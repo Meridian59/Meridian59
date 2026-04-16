@@ -87,19 +87,19 @@ struct font_3d
 //////////////////////
 // Inline Functions //
 //////////////////////
-inline constexpr float DEGREES_TO_RADIANS(float degrees)
+inline constexpr float deg_to_rad(float degrees)
 {
 	constexpr float DEG_TO_RAD_FACTOR = PITWICE / 360.0f;
 	return degrees * DEG_TO_RAD_FACTOR;
 }
-inline constexpr float RADIANS_TO_DEGREES(float radians)
+inline constexpr float rad_to_deg(float radians)
 {	
 	constexpr float RAD_TO_DEG_FACTOR = 360.0f / PITWICE;
 	return radians * RAD_TO_DEG_FACTOR;
 }
 
 // Calculates light range in world units.
-inline constexpr float DLIGHT_SCALE(float intensity)
+inline constexpr float dlight_scale(float intensity)
 {
 	// Conversion factor from light intensity to world units.
 	constexpr float DLIGHT_SCALE_FACTOR = 14000.0f / 255.0f;
@@ -109,14 +109,14 @@ inline constexpr float DLIGHT_SCALE(float intensity)
 	return (intensity * DLIGHT_SCALE_FACTOR) + DLIGHT_MIN_RADIUS;
 }
 
-// Checks if a coordinate is within the bounds of range.
-inline constexpr bool D3DRENDER_CLIP(float coordinate, float range)
+// Returns true if a coordinate is within symmetric range (-range, range).
+inline constexpr bool D3DRender_InBounds(float coordinate, float range)
 {
 	const float absRange = (range < 0.0f) ? -range : range;
 	return (coordinate > -absRange) && (coordinate < absRange);
 }
 
-// Controls alpha testing, which is a 'pass/fail' chck for pixels based on their transparency.
+// Controls alpha testing, which is a 'pass/fail' check for pixels based on their transparency.
 inline void D3DRender_SetAlphaTestState(BOOL enable, DWORD alphaRef, D3DCMPFUNC comparisonFunc)
 {
 	if (!gpD3DDevice) return;
@@ -185,11 +185,12 @@ inline void D3DRender_SetAlphaStage(DWORD stage, D3DTEXTUREOP alphaOp, DWORD arg
 	gpD3DDevice->SetTextureStageState(stage, D3DTSS_ALPHAARG2, arg2);
 }
 
-// Controls the source of vertex data (positions, colors, and textures) for the rendering pipeline.
+// Binds vertex buffers (positions, colors, and texture coordinates) to GPU input streams.
 inline void D3DRender_SetStreams(d3d_render_cache* pCache, int numStages)
 {
 	if (!gpD3DDevice || !pCache) return;
 	
+	// Tracks current stream index to ensure buffers are bound in order.
 	int i = 0;
 	
 	gpD3DDevice->SetStreamSource(i++, pCache->xyzBuffer.pVBuffer, 0, sizeof(custom_xyz));
@@ -203,11 +204,12 @@ inline void D3DRender_SetStreams(d3d_render_cache* pCache, int numStages)
 	gpD3DDevice->SetIndices(pCache->indexBuffer.pIBuffer);
 }
 
-// Disconnects vertext data sources from the rendering pipeline.
+// Disconnects vertex buffers from the GPU input streams.
 inline void D3DRender_ClearStreams(int numStages)
 {
 	if (!gpD3DDevice) return;
 	
+	// Tracks current stream index to ensure buffers are cleared in order.
 	int i = 0;
 	
 	gpD3DDevice->SetStreamSource(i++, nullptr, 0, 0);

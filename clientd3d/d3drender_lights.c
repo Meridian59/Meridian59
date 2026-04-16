@@ -94,7 +94,7 @@ bool D3DLMapCheck(d_light* dLight, room_contents_node* pRNode)
 {
    if (dLight->objID != pRNode->obj.id)
       return false;
-   if (dLight->baseIntensity != DLIGHT_SCALE(pRNode->obj.dLighting.intensity))
+   if (dLight->baseIntensity != dlight_scale(pRNode->obj.dLighting.intensity))
       return false;
    if (dLight->baseColor != pRNode->obj.dLighting.color)
       return false;
@@ -132,9 +132,9 @@ static int CalculateFlickeredIntensity(const LightSourceData& lightData, float* 
    }
    else
    {
-      // Non-flickering lights scale their intensity directly via DLIGHT_SCALE
+      // Non-flickering lights scale their intensity directly via dlight_scale
       // to maintain consistent radius and brightness independent of the dynamic flicker system.
-      flickeredIntensity = DLIGHT_SCALE(lightData.baseIntensity);
+      flickeredIntensity = dlight_scale(lightData.baseIntensity);
    }
 
    if (outFlickerBrightness)
@@ -159,7 +159,7 @@ static void InitializeLightProperties(d_light* light,
    lightCount++;
 
    // Store base values for cache validation (unflickered)
-   light->baseIntensity = DLIGHT_SCALE(lightData.baseIntensity);
+   light->baseIntensity = dlight_scale(lightData.baseIntensity);
    light->baseColor = lightData.lightColor;
 
    // Debug output

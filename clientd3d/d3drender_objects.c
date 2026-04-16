@@ -1157,18 +1157,18 @@ void D3DRenderOverlaysDraw(
 
 						if (
 							(
-								(D3DRENDER_CLIP(topLeft.x, 1.0f) &&
-									D3DRENDER_CLIP(topLeft.y, 1.0f)) ||
-								(D3DRENDER_CLIP(bottomLeft.x, 1.0f) &&
-									D3DRENDER_CLIP(bottomLeft.y, 1.0f)) ||
-								(D3DRENDER_CLIP(topRight.x, 1.0f) &&
-									D3DRENDER_CLIP(topRight.y, 1.0f)) ||
-								(D3DRENDER_CLIP(bottomRight.x, 1.0f) &&
-									D3DRENDER_CLIP(bottomRight.y, 1.0f)) ||
-								(D3DRENDER_CLIP(center.x, 1.0f) &&
-									D3DRENDER_CLIP(center.y, 1.0f))
+								(D3DRender_InBounds(topLeft.x, 1.0f) &&
+									D3DRender_InBounds(topLeft.y, 1.0f)) ||
+								(D3DRender_InBounds(bottomLeft.x, 1.0f) &&
+									D3DRender_InBounds(bottomLeft.y, 1.0f)) ||
+								(D3DRender_InBounds(topRight.x, 1.0f) &&
+									D3DRender_InBounds(topRight.y, 1.0f)) ||
+								(D3DRender_InBounds(bottomRight.x, 1.0f) &&
+									D3DRender_InBounds(bottomRight.y, 1.0f)) ||
+								(D3DRender_InBounds(center.x, 1.0f) &&
+									D3DRender_InBounds(center.y, 1.0f))
 								) &&
-							D3DRENDER_CLIP(topLeft.z, 1.0f))
+							D3DRender_InBounds(topLeft.z, 1.0f))
 						{
 							tempLeft = (topLeft.x * w / 2) + (w / 2);
 							tempRight = (bottomRight.x * w / 2) + (w / 2);
@@ -1704,17 +1704,17 @@ void D3DRenderObjectsDraw(
 
 			if (
 				(
-					(D3DRENDER_CLIP(topLeft.x, 1.0f) &&
-						D3DRENDER_CLIP(topLeft.y, 1.0f)) ||
-					(D3DRENDER_CLIP(bottomLeft.x, 1.0f) &&
-						D3DRENDER_CLIP(bottomLeft.y, 1.0f)) ||
-					(D3DRENDER_CLIP(topRight.x, 1.0f) &&
-						D3DRENDER_CLIP(topRight.y, 1.0f)) ||
-					(D3DRENDER_CLIP(bottomRight.x, 1.0f) &&
-						D3DRENDER_CLIP(bottomRight.y, 1.0f)) ||
-					(D3DRENDER_CLIP(center.x, 1.0f))
+					(D3DRender_InBounds(topLeft.x, 1.0f) &&
+						D3DRender_InBounds(topLeft.y, 1.0f)) ||
+					(D3DRender_InBounds(bottomLeft.x, 1.0f) &&
+						D3DRender_InBounds(bottomLeft.y, 1.0f)) ||
+					(D3DRender_InBounds(topRight.x, 1.0f) &&
+						D3DRender_InBounds(topRight.y, 1.0f)) ||
+					(D3DRender_InBounds(bottomRight.x, 1.0f) &&
+						D3DRender_InBounds(bottomRight.y, 1.0f)) ||
+					(D3DRender_InBounds(center.x, 1.0f))
 					) &&
-				D3DRENDER_CLIP(topLeft.z, 1.0f))
+				D3DRender_InBounds(topLeft.z, 1.0f))
 			{
 				tempLeft = (topLeft.x * w / 2) + (w / 2);
 				tempRight = (bottomRight.x * w / 2) + (w / 2);
@@ -2395,7 +2395,7 @@ bool D3DObjectLightingCalc(
 	float		lastDistance, distance;
 	bool		bFogDisable = false;
 
-	lastDistance = DLIGHT_SCALE(255);
+	lastDistance = dlight_scale(255);
 
 	for (numLights = 0; numLights < lightAndTextureParams.lightCache->numLights; numLights++)
 	{

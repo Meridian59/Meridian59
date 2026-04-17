@@ -1303,3 +1303,110 @@ LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 
 	return pTex1;
 }
+
+// Controls alpha testing, which is a 'pass/fail' check for pixels based on their transparency.
+void D3DRender_SetAlphaTestState(BOOL enable, DWORD alphaRef, D3DCMPFUNC comparisonFunc)
+{
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, enable);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHAREF, alphaRef);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, comparisonFunc);
+}
+
+// Controls alpha blending, which mixes source color with destination color.
+void D3DRender_SetAlphaBlendState(BOOL enable, D3DBLEND srcBlend, D3DBLEND dstBlend)
+{
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, enable);
+	gpD3DDevice->SetRenderState(D3DRS_SRCBLEND, srcBlend);
+	gpD3DDevice->SetRenderState(D3DRS_DESTBLEND, dstBlend);
+}
+
+// Enables stencil writing, and marks surfaces with provided reference.
+void D3DRender_SetStencilMark(DWORD refValue)
+{
+	if (!gpD3DDevice) return;
+    gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_ALWAYS);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILREF, refValue);
+	// Only mark pixels that pass the depth test. And don't mark areas that are occluded.
+    gpD3DDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_REPLACE);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
+}
+
+// Filters drawing based on stencil buffer comparison.  Doesn't modify the buffer.
+void D3DRender_SetStencilTest(D3DCMPFUNC comparisonFunc, DWORD refValue)
+{
+    if (!gpD3DDevice) return;
+    gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILFUNC, comparisonFunc);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILREF, refValue);
+	// Don't change the stencil buffer during the test.
+    gpD3DDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
+    gpD3DDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
+}
+
+// Disable stencil testing for subsequent rendering.
+void D3DRender_DisableStencil()
+{
+    if (!gpD3DDevice) return;
+    gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+}
+
+// Controls how textures and colors are mathematically combined, whether it's 2D sprites or 3D surfaces.
+void D3DRender_SetColorStage(DWORD stage, D3DTEXTUREOP colorOp, DWORD arg1, DWORD arg2)
+{
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_COLOROP, colorOp);
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_COLORARG1, arg1);
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_COLORARG2, arg2);
+}
+
+// Controls how alpha transparency is mathematically combined for any rendered surface.
+void D3DRender_SetAlphaStage(DWORD stage, D3DTEXTUREOP alphaOp, DWORD arg1, DWORD arg2)
+{
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_ALPHAOP, alphaOp);
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_ALPHAARG1, arg1);
+	gpD3DDevice->SetTextureStageState(stage, D3DTSS_ALPHAARG2, arg2);
+}
+
+// Binds vertex buffers (positions, colors, and texture coordinates) to GPU input streams.
+void D3DRender_SetStreams(d3d_render_cache* pCache, int numStages)
+{
+	if (!gpD3DDevice || !pCache) return;
+	
+	// Tracks current stream index to ensure buffers are bound in order.
+	int i = 0;
+	
+	gpD3DDevice->SetStreamSource(i++, pCache->xyzBuffer.pVBuffer, 0, sizeof(custom_xyz));
+	gpD3DDevice->SetStreamSource(i++, pCache->bgraBuffer.pVBuffer, 0, sizeof(custom_bgra));
+	
+	for (int j = 0; j < numStages; j++)
+	{
+		gpD3DDevice->SetStreamSource(i++, pCache->stBuffer[j].pVBuffer, 0, sizeof(custom_st));
+	}
+	
+	gpD3DDevice->SetIndices(pCache->indexBuffer.pIBuffer);
+}
+
+// Disconnects vertex buffers from the GPU input streams.
+void D3DRender_ClearStreams(int numStages)
+{
+	if (!gpD3DDevice) return;
+	
+	// Tracks current stream index to ensure buffers are cleared in order.
+	int i = 0;
+	
+	gpD3DDevice->SetStreamSource(i++, nullptr, 0, 0);
+	gpD3DDevice->SetStreamSource(i++, nullptr, 0, 0);
+	
+	for (int j = 0; j < numStages; j++)
+	{
+		gpD3DDevice->SetStreamSource(i++, nullptr, 0, 0);
+	}
+	
+	gpD3DDevice->SetIndices(nullptr);
+}

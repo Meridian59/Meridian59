@@ -515,7 +515,7 @@ static void D3DCacheFlushChunks(d3d_render_cache_system *pCacheSystem,
 				if (pRenderCache != pChunk->pRenderCache)
 				{
 					pRenderCache = pChunk->pRenderCache;
-					D3DRENDER_SET_STREAMS(gpD3DDevice, pRenderCache, numStages);
+					D3DRender_SetStreams(pRenderCache, numStages);
 				}
 
 				IDirect3DDevice9_DrawIndexedPrimitive(gpD3DDevice,
@@ -568,23 +568,15 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 		// pass can't bleed into the body, even when alpha-blending is active.
 		// Stencil buffer starts at 0 each frame; residual 1s from other objects correctly
 		// suppress the outline wherever it would overlap an already-drawn object.
-		D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE,
-			D3DCMP_ALWAYS, 1,
-			D3DSTENCILOP_REPLACE,   // z-pass  -> write 1
-			D3DSTENCILOP_KEEP,      // stencil-fail (unused, func=ALWAYS)
-			D3DSTENCILOP_KEEP);     // z-fail  -> leave 0 (occluded pixel)
+		D3DRender_SetStencilMark(1);
 		D3DCacheFlushChunks(pCacheSystem, pPool, numStages, type, false);
 
 		// Pass 2 of 2 (outline draw): draw targeted (outline) chunks only where stencil==0,
 		// i.e. the border pixels the normal geometry did not cover.
-		D3DRENDER_SET_STENCIL_STATE(gpD3DDevice, TRUE,
-			D3DCMP_NOTEQUAL, 1,
-			D3DSTENCILOP_KEEP,      // z-pass  -> leave stencil unchanged
-			D3DSTENCILOP_KEEP,      // stencil-fail -> leave unchanged
-			D3DSTENCILOP_KEEP);     // z-fail  -> leave unchanged
+		D3DRender_SetStencilTest(D3DCMP_NOTEQUAL, 1);
 		D3DCacheFlushChunks(pCacheSystem, pPool, numStages, type, true);
 
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
+		D3DRender_DisableStencil();
 	}
 	else
 	{
@@ -597,5 +589,5 @@ void D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *p
 		IDirect3DDevice9_SetTexture(gpD3DDevice, i, NULL);
 	}
 
-	D3DRENDER_CLEAR_STREAMS(gpD3DDevice, numStages);
+	D3DRender_ClearStreams(numStages);
 }

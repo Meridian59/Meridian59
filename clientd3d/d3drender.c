@@ -157,7 +157,7 @@ void					*D3DRenderMalloc(unsigned int bytes);
 void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias)
 {
    float bias = z_bias * -0.00001f;
-   IDirect3DDevice9_SetRenderState(device, D3DRS_DEPTHBIAS, *((DWORD *) &bias));
+   device->SetRenderState(D3DRS_DEPTHBIAS, *((DWORD *) &bias));
 }
 
 int getD3dRenderThreshold()
@@ -244,9 +244,9 @@ HRESULT D3DRenderInit(HWND hWnd)
 		return E_FAIL;
 
 	D3DDISPLAYMODE displayMode;
-	IDirect3D9_GetAdapterDisplayMode(gpD3D, D3DADAPTER_DEFAULT, &displayMode);
+	gpD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode);
 
-	IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &gD3DCaps);
+	gpD3DDevice->GetDeviceCaps(&gD3DCaps);
 
 	gFrame = 0;
 	
@@ -254,22 +254,22 @@ HRESULT D3DRenderInit(HWND hWnd)
 	// Defines screen dimensions (X, Y, Width, Height) and depth range (MinZ, MaxZ).
 	gViewport = { 0, 0, static_cast<DWORD>(gScreenWidth), static_cast<DWORD>(gScreenHeight), 0.0f, 1.0f};
 
-	IDirect3DDevice9_SetViewport(gpD3DDevice, &gViewport);
+	gpD3DDevice->SetViewport(&gViewport);
 
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
+	gpD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_LIGHTING, FALSE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CLIPPING, FALSE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DITHERENABLE, FALSE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_LASTPIXEL, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FILLMODE, D3DFILL_SOLID);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_COLORWRITEENABLE,
+	gpD3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_CLIPPING, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_DITHERENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHAREF, TEMP_ALPHA_REF);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+	gpD3DDevice->SetRenderState(D3DRS_LASTPIXEL, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	gpD3DDevice->SetRenderState(D3DRS_COLORWRITEENABLE,
 		D3DCOLORWRITEENABLE_ALPHA | D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN |
 		D3DCOLORWRITEENABLE_BLUE);
 
@@ -301,25 +301,25 @@ HRESULT D3DRenderInit(HWND hWnd)
 	gEffectPool.pMaterialFctn = &D3DMaterialEffectPool;
 	gParticlePool.pMaterialFctn = &D3DMaterialParticlePool;
    
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAXANISOTROPY, gD3DDriverProfile.maxAnisotropy);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, gD3DDriverProfile.maxAnisotropy);
    
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MAXANISOTROPY, gD3DDriverProfile.maxAnisotropy);
+	gpD3DDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);
+	gpD3DDevice->SetSamplerState(1, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
+	gpD3DDevice->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+	gpD3DDevice->SetSamplerState(1, D3DSAMP_MAXANISOTROPY, gD3DDriverProfile.maxAnisotropy);
 
 	/***************************************************************************/
 	/*                    VERTEX DECLARATIONS                                  */
 	/***************************************************************************/
 	
-	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl0, &decl0dc);
-	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl1, &decl1dc);
-	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl2, &decl2dc);
+	gpD3DDevice->CreateVertexDeclaration(decl0, &decl0dc);
+	gpD3DDevice->CreateVertexDeclaration(decl1, &decl1dc);
+	gpD3DDevice->CreateVertexDeclaration(decl2, &decl2dc);
 
-   SetZBias(gpD3DDevice, 0);
+	SetZBias(gpD3DDevice, 0);
 
 	D3DRenderLMapsBuild();
 
@@ -331,23 +331,20 @@ HRESULT D3DRenderInit(HWND hWnd)
 		float	end = 50000.8f;
 		DWORD	mode = D3DFOG_LINEAR;
 
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGCOLOR, 0);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGTABLEMODE,
-                                      mode);
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGSTART,
-                                      *(DWORD *)(&start));
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGEND,
-                                      *(DWORD *)(&end));
+		gpD3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
+		gpD3DDevice->SetRenderState(D3DRS_FOGCOLOR, 0);
+		gpD3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, mode);
+		gpD3DDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD *)(&start));
+		gpD3DDevice->SetRenderState(D3DRS_FOGEND, *(DWORD *)(&end));
 	}
 
 	// create framebuffer textures
    for (int i = 0; i < MAX_RENDER_TARGET_POOL; i++)
-      IDirect3DDevice9_CreateTexture(gpD3DDevice, gSmallTextureSize, gSmallTextureSize, 1,
+      gpD3DDevice->CreateTexture(gSmallTextureSize, gSmallTextureSize, 1,
                                      D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
                                      &gpBackBufferTex[i], nullptr);
    
-   IDirect3DDevice9_CreateTexture(gpD3DDevice, gFullTextureSize, gFullTextureSize, 1,
+   gpD3DDevice->CreateTexture(gFullTextureSize, gFullTextureSize, 1,
                                   D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
                                   &gpBackBufferTexFull, nullptr);
 
@@ -393,25 +390,30 @@ void D3DRenderShutDown(void)
 
 		if (gpNoLookThrough)
 		{
-			IDirect3DTexture9_Release(gpNoLookThrough);
+			gpNoLookThrough->Release();
 			gpNoLookThrough = nullptr;
 		}
 		if (gpBackBufferTexFull)
 		{
-			IDirect3DTexture9_Release(gpBackBufferTexFull);
+			gpBackBufferTexFull->Release();
 			gpBackBufferTexFull = nullptr;
 		}
 
 		if (gFont.pTexture)
 		{
-         IDirect3DTexture9_Release(gFont.pTexture);
-         delete [] gFont.kerningPairs;
-         gFont.pTexture = nullptr;
+			gFont.pTexture->Release();
+			gFont.pTexture = nullptr;
+		}
+		
+		if (gFont.kerningPairs)
+		{
+			delete[] gFont.kerningPairs;
+			gFont.kerningPairs = nullptr;
 		}
 
 		for (int i = 0; i < MAX_RENDER_TARGET_POOL; i++)
 		{
-         IDirect3DTexture9_Release(gpBackBufferTex[i]);
+			gpBackBufferTex[i]->Release();
 			gpBackBufferTex[i] = nullptr;
 		}
 
@@ -421,7 +423,7 @@ void D3DRenderShutDown(void)
 		{
 			if (gpViewElements[i])
 			{
-				IDirect3DDevice9_Release(gpViewElements[i]);
+				gpViewElements[i]->Release();
 				gpViewElements[i] = nullptr;
 			}
 		}
@@ -430,17 +432,17 @@ void D3DRenderShutDown(void)
 		/*                       VERTEX DECLARATIONS                               */
 		/***************************************************************************/
 		
-		if (decl0dc) IDirect3DDevice9_Release(decl0dc);
-		if (decl1dc) IDirect3DDevice9_Release(decl1dc);
-		if (decl2dc) IDirect3DDevice9_Release(decl2dc);
-
+		if (decl0dc) decl0dc->Release();
+		if (decl1dc) decl1dc->Release();
+		if (decl2dc) decl2dc->Release();
 		decl0dc = nullptr;
 		decl1dc = nullptr;
 		decl2dc = nullptr;
       
-      IDirect3DDevice9_Release(gpD3DDevice);
+		gpD3DDevice->Release();
 		gpD3DDevice = nullptr;
-      IDirect3D9_Release(gpD3D);
+		
+		gpD3D->Release();
 		gpD3D = nullptr;
 	}
 }
@@ -498,14 +500,12 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	LightCacheUpdateParams lightCacheParams{&gDLightCache, &gDLightCacheDynamic, gD3DRedrawAll};
 	D3DLMapsStaticGet(room, lightCacheParams);
 
-	IDirect3DDevice9_Clear(gpD3DDevice, 0, nullptr, D3DCLEAR_TARGET |
-		D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL,
-		D3DCOLOR_ARGB(0, 0, 0, 0), 1.0, 0);
+	gpD3DDevice->Clear(0, nullptr, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL), D3DCOLOR_ARGB(0, 0, 0, 0), 1.0, 0);
 
-	IDirect3DDevice9_BeginScene(gpD3DDevice);
+	gpD3DDevice->BeginScene();
 
 	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
+	gpD3DDevice->SetTransform(D3DTS_WORLD, &mat);
 
 	// A full 360-degree circle is 4096 game units. Player camera rotation is offset
 	// by 270 degrees (3072 game units) to align it with the legacy engine orientation.
@@ -521,15 +521,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	MatrixTranslate(&trans, -static_cast<float>(params->viewer_x), -static_cast<float>(params->viewer_height), -static_cast<float>(params->viewer_y));
 	MatrixMultiply(&view, &trans, &rot);
 
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &view);
 
 	XformMatrixPerspective(&proj, FovHorizontal(gD3DRect.right - gD3DRect.left), FovVertical(gD3DRect.bottom - gD3DRect.top), 100.0f, Z_RANGE);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &proj);
+	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &proj);
 
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_COLORWRITEENABLE,
-		D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE);
+	gpD3DDevice->SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE);
 
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_CW);
+	gpD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
 	D3DCacheSystemReset(&gObjectCacheSystem);
 	D3DCacheSystemReset(&gLMapCacheSystem);
@@ -589,15 +588,15 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 			D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
 			D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
 
-			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
-			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
-			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
+			gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+			gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+			gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
 
 			// Second pass: render transparent objects
-			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, TRUE);
-			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
+			gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+			gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
 
 			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
 
@@ -635,7 +634,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		}
 	}
 
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
+	gpD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	SetZBias(gpD3DDevice, 1);
 
 	if (draw_particles)
@@ -671,14 +670,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
 
-	IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
+	gpD3DDevice->SetVertexShader(nullptr);
+	gpD3DDevice->SetVertexDeclaration(decl0dc);
 
 	// Set up orthographic projection for drawing overlays
 	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
+	gpD3DDevice->SetTransform(D3DTS_WORLD, &mat);
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &mat);
+	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &mat);
 
 	FxRenderSystemStructure fxRenderSystemStructure(decl1dc, &gObjectPool, &gObjectCacheSystem, 
 		&gEffectPool, &gEffectCacheSystem, gpBackBufferTex, gpBackBufferTexFull, 
@@ -704,14 +703,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DRender_SetAlphaTestState(TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
 	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
 
-   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
-	IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
+	gpD3DDevice->SetVertexShader(nullptr);
+	gpD3DDevice->SetVertexDeclaration(decl1dc);
 
 	D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
 	D3DCacheSystemReset(&gObjectCacheSystem);
@@ -719,19 +718,19 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
 	D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
 
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);	
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);	
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
 
-	IDirect3DDevice9_EndScene(gpD3DDevice);
+	gpD3DDevice->EndScene();
 	
 	RECT rect = GetScreenRect();
 
-	HRESULT hr = IDirect3DDevice9_Present(gpD3DDevice, &rect, &gD3DRect, nullptr, nullptr);
+	HRESULT hr = gpD3DDevice->Present(&rect, &gD3DRect, nullptr, nullptr);
 
 	if (hr == D3DERR_DEVICELOST)
 	{
 		while (hr == D3DERR_DEVICELOST)
-			hr = IDirect3DDevice9_TestCooperativeLevel(gpD3DDevice);
+			hr = gpD3DDevice->TestCooperativeLevel();
 
 		if (hr == D3DERR_DEVICENOTRESET)
 		{
@@ -789,7 +788,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 		pFont->texWidth = pFont->texHeight = 256;
 
 	D3DCAPS9 d3dCaps;
-	IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &d3dCaps);
+	gpD3DDevice->GetDeviceCaps(&d3dCaps);
   
 	if ( pFont->texWidth > static_cast<long>(d3dCaps.MaxTextureWidth) )
 	{
@@ -800,10 +799,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	if (pFont->pTexture)
 		IDirect3DTexture9_Release(pFont->pTexture);
    
-   IDirect3DDevice9_CreateTexture(
-      gpD3DDevice, pFont->texWidth,
-      pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
-      D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
+   gpD3DDevice->CreateTexture(pFont->texWidth, pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4, D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
    
    BITMAPINFO bmi;
    memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
@@ -1153,31 +1149,31 @@ LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 	D3DRenderPoolReset(&gEffectPool, &D3DMaterialEffectPool);
 
 	// get pointer to backbuffer surface and z/stencil surface
-	IDirect3DDevice9_GetRenderTarget(gpD3DDevice, 0, &pSrc);
-	IDirect3DDevice9_GetDepthStencilSurface(gpD3DDevice, &pZBuf);
-
+	gpD3DDevice->GetRenderTarget(0, &pSrc);
+	gpD3DDevice->GetDepthStencilSurface(&pZBuf);
+	
 	// get pointer to texture surface for rendering
-	IDirect3DTexture9_GetSurfaceLevel(pTex0, 0, &pDest[0]);
-	IDirect3DTexture9_GetSurfaceLevel(pTex1, 0, &pDest[1]);
+	pTex0->GetSurfaceLevel(0, &pDest[0]);
+	pTex1->GetSurfaceLevel(0, &pDest[1]);
 
 	POINT pnt = { 0, 0 };
 	
 	RECT rect = GetScreenRect();
 
 	// copy framebuffer to texture
-	IDirect3DDevice9_StretchRect(gpD3DDevice, pSrc, &rect, pDest[0], &rect, D3DTEXF_NONE);
+	gpD3DDevice->StretchRect(pSrc, &rect, pDest[0], &rect, D3DTEXF_NONE);
    
 	// clear local->screen transforms
 	D3DMATRIX mat;
 	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
+	gpD3DDevice->SetTransform(D3DTS_WORLD, &mat);
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &mat);
+	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &mat);
 
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-	IDirect3DDevice9_SetRenderTarget(gpD3DDevice, 0, pDest[1]);
+	gpD3DDevice->SetRenderTarget(0, pDest[1]);
 
 	d3d_render_packet_new *pPacket = D3DRenderPacketNew(&gEffectPool);
 	
@@ -1220,14 +1216,14 @@ LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 	D3DCacheFlush(&gEffectCacheSystem, &gEffectPool, 1, D3DPT_TRIANGLESTRIP);
 
 	// restore render target to backbuffer
-	HRESULT hr = IDirect3DDevice9_SetRenderTarget(gpD3DDevice, 0, pSrc);
-	hr = IDirect3DDevice9_SetDepthStencilSurface(gpD3DDevice, pZBuf);
-	hr = IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
+	HRESULT hr = gpD3DDevice->SetRenderTarget(0, pSrc);
+	hr = gpD3DDevice->SetDepthStencilSurface(pZBuf);
+	hr = gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
    
-	IDirect3DSurface9_Release(pSrc);
-	IDirect3DSurface9_Release(pZBuf);
-	IDirect3DSurface9_Release(pDest[0]);
-	IDirect3DSurface9_Release(pDest[1]);
+	pSrc->Release();
+	pZBuf->Release();
+	pDest[0]->Release();
+	pDest[1]->Release();
 
 	return pTex1;
 }

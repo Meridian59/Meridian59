@@ -115,6 +115,12 @@ inline bool D3DRender_InBounds(float coordinate, float range)
 	return fabs(coordinate) < range;
 }
 
+inline RECT GetScreenRect()
+{
+	// RECT struct is set in this order: Left -> Top -> Right -> Bottom
+	return { 0, 0, gScreenWidth, gScreenHeight};
+}
+
 /////////////////////////
 // Function Prototypes //
 /////////////////////////

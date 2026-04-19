@@ -11,15 +11,17 @@
 extern int main_viewport_width;
 extern int main_viewport_height;
 
-// Define field of views with magic numbers for tuning
+// Defines field of views
 float FovHorizontal(long width)
 {
-	return width / static_cast<float>(main_viewport_width) * (-PI / 3.78f);
+	static constexpr float HORIZONTAL_TUNING_FACTOR  = (-PI / 3.78f);
+	return width / static_cast<float>(main_viewport_width) * HORIZONTAL_TUNING_FACTOR ;
 }
 
 float FovVertical(long height)
 {
-	return height / static_cast<float>(main_viewport_height) * (PI / 5.88f);
+	static constexpr float VERTICAL_TUNING_FACTOR = (PI / 5.88f);
+	return height / static_cast<float>(main_viewport_height) * VERTICAL_TUNING_FACTOR;
 }
 
 // Helper function to determine if an object should be rendered in the current pass based on transparency.
@@ -77,7 +79,7 @@ RECT					gD3DRect;
 BYTE					gViewerLight = 0;
 int						gNumObjects;
 int						gNumDPCalls;
-static PALETTEENTRY		gPalette[256];  // Legacy 8-bit color palette, aka 256 colors.
+static PALETTEENTRY		gPalette[NUM_COLORS];
 
 static unsigned int		gFrame = 0;
 
@@ -247,13 +249,10 @@ HRESULT D3DRenderInit(HWND hWnd)
 	IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &gD3DCaps);
 
 	gFrame = 0;
-   
-	gViewport.X = 0;
-	gViewport.Y = 0;
-	gViewport.Width = gScreenWidth;
-	gViewport.Height = gScreenHeight;
-	gViewport.MinZ = 0.0f;
-	gViewport.MaxZ = 1.0f;
+	
+	// Initializes D3D viewport to match current screen dimensions.
+	// Defines screen dimensions (X, Y, Width, Height) and depth range (MinZ, MaxZ).
+	gViewport = { 0, 0, static_cast<DWORD>(gScreenWidth), static_cast<DWORD>(gScreenHeight), 0.0f, 1.0f};
 
 	IDirect3DDevice9_SetViewport(gpD3DDevice, &gViewport);
 
@@ -448,12 +447,7 @@ void D3DRenderShutDown(void)
 
 void D3DRenderBegin(room_type *room, Draw3DParams *params)
 {
-	int	curPacket = 0;
-	int	curIndex = 0;
 	room_contents_node *pRNode = nullptr;
-
-	long timeOverall = timeGetTime();
-	long timeSetup = timeGetTime();
 
 	// Static variable to track the player's previous ability to see. Initialize it only once.
 	static bool can_see = !effects.blind;
@@ -557,8 +551,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		static_cast<float>(params->viewer_height)
 	};
 
-	timeSetup = timeGetTime() - timeSetup;
-
 	if (draw_sky) // Render the skybox first
 	{
 		SkyboxRenderParams skyboxRenderParams(decl1dc, gD3DDriverProfile, gWorldPool, gWorldCacheSystem);
@@ -633,7 +625,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_world)
 	{
-		long timeWorld = D3DRenderWorld(worldRenderParams, worldPropertyParams, lightAndTextureParams);
+		D3DRenderWorld(worldRenderParams, worldPropertyParams, lightAndTextureParams);
 
 		// DEBUG: Draw circles at static light positions
 		if (D3DLightsDebugPositionsEnabled() && config.bDynamicLighting)
@@ -663,7 +655,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		PlayerViewParams playerViewParams(gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
 
-		long timeObjects = D3DRenderObjects(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
+		D3DRenderObjects(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
 	}
 
 	// Transparent walls are drawn LAST so that sprites/monsters behind them show
@@ -705,7 +697,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DFxBlurWaver(fxRenderSystemStructure);
 	}
 
-	long timeComplete = timeGetTime();
 	// view elements (e.g. viewport corners)
 	D3DRender_SetColorStage(1, D3DTOP_DISABLE, 0, 0);
 	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, 0, 0);
@@ -733,11 +724,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	IDirect3DDevice9_EndScene(gpD3DDevice);
 	
-	RECT rect;
-	rect.top = 0;
-	rect.bottom = gScreenHeight;
-	rect.left = 0;
-	rect.right = gScreenWidth;
+	RECT rect = GetScreenRect();
 
 	HRESULT hr = IDirect3DDevice9_Present(gpD3DDevice, &rect, &gD3DRect, nullptr, nullptr);
 
@@ -757,8 +744,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if ((gFrame & 255) == 255)
 		debug(("number of vertices = %d\nnumber of dp calls = %d\n", gNumVertices, gNumDPCalls));
 
-	timeComplete = timeGetTime() - timeComplete;
-	timeOverall = timeGetTime() - timeOverall;
 }
 
 void D3DRenderResizeDisplay(int left, int top, int right, int bottom)
@@ -787,10 +772,6 @@ int D3DRenderIsEnabled(void)
 
 void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 {
-	D3DCAPS9		d3dCaps;
-	DWORD			*pBitmapBits;
-	BITMAPINFO		bmi;
-
    // Ask for a bigger font to reduce aliasing, then scale the texture
    // down by the same amount.
    float fontScale = 3.0;
@@ -807,6 +788,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	else
 		pFont->texWidth = pFont->texHeight = 256;
 
+	D3DCAPS9 d3dCaps;
 	IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &d3dCaps);
   
 	if ( pFont->texWidth > static_cast<long>(d3dCaps.MaxTextureWidth) )
@@ -823,6 +805,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
       pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
       D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
    
+   BITMAPINFO bmi;
    memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
    bmi.bmiHeader.biWidth = static_cast<int>(pFont->texWidth);
@@ -832,6 +815,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
    bmi.bmiHeader.biBitCount = 32;
    
    HDC hDC = CreateCompatibleDC(gBitsDC);
+   DWORD *pBitmapBits;
    HBITMAP hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, nullptr, 0 );
    SetMapMode(hDC, MM_TEXT);
   
@@ -1076,21 +1060,18 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 
 void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 {
-   // Render view elements (such as the main viewport yellow ui corners)
-   int offset = 0;
-
    float screenW = static_cast<float>(gD3DRect.right - gD3DRect.left) / static_cast<float>(gScreenWidth);
    float screenH = static_cast<float>(gD3DRect.bottom - gD3DRect.top) / static_cast<float>(gScreenHeight);
 
-   if (GetFocus() == hMain)
-      offset = 4;
-
+   // Render view elements (such as the main viewport yellow ui corners).
+   int offset = (GetFocus() == hMain) ? 4 : 0;
+   
    // 0 = top-left
    // 1 = top-right
    // 2 = bottom-left
    // 3 = bottom-right
-
-   for (int i = 0; i < 4; ++i)
+   static constexpr int NUM_CORNERS = 4;
+   for (int i = 0; i < NUM_CORNERS; ++i)
    {
       float width = static_cast<float>(ViewElements[i + offset].width) / screenW;
       float height = static_cast<float>(ViewElements[i + offset].height) / screenH;
@@ -1143,11 +1124,12 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
       pChunk->xyz[2] = { right, VIEW_ELEMENT_Z, bottom };
       pChunk->xyz[3] = { right, VIEW_ELEMENT_Z, top };	  
 
-      for (int j = 0; j < 4; j++)
+      for (auto& color : pChunk->bgra)
       {
-         pChunk->bgra[j] = {255, 255, 255, 255};
+         color = {255, 255, 255, 255}; // Solid white (no tinting)
       }
 
+      // Half-pixel offset to prevent texture bleeding.
       static constexpr float foffset = 1.0f / 64.0f;
       pChunk->st0[0] = { foffset, foffset };
       pChunk->st0[1] = { foffset, (1.0f - foffset) };
@@ -1180,10 +1162,7 @@ LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 
 	POINT pnt = { 0, 0 };
 	
-	RECT rect;
-	rect.left = rect.top = 0;
-	rect.right = gScreenWidth;
-	rect.bottom = gScreenHeight;
+	RECT rect = GetScreenRect();
 
 	// copy framebuffer to texture
 	IDirect3DDevice9_StretchRect(gpD3DDevice, pSrc, &rect, pDest[0], &rect, D3DTEXF_NONE);

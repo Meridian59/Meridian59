@@ -36,16 +36,9 @@ static constexpr float Z_RANGE = 200000.0f;
 // Standard ASCII table, minus the first 32 non-printable control characters.
 static constexpr int NUM_CHARS = 128 - 32;
 
-/////////////
-// Globals //
-/////////////
-inline IDirect3D9* gpD3D = nullptr;
-inline IDirect3DDevice9* gpD3DDevice = nullptr;
-
-inline int gNumVertices = 0;
-inline int gD3DEnabled = 0;
-inline int gScreenWidth = 0;
-inline int gScreenHeight = 0;
+// Pool of textures used for off-screen rendering (drawing to memory instead of on screen).
+// These are used for intermediate passes for things like dynamic lighting.
+static constexpr int MAX_RENDER_TARGET_POOL = 16;
 
 ////////////////
 // Structures //
@@ -84,6 +77,36 @@ struct font_3d
   KERNINGPAIR *kerningPairs;
 };
 
+/////////////
+// Globals //
+/////////////
+inline IDirect3D9* gpD3D = nullptr;
+inline IDirect3DDevice9* gpD3DDevice = nullptr;
+
+inline int gNumVertices = 0;
+inline int gD3DEnabled = 0;
+inline int gScreenWidth = 0;
+inline int gScreenHeight = 0;
+
+// Main client windows current viewport area
+// These varaibles exist in graphics.c
+extern int main_viewport_width;
+extern int main_viewport_height;
+
+inline int d3dRenderTextureThreshold;
+
+// Defined in d3ddriver.c
+extern d3d_driver_profile gD3DDriverProfile;
+
+inline bool gWireframe = false;
+inline font_3d gFont;
+
+inline LPDIRECT3DTEXTURE9 gpBackBufferTex[MAX_RENDER_TARGET_POOL];
+inline LPDIRECT3DTEXTURE9 gpBackBufferTexFull;
+
+inline static PALETTEENTRY gPalette[NUM_COLORS];
+extern Color base_palette[NUM_COLORS];
+
 //////////////////////
 // Helper Functions //
 //////////////////////
@@ -121,6 +144,96 @@ inline RECT GetScreenRect()
 	return { 0, 0, gScreenWidth, gScreenHeight};
 }
 
+inline int D3DRenderIsEnabled()
+{
+	return gD3DEnabled;
+}
+
+inline void *D3DRenderMalloc(unsigned int bytes)
+{
+	return malloc(bytes);
+}
+
+inline void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias)
+{
+   float bias = z_bias * -0.00001f;
+   device->SetRenderState(D3DRS_DEPTHBIAS, *((DWORD *) &bias));
+}
+
+inline int DistanceGet(int x, int y)
+{
+	return static_cast<int>(sqrtf(static_cast<float>(x * x + y * y)));
+}
+
+// Helper function to determine if an object should be rendered in the current pass based on transparency.
+inline bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent)
+{
+	return transparent_pass == isTransparent;
+}
+
+// Defines field of views
+inline float FovHorizontal(long width)
+{
+	static constexpr float HORIZONTAL_TUNING_FACTOR  = (-PI / 3.78f);
+	return width / static_cast<float>(main_viewport_width) * HORIZONTAL_TUNING_FACTOR ;
+}
+
+inline float FovVertical(long height)
+{
+	static constexpr float VERTICAL_TUNING_FACTOR = (PI / 5.88f);
+	return height / static_cast<float>(main_viewport_height) * VERTICAL_TUNING_FACTOR;
+}
+
+// Retrieve the threshold value for determining whether to round up the dimensions of a texture.
+inline int getD3dRenderThreshold()
+{
+	return d3dRenderTextureThreshold;
+}
+
+inline bool isManagedTexturesEnabled()
+{
+    return gD3DDriverProfile.bManagedTextures;
+}
+
+inline bool isFogEnabled()
+{
+	return gD3DDriverProfile.bFogEnable;
+}
+
+inline void setWireframeMode(bool isEnabled)
+{
+	gWireframe = isEnabled;
+}
+
+inline bool isWireframeMode()
+{
+	return gWireframe;
+}
+
+inline const font_3d& getFont3d()
+{
+	return gFont;
+}
+
+inline const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
+{
+	return gpBackBufferTex[0];
+}
+
+// Global palette array containing 256 color entries used for rendering textures in the current frame.
+// This palette is dynamically updated based on the current rendering context.
+inline PALETTEENTRY* getPalette()
+{
+    return gPalette;
+}
+
+// Base palette array containing predefined colors used as a reference for rendering effects.
+// This palette remains constant and is used for color lookups and transformations.
+inline const Color(&getBasePalette())[NUM_COLORS]
+{
+	return base_palette;
+}
+
 /////////////////////////
 // Function Prototypes //
 /////////////////////////
@@ -129,56 +242,15 @@ void				D3DRenderShutDown(void);
 void				D3DRenderBegin(room_type *room, Draw3DParams *params);
 void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
 void				D3DRenderEnableToggle(void);
-int					D3DRenderIsEnabled(void);
 int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
 d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
-												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
+												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);												
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
 d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);
 void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
 void				*D3DRenderMalloc(unsigned int bytes);
 void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
-
-LPDIRECT3DTEXTURE9  D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1, 
-	float width, float height);
-
-void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias);
-int DistanceGet(int x, int y);
-
-int FindHotspotPdib(PDIB pdib, char hotspot, POINT* point);
-
-bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
-
-float FovHorizontal(long width);
-float FovVertical(long height);
-
-// Retrieve the threshold value for determining whether to round up the dimensions of a texture.
-int getD3dRenderThreshold();
-
-// Returns the max shading range (FINENESS-shade_amount) to FINENESS
-long getShadeAmount();
-
-bool isManagedTexturesEnabled();
-bool isFogEnabled();
-
-const Vector3D& getSunVector();
-
-void setWireframeMode(bool isEnabled);
-bool isWireframeMode();
-
-const font_3d& getFont3d();
-
-const LPDIRECT3DTEXTURE9 getWhiteLightTexture();
-
-const LPDIRECT3DTEXTURE9 getBackBufferTextureZero();
-
-// Global palette array containing 256 color entries used for rendering textures in the current frame.
-// This palette is dynamically updated based on the current rendering context.
-PALETTEENTRY* getPalette();
-
-// Base palette array containing predefined colors used as a reference for rendering effects.
-// This palette remains constant and is used for color lookups and transformations.
-const Color(&getBasePalette())[NUM_COLORS];
+LPDIRECT3DTEXTURE9  D3DRender_CaptureEffect(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1);
 
 // D3D State Functions
 void D3DRender_SetAlphaTestState(BOOL enable, DWORD alphaRef, D3DCMPFUNC comparisonFunc);
@@ -193,5 +265,20 @@ void D3DRender_SetAlphaStage(DWORD stage, D3DTEXTUREOP alphaOp, DWORD arg1, DWOR
 
 void D3DRender_SetStreams(d3d_render_cache* pCache, int numStages);
 void D3DRender_ClearStreams(int numStages);
+
+////////////////////////
+// External Functions //
+////////////////////////
+
+// Defined in object3d.c
+int FindHotspotPdib(PDIB pdib, char hotspot, POINT* point);
+const Vector3D& getSunVector();
+
+// Defined in graphics.c
+// Returns the max shading range (FINENESS-shade_amount) to FINENESS.
+long getShadeAmount();
+
+// Defined in d3drender_lights.c
+LPDIRECT3DTEXTURE9 D3DRenderLightsGetWhite();
 
 #endif	// __D3DRENDER_H__

@@ -224,7 +224,7 @@ bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool)
    IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
    IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
-   const auto &whiteLightTexture = getWhiteLightTexture();
+   const auto &whiteLightTexture = D3DRenderLightsGetWhite();
    IDirect3DDevice9_SetTexture(gpD3DDevice, 0, (IDirect3DBaseTexture9 *) whiteLightTexture);
 
    D3DRender_SetColorStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);

@@ -29,7 +29,6 @@ extern HWND hStats;
 static int num_visible;             // # of stats visible in list box
 
 static int StatListFindItem(int num);
-static void StatsListUpdateScrollPos(HWND hwnd, int pos);
 static LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, bool selected);
 static int  StatsListGetItemHeight(void);
@@ -88,22 +87,13 @@ void StatsListResize(list_type stats)
 
    // Hide scrollbar if not needed
    num_visible = (stats_area.cy - y) / std::max(ListBox_GetItemHeight(hList, 0), 1);
-   SCROLLINFO si = { sizeof(si), SIF_RANGE | SIF_PAGE | SIF_POS };
    if (num_visible >= ListBox_GetCount(hList))
-   {
-      si.nMin = 0;
-      si.nMax = 0;
-      si.nPage = 0;
-      si.nPos = 0;
-   }
+     SetScrollRange(hList, SB_VERT, 0, 0, TRUE);
    else
-   {
-      si.nMin = 0;
-      si.nMax = ListBox_GetCount(hList) - 1;
-      si.nPage = num_visible;
-      si.nPos = ListBox_GetTopIndex(hList);
-   }
-   SetScrollInfo(hList, SB_VERT, &si, TRUE);
+     {
+       SetScrollRange(hList, SB_VERT, 0, ListBox_GetCount(hList) - num_visible, TRUE);
+       SetScrollPos(hList, SB_VERT, ListBox_GetTopIndex(hList), TRUE);
+     }
 
 	if( StatsGetCurrentGroup() != STATS_INVENTORY )			//	ajw
 		ShowWindow(hList, SW_NORMAL);
@@ -164,16 +154,6 @@ int StatListFindItem(int num)
 }
 /************************************************************************/
 /*
- * StatsListUpdateScrollPos:  Set the scrollbar thumb position.
- */
-void StatsListUpdateScrollPos(HWND hwnd, int pos)
-{
-   SCROLLINFO si = { sizeof(si), SIF_POS };
-   si.nPos = pos;
-   SetScrollInfo(hwnd, SB_VERT, &si, TRUE);
-}
-/************************************************************************/
-/*
  * StatsListProc:  Subclassed window procedure for list box.
  */
 LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -186,21 +166,8 @@ LRESULT CALLBACK StatsListProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lP
       break;
 
    case WM_MOUSEWHEEL:
-   {
-      /* Let the default handler scroll the listbox content, then sync
-         the scrollbar thumb position.  The default handler calls
-         ListBox_SetTopIndex internally but does not update the
-         manually managed scrollbar. */
-      int old_top = ListBox_GetTopIndex(hwnd);
-      LRESULT result = CallWindowProc(lpfnDefStatListProc, hwnd, message, wParam, lParam);
-      int new_top = ListBox_GetTopIndex(hwnd);
-      if (new_top != old_top)
-      {
-         StatsListUpdateScrollPos(hwnd, new_top);
-         InvalidateRect(hList, NULL, TRUE);
-      }
-      return result;
-   }
+      InvalidateRect(hList, NULL, TRUE);
+      break;
 
       HANDLE_MSG(hwnd, WM_VSCROLL, StatsListVScroll);
 
@@ -485,7 +452,7 @@ void StatsListVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
 
    if (new_top != old_top)
    {
-      StatsListUpdateScrollPos(hwnd, new_top);
+      SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
 
       WindowBeginUpdate(hwnd);
       ListBox_SetTopIndex(hwnd, new_top);
@@ -518,7 +485,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
        new_top = new_pos;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
-     StatsListUpdateScrollPos(hwnd, new_top);
+     SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
      WindowEndUpdate(hwnd);
      return true;
 
@@ -529,7 +496,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
        new_top = new_pos - num_visible;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
-     StatsListUpdateScrollPos(hwnd, new_top);
+     SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
      WindowEndUpdate(hwnd);
      return true;
 
@@ -539,7 +506,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
      new_top = new_pos;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
-     StatsListUpdateScrollPos(hwnd, new_top);
+     SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
      WindowEndUpdate(hwnd);
      return true;
 
@@ -549,7 +516,7 @@ bool StatListKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
      new_top = new_pos - num_visible;
      ListBox_SetTopIndex(hwnd, new_top);
      ListBox_SetCurSel(hwnd, new_pos);
-     StatsListUpdateScrollPos(hwnd, new_top);
+     SetScrollPos(hwnd, SB_VERT, new_top, TRUE); 
      WindowEndUpdate(hwnd);
      return true;
 

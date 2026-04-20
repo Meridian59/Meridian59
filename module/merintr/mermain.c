@@ -348,7 +348,7 @@ bool InterfaceAction(int action, void *action_data)
 	 return false;
       }
 
-      SpellCast((spell *) action_data);
+      SpellCast((spell_action *) action_data);
 
       return false;
 

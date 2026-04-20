@@ -11,7 +11,6 @@
 ///////////////
 // Variables //
 ///////////////
-
 d3d_render_packet_new	*gpPacket = nullptr;
 
 LPDIRECT3DTEXTURE9		gpNoLookThrough = nullptr;
@@ -47,10 +46,10 @@ d3d_render_pool_new		gWallMaskPool;
 d3d_render_pool_new		gEffectPool;
 d3d_render_pool_new		gParticlePool;
 
-custom_xyz				playerOldPos;
-custom_xyz				playerDeltaPos;
+custom_xyz				playerOldPos = {0.0f, 0.0f, 0.0f};
+custom_xyz				playerDeltaPos = {0.0f, 0.0f, 0.0f};
 
-RECT					gD3DRect;
+RECT					gD3DRect = {0, 0, 0, 0};
 BYTE					gViewerLight = 0;
 int						gNumObjects = 0;
 int						gNumDPCalls = 0;
@@ -97,7 +96,6 @@ D3DMATRIX view, mat, rot, trans, proj;
 //////////////////////
 // External Globals //
 //////////////////////
-
 extern long				viewer_height;
 extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
@@ -119,7 +117,6 @@ extern void			UpdateRoom3D(room_type *room, Draw3DParams *params);
 /////////////////////////
 // Internal Prototypes //
 /////////////////////////
-
 void D3DRenderPacketInit(d3d_render_packet_new *pPacket);
 void D3DRenderChunkInit(d3d_render_chunk_new *pChunk);
 void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool);
@@ -127,17 +124,16 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool);
 //////////////////////////////
 // Main Rendering Interface //
 //////////////////////////////
-
 void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 {
-   // Ask for a bigger font to reduce aliasing, then scale the texture
-   // down by the same amount.
-   static constexpr float fontScale = 3.0;
-   HFONT hScaledFont = FontsGetScaledFont(hFont, fontScale);
-   assert(hScaledFont);
+	// Ask for a bigger font to reduce aliasing, then scale the texture
+	// down by the same amount.
+	static constexpr float fontScale = 3.0;
+	HFONT hScaledFont = FontsGetScaledFont(hFont, fontScale);
+	assert(hScaledFont);
       
-   pFont->fontHeight = GetFontHeight(hScaledFont);
-   pFont->texScale = fontScale;
+	pFont->fontHeight = GetFontHeight(hScaledFont);
+	pFont->texScale = fontScale;
    
 	if (pFont->fontHeight > 40)
 		pFont->texWidth = pFont->texHeight = 1024;
@@ -156,113 +152,113 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	}
   
 	if (pFont->pTexture)
-		IDirect3DTexture9_Release(pFont->pTexture);
+		pFont->pTexture->Release();
    
-   gpD3DDevice->CreateTexture(pFont->texWidth, pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4, D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
+	gpD3DDevice->CreateTexture(pFont->texWidth, pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
+									D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
    
-   BITMAPINFO bmi;
-   memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
-   bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-   bmi.bmiHeader.biWidth = static_cast<int>(pFont->texWidth);
-   bmi.bmiHeader.biHeight = -static_cast<int>(pFont->texHeight);
-   bmi.bmiHeader.biPlanes = 1;
-   bmi.bmiHeader.biCompression = BI_RGB;
-   bmi.bmiHeader.biBitCount = 32;
-   
-   HDC hDC = CreateCompatibleDC(gBitsDC);
-   DWORD *pBitmapBits;
-   HBITMAP hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, nullptr, 0 );
-   SetMapMode(hDC, MM_TEXT);
+	BITMAPINFO bmi;
+	memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biWidth = static_cast<int>(pFont->texWidth);
+	bmi.bmiHeader.biHeight = -static_cast<int>(pFont->texHeight);
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biCompression = BI_RGB;
+	bmi.bmiHeader.biBitCount = 32;
+
+	HDC hDC = CreateCompatibleDC(gBitsDC);
+	DWORD *pBitmapBits;
+	HBITMAP hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, nullptr, 0 );
+	SetMapMode(hDC, MM_TEXT);
   
-   SelectObject(hDC, hbmBitmap);
-   SelectObject(hDC, hScaledFont);
+	SelectObject(hDC, hbmBitmap);
+	SelectObject(hDC, hScaledFont);
    
-   // Set text properties
-   SetTextColor(hDC, RGB(255,255,255));
-   SetBkColor(hDC, 0);
-   SetBkMode(hDC, TRANSPARENT);
-   SetTextAlign(hDC, TA_TOP);
-   
-   TCHAR str[2] = _T("x");
-   long x = 0;
-   long y = 0;
-   for(TCHAR c = 32; c < 127; c++ )
-   {
-      int index = c - 32;
+	// Set text properties
+	SetTextColor(hDC, RGB(255,255,255));
+	SetBkColor(hDC, 0);
+	SetBkMode(hDC, TRANSPARENT);
+	SetTextAlign(hDC, TA_TOP);
+
+	TCHAR str[2] = _T("x");
+	long x = 0;
+	long y = 0;
+	for(TCHAR c = 32; c < 127; c++ )
+	{
+		int index = c - 32;
+		
+		str[0] = c;
+		
+		SIZE size;
+		GetTextExtentPoint32(hDC, str, 1, &size);
+		
+		if (!GetCharABCWidths(hDC, c, c, &pFont->abc[index]))
+		{
+			pFont->abc[index] = { 0, static_cast<UINT>(size.cx), 0 };
+		}
+
+		size.cx = pFont->abc[index].abcB;
+
+		// Is this row of the texture filled up?
+		if (x + size.cx >= pFont->texWidth)
+		{
+			x = 0;
+			y += (size.cy + 1);
+		}
       
-      str[0] = c;
+		int left_offset = pFont->abc[index].abcA;
+		ExtTextOut(hDC, x - left_offset, y, 0, nullptr, str, 1, nullptr);
+      
+		pFont->texST[index][0] = {(static_cast<float>(x) / pFont->texWidth), 
+									(static_cast<float>(y) / pFont->texHeight)};
 	  
-	  SIZE size;
-      GetTextExtentPoint32(hDC, str, 1, &size);
-      
-      if (!GetCharABCWidths(hDC, c, c, &pFont->abc[index]))
-	  {
-         pFont->abc[index].abcA = 0;
-         pFont->abc[index].abcB = size.cx;
-         pFont->abc[index].abcC = 0;
-      }
+		pFont->texST[index][1] = {(static_cast<float>(x + size.cx) / pFont->texWidth),
+									(static_cast<float>(y + size.cy) / pFont->texHeight)};
 
-      size.cx = pFont->abc[index].abcB;
+		// Leave +1 space so bilinear filtering doesn't pick up neighboring character
+		x += (size.cx + 1);  
+	}
+   
+	D3DLOCKED_RECT d3dlr;
+	pFont->pTexture->LockRect(0, &d3dlr, 0, 0);
+   
+	BYTE *pDstRow = reinterpret_cast<BYTE*>(d3dlr.pBits);
+   
+	// Convert a texture bitmask into a 16-bit pixel format.
+	for (y = 0; y < pFont->texHeight; y++)
+	{
+		WORD *pDst16 = reinterpret_cast<WORD*>(pDstRow);
+		for(x = 0; x < pFont->texWidth; x++)
+		{
+			// Extract 4-bit alpha from 8-bit source.
+			BYTE bAlpha = static_cast<BYTE>( (pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4 );
+			
+			// If there's any alpha, set color to white with alpha. Otherwise it's transparent.
+			*pDst16++ = (bAlpha > 0)	? (static_cast<WORD>(bAlpha << 12) | 0x0FFF)
+										: 0x0000;
+		}
+		pDstRow += d3dlr.Pitch;
+	}
+	
+	pFont->pTexture->UnlockRect(0);
 
-      // Is this row of the texture filled up?
-      if (x + size.cx >= pFont->texWidth)
-      {
-         x = 0;
-         y += size.cy + 1;
-      }
-      
-      int left_offset = pFont->abc[index].abcA;
-      ExtTextOut(hDC, x - left_offset, y+0, 0, nullptr, str, 1, nullptr);
-      
-      pFont->texST[index][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
-      pFont->texST[index][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
-      pFont->texST[index][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
-      pFont->texST[index][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
-
-      // Leave +1 space so bilinear filtering doesn't pick up neighboring character
-      x += size.cx+1;  
-   }
-   
-   D3DLOCKED_RECT d3dlr;
-   IDirect3DTexture9_LockRect(pFont->pTexture, 0, &d3dlr, 0, 0);
-   
-   BYTE *pDstRow = (BYTE*)d3dlr.pBits;
-   
-   for(y = 0; y < pFont->texHeight; y++)
-   {
-      WORD *pDst16 = (WORD *)pDstRow;
-      for(x = 0; x < pFont->texWidth; x++)
-      {
-         BYTE bAlpha = static_cast<BYTE>( (pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4 );
-         if (bAlpha > 0)
-         {
-            *pDst16++ = (bAlpha << 12) | 0x0fff;
-         }
-         else
-         {
-            *pDst16++ = 0x0000;
-         }
-      }
-      pDstRow += d3dlr.Pitch;
-   }
-   
-   IDirect3DTexture9_UnlockRect(pFont->pTexture, 0);
-
-   // Get kerning pairs for font
-   pFont->numKerningPairs = GetKerningPairs(hDC, 0, nullptr);
-   pFont->kerningPairs = new KERNINGPAIR[pFont->numKerningPairs];
-   GetKerningPairs(hDC, pFont->numKerningPairs, pFont->kerningPairs);
-   
-   DeleteObject(hbmBitmap);
-   DeleteObject(hScaledFont);
-   DeleteDC(hDC);
+	// Get kerning pairs for font
+	pFont->numKerningPairs = GetKerningPairs(hDC, 0, nullptr);
+	pFont->kerningPairs = new KERNINGPAIR[pFont->numKerningPairs];
+	GetKerningPairs(hDC, pFont->numKerningPairs, pFont->kerningPairs);
+	
+	DeleteObject(hbmBitmap);
+	DeleteObject(hScaledFont);
+	DeleteDC(hDC);
 }
 
 void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize)
 {
 	pPool->size = size;
 	pPool->curPacket = 0;
-	d3d_render_packet_new *pPacket = (d3d_render_packet_new *)D3DRenderMalloc(sizeof(d3d_render_packet_new) * size);
+	
+	d3d_render_packet_new *pPacket = reinterpret_cast<d3d_render_packet_new*>
+										(D3DRenderMalloc(sizeof(d3d_render_packet_new) * size));
 	assert(pPacket);
 	pPool->renderPacketList = list_create(pPacket);
 	pPool->packetSize = packetSize;
@@ -286,7 +282,7 @@ void D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc)
 	pPool->curPacket = 0;
 	pPool->numLists = 0;
 	pPool->curPacketList = pPool->renderPacketList;
-	pPool->pMaterialFctn = (MaterialFctn) pMaterialFunc;
+	pPool->pMaterialFctn = reinterpret_cast<MaterialFctn>(pMaterialFunc);
 }
 
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool)
@@ -297,22 +293,24 @@ d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool)
 	{
 		if (pPool->curPacketList->next == nullptr)
 		{
-			pPacket = (d3d_render_packet_new *)D3DRenderMalloc(sizeof(d3d_render_packet_new) * pPool->size);
+			pPacket = reinterpret_cast<d3d_render_packet_new*>(D3DRenderMalloc(sizeof(d3d_render_packet_new) * pPool->size));
 			assert(pPacket);
 			list_add_item(pPool->renderPacketList, pPacket);
 		}
 		else
-			pPacket = (d3d_render_packet_new *)pPool->curPacketList->next->data;
+		{
+			reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->next->data);
+		}
 
 		pPool->curPacketList = pPool->curPacketList->next;
 		pPool->curPacket = 1;
 		pPool->numLists++;
 
-		pPacket = (d3d_render_packet_new *)pPool->curPacketList->data;
+		pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->data);
 	}
 	else
 	{
-		pPacket = (d3d_render_packet_new *)pPool->curPacketList->data;
+		pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->data);
 		pPacket += pPool->curPacket;
 
 		if (pPool->curPacket == 12)
@@ -414,87 +412,87 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 
 void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 {
-   float screenW = static_cast<float>(gD3DRect.right - gD3DRect.left) / static_cast<float>(gScreenWidth);
-   float screenH = static_cast<float>(gD3DRect.bottom - gD3DRect.top) / static_cast<float>(gScreenHeight);
+	float screenW = static_cast<float>(gD3DRect.right - gD3DRect.left) / static_cast<float>(gScreenWidth);
+	float screenH = static_cast<float>(gD3DRect.bottom - gD3DRect.top) / static_cast<float>(gScreenHeight);
 
-   // Render view elements (such as the main viewport yellow ui corners).
-   int offset = (GetFocus() == hMain) ? 4 : 0;
-   
-   // 0 = top-left
-   // 1 = top-right
-   // 2 = bottom-left
-   // 3 = bottom-right
-   static constexpr int NUM_CORNERS = 4;
-   for (int i = 0; i < NUM_CORNERS; ++i)
-   {
-      float width = static_cast<float>(ViewElements[i + offset].width) / screenW;
-      float height = static_cast<float>(ViewElements[i + offset].height) / screenH;
+	// Render view elements (such as the main viewport yellow ui corners).
+	int offset = (GetFocus() == hMain) ? 4 : 0;
 
-      float left, right, top, bottom;
+	// 0 = top-left
+	// 1 = top-right
+	// 2 = bottom-left
+	// 3 = bottom-right
+	static constexpr int NUM_CORNERS = 4;
+	for (int i = 0; i < NUM_CORNERS; ++i)
+	{
+		float width = static_cast<float>(ViewElements[i + offset].width) / screenW;
+		float height = static_cast<float>(ViewElements[i + offset].height) / screenH;
+		
+		float left, right, top, bottom;
 	  
-      if (i % 2 == 0)  // left side
-      {
-         left = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
-         right = D3DRENDER_SCREEN_TO_CLIP_X(width, gScreenWidth);
-      }
-      else  // right side
-      {
-         left = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - width, gScreenWidth);
-         right = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth);
-      }
+		if (i % 2 == 0)  // left side
+		{
+			left = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
+			right = D3DRENDER_SCREEN_TO_CLIP_X(width, gScreenWidth);
+		}
+		else  // right side
+		{
+			left = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth - width, gScreenWidth);
+			right = D3DRENDER_SCREEN_TO_CLIP_X(gScreenWidth, gScreenWidth);
+		}
 
-      if (i < 2)  // top side
-      {
-         top = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-         bottom = D3DRENDER_SCREEN_TO_CLIP_Y(height, gScreenHeight);
-      }
-      else  // bottom side
-      {
-         top = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - height, gScreenHeight);
-         bottom = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight);
-      }
+		if (i < 2)  // top side
+		{
+		 top = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
+		 bottom = D3DRENDER_SCREEN_TO_CLIP_Y(height, gScreenHeight);
+		}
+		else  // bottom side
+		{
+		 top = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - height, gScreenHeight);
+		 bottom = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight);
+		}
 
-      d3d_render_packet_new *pPacket = D3DRenderPacketNew(pPool);
-      pPacket->pDib = nullptr;
-      pPacket->pTexture = gpViewElements[i + offset];
-      pPacket->xLat0 = 0;
-      pPacket->xLat1 = 0;
-      pPacket->effect = 0;
-      pPacket->size = pPool->packetSize;
+		d3d_render_packet_new *pPacket = D3DRenderPacketNew(pPool);
+		pPacket->pDib = nullptr;
+		pPacket->pTexture = gpViewElements[i + offset];
+		pPacket->xLat0 = 0;
+		pPacket->xLat1 = 0;
+		pPacket->effect = 0;
+		pPacket->size = pPool->packetSize;
 
-      d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
-      pChunk->flags = 0;
-      pChunk->numIndices = 4;
-      pChunk->numVertices = 4;
-      pChunk->numPrimitives = pChunk->numVertices - 2;
-      pChunk->xLat0 = 0;
-      pChunk->xLat1 = 0;
+		d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
+		pChunk->flags = 0;
+		pChunk->numIndices = 4;
+		pChunk->numVertices = 4;
+		pChunk->numPrimitives = pChunk->numVertices - 2;
+		pChunk->xLat0 = 0;
+		pChunk->xLat1 = 0;
 
-      pPacket->pMaterialFctn = D3DMaterialObjectPacket;
-      pChunk->pMaterialFctn = D3DMaterialNone;
+		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
+		pChunk->pMaterialFctn = D3DMaterialNone;
 
-      pChunk->xyz[0] = { left, VIEW_ELEMENT_Z, top };
-      pChunk->xyz[1] = { left, VIEW_ELEMENT_Z, bottom };	  
-      pChunk->xyz[2] = { right, VIEW_ELEMENT_Z, bottom };
-      pChunk->xyz[3] = { right, VIEW_ELEMENT_Z, top };	  
+		pChunk->xyz[0] = { left, VIEW_ELEMENT_Z, top };
+		pChunk->xyz[1] = { left, VIEW_ELEMENT_Z, bottom };	  
+		pChunk->xyz[2] = { right, VIEW_ELEMENT_Z, bottom };
+		pChunk->xyz[3] = { right, VIEW_ELEMENT_Z, top };	  
 
-      for (auto& color : pChunk->bgra)
-      {
-         color = {255, 255, 255, 255}; // Solid white (no tinting)
-      }
+		for (auto& color : pChunk->bgra)
+		{
+		 color = {255, 255, 255, 255}; // Solid white (no tinting)
+		}
 
-      // Half-pixel offset to prevent texture bleeding.
-      static constexpr float foffset = 1.0f / 64.0f;
-      pChunk->st0[0] = { foffset, foffset };
-      pChunk->st0[1] = { foffset, (1.0f - foffset) };
-      pChunk->st0[2] = { (1.0f - foffset), (1.0f - foffset) };
-      pChunk->st0[3] = { (1.0f - foffset), foffset };
+		// Half-pixel offset to prevent texture bleeding.
+		static constexpr float foffset = 1.0f / 64.0f;
+		pChunk->st0[0] = { foffset, foffset };
+		pChunk->st0[1] = { foffset, (1.0f - foffset) };
+		pChunk->st0[2] = { (1.0f - foffset), (1.0f - foffset) };
+		pChunk->st0[3] = { (1.0f - foffset), foffset };
 
-      pChunk->indices[0] = 1;
-      pChunk->indices[1] = 2;
-      pChunk->indices[2] = 0;
-      pChunk->indices[3] = 3;
-   }
+		pChunk->indices[0] = 1;
+		pChunk->indices[1] = 2;
+		pChunk->indices[2] = 0;
+		pChunk->indices[3] = 3;
+	}
 }
 
 // Captures current rendered frame as a texture for post-processing effects.
@@ -514,7 +512,6 @@ LPDIRECT3DTEXTURE9 D3DRender_CaptureEffect(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DT
 	pTex1->GetSurfaceLevel(0, &pDest[1]);
 
 	POINT pnt = { 0, 0 };
-	
 	RECT rect = GetScreenRect();
 
 	// copy framebuffer to texture
@@ -545,29 +542,33 @@ LPDIRECT3DTEXTURE9 D3DRender_CaptureEffect(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DT
 	pChunk->numPrimitives = pChunk->numVertices - 2;
 	MatrixIdentity(&pChunk->xForm);
 
-	CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
-		0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize));
-	CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
-		0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize));
-	CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
-		0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize));
-	CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
-		0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize));
+	pChunk->xyz[0] = { D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize) };
+						
+	pChunk->xyz[1] = { D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize) };
+						
+	pChunk->xyz[2] = { D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize) };
+						
+	pChunk->xyz[3] = { D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize) };
 
-	CHUNK_ST0_SET(pChunk, 0, 0.0f, 0.0f);
-	CHUNK_ST0_SET(pChunk, 1, 0.0f, gScreenHeight / static_cast<float>(gFullTextureSize));
-	CHUNK_ST0_SET(pChunk, 2, gScreenWidth / static_cast<float>(gFullTextureSize), gScreenHeight / static_cast<float>(gFullTextureSize));
-	CHUNK_ST0_SET(pChunk, 3, gScreenWidth / static_cast<float>(gFullTextureSize), 0.0f);
+	const float texSize = static_cast<float>(gFullTextureSize);
+	pChunk->st0[0] = { 0.0f, 0.0f };
+	pChunk->st0[1] = { 0.0f, (gScreenHeight / texSize) };
+	pChunk->st0[2] = { (gScreenWidth / texSize), (gScreenHeight / texSize) };
+	pChunk->st0[3] = { (gScreenWidth / texSize), 0.0f };
 
-	CHUNK_BGRA_SET(pChunk, 0, COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
-	CHUNK_BGRA_SET(pChunk, 1, COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
-	CHUNK_BGRA_SET(pChunk, 2, COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
-	CHUNK_BGRA_SET(pChunk, 3, COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
+	for (int i = 0; i < 4; i++)
+	{
+		pChunk->bgra[i] = {COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX};
+	}
 
-	CHUNK_INDEX_SET(pChunk, 0, 1);
-	CHUNK_INDEX_SET(pChunk, 1, 2);
-	CHUNK_INDEX_SET(pChunk, 2, 0);
-	CHUNK_INDEX_SET(pChunk, 3, 3);
+	pChunk->indices[0] = 1;
+	pChunk->indices[1] = 2;
+	pChunk->indices[2] = 0;
+	pChunk->indices[3] = 3;
 
 	D3DCacheFill(&gEffectCacheSystem, &gEffectPool, 1);
 	D3DCacheFlush(&gEffectCacheSystem, &gEffectPool, 1, D3DPT_TRIANGLESTRIP);
@@ -680,7 +681,7 @@ HRESULT D3DRenderInit(HWND hWnd)
 	gpD3DDevice->CreateVertexDeclaration(decl1, &decl1dc);
 	gpD3DDevice->CreateVertexDeclaration(decl2, &decl2dc);
 
-	SetZBias(gpD3DDevice, 0);
+	SetZBias(0);
 
 	D3DRenderLMapsBuild();
 
@@ -688,26 +689,24 @@ HRESULT D3DRenderInit(HWND hWnd)
 
 	if (gD3DDriverProfile.bFogEnable)
 	{
-		float	start = 0.0f;
-		float	end = 50000.8f;
-		DWORD	mode = D3DFOG_LINEAR;
+		static constexpr float start = 0.0f;
+		static constexpr float end = 50000.8f;
+		DWORD mode = D3DFOG_LINEAR;
 
 		gpD3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
 		gpD3DDevice->SetRenderState(D3DRS_FOGCOLOR, 0);
 		gpD3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, mode);
-		gpD3DDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD *)(&start));
-		gpD3DDevice->SetRenderState(D3DRS_FOGEND, *(DWORD *)(&end));
+		gpD3DDevice->SetRenderState(D3DRS_FOGSTART, std::bit_cast<DWORD>(start));
+		gpD3DDevice->SetRenderState(D3DRS_FOGEND, std::bit_cast<DWORD>(end));
 	}
 
 	// create framebuffer textures
-   for (int i = 0; i < MAX_RENDER_TARGET_POOL; i++)
-      gpD3DDevice->CreateTexture(gSmallTextureSize, gSmallTextureSize, 1,
-                                     D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
-                                     &gpBackBufferTex[i], nullptr);
+	for (int i = 0; i < MAX_RENDER_TARGET_POOL; i++)
+	gpD3DDevice->CreateTexture(gSmallTextureSize, gSmallTextureSize, 1,D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8,
+									D3DPOOL_DEFAULT, &gpBackBufferTex[i], nullptr);
    
-   gpD3DDevice->CreateTexture(gFullTextureSize, gFullTextureSize, 1,
-                                  D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
-                                  &gpBackBufferTexFull, nullptr);
+	gpD3DDevice->CreateTexture(gFullTextureSize, gFullTextureSize, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8,
+									D3DPOOL_DEFAULT, &gpBackBufferTexFull, nullptr);
 
 	/***************************************************************************/
 	/*                                FONT                                     */
@@ -723,89 +722,89 @@ HRESULT D3DRenderInit(HWND hWnd)
 
 void D3DRenderShutDown(void)
 {
-	if (!gD3DDriverProfile.bSoftwareRenderer)
+	if (gD3DDriverProfile.bSoftwareRenderer)
+		return;
+	
+	if (config.bDynamicLighting)
 	{
-		if (config.bDynamicLighting)
-		{
-			D3DCacheSystemShutdown(&gLMapCacheSystem);
-			D3DCacheSystemShutdown(&gLMapCacheSystemStatic);
-			D3DRenderPoolShutdown(&gLMapPool);
-			D3DRenderPoolShutdown(&gLMapPoolStatic);
-		}
-
-		D3DCacheSystemShutdown(&gObjectCacheSystem);
-		D3DCacheSystemShutdown(&gWorldCacheSystem);
-		D3DCacheSystemShutdown(&gWorldCacheSystemStatic);
-		D3DCacheSystemShutdown(&gWallMaskCacheSystem);
-		D3DCacheSystemShutdown(&gEffectCacheSystem);
-		D3DCacheSystemShutdown(&gParticleCacheSystem);
-
-		D3DRenderPoolShutdown(&gObjectPool);
-		D3DRenderPoolShutdown(&gWorldPool);
-		D3DRenderPoolShutdown(&gWorldPoolStatic);
-		D3DRenderPoolShutdown(&gWallMaskPool);
-		D3DRenderPoolShutdown(&gEffectPool);
-		D3DRenderPoolShutdown(&gParticlePool);
-
-		D3DRenderLightsShutdown();
-
-		if (gpNoLookThrough)
-		{
-			gpNoLookThrough->Release();
-			gpNoLookThrough = nullptr;
-		}
-		if (gpBackBufferTexFull)
-		{
-			gpBackBufferTexFull->Release();
-			gpBackBufferTexFull = nullptr;
-		}
-
-		if (gFont.pTexture)
-		{
-			gFont.pTexture->Release();
-			gFont.pTexture = nullptr;
-		}
-		
-		if (gFont.kerningPairs)
-		{
-			delete[] gFont.kerningPairs;
-			gFont.kerningPairs = nullptr;
-		}
-
-		for (int i = 0; i < MAX_RENDER_TARGET_POOL; i++)
-		{
-			gpBackBufferTex[i]->Release();
-			gpBackBufferTex[i] = nullptr;
-		}
-
-		D3DRenderSkyBoxShutdown();
-
-		for (int i = 0; i < NUM_VIEW_ELEMENTS; i++)
-		{
-			if (gpViewElements[i])
-			{
-				gpViewElements[i]->Release();
-				gpViewElements[i] = nullptr;
-			}
-		}
-      
-		/***************************************************************************/
-		/*                       VERTEX DECLARATIONS                               */
-		/***************************************************************************/
-		
-		if (decl0dc) decl0dc->Release();
-		if (decl1dc) decl1dc->Release();
-		if (decl2dc) decl2dc->Release();
-		decl0dc = nullptr;
-		decl1dc = nullptr;
-		decl2dc = nullptr;
-      
-		gpD3DDevice->Release();
-		gpD3DDevice = nullptr;
-		
-		gpD3D->Release();
-		gpD3D = nullptr;
+		D3DCacheSystemShutdown(&gLMapCacheSystem);
+		D3DCacheSystemShutdown(&gLMapCacheSystemStatic);
+		D3DRenderPoolShutdown(&gLMapPool);
+		D3DRenderPoolShutdown(&gLMapPoolStatic);
 	}
+
+	D3DCacheSystemShutdown(&gObjectCacheSystem);
+	D3DCacheSystemShutdown(&gWorldCacheSystem);
+	D3DCacheSystemShutdown(&gWorldCacheSystemStatic);
+	D3DCacheSystemShutdown(&gWallMaskCacheSystem);
+	D3DCacheSystemShutdown(&gEffectCacheSystem);
+	D3DCacheSystemShutdown(&gParticleCacheSystem);
+
+	D3DRenderPoolShutdown(&gObjectPool);
+	D3DRenderPoolShutdown(&gWorldPool);
+	D3DRenderPoolShutdown(&gWorldPoolStatic);
+	D3DRenderPoolShutdown(&gWallMaskPool);
+	D3DRenderPoolShutdown(&gEffectPool);
+	D3DRenderPoolShutdown(&gParticlePool);
+
+	D3DRenderLightsShutdown();
+
+	if (gpNoLookThrough)
+	{
+		gpNoLookThrough->Release();
+		gpNoLookThrough = nullptr;
+	}
+	if (gpBackBufferTexFull)
+	{
+		gpBackBufferTexFull->Release();
+		gpBackBufferTexFull = nullptr;
+	}
+
+	if (gFont.pTexture)
+	{
+		gFont.pTexture->Release();
+		gFont.pTexture = nullptr;
+	}
+	
+	if (gFont.kerningPairs)
+	{
+		delete[] gFont.kerningPairs;
+		gFont.kerningPairs = nullptr;
+	}
+
+	for (int i = 0; i < MAX_RENDER_TARGET_POOL; i++)
+	{
+		gpBackBufferTex[i]->Release();
+		gpBackBufferTex[i] = nullptr;
+	}
+
+	D3DRenderSkyBoxShutdown();
+
+	for (int i = 0; i < NUM_VIEW_ELEMENTS; i++)
+	{
+		if (gpViewElements[i])
+		{
+			gpViewElements[i]->Release();
+			gpViewElements[i] = nullptr;
+		}
+	}
+  
+	/***************************************************************************/
+	/*                       VERTEX DECLARATIONS                               */
+	/***************************************************************************/
+	
+	if (decl0dc) decl0dc->Release();
+	if (decl1dc) decl1dc->Release();
+	if (decl2dc) decl2dc->Release();
+	decl0dc = nullptr;
+	decl1dc = nullptr;
+	decl2dc = nullptr;
+  
+	gpD3DDevice->Release();
+	gpD3DDevice = nullptr;
+	
+	gpD3D->Release();
+	gpD3D = nullptr;
 }
 
 void D3DRenderBegin(room_type *room, Draw3DParams *params)
@@ -844,8 +843,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	{
 		for (int i = 0; i < NUM_VIEW_ELEMENTS; i++)
 		{
-			gpViewElements[i] = D3DRenderTextureCreateFromResource(ViewElements[i].bits,
-				ViewElements[i].width, ViewElements[i].height);
+			gpViewElements[i] = D3DRenderTextureCreateFromResource(ViewElements[i].bits, ViewElements[i].width, 
+																	ViewElements[i].height);
 		}
 	}
 
@@ -862,7 +861,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	LightCacheUpdateParams lightCacheParams{&gDLightCache, &gDLightCacheDynamic, gD3DRedrawAll};
 	D3DLMapsStaticGet(room, lightCacheParams);
 
-	gpD3DDevice->Clear(0, nullptr, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL), D3DCOLOR_ARGB(0, 0, 0, 0), 1.0, 0);
+	gpD3DDevice->Clear(0, nullptr, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL),
+							D3DCOLOR_ARGB(0, 0, 0, 0), 1.0, 0);
 
 	gpD3DDevice->BeginScene();
 
@@ -880,15 +880,20 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	MatrixRotateY(&rot, static_cast<float>(angleHeading) * 360.0f / 4096.0f * PI / 180.0f);
 	MatrixRotateX(&mat, static_cast<float>(anglePitch) * 45.0f / 414.0f * PI / 180.0f);
 	MatrixMultiply(&rot, &rot, &mat);
-	MatrixTranslate(&trans, -static_cast<float>(params->viewer_x), -static_cast<float>(params->viewer_height), -static_cast<float>(params->viewer_y));
+	MatrixTranslate(&trans, -static_cast<float>(params->viewer_x), 
+							-static_cast<float>(params->viewer_height), 
+							-static_cast<float>(params->viewer_y));
 	MatrixMultiply(&view, &trans, &rot);
 
 	gpD3DDevice->SetTransform(D3DTS_VIEW, &view);
 
-	XformMatrixPerspective(&proj, FovHorizontal(gD3DRect.right - gD3DRect.left), FovVertical(gD3DRect.bottom - gD3DRect.top), 100.0f, Z_RANGE);
+	XformMatrixPerspective(&proj, FovHorizontal(gD3DRect.right - gD3DRect.left), 
+									FovVertical(gD3DRect.bottom - gD3DRect.top), 100.0f, Z_RANGE);
 	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &proj);
 
-	gpD3DDevice->SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE);
+	gpD3DDevice->SetRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | 
+														D3DCOLORWRITEENABLE_GREEN | 
+														D3DCOLORWRITEENABLE_BLUE);
 
 	gpD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
@@ -896,7 +901,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DCacheSystemReset(&gLMapCacheSystem);
 	D3DCacheSystemReset(&gWorldCacheSystem);
 
-	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
+	SetZBias(ZBIAS_DEFAULT);
 
 	UpdateRoom3D(room, params);
 
@@ -925,8 +930,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	WorldPoolParams worldPoolParams(&gWorldPool, &gWorldPoolStatic, &gLMapPool, &gLMapPoolStatic, &gWallMaskPool);
 		
-	WorldRenderParams worldRenderParams(decl1dc, decl2dc, gD3DDriverProfile, worldCacheSystemParams, worldPoolParams, 
-		view, proj);
+	WorldRenderParams worldRenderParams(decl1dc, decl2dc, gD3DDriverProfile, worldCacheSystemParams, worldPoolParams, view, proj);
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
@@ -979,8 +983,9 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (draw_background_overlays)
 	{
 		BackgroundOverlaysRenderStateParams bgoRenderStateParams(decl1dc, gD3DDriverProfile, &gWorldPool, &gWorldCacheSystem, 
-			view, mat, gD3DRect);
-		BackgroundOverlaysSceneParams bgoSceneParams(&num_visible_objects, visible_objects, angleHeading, anglePitch, room, params);
+																	view, mat, gD3DRect);
+		BackgroundOverlaysSceneParams bgoSceneParams(&num_visible_objects, visible_objects, 
+														angleHeading, anglePitch, room, params);
 		D3DRenderBackgroundOverlays(bgoRenderStateParams, bgoSceneParams);
 	}
 
@@ -997,7 +1002,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	}
 
 	gpD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	SetZBias(gpD3DDevice, 1);
+	SetZBias(1);
 
 	if (draw_particles)
 	{
@@ -1007,7 +1012,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_objects)
 	{
-		ObjectsRenderParams objectsRenderParams(decl1dc, decl2dc, gD3DDriverProfile, &gObjectPool, &gObjectCacheSystem, view, proj, room, params);
+		ObjectsRenderParams objectsRenderParams(decl1dc, decl2dc, gD3DDriverProfile, &gObjectPool, &gObjectCacheSystem,
+													view, proj, room, params);
 
 		GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects, 
 			gpBackBufferTexFull, gpBackBufferTex);
@@ -1030,7 +1036,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DRender_SetColorStage(1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 
-	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
+	SetZBias(ZBIAS_DEFAULT);
 
 	gpD3DDevice->SetVertexShader(nullptr);
 	gpD3DDevice->SetVertexDeclaration(decl0dc);
@@ -1092,8 +1098,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (hr == D3DERR_DEVICELOST)
 	{
 		while (hr == D3DERR_DEVICELOST)
+		{
 			hr = gpD3DDevice->TestCooperativeLevel();
-
+		}
+		
 		if (hr == D3DERR_DEVICENOTRESET)
 		{
 			D3DRenderShutDown();
@@ -1108,7 +1116,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 void D3DRenderResizeDisplay(int left, int top, int right, int bottom)
 {
-	gD3DRect = {static_cast<LONG>(left), static_cast<LONG>(top), static_cast<LONG>(left + right), static_cast<LONG>(top + bottom)};
+	gD3DRect = {static_cast<LONG>(left), static_cast<LONG>(top),
+				static_cast<LONG>(left + right), static_cast<LONG>(top + bottom)};
 }
 
 void D3DRenderEnableToggle(void)
@@ -1156,21 +1165,21 @@ void D3DRender_SetStencilMark(DWORD refValue)
 // Filters drawing based on stencil buffer comparison.  Doesn't modify the buffer.
 void D3DRender_SetStencilTest(D3DCMPFUNC comparisonFunc, DWORD refValue)
 {
-    if (!gpD3DDevice) return;
-    gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
-    gpD3DDevice->SetRenderState(D3DRS_STENCILFUNC, comparisonFunc);
-    gpD3DDevice->SetRenderState(D3DRS_STENCILREF, refValue);
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_STENCILFUNC, comparisonFunc);
+	gpD3DDevice->SetRenderState(D3DRS_STENCILREF, refValue);
 	// Don't change the stencil buffer during the test.
-    gpD3DDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
-    gpD3DDevice->SetRenderState(D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
-    gpD3DDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
+	gpD3DDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+	gpD3DDevice->SetRenderState(D3DRS_STENCILFAIL, D3DSTENCILOP_KEEP);
+	gpD3DDevice->SetRenderState(D3DRS_STENCILZFAIL, D3DSTENCILOP_KEEP);
 }
 
 // Disable stencil testing for subsequent rendering.
 void D3DRender_DisableStencil()
 {
-    if (!gpD3DDevice) return;
-    gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+	if (!gpD3DDevice) return;
+	gpD3DDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
 }
 
 // Controls how textures and colors are mathematically combined, whether it's 2D sprites or 3D surfaces.

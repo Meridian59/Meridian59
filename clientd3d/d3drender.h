@@ -71,10 +71,10 @@ struct font_3d
 	long				 texHeight;
 	float				 texScale;
 	custom_st	   texST[NUM_CHARS][2];
-  // Deal with underhanging and overhanging characters
-  ABC          abc[NUM_CHARS];
-  int          numKerningPairs;
-  KERNINGPAIR *kerningPairs;
+	// Deal with underhanging and overhanging characters
+	ABC          abc[NUM_CHARS];
+	int          numKerningPairs;
+	KERNINGPAIR *kerningPairs;
 };
 
 /////////////
@@ -88,15 +88,7 @@ inline int gD3DEnabled = 0;
 inline int gScreenWidth = 0;
 inline int gScreenHeight = 0;
 
-// Main client windows current viewport area
-// These varaibles exist in graphics.c
-extern int main_viewport_width;
-extern int main_viewport_height;
-
 inline int d3dRenderTextureThreshold;
-
-// Defined in d3ddriver.c
-extern d3d_driver_profile gD3DDriverProfile;
 
 inline bool gWireframe = false;
 inline font_3d gFont;
@@ -105,6 +97,16 @@ inline LPDIRECT3DTEXTURE9 gpBackBufferTex[MAX_RENDER_TARGET_POOL];
 inline LPDIRECT3DTEXTURE9 gpBackBufferTexFull;
 
 inline static PALETTEENTRY gPalette[NUM_COLORS];
+
+// Main client windows current viewport area
+// Derived from graphics.c
+extern int main_viewport_width;
+extern int main_viewport_height;
+
+// Defined in d3ddriver.c
+extern d3d_driver_profile gD3DDriverProfile;
+
+// Derived from palette.c
 extern Color base_palette[NUM_COLORS];
 
 //////////////////////
@@ -141,7 +143,7 @@ inline bool D3DRender_InBounds(float coordinate, float range)
 inline RECT GetScreenRect()
 {
 	// RECT struct is set in this order: Left -> Top -> Right -> Bottom
-	return { 0, 0, gScreenWidth, gScreenHeight};
+	return { 0, 0, gScreenWidth, gScreenHeight };
 }
 
 inline int D3DRenderIsEnabled()
@@ -154,10 +156,10 @@ inline void *D3DRenderMalloc(unsigned int bytes)
 	return malloc(bytes);
 }
 
-inline void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias)
+inline void SetZBias(int z_bias)
 {
    float bias = z_bias * -0.00001f;
-   device->SetRenderState(D3DRS_DEPTHBIAS, *((DWORD *) &bias));
+   gpD3DDevice->SetRenderState(D3DRS_DEPTHBIAS, std::bit_cast<DWORD>(bias));
 }
 
 inline int DistanceGet(int x, int y)
@@ -248,7 +250,6 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
 d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);
 void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
-void				*D3DRenderMalloc(unsigned int bytes);
 void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
 LPDIRECT3DTEXTURE9  D3DRender_CaptureEffect(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1);
 

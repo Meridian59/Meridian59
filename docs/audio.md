@@ -232,10 +232,53 @@ played at equal volume in both stereo channels (no panning).
 
 ### Distance Model
 
-- **Model:** Linear distance clamped
-- **Reference distance:** 1 tile (full volume)
-- **Max distance:** Radius from server (silence beyond)
-- **Coordinate mapping:** Game coords to OpenAL coords (X negated for handedness)
+The client uses two different OpenAL distance models depending on whether a
+sound is a one-shot effect or a looping ambient emitter, and whether the
+Blakod explicitly specified a cutoff radius:
+
+| Sound type | Blakod-set radius? | Distance model | Reference distance | Max distance | Behavior |
+|------------|--------------------|----------------|--------------------|--------------|----------|
+| `SF_LOOP` ambient (fountain, firepit, forge) | yes (always) | `AL_LINEAR_DISTANCE_CLAMPED` | 1 tile | radius | Linear falloff to silence at the Blakod-defined radius |
+| One-shot with explicit radius (door, scripted area effect) | yes | `AL_LINEAR_DISTANCE_CLAMPED` | 1 tile | radius | Linear falloff to silence at the Blakod-defined radius |
+| One-shot with no radius (combat, spells, generic effects) | no | `AL_INVERSE_DISTANCE_CLAMPED` | 2 tiles | 10000 (effectively unbounded) | Smooth `1/d` falloff, never reaches silence |
+
+The Blakod communicates intent via the `cutoff_radius` parameter on
+`SomethingWaveRoom` / `WaveSendUser`:
+
+- `cutoff_radius = 0` (default in `user.kod`'s `WaveSendUser`):  no opinion.
+  One-shots get the soft inverse falloff so distant combat/spells stay
+  audible across the room, matching pre-OpenAL Miles Sound System behavior
+  where `GamePlaySound()` computed `volume = MAX_VOLUME * 2 / distance` and
+  never let a sound reach zero.
+- `cutoff_radius = N` (Blakod set it explicitly):  the Blakod author wants
+  a hard cutoff at N tiles.  Used by door open/close (radius=4) so a door
+  slam in one corner of a large hall does not bleed across the whole room.
+
+Loops always use the linear-clamped model with their Blakod-defined radius.
+Without the cutoff, every loaded ambient emitter (fountain in every room,
+firepit in every cave) would mix together forever with no way to bound CPU
+or audio mix complexity.  `fountain.kod` defaults `piSoundRadius = 40` and
+firepits typically use 5.
+
+Per-source distance models are enabled via `AL_EXT_source_distance_model`
+(`alEnable(AL_SOURCE_DISTANCE_MODEL)` at init), which lets each source pick
+its own model independently of the global default.
+
+```mermaid
+flowchart TD
+    A["SoundPlay called"] --> B{"Has positional<br/>coordinates?"}
+    B -->|"No"| C["Centered on local listener<br/>(SOURCE_RELATIVE, no falloff)<br/>Plays equally L/R for this client only"]
+    B -->|"Yes"| D{"SF_LOOP flag set?"}
+    D -->|"Yes (fountain, firepit)"| E["AL_LINEAR_DISTANCE_CLAMPED<br/>ref=1, max=radius<br/>Hard cutoff at radius"]
+    D -->|"No"| G{"Blakod-set radius?<br/>(radius > 0)"}
+    G -->|"Yes (door, area effect)"| H["AL_LINEAR_DISTANCE_CLAMPED<br/>ref=1, max=radius<br/>Hard cutoff at radius"]
+    G -->|"No (combat, spell)"| F["AL_INVERSE_DISTANCE_CLAMPED<br/>ref=2, max=10000<br/>Soft 1/d falloff, no cutoff"]
+
+    style C fill:#1864ab,color:#fff
+    style E fill:#2f9e44,color:#fff
+    style H fill:#2f9e44,color:#fff
+    style F fill:#2f9e44,color:#fff
+```
 
 ### Coordinate System
 

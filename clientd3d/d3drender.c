@@ -91,7 +91,8 @@ AREA					gD3DView;
 int						gD3DRedrawAll = 0;
 int						gTemp = 0;
 
-D3DMATRIX view, mat, rot, trans, proj;
+// Transformation matrices for the current frame's pipeline.
+static D3DMATRIX view, mat, rot, trans, proj;
 
 //////////////////////
 // External Globals //
@@ -518,11 +519,11 @@ LPDIRECT3DTEXTURE9 D3DRender_CaptureEffect(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DT
 	gpD3DDevice->StretchRect(pSrc, &rect, pDest[0], &rect, D3DTEXF_NONE);
    
 	// clear local->screen transforms
-	D3DMATRIX mat;
-	MatrixIdentity(&mat);
-	gpD3DDevice->SetTransform(D3DTS_WORLD, &mat);
-	gpD3DDevice->SetTransform(D3DTS_VIEW, &mat);
-	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &mat);
+	D3DMATRIX tempMat;
+	MatrixIdentity(&tempMat);
+	gpD3DDevice->SetTransform(D3DTS_WORLD, &tempMat);
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &tempMat);
+	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &tempMat);
 
 	gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);

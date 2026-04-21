@@ -19,8 +19,6 @@
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
 
-extern AREA	gD3DView;
-
 /* Set to true when the room should be redrawn at the first opportunity */
 static bool need_redraw = false;
 

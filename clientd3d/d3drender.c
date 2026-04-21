@@ -7,23 +7,17 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
+static constexpr int TEX_CACHE_MAX_WALLMASK = 2000000;
+static constexpr int TEX_CACHE_MAX_EFFECT = 1000000;
+static constexpr int TEX_CACHE_MAX_PARTICLE = 1000000;
 
 ///////////////
 // Variables //
 ///////////////
-d3d_render_packet_new	*gpPacket = nullptr;
-
 LPDIRECT3DTEXTURE9		gpNoLookThrough = nullptr;
-
 LPDIRECT3DTEXTURE9		gpViewElements[NUM_VIEW_ELEMENTS];
 
 D3DVIEWPORT9			gViewport;
-D3DCAPS9				gD3DCaps;
-
-d3d_render_cache		gObjectCache;
-d3d_render_cache		gWorldCache;
-d3d_render_cache		gWorldCacheStatic;
-d3d_render_cache		gLMapCacheStatic;
 
 d3d_render_cache_system	gObjectCacheSystem;
 d3d_render_cache_system	gWorldCacheSystem;
@@ -50,8 +44,9 @@ custom_xyz				playerOldPos = {0.0f, 0.0f, 0.0f};
 custom_xyz				playerDeltaPos = {0.0f, 0.0f, 0.0f};
 
 RECT					gD3DRect = {0, 0, 0, 0};
-BYTE					gViewerLight = 0;
 int						gNumObjects = 0;
+
+// Incremented in d3dcache.c to track total DrawPrimitive calls per frame.
 int						gNumDPCalls = 0;
 
 static unsigned int		gFrame = 0;
@@ -87,9 +82,7 @@ LPDIRECT3DVERTEXDECLARATION9 decl0dc;
 LPDIRECT3DVERTEXDECLARATION9 decl1dc;
 LPDIRECT3DVERTEXDECLARATION9 decl2dc;
 
-AREA					gD3DView;
 int						gD3DRedrawAll = 0;
-int						gTemp = 0;
 
 // Transformation matrices for the current frame's pipeline.
 static D3DMATRIX view, mat, rot, trans, proj;
@@ -169,7 +162,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 
 	HDC hDC = CreateCompatibleDC(gBitsDC);
 	DWORD *pBitmapBits;
-	HBITMAP hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, nullptr, 0 );
+	HBITMAP hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBitmapBits), nullptr, 0);
 	SetMapMode(hDC, MM_TEXT);
   
 	SelectObject(hDC, hbmBitmap);
@@ -184,7 +177,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	TCHAR str[2] = _T("x");
 	long x = 0;
 	long y = 0;
-	for(TCHAR c = 32; c < 127; c++ )
+	for(TCHAR c = 32; c < 127; c++)
 	{
 		int index = c - 32;
 		
@@ -235,8 +228,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 			BYTE bAlpha = static_cast<BYTE>( (pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4 );
 			
 			// If there's any alpha, set color to white with alpha. Otherwise it's transparent.
-			*pDst16++ = (bAlpha > 0)	? (static_cast<WORD>(bAlpha << 12) | 0x0FFF)
-										: 0x0000;
+			*pDst16++ = (bAlpha > 0) ? (static_cast<WORD>(bAlpha << 12) | 0x0FFF) : 0x0000;
 		}
 		pDstRow += d3dlr.Pitch;
 	}
@@ -313,10 +305,6 @@ d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool)
 	{
 		pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->data);
 		pPacket += pPool->curPacket;
-
-		if (pPool->curPacket == 12)
-			gpPacket = pPacket;
-
 		pPool->curPacket++;
 	}
 
@@ -340,12 +328,9 @@ d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket)
 {
 	if (pPacket->curChunk >= (pPacket->size - 1))
 		return nullptr;
-	else
-	{
-		pPacket->curChunk++;
-		D3DRenderChunkInit(&pPacket->renderChunks[pPacket->curChunk - 1]);
-		return &pPacket->renderChunks[pPacket->curChunk - 1];
-	}
+	pPacket->curChunk++;
+	D3DRenderChunkInit(&pPacket->renderChunks[pPacket->curChunk - 1]);
+	return &pPacket->renderChunks[pPacket->curChunk - 1];
 }
 
 void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
@@ -444,13 +429,13 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 
 		if (i < 2)  // top side
 		{
-		 top = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
-		 bottom = D3DRENDER_SCREEN_TO_CLIP_Y(height, gScreenHeight);
+			top = D3DRENDER_SCREEN_TO_CLIP_Y(0, gScreenHeight);
+			bottom = D3DRENDER_SCREEN_TO_CLIP_Y(height, gScreenHeight);
 		}
 		else  // bottom side
 		{
-		 top = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - height, gScreenHeight);
-		 bottom = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight);
+			top = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight - height, gScreenHeight);
+			bottom = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight);
 		}
 
 		d3d_render_packet_new *pPacket = D3DRenderPacketNew(pPool);
@@ -561,9 +546,9 @@ LPDIRECT3DTEXTURE9 D3DRender_CaptureEffect(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DT
 	pChunk->st0[2] = { (gScreenWidth / texSize), (gScreenHeight / texSize) };
 	pChunk->st0[3] = { (gScreenWidth / texSize), 0.0f };
 
-	for (int i = 0; i < 4; i++)
+	for (auto& color : pChunk->bgra)
 	{
-		pChunk->bgra[i] = {COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX};
+		color = {COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX};
 	}
 
 	pChunk->indices[0] = 1;
@@ -609,8 +594,6 @@ HRESULT D3DRenderInit(HWND hWnd)
 	D3DDISPLAYMODE displayMode;
 	gpD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode);
 
-	gpD3DDevice->GetDeviceCaps(&gD3DCaps);
-
 	gFrame = 0;
 	
 	// Initializes D3D viewport to match current screen dimensions.
@@ -644,9 +627,9 @@ HRESULT D3DRenderInit(HWND hWnd)
 	D3DCacheSystemInit(&gObjectCacheSystem, gD3DDriverProfile.texMemObjects);
 	D3DCacheSystemInit(&gWorldCacheSystem, gD3DDriverProfile.texMemWorldDynamic);
 	D3DCacheSystemInit(&gWorldCacheSystemStatic, gD3DDriverProfile.texMemWorldStatic);
-	D3DCacheSystemInit(&gWallMaskCacheSystem, 2000000);
-	D3DCacheSystemInit(&gEffectCacheSystem, 1000000);
-	D3DCacheSystemInit(&gParticleCacheSystem, 1000000);
+	D3DCacheSystemInit(&gWallMaskCacheSystem, TEX_CACHE_MAX_WALLMASK);
+	D3DCacheSystemInit(&gEffectCacheSystem, TEX_CACHE_MAX_EFFECT);
+	D3DCacheSystemInit(&gParticleCacheSystem, TEX_CACHE_MAX_PARTICLE);
 
 	D3DRenderPoolInit(&gObjectPool, POOL_SIZE, PACKET_SIZE);
 	D3DRenderPoolInit(&gWorldPool, POOL_SIZE, PACKET_SIZE);
@@ -692,11 +675,9 @@ HRESULT D3DRenderInit(HWND hWnd)
 	{
 		static constexpr float start = 0.0f;
 		static constexpr float end = 50000.8f;
-		DWORD mode = D3DFOG_LINEAR;
-
 		gpD3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
 		gpD3DDevice->SetRenderState(D3DRS_FOGCOLOR, 0);
-		gpD3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, mode);
+		gpD3DDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);
 		gpD3DDevice->SetRenderState(D3DRS_FOGSTART, std::bit_cast<DWORD>(start));
 		gpD3DDevice->SetRenderState(D3DRS_FOGEND, std::bit_cast<DWORD>(end));
 	}
@@ -937,38 +918,31 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	WorldPropertyParams worldPropertyParams(gpNoLookThrough, D3DRenderLightsGetOrange());
 
-	if (gD3DRedrawAll & D3DRENDER_REDRAW_ALL)
+	// Perform a requested static cache rebuild only if invert effect isn't active.
+	// GetLightPaletteIndex returns PALETTE_INVERT during the flash effect, which would
+	// cause incorrect lighting values to be baked into the static geometry cache.
+	// Keep gD3DRedrawAll set so rebuild happens after the invert effect ends.
+	if ((gD3DRedrawAll & D3DRENDER_REDRAW_ALL) && (effects.invert <= 0))
 	{
-		// Defer static cache rebuild while invert effect is active.
-		// GetLightPaletteIndex returns PALETTE_INVERT during the flash effect, which would
-		// cause incorrect lighting values to be baked into the static geometry cache.
-		// Keep gD3DRedrawAll set so rebuild happens after the invert effect ends.
-		if (effects.invert > 0)
-		{
-			// Skip rebuild this frame - will be processed when invert effect ends
-		}
-		else
-		{
-			D3DCacheSystemReset(&gWorldCacheSystemStatic);
-			D3DCacheSystemReset(&gWallMaskCacheSystem);
+		D3DCacheSystemReset(&gWorldCacheSystemStatic);
+		D3DCacheSystemReset(&gWallMaskCacheSystem);
 
-			D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
-			D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
+		D3DRenderPoolReset(&gWorldPoolStatic, &D3DMaterialWorldPool);
+		D3DRenderPoolReset(&gWallMaskPool, &D3DMaterialWallMaskPool);
 
-			gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-			gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-			gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
+		gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+		gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, false);
 
-			// Second pass: render transparent objects
-			gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-			gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
+		// Second pass: render transparent objects
+		gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+		gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);  // Disable depth writing
 
-			D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
+		D3DGeometryBuildNew(worldRenderParams, worldPropertyParams, lightAndTextureParams, true);
 
-			gD3DRedrawAll = FALSE;
-		}
+		gD3DRedrawAll = FALSE;
 	}
 	else if (gD3DRedrawAll & D3DRENDER_REDRAW_UPDATE)
 	{

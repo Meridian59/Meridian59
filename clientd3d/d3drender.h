@@ -99,14 +99,14 @@ inline LPDIRECT3DTEXTURE9 gpBackBufferTexFull;
 inline static PALETTEENTRY gPalette[NUM_COLORS];
 
 // Main client windows current viewport area
-// Derived from graphics.c
+// Defined in graphics.c
 extern int main_viewport_width;
 extern int main_viewport_height;
 
 // Defined in d3ddriver.c
 extern d3d_driver_profile gD3DDriverProfile;
 
-// Derived from palette.c
+// Defined in palette.c
 extern Color base_palette[NUM_COLORS];
 
 //////////////////////

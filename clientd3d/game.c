@@ -652,7 +652,9 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
 	 volume = maxvolume - (distance * maxvolume / cutoff) ;
       }
    }
-   PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, cutoff, maxvolume);
+   // Pass the raw radius so the audio layer can tell a caller-specified
+   // radius (radius > 0) apart from "use the default" (radius == 0).
+   PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, radius, maxvolume);
 }
 /************************************************************************/
 void GameQuit(void)

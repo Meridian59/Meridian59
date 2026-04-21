@@ -188,8 +188,10 @@ bool AudioInit(HWND hWnd)
    ALfloat listenerOri[] = { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }; // forward, up
    alListenerfv(AL_ORIENTATION, listenerOri);
 
-   // Use linear distance model for predictable 3D audio falloff
+   // Use linear falloff by default, but let each source pick its own
+   // curve so they don't all have to fade out the same way.
    alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+   alEnable(AL_SOURCE_DISTANCE_MODEL);
 
    g_initialized = true;
 
@@ -1025,9 +1027,31 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       alSourcei(source, AL_SOURCE_RELATIVE, AL_FALSE);
       alSource3f(source, AL_POSITION, -(float)src_col, 0.0f, (float)src_row);
 
-      // Distance attenuation: full volume within 1 tile, silent at radius
-      alSourcef(source, AL_REFERENCE_DISTANCE, 1.0f);
-      alSourcef(source, AL_MAX_DISTANCE, (float)radius);
+      // Pick the distance attenuation curve:
+      //   - If the caller set a radius, fade linearly from full volume
+      //     at 1 tile to silence at that radius (hard cutoff).  Used
+      //     for looping sources and one-shots with an explicit range.
+      //   - Otherwise use OpenAL's "inverse" model: a 1/distance curve
+      //     that halves every time distance doubles and never reaches
+      //     zero, so distant one-shots stay faintly audible.
+      ALenum model;
+      float refDist, maxDist;
+      if ((flags & SF_LOOP) || radius > 0)
+      {
+         float r = (radius > 0) ? (float)radius : (float)VOLUME_CUTOFF_DISTANCE;
+         model   = AL_LINEAR_DISTANCE_CLAMPED;
+         refDist = 1.0f;
+         maxDist = r;
+      }
+      else
+      {
+         model   = AL_INVERSE_DISTANCE_CLAMPED;
+         refDist = 2.0f;
+         maxDist = 10000.0f;
+      }
+      alSourcei(source, AL_DISTANCE_MODEL, model);
+      alSourcef(source, AL_REFERENCE_DISTANCE, refDist);
+      alSourcef(source, AL_MAX_DISTANCE, maxDist);
       alSourcef(source, AL_ROLLOFF_FACTOR, 1.0f);
 
       float gain = (float)max_vol / (float)MAX_VOLUME;

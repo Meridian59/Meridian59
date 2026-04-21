@@ -73,7 +73,6 @@ static D3DMATRIX view, mat, rot, trans, proj;
 // External Globals //
 //////////////////////
 extern long				viewer_height;
-extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
 extern DrawItem			drawdata[];
@@ -81,13 +80,9 @@ extern long				nitems;
 extern int				sector_depths[];
 extern BYTE				*gBits;
 extern BYTE				*gBufferBits;
-extern D3DPRESENT_PARAMETERS	gPresentParam;
-extern long				stretchfactor;
 extern ViewElement		ViewElements[];
 extern HDC				gBitsDC;
 
-extern void			DrawItemsD3D();
-extern bool			ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
 extern void			UpdateRoom3D(room_type *room, Draw3DParams *params);
 
 /////////////////////////
@@ -104,12 +99,12 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 {
 	// Ask for a bigger font to reduce aliasing, then scale the texture
 	// down by the same amount.
-	static constexpr float fontScale = 3.0;
-	HFONT hScaledFont = FontsGetScaledFont(hFont, fontScale);
+	static constexpr float FONT_SCALE = 3.0;
+	HFONT hScaledFont = FontsGetScaledFont(hFont, FONT_SCALE);
 	assert(hScaledFont);
-      
+	
 	pFont->fontHeight = GetFontHeight(hScaledFont);
-	pFont->texScale = fontScale;
+	pFont->texScale = FONT_SCALE;
    
 	if (pFont->fontHeight > 40)
 		pFont->texWidth = pFont->texHeight = 1024;
@@ -117,7 +112,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 		pFont->texWidth = pFont->texHeight = 512;
 	else
 		pFont->texWidth = pFont->texHeight = 256;
-
+	
 	D3DCAPS9 d3dCaps;
 	gpD3DDevice->GetDeviceCaps(&d3dCaps);
   
@@ -126,13 +121,13 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 		pFont->texScale *= static_cast<float>(pFont->texWidth) / static_cast<float>(d3dCaps.MaxTextureWidth);
 		pFont->texHeight = pFont->texWidth = d3dCaps.MaxTextureWidth;
 	}
-  
+	
 	if (pFont->pTexture)
 		pFont->pTexture->Release();
-   
+	
 	gpD3DDevice->CreateTexture(pFont->texWidth, pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
 									D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
-   
+	
 	BITMAPINFO bmi;
 	memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
 	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -141,21 +136,21 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	bmi.bmiHeader.biPlanes = 1;
 	bmi.bmiHeader.biCompression = BI_RGB;
 	bmi.bmiHeader.biBitCount = 32;
-
+	
 	HDC hDC = CreateCompatibleDC(gBitsDC);
 	DWORD *pBitmapBits;
 	HBITMAP hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBitmapBits), nullptr, 0);
 	SetMapMode(hDC, MM_TEXT);
-  
+	
 	SelectObject(hDC, hbmBitmap);
 	SelectObject(hDC, hScaledFont);
-   
+	
 	// Set text properties
 	SetTextColor(hDC, RGB(255,255,255));
 	SetBkColor(hDC, 0);
 	SetBkMode(hDC, TRANSPARENT);
 	SetTextAlign(hDC, TA_TOP);
-
+	
 	TCHAR str[2] = _T("x");
 	long x = 0;
 	long y = 0;
@@ -574,9 +569,6 @@ HRESULT D3DRenderInit(HWND hWnd)
 	gD3DEnabled = D3DDriverProfileInit();
 	if (!gD3DEnabled)
 		return E_FAIL;
-
-	D3DDISPLAYMODE displayMode;
-	gpD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode);
 
 	gFrame = 0;
 	

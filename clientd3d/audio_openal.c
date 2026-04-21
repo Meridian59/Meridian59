@@ -188,10 +188,8 @@ bool AudioInit(HWND hWnd)
    ALfloat listenerOri[] = { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }; // forward, up
    alListenerfv(AL_ORIENTATION, listenerOri);
 
-   /* Default distance model: linear clamped, used for SF_LOOP ambient
-    * emitters that should cut off at their kod-defined radius (fountains,
-    * firepits, etc.).  Per-source distance model is enabled below so that
-    * one-shot sounds can use an inverse curve instead (no hard cutoff). */
+   // Use linear falloff by default, but let each source pick its own
+   // curve so they don't all have to fade out the same way.
    alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
    alEnable(AL_SOURCE_DISTANCE_MODEL);
 
@@ -1029,13 +1027,13 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       alSourcei(source, AL_SOURCE_RELATIVE, AL_FALSE);
       alSource3f(source, AL_POSITION, -(float)src_col, 0.0f, (float)src_row);
 
-      /* Pick the distance attenuation curve:
- *   - If the Blakod set a radius, fade linearly from full volume
- *     at 1 tile to silence at that radius (hard cutoff).  Used
- *     for looping emitters and one-shots with an explicit range.
- *   - Otherwise use OpenAL's "inverse" model: a 1/distance curve
- *     that halves every time distance doubles and never reaches
- *     zero, so distant one-shots stay faintly audible. */
+      // Pick the distance attenuation curve:
+      //   - If the caller set a radius, fade linearly from full volume
+      //     at 1 tile to silence at that radius (hard cutoff).  Used
+      //     for looping sources and one-shots with an explicit range.
+      //   - Otherwise use OpenAL's "inverse" model: a 1/distance curve
+      //     that halves every time distance doubles and never reaches
+      //     zero, so distant one-shots stay faintly audible.
       ALenum model;
       float refDist, maxDist;
       if ((flags & SF_LOOP) || radius > 0)

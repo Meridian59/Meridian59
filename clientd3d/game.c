@@ -652,11 +652,8 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
 	 volume = maxvolume - (distance * maxvolume / cutoff) ;
       }
    }
-   /* Pass raw radius (not the defaulted cutoff) so SoundPlay can tell
-    * whether the Blakod explicitly set a cutoff radius for this sound.  A
-    * Blakod-set radius means the author wants a hard cutoff at that
-    * distance; radius of 0 means "no opinion" and SoundPlay will use a
-    * soft inverse falloff. */
+   // Pass the raw radius so the audio layer can tell a caller-specified
+   // radius (radius > 0) apart from "use the default" (radius == 0).
    PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, radius, maxvolume);
 }
 /************************************************************************/

@@ -332,7 +332,15 @@ void InventoryScrollRange(void)
 {
    /* Max is when last item is on bottom of list */
    if (cols != 0)
-      SetScrollRange(hwndInvScroll, SB_CTL, 0, (num_items + cols - 1) / cols - rows, TRUE);
+   {
+      int total_rows = (num_items + cols - 1) / cols;
+      SCROLLINFO si = { sizeof(si), SIF_RANGE | SIF_PAGE | SIF_POS };
+      si.nMin  = 0;
+      si.nMax  = total_rows - 1;
+      si.nPage = rows;
+      si.nPos  = top_row;
+      SetScrollInfo(hwndInvScroll, SB_CTL, &si, TRUE);
+   }
 }
 /************************************************************************/
 /*

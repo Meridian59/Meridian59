@@ -14,8 +14,8 @@ static constexpr int TEX_CACHE_MAX_PARTICLE = 1000000;
 ///////////////
 // Variables //
 ///////////////
-LPDIRECT3DTEXTURE9		gpNoLookThrough = nullptr;
-LPDIRECT3DTEXTURE9		gpViewElements[NUM_VIEW_ELEMENTS];
+IDirect3DTexture9*		gpNoLookThrough = nullptr;
+IDirect3DTexture9*		gpViewElements[NUM_VIEW_ELEMENTS];
 
 D3DVIEWPORT9			gViewport;
 
@@ -57,30 +57,12 @@ static unsigned int		gFrame = 0;
 int						gFullTextureSize = 0;
 int						gSmallTextureSize = 0;
 
-D3DVERTEXELEMENT9		decl0[] = {
-	{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-	{1, 0, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0},
-	D3DDECL_END()
-	};
-
-D3DVERTEXELEMENT9		decl1[] = {
-	{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-	{1, 0, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0},
-	{2, 0, D3DDECLTYPE_FLOAT2,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-	D3DDECL_END()
-	};
-
-D3DVERTEXELEMENT9		decl2[] = {
-	{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
-	{1, 0, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0},
-	{2, 0, D3DDECLTYPE_FLOAT2,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
-	{3, 0, D3DDECLTYPE_FLOAT2,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
-	D3DDECL_END()
-	};
-
-LPDIRECT3DVERTEXDECLARATION9 decl0dc;
-LPDIRECT3DVERTEXDECLARATION9 decl1dc;
-LPDIRECT3DVERTEXDECLARATION9 decl2dc;
+// Basic layout: Position and diffuse color.  Used for simple geometry and UI.
+IDirect3DVertexDeclaration9* g_pVertexDecl_PosColor;
+// Standard layout: Position, color, and one UV. Used for most world textures, sprites, and particles.
+IDirect3DVertexDeclaration9* g_pVertexDecl_PosColorTex1;
+// Multi-textured layout: Position, color, and two UVs. Used for lightmapped surfaces.
+IDirect3DVertexDeclaration9* g_pVertexDecl_PosColorTex2;
 
 int						gD3DRedrawAll = 0;
 
@@ -351,7 +333,7 @@ void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
 	pChunk->pRenderCache = nullptr;
 }
 
-d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
+d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, IDirect3DTexture9* pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect)
 {
 	d3d_render_packet_new *pPacket;
@@ -482,9 +464,11 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 }
 
 // Captures current rendered frame as a texture for post-processing effects.
-LPDIRECT3DTEXTURE9 D3DRender_CaptureEffect(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1)
+IDirect3DTexture9* D3DRender_CaptureEffect(IDirect3DTexture9* pTex0, IDirect3DTexture9* pTex1)
 {
-	LPDIRECT3DSURFACE9 pSrc, pDest[2], pZBuf;
+	IDirect3DSurface9* pSrc = nullptr;
+	IDirect3DSurface9* pDest[2]{};
+	IDirect3DSurface9* pZBuf = nullptr;
 
 	D3DCacheSystemReset(&gEffectCacheSystem);
 	D3DRenderPoolReset(&gEffectPool, &D3DMaterialEffectPool);
@@ -660,10 +644,34 @@ HRESULT D3DRenderInit(HWND hWnd)
 	/***************************************************************************/
 	/*                    VERTEX DECLARATIONS                                  */
 	/***************************************************************************/
-	
-	gpD3DDevice->CreateVertexDeclaration(decl0, &decl0dc);
-	gpD3DDevice->CreateVertexDeclaration(decl1, &decl1dc);
-	gpD3DDevice->CreateVertexDeclaration(decl2, &decl2dc);
+
+	// Vertex layout for non-textured geometry.
+	static constexpr D3DVERTEXELEMENT9 VERTEX_LAYOUT_POS_COLOR[] = {
+		{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+		{1, 0, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0},
+		D3DDECL_END()
+		};
+
+	// Vertex layout for standard texturing.
+	static constexpr D3DVERTEXELEMENT9 VERTEX_LAYOUT_POS_COLOR_TEX1[] = {
+		{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+		{1, 0, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0},
+		{2, 0, D3DDECLTYPE_FLOAT2,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+		D3DDECL_END()
+		};
+
+	// Vertex layout for multi-texturing (lightmaps).
+	static constexpr D3DVERTEXELEMENT9 VERTEX_LAYOUT_POS_COLOR_TEX2[] = {
+		{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
+		{1, 0, D3DDECLTYPE_D3DCOLOR, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_COLOR, 0},
+		{2, 0, D3DDECLTYPE_FLOAT2,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0},
+		{3, 0, D3DDECLTYPE_FLOAT2,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1},
+		D3DDECL_END()
+		};
+
+	gpD3DDevice->CreateVertexDeclaration(VERTEX_LAYOUT_POS_COLOR, &g_pVertexDecl_PosColor);
+	gpD3DDevice->CreateVertexDeclaration(VERTEX_LAYOUT_POS_COLOR_TEX1, &g_pVertexDecl_PosColorTex1);
+	gpD3DDevice->CreateVertexDeclaration(VERTEX_LAYOUT_POS_COLOR_TEX2, &g_pVertexDecl_PosColorTex2);
 
 	SetZBias(0);
 
@@ -775,12 +783,12 @@ void D3DRenderShutDown(void)
 	/*                       VERTEX DECLARATIONS                               */
 	/***************************************************************************/
 	
-	if (decl0dc) decl0dc->Release();
-	if (decl1dc) decl1dc->Release();
-	if (decl2dc) decl2dc->Release();
-	decl0dc = nullptr;
-	decl1dc = nullptr;
-	decl2dc = nullptr;
+	if (g_pVertexDecl_PosColor) g_pVertexDecl_PosColor->Release();
+	if (g_pVertexDecl_PosColorTex1) g_pVertexDecl_PosColorTex1->Release();
+	if (g_pVertexDecl_PosColorTex2) g_pVertexDecl_PosColorTex2->Release();
+	g_pVertexDecl_PosColor = nullptr;
+	g_pVertexDecl_PosColorTex1 = nullptr;
+	g_pVertexDecl_PosColorTex2 = nullptr;
   
 	gpD3DDevice->Release();
 	gpD3DDevice = nullptr;
@@ -901,7 +909,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_sky) // Render the skybox first
 	{
-		SkyboxRenderParams skyboxRenderParams(decl1dc, gD3DDriverProfile, gWorldPool, gWorldCacheSystem);
+		SkyboxRenderParams skyboxRenderParams(g_pVertexDecl_PosColorTex1, gD3DDriverProfile, gWorldPool, gWorldCacheSystem);
 		D3DRenderSkyBox(params, angleHeading, anglePitch, view, skyboxRenderParams);
 	}
 
@@ -912,7 +920,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	WorldPoolParams worldPoolParams(&gWorldPool, &gWorldPoolStatic, &gLMapPool, &gLMapPoolStatic, &gWallMaskPool);
 		
-	WorldRenderParams worldRenderParams(decl1dc, decl2dc, gD3DDriverProfile, worldCacheSystemParams, worldPoolParams, view, proj);
+	WorldRenderParams worldRenderParams(g_pVertexDecl_PosColorTex1, g_pVertexDecl_PosColorTex2,
+											gD3DDriverProfile, worldCacheSystemParams, worldPoolParams, view, proj);
 
 	LightAndTextureParams lightAndTextureParams(&gDLightCache, &gDLightCacheDynamic, gSmallTextureSize, sector_depths);
 
@@ -957,7 +966,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// background overlays (e.g. the Sun & Moon)
 	if (draw_background_overlays)
 	{
-		BackgroundOverlaysRenderStateParams bgoRenderStateParams(decl1dc, gD3DDriverProfile, &gWorldPool, &gWorldCacheSystem, 
+		BackgroundOverlaysRenderStateParams bgoRenderStateParams(g_pVertexDecl_PosColorTex1, gD3DDriverProfile, &gWorldPool, &gWorldCacheSystem, 
 																	view, mat, gD3DRect);
 		BackgroundOverlaysSceneParams bgoSceneParams(&num_visible_objects, visible_objects, 
 														angleHeading, anglePitch, room, params);
@@ -981,13 +990,13 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_particles)
 	{
-		ParticleSystemStructure particleSystemStructure(decl1dc, playerDeltaPos, &gParticlePool, &gParticleCacheSystem);
+		ParticleSystemStructure particleSystemStructure(g_pVertexDecl_PosColorTex1, playerDeltaPos, &gParticlePool, &gParticleCacheSystem);
 		D3DRenderParticles(particleSystemStructure);
 	}
 
 	if (draw_objects)
 	{
-		ObjectsRenderParams objectsRenderParams(decl1dc, decl2dc, gD3DDriverProfile, &gObjectPool, &gObjectCacheSystem,
+		ObjectsRenderParams objectsRenderParams(g_pVertexDecl_PosColorTex1, g_pVertexDecl_PosColorTex2, gD3DDriverProfile, &gObjectPool, &gObjectCacheSystem,
 													view, proj, room, params);
 
 		GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects, 
@@ -1014,7 +1023,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	SetZBias(ZBIAS_DEFAULT);
 
 	gpD3DDevice->SetVertexShader(nullptr);
-	gpD3DDevice->SetVertexDeclaration(decl0dc);
+	gpD3DDevice->SetVertexDeclaration(g_pVertexDecl_PosColor);
 
 	// Set up orthographic projection for drawing overlays
 	MatrixIdentity(&mat);
@@ -1022,7 +1031,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	gpD3DDevice->SetTransform(D3DTS_VIEW, &mat);
 	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &mat);
 
-	FxRenderSystemStructure fxRenderSystemStructure(decl1dc, &gObjectPool, &gObjectCacheSystem, 
+	FxRenderSystemStructure fxRenderSystemStructure(g_pVertexDecl_PosColorTex1, &gObjectPool, &gObjectCacheSystem, 
 		&gEffectPool, &gEffectCacheSystem, gpBackBufferTex, gpBackBufferTexFull, 
 		gFullTextureSize, gSmallTextureSize, mat, gFrame, gScreenWidth, gScreenHeight);
 
@@ -1053,7 +1062,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
 	gpD3DDevice->SetVertexShader(nullptr);
-	gpD3DDevice->SetVertexDeclaration(decl1dc);
+	gpD3DDevice->SetVertexDeclaration(g_pVertexDecl_PosColorTex1);
 
 	D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
 	D3DCacheSystemReset(&gObjectCacheSystem);

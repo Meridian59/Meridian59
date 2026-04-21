@@ -245,13 +245,13 @@ void				D3DRenderBegin(room_type *room, Draw3DParams *params);
 void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
 void				D3DRenderEnableToggle(void);
 int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
-d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
+d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, IDirect3DTexture9* pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);												
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
 d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);
 void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
 void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
-LPDIRECT3DTEXTURE9  D3DRender_CaptureEffect(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1);
+IDirect3DTexture9*  D3DRender_CaptureEffect(IDirect3DTexture9* pTex0, IDirect3DTexture9* pTex1);
 
 // D3D State Functions
 void D3DRender_SetAlphaTestState(BOOL enable, DWORD alphaRef, D3DCMPFUNC comparisonFunc);

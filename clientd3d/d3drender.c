@@ -105,15 +105,22 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	
 	pFont->fontHeight = GetFontHeight(hScaledFont);
 	pFont->texScale = FONT_SCALE;
-   
-	if (pFont->fontHeight > 40)
-		pFont->texWidth = pFont->texHeight = 1024;
-	else if (pFont->fontHeight > 20)
-		pFont->texWidth = pFont->texHeight = 512;
-	else
-		pFont->texWidth = pFont->texHeight = 256;
 	
-	D3DCAPS9 d3dCaps;
+	static constexpr int LARGE_FONT_THRESHOLD = 40;
+	static constexpr int MEDIUM_FONT_THRESHOLD = 20;
+	
+	static constexpr int FONT_TEXTURE_SIZE_LARGE = 1024;
+	static constexpr int FONT_TEXTURE_SIZE_MEDIUM = 512;
+	static constexpr int FONT_TEXTURE_SIZE_SMALL = 256;
+	
+	if (pFont->fontHeight > LARGE_FONT_THRESHOLD)
+		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_LARGE;
+	else if (pFont->fontHeight > MEDIUM_FONT_THRESHOLD)
+		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_MEDIUM;
+	else
+		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_SMALL;
+	
+	D3DCAPS9 d3dCaps = {};
 	gpD3DDevice->GetDeviceCaps(&d3dCaps);
   
 	if ( pFont->texWidth > static_cast<long>(d3dCaps.MaxTextureWidth) )
@@ -128,78 +135,90 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	gpD3DDevice->CreateTexture(pFont->texWidth, pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
 									D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
 	
-	BITMAPINFO bmi;
-	memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
-	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmi.bmiHeader.biWidth = static_cast<int>(pFont->texWidth);
-	bmi.bmiHeader.biHeight = -static_cast<int>(pFont->texHeight);
-	bmi.bmiHeader.biPlanes = 1;
-	bmi.bmiHeader.biCompression = BI_RGB;
-	bmi.bmiHeader.biBitCount = 32;
+	static constexpr int BITMAP_PLANES = 1;
+	static constexpr int BITMAP_BIT_DEPTH = 32;
 	
-	HDC hDC = CreateCompatibleDC(gBitsDC);
-	DWORD *pBitmapBits;
-	HBITMAP hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBitmapBits), nullptr, 0);
-	SetMapMode(hDC, MM_TEXT);
+	// Initialize bitmap info. Top-down DIBs (negative height) match D3D's coordinate system.
+	BITMAPINFO bitmapInfo = {};
+	bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bitmapInfo.bmiHeader.biWidth = static_cast<int>(pFont->texWidth);
+	bitmapInfo.bmiHeader.biHeight = -static_cast<int>(pFont->texHeight);
+	bitmapInfo.bmiHeader.biPlanes = BITMAP_PLANES;
+	bitmapInfo.bmiHeader.biCompression = BI_RGB;
+	bitmapInfo.bmiHeader.biBitCount = BITMAP_BIT_DEPTH;
 	
-	SelectObject(hDC, hbmBitmap);
-	SelectObject(hDC, hScaledFont);
+	// Handle to Device Context for fonts.
+	HDC fontDC = CreateCompatibleDC(gBitsDC);
+	DWORD *pBitmapBits = nullptr;
+	HBITMAP fontBitmap = CreateDIBSection(fontDC, &bitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBitmapBits), nullptr, 0);
+	SetMapMode(fontDC, MM_TEXT);
+	
+	SelectObject(fontDC, fontBitmap);
+	SelectObject(fontDC, hScaledFont);
 	
 	// Set text properties
-	SetTextColor(hDC, RGB(255,255,255));
-	SetBkColor(hDC, 0);
-	SetBkMode(hDC, TRANSPARENT);
-	SetTextAlign(hDC, TA_TOP);
+	SetTextColor(fontDC, RGB(255,255,255));
+	SetBkColor(fontDC, 0);
+	SetBkMode(fontDC, TRANSPARENT);
+	SetTextAlign(fontDC, TA_TOP);
 	
+	// Temporary string that holds both a character and a null terminator.
 	TCHAR str[2] = _T("x");
-	long x = 0;
-	long y = 0;
-	for(TCHAR c = 32; c < 127; c++)
+	
+	// Tracks next available pixel position in the texture atlas.
+	long atlasX = 0;
+	long atlasY = 0;
+	
+	// Iterate through printable ASCII characters.
+	for (int i = 0; i < NUM_CHARS; i++)
 	{
-		int index = c - 32;
+		// Skip the first 32 non-printable characters.
+		TCHAR c = static_cast<TCHAR>(i + 32);
 		
 		str[0] = c;
 		
-		SIZE size;
-		GetTextExtentPoint32(hDC, str, 1, &size);
+		SIZE size = {};
+		GetTextExtentPoint32(fontDC, str, 1, &size);
 		
-		if (!GetCharABCWidths(hDC, c, c, &pFont->abc[index]))
+		if (!GetCharABCWidths(fontDC, c, c, &pFont->abc[i]))
 		{
-			pFont->abc[index] = { 0, static_cast<UINT>(size.cx), 0 };
+			// If font isn't TrueType, fallback to basic width (abcB).
+			pFont->abc[i] = { 0, static_cast<UINT>(size.cx), 0 };
 		}
 
-		size.cx = pFont->abc[index].abcB;
+		// Use the 'B' width (actual character body) for layout.
+		size.cx = pFont->abc[i].abcB;
 
 		// Is this row of the texture filled up?
-		if (x + size.cx >= pFont->texWidth)
+		if (atlasX + size.cx >= pFont->texWidth)
 		{
-			x = 0;
-			y += (size.cy + 1);
+			atlasX = 0;
+			atlasY += (size.cy + 1);
 		}
       
-		int left_offset = pFont->abc[index].abcA;
-		ExtTextOut(hDC, x - left_offset, y, 0, nullptr, str, 1, nullptr);
+		int left_offset = pFont->abc[i].abcA;
+		ExtTextOut(fontDC, (atlasX - left_offset), atlasY, 0, nullptr, str, 1, nullptr);
       
-		pFont->texST[index][0] = {(static_cast<float>(x) / pFont->texWidth), 
-									(static_cast<float>(y) / pFont->texHeight)};
+		pFont->texST[i][0] = {(static_cast<float>(atlasX) / pFont->texWidth), 
+									(static_cast<float>(atlasY) / pFont->texHeight)};
 	  
-		pFont->texST[index][1] = {(static_cast<float>(x + size.cx) / pFont->texWidth),
-									(static_cast<float>(y + size.cy) / pFont->texHeight)};
+		pFont->texST[i][1] = {(static_cast<float>(atlasX + size.cx) / pFont->texWidth),
+									(static_cast<float>(atlasY + size.cy) / pFont->texHeight)};
 
 		// Leave +1 space so bilinear filtering doesn't pick up neighboring character
-		x += (size.cx + 1);  
+		atlasX += (size.cx + 1);  
 	}
    
-	D3DLOCKED_RECT d3dlr;
+	D3DLOCKED_RECT d3dlr = {};
 	pFont->pTexture->LockRect(0, &d3dlr, 0, 0);
    
 	BYTE *pDstRow = reinterpret_cast<BYTE*>(d3dlr.pBits);
    
 	// Convert a texture bitmask into a 16-bit pixel format.
-	for (y = 0; y < pFont->texHeight; y++)
+	for (int y = 0; y < pFont->texHeight; y++)
 	{
 		WORD *pDst16 = reinterpret_cast<WORD*>(pDstRow);
-		for(x = 0; x < pFont->texWidth; x++)
+		for(int x = 0; x < pFont->texWidth; x++)
 		{
 			// Extract 4-bit alpha from 8-bit source.
 			BYTE bAlpha = static_cast<BYTE>( (pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4 );
@@ -213,13 +232,13 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	pFont->pTexture->UnlockRect(0);
 
 	// Get kerning pairs for font
-	pFont->numKerningPairs = GetKerningPairs(hDC, 0, nullptr);
+	pFont->numKerningPairs = GetKerningPairs(fontDC, 0, nullptr);
 	pFont->kerningPairs = new KERNINGPAIR[pFont->numKerningPairs];
-	GetKerningPairs(hDC, pFont->numKerningPairs, pFont->kerningPairs);
+	GetKerningPairs(fontDC, pFont->numKerningPairs, pFont->kerningPairs);
 	
-	DeleteObject(hbmBitmap);
+	DeleteObject(fontBitmap);
 	DeleteObject(hScaledFont);
-	DeleteDC(hDC);
+	DeleteDC(fontDC);
 }
 
 void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize)

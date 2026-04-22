@@ -218,7 +218,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	for (int y = 0; y < pFont->texHeight; y++)
 	{
 		WORD *pDst16 = reinterpret_cast<WORD*>(pDstRow);
-		for(int x = 0; x < pFont->texWidth; x++)
+		for (int x = 0; x < pFont->texWidth; x++)
 		{
 			// Extract 4-bit alpha from 8-bit source.
 			BYTE bAlpha = static_cast<BYTE>( (pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4 );

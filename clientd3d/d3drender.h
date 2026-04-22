@@ -66,7 +66,7 @@ struct font_3d
 	TCHAR        strFontName[80];
 	long         fontHeight;
 
-	LPDIRECT3DTEXTURE9	pTexture;
+	IDirect3DTexture9*	pTexture;
 	long				 texWidth;
 	long				 texHeight;
 	float				 texScale;
@@ -93,8 +93,8 @@ inline int d3dRenderTextureThreshold;
 inline bool gWireframe = false;
 inline font_3d gFont;
 
-inline LPDIRECT3DTEXTURE9 gpBackBufferTex[MAX_RENDER_TARGET_POOL];
-inline LPDIRECT3DTEXTURE9 gpBackBufferTexFull;
+inline IDirect3DTexture9* gpBackBufferTex[MAX_RENDER_TARGET_POOL];
+inline IDirect3DTexture9* gpBackBufferTexFull;
 
 inline static PALETTEENTRY gPalette[NUM_COLORS];
 
@@ -177,13 +177,13 @@ inline bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent)
 inline float FovHorizontal(long width)
 {
 	static constexpr float HORIZONTAL_TUNING_FACTOR  = (-PI / 3.78f);
-	return width / static_cast<float>(main_viewport_width) * HORIZONTAL_TUNING_FACTOR ;
+	return (width / static_cast<float>(main_viewport_width)) * HORIZONTAL_TUNING_FACTOR ;
 }
 
 inline float FovVertical(long height)
 {
 	static constexpr float VERTICAL_TUNING_FACTOR = (PI / 5.88f);
-	return height / static_cast<float>(main_viewport_height) * VERTICAL_TUNING_FACTOR;
+	return (height / static_cast<float>(main_viewport_height)) * VERTICAL_TUNING_FACTOR;
 }
 
 // Retrieve the threshold value for determining whether to round up the dimensions of a texture.
@@ -217,7 +217,7 @@ inline const font_3d& getFont3d()
 	return gFont;
 }
 
-inline const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
+inline const IDirect3DTexture9* getBackBufferTextureZero()
 {
 	return gpBackBufferTex[0];
 }

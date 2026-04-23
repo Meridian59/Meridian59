@@ -57,13 +57,22 @@ typedef struct {
    int  platform;           // Operating system identifier
    int  platform_major;     // Major version of OS
    int  platform_minor;     // Minor version of OS
-   int  memory;             // Amount of physical memory, in bytes
-   int chip;                // Chip type
+   int memory;             // Amount of physical memory, in bytes
    WORD screen_width;
    WORD screen_height;
    int color_depth;
-   int bandwidth;
-   int reserved;
+   int os_build_number;
+   int renderer_mode;
+   int vram_mb;
+   int session_bucket;
+   int gpu_vendor_id;
+   int last_avg_fps;
+   int last_low_fps;
+   int last_max_fps;
+   int partner_code;
+   int is_wine;
+   int crc16;
+   char gpu_desc[128];
 } SystemInfo;
 
 char *strtolower(char *);

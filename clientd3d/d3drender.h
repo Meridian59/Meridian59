@@ -124,6 +124,10 @@ void				D3DRenderBegin(room_type *room, Draw3DParams *params);
 void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
 void				D3DRenderEnableToggle(void);
 int					D3DRenderIsEnabled(void);
+void				D3DGetAdapterInfo(char *gpuDesc, int descLen,
+                                      unsigned int *vramMB,
+                                      DWORD *vendorId, DWORD *deviceId,
+                                      WORD *driverMajor, WORD *driverMinor);
 int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
 d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);

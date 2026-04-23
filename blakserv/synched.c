@@ -161,7 +161,7 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
    switch (msg->data[0])
    {
    case AP_LOGIN : 
-      if (msg->len < 39) /* fixed size of AP_LOGIN, before strings */
+      if (msg->len < 75) /* fixed size of AP_LOGIN, before strings */
 	 break;
       s->version_major = *(char *)(msg->data+index);
       index++;
@@ -175,22 +175,36 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       index += 4;
       s->machine_ram = *(int *)(msg->data+index);
       index += 4;
-      s->machine_cpu = *(int *)(msg->data+index);
-      index += 4;
 
       s->screen_x = *(short *)(msg->data+index);
       index += 2;
       s->screen_y = *(short *)(msg->data+index);
       index += 2;
 
-      s->displays_possible = *(int *)(msg->data+index);
+      s->screen_color_depth = *(int *)(msg->data+index);
       index += 4;
-      s->bandwidth = *(int *)(msg->data+index);
+      s->os_build_number = *(int *)(msg->data+index);
       index += 4;
-      s->reserved = *(int *)(msg->data+index);
+      s->renderer_mode = *(int *)(msg->data+index);
       index += 4;
-      s->screen_color_depth = (short)(s->reserved & 0xFF);
-      s->partner = (short)((s->reserved & 0xFF00) >> 8);
+      s->vram_mb = *(int *)(msg->data+index);
+      index += 4;
+      s->session_bucket = *(int *)(msg->data+index);
+      index += 4;
+      s->gpu_vendor_id = *(int *)(msg->data+index);
+      index += 4;
+      s->last_avg_fps = *(int *)(msg->data+index);
+      index += 4;
+      s->last_low_fps = *(int *)(msg->data+index);
+      index += 4;
+      s->last_max_fps = *(int *)(msg->data+index);
+      index += 4;
+      s->partner = (short)*(int *)(msg->data+index);
+      index += 4;
+      s->is_wine = *(int *)(msg->data+index);
+      index += 4;
+      s->crc16 = *(int *)(msg->data+index);
+      index += 4;
 
       // The following line was commented out because I added support for the 3 4-byte integers
       // index += 12; /* 12 bytes future expansion space */
@@ -212,6 +226,14 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       memcpy(password, msg->data + index + 2, len);
       password[len] = 0; /* null terminate string */
       index += 2 + len;
+      
+      if (index + 2 <= msg->len) {
+         len = *(short *)(msg->data + index);
+         if (index + 2 + len <= msg->len) {
+            s->gpu_desc.assign((char*)(msg->data + index + 2), len);
+            index += 2 + len;
+         }
+      }
       
       SynchedAcceptLogin(s,name,password);
       
@@ -476,68 +498,96 @@ void VerifyLogin(session_node *s)
 void LogUserData(session_node *s)
 {
    std::string buf;
-   
-   buf += "LogUserData/4 got " + std::to_string(s->account->account_id) + " from " + s->conn.name + ", ";
 
-   switch (s->os_type)
-   {
-   case VER_PLATFORM_WIN32_WINDOWS :
-		if ((s->os_version_major > 4) ||  ((s->os_version_major == 4) && (s->os_version_minor > 0)))
-			buf += "Windows 98";
-		else
-			buf += "Windows 95";
-      break;
-   case VER_PLATFORM_WIN32_NT :
-      buf += "Windows NT";
-      break;
-   default :
-      buf += std::to_string(s->os_type);
-      break;
-   }
-   
-   buf += ", " + std::to_string(s->os_version_major) + ", " + std::to_string(s->os_version_minor) + ", ";
+   buf += "Login account " + std::to_string(s->account->account_id) + " from " + s->conn.name + ": ";
 
-   switch (s->machine_cpu&0xFFFF)	/* charlie: the cpu level is in the top 16 bits */
-   {
-   case PROCESSOR_INTEL_386 :
-      buf += "386";
-      break;
-   case PROCESSOR_INTEL_486 :
-      buf += "486";
-      break;
-   case PROCESSOR_INTEL_PENTIUM :
-      buf += "Pentium";
-      break;
-   default :
-      buf += std::to_string(s->machine_cpu&0xFFFF);
-      break;
-   }
-   
+   // Windows version (os_version_major/minor from RtlGetVersion)
+   buf += "Win " + std::to_string(s->os_version_major) + "." + std::to_string(s->os_version_minor);
+   if (s->os_build_number > 0)
+      buf += " build " + std::to_string(s->os_build_number);
    buf += ", ";
 
-   buf += std::to_string(s->machine_ram/(1024*1024)) + " MB";
-   buf += ", ";
+   // RAM
+   {
+      int ramMB = s->machine_ram;
+      if (ramMB >= 1024)
+         buf += std::to_string(ramMB / 1024) + " GB RAM, ";
+      else
+         buf += std::to_string(ramMB) + " MB RAM, ";
+   }
 
-   buf += std::to_string(s->screen_x) + "x" + std::to_string(s->screen_y) + "x" + std::to_string(s->screen_color_depth);
-   std::stringstream sstream;
-   sstream << std::hex << ((s->machine_cpu&0xFFFF0000)|s->displays_possible);
-   std::string result = sstream.str();
-   buf += " (0x" + sstream.str() + ")";
+   // Screen
+   buf += std::to_string(s->screen_x) + "x" + std::to_string(s->screen_y)
+        + "@" + std::to_string(s->screen_color_depth) + "bpp, ";
+
+   // GPU vendor + VRAM + renderer + session length
+   {
+      int renderer_mode     = s->renderer_mode;
+      unsigned int vramMB   = (unsigned int)s->vram_mb;
+      unsigned int sessBuck = (unsigned int)s->session_bucket;
+      unsigned int vendorId = (unsigned int)s->gpu_vendor_id;
+
+      const char *rendStr  = (renderer_mode == 2) ? "D3D+GpuEff"
+                           : (renderer_mode == 1) ? "D3D" : "Software";
+      
+      std::string gpuInfo;
+      if (!s->gpu_desc.empty()) {
+         gpuInfo = s->gpu_desc;
+      } else {
+         const char *gpuVendor = (vendorId == 0x10DE) ? "NVIDIA"
+                               : (vendorId == 0x1002) ? "AMD"
+                               : (vendorId == 0x8086) ? "Intel"
+                               : (vendorId == 0)      ? "N/A" : "GPU";
+         std::stringstream ssVendor;
+         if (vendorId != 0 && vendorId != 0x10DE && vendorId != 0x1002 && vendorId != 0x8086)
+            ssVendor << " 0x" << std::hex << vendorId;
+         gpuInfo = std::string(gpuVendor) + ssVendor.str();
+      }
+      buf += std::string(rendStr) + ", " + gpuInfo;
+      if (vramMB >= 1024)
+         buf += " " + std::to_string((vramMB + 512) / 1024) + "GB, ";
+      else if (vramMB > 0)
+         buf += " " + std::to_string(vramMB) + "MB, ";
+      else
+         buf += ", ";
+
+      // Session bucket (seconds-based)
+      static const char *sessBucketStr[] = {
+         NULL, "<1min", "~2min", "~10min", "~20min", "~45min",
+         "~1.5hr", "~3hr", "~5hr", "~7hr", "~10hr", "12+hr"
+      };
+      if (sessBuck > 0 && sessBuck < 12)
+         buf += "session " + std::string(sessBucketStr[sessBuck]) + ", ";
+      else if (sessBuck >= 12)
+         buf += "session 12+hr, ";
+   }
+
+   // Last session FPS
+   {
+      unsigned int avgFps = (unsigned int)s->last_avg_fps;
+      unsigned int lowFps = (unsigned int)s->last_low_fps;
+      unsigned int maxFps = (unsigned int)s->last_max_fps;
+      bool         wine   = s->is_wine != 0;
+
+      if (avgFps > 0)
+      {
+         buf += "fps avg=" + std::to_string(avgFps)
+              + " 1%low=" + std::to_string(lowFps);
+         if (maxFps > 0)
+            buf += " max=" + std::to_string(maxFps);
+      }
+      else
+         buf += "fps=N/A";
+
+      if (wine)
+         buf += " [Wine]";
+   }
 
    if (s->partner)
-     buf += ", Partner " + std::to_string(s->partner);
-
-   buf += ", ";
-   buf += LockConfigStr(ADVERTISE_FILE1);
-   UnlockConfigStr();
-
-   buf += ", ";
-   buf += LockConfigStr(ADVERTISE_FILE2);
-   UnlockConfigStr();
+      buf += ", Partner " + std::to_string(s->partner);
 
    buf += "\n";
-
-   lprintf("%s",buf.c_str());
+   lprintf("%s", buf.c_str());
 }
 
 void SynchedDoMenu(session_node *s)

@@ -154,6 +154,8 @@ void CALLBACK LogoffTimerProc(HWND hwnd, UINT msg, UINT_PTR timer, DWORD dwTime)
    if (elapsed >= (long) (config.timeout * MS_PER_MINUTE))
    {
       /* User is history! */
+      GraphicsFlushPerfReport();
+      PingFlushPerfReport();
       RequestQuit();
       return;
    }

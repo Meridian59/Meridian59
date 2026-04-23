@@ -1685,7 +1685,7 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
 
          for (count = 0; count < pNode->u.leaf.poly.npts; count++)
          {
-            falloff = (xyz[count].z - pDLightCache->dLights[numLights].xyz.z) * invZScale;
+            falloff = (xyz[count].z - pDLightCache->dLights[numLights].xyz.z) * invZScaleHalf;
 
             if (falloff < 0)
                falloff = -falloff;
@@ -1842,7 +1842,7 @@ void D3DRenderLMapPostCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_l
 
          for (count = 0; count < pNode->u.leaf.poly.npts; count++)
          {
-            falloff = (xyz[count].z - pDLightCache->dLights[numLights].xyz.z) * invZScale;
+            falloff = (xyz[count].z - pDLightCache->dLights[numLights].xyz.z) * invZScaleHalf;
 
             if (falloff < 0)
                falloff = -falloff;
@@ -2091,7 +2091,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
          {
             for (i = 0; i < 4; i++)
             {
-               falloff = (xyz[i].x - pDLightCache->dLights[numLights].xyz.x) * invXScale;
+               falloff = (xyz[i].x - pDLightCache->dLights[numLights].xyz.x) * invXScaleHalf;
 
                if (falloff < 0)
                   falloff = -falloff;
@@ -2111,7 +2111,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
          {
             for (i = 0; i < 4; i++)
             {
-               falloff = (xyz[i].y - pDLightCache->dLights[numLights].xyz.y) * invYScale;
+               falloff = (xyz[i].y - pDLightCache->dLights[numLights].xyz.y) * invYScaleHalf;
 
                if (falloff < 0)
                   falloff = -falloff;

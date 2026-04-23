@@ -160,6 +160,8 @@ config_table_type config_table[] =
 { UPDATE_DOWNLOAD_REASON, true, "DownloadReason",CONFIG_STR,
      "An update of Meridian files is available and required." },
 { UPDATE_DEMO_BUTTON,	  true, "DemoButton"    ,CONFIG_STR,   "http://meridian59.neardeathstudios.com/M59-Download-01.shtml" },
+{ UPDATE_MOVE_INTERVAL,   true, "MoveInterval"  ,CONFIG_INT,   "1000" },
+{ UPDATE_MOVE_COUNT_THRESHOLD,   true, "MoveCountThreshold"  ,CONFIG_INT,   "2" },
 
 { CONSOLE_GROUP,          false, "[Console]",     CONFIG_GROUP, "" },
 { CONSOLE_ADMINISTRATOR,  false, "Administrator", CONFIG_STR,   "Administrator" },

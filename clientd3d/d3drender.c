@@ -14,32 +14,9 @@
 #define	TEX_CACHE_MAX_EFFECT	2000000
 #define	TEX_CACHE_MAX_PARTICLE	1000000
 
-// Main client windows current viewport area
-extern int main_viewport_width;
-extern int main_viewport_height;
-
-// Define field of views with magic numbers for tuning
-float FovHorizontal(long width)
-{
-	return width / (float)(main_viewport_width) * (-PI / 3.78f);
-}
-
-float FovVertical(long height)
-{
-	return height / (float)(main_viewport_height) * (PI / 5.88f);
-}
-
-// Helper function to determine if an object should be rendered in the current pass based on transparency.
-bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent)
-{
-	return transparent_pass == isTransparent;
-}
-
 d3d_render_packet_new	*gpPacket;
 
 LPDIRECT3DTEXTURE9		gpNoLookThrough = NULL;
-LPDIRECT3DTEXTURE9		gpBackBufferTex[16];
-LPDIRECT3DTEXTURE9		gpBackBufferTexFull;
 LPDIRECT3DTEXTURE9		gpViewElements[NUM_VIEW_ELEMENTS];
 
 D3DVIEWPORT9			gViewport;
@@ -74,13 +51,10 @@ d3d_render_pool_new		gParticlePool;
 custom_xyz				playerOldPos;
 custom_xyz				playerDeltaPos;
 
-font_3d					gFont;
-
 RECT					gD3DRect;
 BYTE					gViewerLight = 0;
 int						gNumObjects;
 int						gNumDPCalls;
-static PALETTEENTRY		gPalette[256];
 
 static unsigned int		gFrame = 0;
 
@@ -89,8 +63,6 @@ static unsigned int		gFrame = 0;
 // As per the original specification, the smaller buffer is 1/4 the size of the full buffer.
 int						gFullTextureSize;
 int						gSmallTextureSize;
-
-int						d3dRenderTextureThreshold;
 
 D3DVERTEXELEMENT9		decl0[] = {
 	{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
@@ -120,17 +92,14 @@ LPDIRECT3DVERTEXDECLARATION9 decl2dc;
 AREA					gD3DView;
 int						gD3DRedrawAll = 0;
 int						gTemp = 0;
-bool					gWireframe;		// this is really bad, I'm sorry
 
 extern long				viewer_height;
-extern Color			base_palette[NUM_COLORS];
 extern PDIB				background;         /* Pointer to background bitmap */
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
 extern DrawItem			drawdata[];
 extern long				nitems;
 extern int				sector_depths[];
-extern d3d_driver_profile	gD3DDriverProfile;
 extern BYTE				*gBits;
 extern BYTE				*gBufferBits;
 extern D3DPRESENT_PARAMETERS	gPresentParam;
@@ -153,85 +122,10 @@ d3d_render_packet_new	*D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 
 void					D3DRenderViewElementsDraw(d3d_render_pool_new *pPool);
 
-void					*D3DRenderMalloc(unsigned int bytes);
-
-void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
-   float bias = z_bias * -0.00001f;
-   IDirect3DDevice9_SetRenderState(device, D3DRS_DEPTHBIAS,
-                                   *((DWORD *) &bias));
-}
-
-int getD3dRenderThreshold()
-{
-	return d3dRenderTextureThreshold;
-}
-
-bool isManagedTexturesEnabled() {
-    return gD3DDriverProfile.bManagedTextures;
-}
-
-bool isFogEnabled()
-{
-	return gD3DDriverProfile.bFogEnable;
-}
-
-void setWireframeMode(bool isEnabled)
-{
-	gWireframe = isEnabled;
-}
-
-PALETTEENTRY* getPalette()
-{
-    return gPalette;
-}
-
-const Color(&getBasePalette())[NUM_COLORS]
-{
-	return base_palette;
-}
-
-bool isWireframeMode()
-{
-	return gWireframe;
-}
-
-const font_3d& getFont3d()
-{
-	return gFont;
-}
-
-const LPDIRECT3DTEXTURE9 getWhiteLightTexture()
-{
-	return D3DRenderLightsGetWhite();
-}
-
-const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
-{
-	return gpBackBufferTex[0];
-}
-
 // externed stuff
 extern void			DrawItemsD3D();
 extern bool			ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
 extern void			UpdateRoom3D(room_type *room, Draw3DParams *params);
-
-int DistanceGet(int x, int y)
-{
-	int	distance;
-	float	xf, yf;
-
-	xf = (float)x;
-	yf = (float)y;
-
-	distance = sqrt((double)(xf * xf) + (double)(yf * yf));
-
-	return (int)distance;
-}
-
-void *D3DRenderMalloc(unsigned int bytes)
-{
-	return malloc(bytes);
-}
 
 /************************************************************************************
 *
@@ -800,11 +694,6 @@ void D3DRenderEnableToggle(void)
 		memset(gBits, 0, MAXX * MAXY);
 		memset(gBufferBits, 0, MAXX * 2 * MAXY * 2);
 	}
-}
-
-int D3DRenderIsEnabled(void)
-{
-	return gD3DEnabled;
 }
 
 void D3DRenderFontInit(font_3d *pFont, HFONT hFont)

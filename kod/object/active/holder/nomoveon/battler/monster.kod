@@ -1616,7 +1616,7 @@ messages:
    {
       if vrSound_miss <> $
       {
-         Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=vrSound_miss,
+         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_miss,
               #flags=SOUND_RANDOM_PITCH);
          if (IsClass(what,&Player))
          {
@@ -1630,11 +1630,11 @@ messages:
 
    AssessMiss(what = $, stroke_obj = $)
    "This does the fallout of a miss, gives appropriate message, etc.  "
-   "Called on target when missing."
+   "Called on self when missing."
    {
       if vrSound_miss <> $
       {
-         Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=vrSound_miss,
+         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_miss,
               #flags=SOUND_RANDOM_PITCH);
       }
 

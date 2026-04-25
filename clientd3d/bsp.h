@@ -121,10 +121,12 @@ typedef struct
    float x, y;
 } Pnt, Pnt2D, Vector2D;
 
-typedef struct
+struct Vector3D
 {
    float x, y, z;
-} Pnt3D, Vector3D;
+};
+
+using Pnt3D = Vector3D;
 
 typedef struct ObjectData
 {

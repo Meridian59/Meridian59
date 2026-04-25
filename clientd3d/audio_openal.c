@@ -75,6 +75,16 @@ static std::list<CacheNode> g_cacheList;
 static std::unordered_map<std::string, std::list<CacheNode>::iterator,
                           CaseInsensitiveHash, CaseInsensitiveEqual> g_cacheMap;
 
+/*
+ * Tracked source registry: links a playing OpenAL source to a game object
+ * so the source's position can be refreshed each frame as the object moves.
+ */
+struct TrackedSource {
+   ALuint source;     // OpenAL source currently playing
+   ID     object_id;  // Game object whose position the source should follow
+};
+static std::vector<TrackedSource> g_trackedSources;
+
 // Music streaming state
 static const int STREAM_NUM_BUFFERS = 4;
 static const int STREAM_BUFFER_SAMPLES = 4096;
@@ -948,9 +958,13 @@ static ALuint LoadAudioBuffer(const char* filename)
 
 /*
  * SoundPlay: Returns true if sound started. Supports OGG/WAV, 3D positioning, looping.
+ *   When source_obj is non-zero and the sound is positional, the source is
+ *   registered so subsequent frames refresh its position from the object's
+ *   current location.
  */
 bool SoundPlay(const char* filename, int volume, BYTE flags,
-               int src_row, int src_col, int radius, int max_vol)
+               int src_row, int src_col, int radius, int max_vol,
+               ID source_obj)
 {
    if (!g_initialized)
       return false;
@@ -1096,6 +1110,14 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       return false;
    }
 
+   // Register the source for per-frame position updates if it is a positional
+   // sound emitted by a known game object.  Non-positional sounds (UI, ambient
+   // loops at placeholder coords) ignore source_obj.
+   if (isPositional && source_obj != 0)
+   {
+      g_trackedSources.push_back({source, source_obj});
+   }
+
    return true;
 }
 
@@ -1124,6 +1146,8 @@ void SoundStopAll(void)
    {
       alSourceStop(g_sources[i]);
    }
+
+   g_trackedSources.clear();
 }
 
 /*
@@ -1166,7 +1190,50 @@ void Audio_StopSourcesForFilename(const char* filename)
       {
          alSourceStop(g_sources[i]);
          alSourcei(g_sources[i], AL_BUFFER, 0);
+
+         // Drop any tracked entries pointing at this source
+         auto end = std::remove_if(g_trackedSources.begin(), g_trackedSources.end(),
+            [src = g_sources[i]](const TrackedSource& t) { return t.source == src; });
+         g_trackedSources.erase(end, g_trackedSources.end());
       }
+   }
+}
+
+/*
+ * Audio_UpdateTrackedSources: Refresh OpenAL source positions for sounds
+ *   attached to moving game objects.  Drops entries whose source has stopped
+ *   or whose object is no longer in the room.
+ */
+void Audio_UpdateTrackedSources(void)
+{
+   if (!g_initialized || g_trackedSources.empty())
+      return;
+
+   for (auto it = g_trackedSources.begin(); it != g_trackedSources.end(); )
+   {
+      ALint state = AL_STOPPED;
+      alGetSourcei(it->source, AL_SOURCE_STATE, &state);
+      if (state != AL_PLAYING && state != AL_PAUSED)
+      {
+         it = g_trackedSources.erase(it);
+         continue;
+      }
+
+      room_contents_node *obj = GetRoomObjectById(it->object_id);
+      if (obj == NULL)
+      {
+         // Object left the room or was destroyed; stop the sound so it does
+         // not linger at a stale position.
+         alSourceStop(it->source);
+         it = g_trackedSources.erase(it);
+         continue;
+      }
+
+      int row = obj->motion.y >> LOG_FINENESS;
+      int col = obj->motion.x >> LOG_FINENESS;
+      // Negate X to match the listener's coordinate convention
+      alSource3f(it->source, AL_POSITION, -(float)col, 0.0f, (float)row);
+      ++it;
    }
 }
 

@@ -87,6 +87,7 @@ graph TD
 | `SoundPlay(filename, volume, flags, ...)` | Play sound effect with optional 3D positioning |
 | `SoundStopAll()` | Stop all sound effects |
 | `AudioUpdateListener(x, y, z, ...)` | Update listener position for 3D audio |
+| `Audio_UpdateTrackedSources()` | Refresh positions of sources attached to moving game objects |
 
 ### Music API (music.c)
 
@@ -132,7 +133,8 @@ theme.mp3 -> theme.ogg
 
 This mapping happens in `ConvertLegacyMusicExtension()` in music.c.
 
-Sound effects also prefer .ogg over .wav. When a .wav file is requested, the audio system first checks if an .ogg version exists and uses that instead.
+Sound effects also prefer .ogg over .wav. When a .wav file is requested, the audio
+system first checks if an .ogg version exists and uses that instead.
 
 ### File Naming Convention
 
@@ -157,11 +159,14 @@ Sound effects are cached using an LRU (Least Recently Used) strategy:
 - **Protection:** Buffers currently playing are never evicted
 - **Lookup:** O(1) via case-insensitive hash map
 
-Music is NOT cached because tracks are large and typically don't repeat rapidly. Instead, music uses streaming playback (see below).
+Music is NOT cached because tracks are large and typically don't repeat rapidly.
+Instead, music uses streaming playback (see below).
 
 ## Music Streaming
 
-Music files are played via streaming rather than full-file decoding. This eliminates the loading hitch that occurred when decompressing entire OGG files (30-50 MB of decoded PCM from 2-7 MB OGG files) in a single blocking call on the main thread.
+Music files are played via streaming rather than full-file decoding. This eliminates
+the loading hitch that occurred when decompressing entire OGG files (30-50 MB of
+decoded PCM from 2-7 MB OGG files) in a single blocking call on the main thread.
 
 ### How It Works
 
@@ -176,9 +181,14 @@ chunks and fed to OpenAL through a ring buffer:
 | Memory per buffer | 16,384 bytes (stereo 16-bit) |
 | Total streaming memory | ~64 KB (vs 30-50 MB full decode) |
 
-Music streaming runs on a dedicated background thread (`MusicThreadProc`) started in `AudioInit()`. The thread decodes OGG data and rotates OpenAL buffers independently of the main thread, so buffer refills cannot be starved by UI activity.
+Music streaming runs on a dedicated background thread (`MusicThreadProc`) started
+in `AudioInit()`. The thread decodes OGG data and rotates OpenAL buffers independently
+of the main thread, so buffer refills cannot be starved by UI activity.
 
-`MusicPlay()`, `MusicStop()`, and `MusicSetVolume()` post commands to the thread and return immediately. `MusicStreamUpdate()` queries `AL_BUFFERS_PROCESSED` to find consumed buffers, decodes the next chunk, and re-queues. If the source underruns, it restarts automatically. Looping seeks the decoder back to the start at EOF.
+`MusicPlay()`, `MusicStop()`, and `MusicSetVolume()` post commands to the thread
+and return immediately. `MusicStreamUpdate()` queries `AL_BUFFERS_PROCESSED` to find
+consumed buffers, decodes the next chunk, and re-queues. If the source underruns,
+it restarts automatically. Looping seeks the decoder back to the start at EOF.
 
 ```mermaid
 graph LR
@@ -210,7 +220,8 @@ graph LR
 
 ### Which Sounds Are Positional?
 
-Not all sounds use 3D positioning. This matches the original MSS behavior where all sounds played at equal volume in both stereo channels (no panning).
+Not all sounds use 3D positioning. This matches the original MSS behavior where all sounds
+played at equal volume in both stereo channels (no panning).
 
 | Sound Type | Positional? | Rationale |
 |------------|-------------|----------|
@@ -222,22 +233,37 @@ Not all sounds use 3D positioning. This matches the original MSS behavior where 
 
 ### Distance Model
 
-The client uses two different OpenAL distance models depending on whether a sound is a one-shot effect or a looping ambient emitter, and whether the Blakod explicitly specified a cutoff radius:
+The client uses two different OpenAL distance models depending on whether a
+sound is a one-shot effect or a looping ambient emitter, and whether the
+server (kod) explicitly specified a cutoff radius:
 
-| Sound type | Blakod-set radius? | Distance model | Reference distance | Max distance | Behavior |
-|------------|--------------------|----------------|--------------------|--------------|----------|
-| `SF_LOOP` ambient (fountain, firepit, forge) | yes (always) | `AL_LINEAR_DISTANCE_CLAMPED` | 1 tile | radius | Linear falloff to silence at the Blakod-defined radius |
-| One-shot with explicit radius (door, scripted area effect) | yes | `AL_LINEAR_DISTANCE_CLAMPED` | 1 tile | radius | Linear falloff to silence at the Blakod-defined radius |
+| Sound type | Kod-set radius? | Distance model | Reference distance | Max distance | Behavior |
+|------------|-----------------|----------------|--------------------|--------------|----------|
+| `SF_LOOP` ambient (fountain, firepit, forge) | yes (always) | `AL_LINEAR_DISTANCE_CLAMPED` | 1 tile | radius | Linear falloff to silence at the kod-defined radius |
+| One-shot with explicit radius (door, scripted area effect) | yes | `AL_LINEAR_DISTANCE_CLAMPED` | 1 tile | radius | Linear falloff to silence at the kod-defined radius |
 | One-shot with no radius (combat, spells, generic effects) | no | `AL_INVERSE_DISTANCE_CLAMPED` | 2 tiles | 10000 (effectively unbounded) | Smooth `1/d` falloff, never reaches silence |
 
-The Blakod communicates intent via the `cutoff_radius` parameter on `SomethingWaveRoom` / `WaveSendUser`:
+The server (Blakod) communicates intent via the `cutoff_radius` parameter on
+`SomethingWaveRoom` / `WaveSendUser`:
 
-- `cutoff_radius = 0` (default in `user.kod`'s `WaveSendUser`): no opinion. One-shots get the soft inverse falloff so distant combat/spells stay audible across the room, matching pre-OpenAL Miles Sound System behavior where `GamePlaySound()` computed `volume = MAX_VOLUME * 2 / distance` and never let a sound reach zero.
-- `cutoff_radius = N` (Blakod set it explicitly): the Blakod author wants a hard cutoff at N tiles. Used by door open/close (radius=4) so a door slam in one corner of a large hall does not bleed across the whole room.
+- `cutoff_radius = 0` (default in `user.kod`'s `WaveSendUser`):  no opinion.
+  One-shots get the soft inverse falloff so distant combat/spells stay
+  audible across the room, matching pre-OpenAL Miles Sound System behavior
+  where `GamePlaySound()` computed `volume = MAX_VOLUME * 2 / distance` and
+  never let a sound reach zero.
+- `cutoff_radius = N` (kod set it explicitly):  the kod author wants a hard
+  cutoff at N tiles.  Used by door open/close (radius=4) so a door slam in
+  one corner of a large hall does not bleed across the whole room.
 
-Loops always use the linear-clamped model with their Blakod-defined radius. Without the cutoff, every loaded ambient emitter (fountain in every room, firepit in every cave) would mix together forever with no way to bound CPU or audio mix complexity. `fountain.kod` defaults `piSoundRadius = 40` and firepits typically use 5.
+Loops always use the linear-clamped model with their kod-defined radius.
+Without the cutoff, every loaded ambient emitter (fountain in every room,
+firepit in every cave) would mix together forever with no way to bound CPU
+or audio mix complexity.  Fountain.kod defaults `piSoundRadius = 40` and
+firepits typically use 5.
 
-Per-source distance models are enabled via `AL_EXT_source_distance_model` (`alEnable(AL_SOURCE_DISTANCE_MODEL)` at init), which lets each source pick its own model independently of the global default.
+Per-source distance models are enabled via `AL_EXT_source_distance_model`
+(`alEnable(AL_SOURCE_DISTANCE_MODEL)` at init), which lets each source pick
+its own model independently of the global default.
 
 ```mermaid
 flowchart TD
@@ -245,7 +271,7 @@ flowchart TD
     B -->|"No"| C["Centered on local listener<br/>(SOURCE_RELATIVE, no falloff)<br/>Plays equally L/R for this client only"]
     B -->|"Yes"| D{"SF_LOOP flag set?"}
     D -->|"Yes (fountain, firepit)"| E["AL_LINEAR_DISTANCE_CLAMPED<br/>ref=1, max=radius<br/>Hard cutoff at radius"]
-    D -->|"No"| G{"Blakod-set radius?<br/>(radius > 0)"}
+    D -->|"No"| G{"Kod-set radius?<br/>(radius > 0)"}
     G -->|"Yes (door, area effect)"| H["AL_LINEAR_DISTANCE_CLAMPED<br/>ref=1, max=radius<br/>Hard cutoff at radius"]
     G -->|"No (combat, spell)"| F["AL_INVERSE_DISTANCE_CLAMPED<br/>ref=2, max=10000<br/>Soft 1/d falloff, no cutoff"]
 
@@ -262,9 +288,34 @@ All audio positioning uses **tile coordinates** (coarse grid), not fine coordina
 - **Fine coords:** High precision (e.g., 39424, 56832), used for smooth player movement
 - **Tile coords:** Coarse grid (e.g., 56, 18), conversion: `tile = fine >> LOG_FINENESS`
 
-`GamePlaySound()` normalizes object positions (fine) to tile coords before calling audio. `UpdateLoopingSounds()` converts player position (fine) to tile coords for the listener. Server-provided ambient sound positions are already in tile coords.
+`GamePlaySound()` normalizes object positions (fine) to tile coords before calling audio.
+`UpdateLoopingSounds()` converts player position (fine) to tile coords for the listener.
+Server-provided ambient sound positions are already in tile coords.
 
 The listener position is updated each frame via `AudioUpdateListener()`.
+
+### Sources Attached to Moving Objects
+
+When a sound is started for a specific game object (a monster, a player, a
+projectile owner), `GamePlaySound` forwards the object's `source_obj` ID all
+the way down to `SoundPlay`.  If the resulting source is positional, the audio
+layer registers it in a small `g_trackedSources` table.
+
+Each frame `UpdateLoopingSounds()` calls `Audio_UpdateTrackedSources()`, which:
+
+- Drops entries whose source has stopped (one-shots clean themselves up as they
+  finish playing).
+- Looks up the object via `GetRoomObjectById`.  If the object is gone (left the
+  room or was destroyed) the source is stopped to avoid lingering audio at a
+  stale position.
+- Otherwise refreshes `AL_POSITION` from the object's current `motion.x/y` so
+  the sound follows the object as it moves.
+
+Without this, a sound emitted by a moving object stays anchored at the spot
+where the sound first started, regardless of where the object is now.  Sounds
+started with `source_obj == 0` (UI sounds, fixed-position room emitters such as
+fountains and firepits) are never registered and remain at their initial
+position.
 
 ## Audio File Guidelines
 
@@ -288,9 +339,12 @@ When adding new sound files to the game, follow these guidelines for optimal pla
 
 ### Why Mono for 3D Audio?
 
-OpenAL uses the mono audio data and applies HRTF/panning based on the sound's position relative to the listener. With stereo files, OpenAL cannot determine how to spatialize the left vs right channels, so it plays them as-is (no 3D effect).
+OpenAL uses the mono audio data and applies HRTF/panning based on the sound's position
+relative to the listener. With stereo files, OpenAL cannot determine how to spatialize
+the left vs right channels, so it plays them as-is (no 3D effect).
 
-If you notice a sound effect is not panning correctly when you move around it in-game, check if the source file is stereo and convert it to mono.
+If you notice a sound effect is not panning correctly when you move around it in-game,
+check if the source file is stereo and convert it to mono.
 
 ## Configuration
 
@@ -309,7 +363,8 @@ OpenAL Soft supports multiple audio output modes configured via `alsoft.ini` (us
 
 ### HRTF (Headphone 3D Audio)
 
-Head-Related Transfer Function simulates 3D audio for headphone users by applying filters that mimic how sound reaches your ears from different directions.
+Head-Related Transfer Function simulates 3D audio for headphone users by applying filters
+that mimic how sound reaches your ears from different directions.
 
 To enable HRTF, create or edit `alsoft.ini`:
 
@@ -318,11 +373,14 @@ To enable HRTF, create or edit `alsoft.ini`:
 hrtf = true
 ```
 
-OpenAL Soft ships with built-in HRTF data. Additional HRTF profiles (.mhr files) can be placed in the OpenAL Soft data directory.
+OpenAL Soft ships with built-in HRTF data. Additional HRTF profiles (.mhr files) can be
+placed in the OpenAL Soft data directory.
 
 ### Surround Sound (5.1 / 7.1)
 
-OpenAL Soft automatically detects and uses your system's speaker configuration. For multi-channel setups (5.1, 7.1), 3D positional sounds will be correctly spatialized across all speakers.
+OpenAL Soft automatically detects and uses your system's speaker configuration. For
+multi-channel setups (5.1, 7.1), 3D positional sounds will be correctly spatialized
+across all speakers.
 
 To force a specific output mode in `alsoft.ini`:
 
@@ -331,7 +389,8 @@ To force a specific output mode in `alsoft.ini`:
 channels = surround51   ; Options: mono, stereo, quad, surround51, surround61, surround71
 ```
 
-No game configuration is required—OpenAL Soft handles speaker routing automatically based on your Windows audio device settings.
+No game configuration is required—OpenAL Soft handles speaker routing automatically
+based on your Windows audio device settings.
 
 ## Dependencies
 

@@ -433,7 +433,7 @@ void UserMovePlayer(int action)
        player_obj->motion.z <= z &&
        ((last_splash == 0xFFFFFFFF) || ((now - last_splash) > (DWORD)(500*depth))))
    {
-       PlayWaveRsc(effects.wadingsound, MAX_VOLUME, 0, 0, 0, 0, 0);
+       PlayWaveRsc(effects.wadingsound, MAX_VOLUME, 0, 0, 0, 0, 0, 0);
        last_splash = now;
    }
    if (depth == SF_DEPTH0)

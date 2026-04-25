@@ -127,7 +127,7 @@ LPDIRECT3DTEXTURE9 D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCach
 	if (NULL == pTexture)
 		return NULL;
 
-	pTexEntry = (d3d_texture_cache_entry *)D3DRenderMalloc(sizeof(d3d_texture_cache_entry));
+	pTexEntry = reinterpret_cast<d3d_texture_cache_entry*>( malloc(sizeof(d3d_texture_cache_entry)) );
 	assert(pTexEntry);
 
 	IDirect3DTexture9_GetLevelDesc(pTexture, 0, &surfDesc);
@@ -195,7 +195,7 @@ LPDIRECT3DTEXTURE9 D3DCacheTextureLookup(d3d_texture_cache *pTextureCache, d3d_r
 	if (NULL == pTexture)
 		return NULL;
 
-	pTexEntry = (d3d_texture_cache_entry *)D3DRenderMalloc(sizeof(d3d_texture_cache_entry));
+	pTexEntry = reinterpret_cast<d3d_texture_cache_entry*>( malloc(sizeof(d3d_texture_cache_entry)) );
 	assert(pTexEntry);
 
 	IDirect3DTexture9_GetLevelDesc(pTexture, 0, &surfDesc);
@@ -236,7 +236,7 @@ void D3DCacheSystemInit(d3d_render_cache_system *pCacheSystem, int texCacheSize)
 
 	memset(pCacheSystem, 0, sizeof(pCacheSystem));
 	
-	pRenderCache = (d3d_render_cache *)D3DRenderMalloc(sizeof(d3d_render_cache));
+	pRenderCache = reinterpret_cast<d3d_render_cache*>( malloc(sizeof(d3d_render_cache)) );
 
 	if (pRenderCache)
 	{
@@ -310,7 +310,7 @@ d3d_render_cache *D3DCacheSystemSwap(d3d_render_cache_system *pCacheSystem)
 	}
 	else
 	{
-		pRenderCache = (d3d_render_cache *)D3DRenderMalloc(sizeof(d3d_render_cache));
+		pRenderCache = reinterpret_cast<d3d_render_cache*>( malloc(sizeof(d3d_render_cache)) );
 
 		if (pRenderCache)
 		{

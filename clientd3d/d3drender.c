@@ -13,6 +13,8 @@
 d3d_render_packet_new	*gpPacket;
 
 LPDIRECT3DTEXTURE9		gpNoLookThrough = NULL;
+LPDIRECT3DTEXTURE9		gpBackBufferTex[16];
+LPDIRECT3DTEXTURE9		gpBackBufferTexFull;
 LPDIRECT3DTEXTURE9		gpViewElements[NUM_VIEW_ELEMENTS];
 
 D3DVIEWPORT9			gViewport;
@@ -42,9 +44,12 @@ d3d_render_pool_new		gParticlePool;
 custom_xyz				playerOldPos;
 custom_xyz				playerDeltaPos;
 
+font_3d					gFont;
+
 RECT					gD3DRect;
 int						gNumObjects;
 int						gNumDPCalls;
+static PALETTEENTRY		gPalette[256];
 
 static unsigned int		gFrame = 0;
 
@@ -53,6 +58,8 @@ static unsigned int		gFrame = 0;
 // As per the original specification, the smaller buffer is 1/4 the size of the full buffer.
 int						gFullTextureSize;
 int						gSmallTextureSize;
+
+int 					d3dRenderTextureThreshold;
 
 D3DVERTEXELEMENT9		decl0[] = {
 	{0, 0, D3DDECLTYPE_FLOAT3,	 D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0},
@@ -80,12 +87,25 @@ LPDIRECT3DVERTEXDECLARATION9 decl1dc;
 LPDIRECT3DVERTEXDECLARATION9 decl2dc;
 
 int						gD3DRedrawAll = 0;
+bool 					gWireframe;
 
 D3DMATRIX view, mat, rot, trans, proj;
 
-//////////////////////
-// External Globals //
-//////////////////////
+///////////////////////////
+// External Dependencies //
+///////////////////////////
+
+// Defined in graphics.c
+// Main client windows current viewport area
+extern int main_viewport_width;
+extern int main_viewport_height;
+
+// Defined in d3ddriver.c
+extern d3d_driver_profile gD3DDriverProfile;
+
+// Defined in palette.c
+extern Color base_palette[NUM_COLORS];
+
 extern long				viewer_height;
 extern ObjectRange		visible_objects[];    /* Where objects are on screen */
 extern int				num_visible_objects;
@@ -255,7 +275,7 @@ void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize)
 
 	pPool->size = size;
 	pPool->curPacket = 0;
-	pPacket = (d3d_render_packet_new *)D3DRenderMalloc(sizeof(d3d_render_packet_new) * size);
+	pPacket = reinterpret_cast<d3d_render_packet_new*>( malloc(sizeof(d3d_render_packet_new) * size) );
 	assert(pPacket);
 	pPool->renderPacketList = list_create(pPacket);
 	pPool->packetSize = packetSize;
@@ -290,7 +310,7 @@ d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool)
 	{
 		if (pPool->curPacketList->next == NULL)
 		{
-			pPacket = (d3d_render_packet_new *)D3DRenderMalloc(sizeof(d3d_render_packet_new) * pPool->size);
+			pPacket = reinterpret_cast<d3d_render_packet_new*>( malloc(sizeof(d3d_render_packet_new) * pPool->size) );
 			assert(pPacket);
 			list_add_item(pPool->renderPacketList, pPacket);
 		}
@@ -610,6 +630,92 @@ LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 //////////////////////
 // Public Functions //
 //////////////////////
+int D3DRenderIsEnabled(void)
+{
+	return gD3DEnabled;
+}
+
+void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
+   float bias = z_bias * -0.00001f;
+   IDirect3DDevice9_SetRenderState(device, D3DRS_DEPTHBIAS,
+                                   *((DWORD *) &bias));
+}
+
+int DistanceGet(int x, int y)
+{
+	int	distance;
+	float	xf, yf;
+
+	xf = (float)x;
+	yf = (float)y;
+
+	distance = sqrt((double)(xf * xf) + (double)(yf * yf));
+
+	return (int)distance;
+}
+
+// Helper function to determine if an object should be rendered in the current pass based on transparency.
+bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent)
+{
+	return transparent_pass == isTransparent;
+}
+
+// Define field of views with magic numbers for tuning
+float FovHorizontal(long width)
+{
+	return width / (float)(main_viewport_width) * (-PI / 3.78f);
+}
+
+float FovVertical(long height)
+{
+	return height / (float)(main_viewport_height) * (PI / 5.88f);
+}
+
+// Retrieve the threshold value for determining whether to round up the dimensions of a texture.
+int getD3dRenderThreshold()
+{
+	return d3dRenderTextureThreshold;
+}
+
+bool isManagedTexturesEnabled()
+{
+    return gD3DDriverProfile.bManagedTextures;
+}
+
+bool isFogEnabled()
+{
+	return gD3DDriverProfile.bFogEnable;
+}
+
+void setWireframeMode(bool isEnabled)
+{
+	gWireframe = isEnabled;
+}
+
+bool isWireframeMode()
+{
+	return gWireframe;
+}
+
+const font_3d& getFont3d()
+{
+	return gFont;
+}
+
+const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
+{
+	return gpBackBufferTex[0];
+}
+
+PALETTEENTRY* getPalette()
+{
+    return gPalette;
+}
+
+const Color(&getBasePalette())[NUM_COLORS]
+{
+	return base_palette;
+}
 
 /************************************************************************************
 *

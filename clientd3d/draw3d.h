@@ -16,6 +16,10 @@
 
 #include "drawdefs.h"    // Basic constant definitions
 
+// Forward declaration of Vector3D required for getSunVector() to
+// avoid issues with include-order in client.h
+struct Vector3D;  
+
 /* a divided by b, rounded down */
 #define DIVDOWN(a,b) (a)/(b)
 /* a divided by b, rounded up (doesn't work for b<0!!!!) */
@@ -114,6 +118,7 @@ int  GetFlicker(room_contents_node *obj);
 const Draw3DParams& getDrawParams();
 void setDrawParams(Draw3DParams* newDrawParams);
 
+const Vector3D& getSunVector();
 
 #endif /* #ifndef _DRAW3D_H */
 

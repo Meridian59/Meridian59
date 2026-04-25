@@ -75,10 +75,8 @@ static std::list<CacheNode> g_cacheList;
 static std::unordered_map<std::string, std::list<CacheNode>::iterator,
                           CaseInsensitiveHash, CaseInsensitiveEqual> g_cacheMap;
 
-/*
- * Tracked source registry: links a playing OpenAL source to a game object
- * so the source's position can be refreshed each frame as the object moves.
- */
+// Tracked source registry: links a playing OpenAL source to a game object
+// so the source's position can be refreshed each frame as the object moves.
 struct TrackedSource {
    ALuint source;     // OpenAL source currently playing
    ID     object_id;  // Game object whose position the source should follow

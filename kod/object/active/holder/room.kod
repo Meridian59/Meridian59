@@ -644,7 +644,7 @@ messages:
    % Tell client to begin playing room-owned sounds that loop
    SendLoopingSounds(who = $)
    {
-      local lLoopSound, iRadius, iMaxVol;
+      local lLoopSound, iRadius, iMaxVol, oSource;
 
       % Each sound is:
       %  [wave_file, row, col, cutoff radius, maximum volume, object]
@@ -655,6 +655,7 @@ messages:
          {
             iRadius = 0;
             iMaxVol = 0;
+            oSource = 0;
             if length(lLoopSound) > 3
             {
                iRadius = Nth(lLoopSound,4);
@@ -665,7 +666,13 @@ messages:
                iMaxVol = Nth(lLoopSound,5);
             }
 
+            if length(lLoopSound) > 5
+            {
+               oSource = Nth(lLoopSound,6);
+            }
+
             Send(who,@WaveSendUser,#wave_rsc=First(lLoopSound),
+                 #source_obj=oSource,
                  #flags=SOUND_LOOP,
                  #row=Nth(lLoopSound,2),#col=Nth(lLoopSound,3),
                  #cutoff_radius=iRadius,#max_volume=iMaxVol);
@@ -677,7 +684,7 @@ messages:
 
    AddLoopingSound(lSoundData = $)
    {
-      local iRadius, iMaxVol, oObject;
+      local iRadius, iMaxVol, oObject, oSource;
 
       if lSoundData <> $
       {
@@ -686,6 +693,7 @@ messages:
          % Send sound to all players
          iRadius = 0;
          iMaxVol = 0;
+         oSource = 0;
          if length(lSoundData) > 3
          {
             iRadius = Nth(lSoundData,4);
@@ -696,11 +704,17 @@ messages:
             iMaxVol = Nth(lSoundData,5);
          }
 
+         if length(lSoundData) > 5
+         {
+            oSource = Nth(lSoundData,6);
+         }
+
          for oObject in plActive
          {
             if IsClass(first(oObject),&User)
             {
                Send(first(oObject),@WaveSendUser,#wave_rsc=First(lSoundData),
+                    #source_obj=oSource,
                     #flags=SOUND_LOOP,
                     #row=Nth(lSoundData,2),#col=Nth(lSoundData,3),
                     #cutoff_radius=iRadius,#max_volume=iMaxVol);

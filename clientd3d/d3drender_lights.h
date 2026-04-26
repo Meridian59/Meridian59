@@ -71,4 +71,6 @@ float GetGlobalLightScale(void);
 // Report flicker performance stats (called from D3DRenderBegin).
 void D3DLightsReportFlickerPerf(void);
 
+LPDIRECT3DTEXTURE9 D3DRenderLightsGetWhite();
+
 #endif /* #ifndef _D3DRENDERLIGHTS_H */

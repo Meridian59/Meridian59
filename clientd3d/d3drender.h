@@ -115,55 +115,23 @@ inline bool D3DRender_InBounds(float coordinate, float range)
 	return fabs(coordinate) < range;
 }
 
-/////////////////////////
-// Function Prototypes //
-/////////////////////////
-HRESULT				D3DRenderInit(HWND hWnd);
-void				D3DRenderShutDown(void);
-void				D3DRenderBegin(room_type *room, Draw3DParams *params);
-void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
-void				D3DRenderEnableToggle(void);
-int					D3DRenderIsEnabled(void);
-int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
-d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
-												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
-d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
-d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);
-void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
-void				*D3DRenderMalloc(unsigned int bytes);
-void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
+////////////////
+// Prototypes //
+////////////////
 
-LPDIRECT3DTEXTURE9  D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1, 
-	float width, float height);
-
+// Helper Function Prototypes //
+int D3DRenderIsEnabled(void);
 void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias);
 int DistanceGet(int x, int y);
-
-int FindHotspotPdib(PDIB pdib, char hotspot, POINT* point);
-
 bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
-
 float FovHorizontal(long width);
 float FovVertical(long height);
-
-// Retrieve the threshold value for determining whether to round up the dimensions of a texture.
 int getD3dRenderThreshold();
-
-// Returns the max shading range (FINENESS-shade_amount) to FINENESS
-long getShadeAmount();
-
 bool isManagedTexturesEnabled();
 bool isFogEnabled();
-
-const Vector3D& getSunVector();
-
 void setWireframeMode(bool isEnabled);
 bool isWireframeMode();
-
 const font_3d& getFont3d();
-
-const LPDIRECT3DTEXTURE9 getWhiteLightTexture();
-
 const LPDIRECT3DTEXTURE9 getBackBufferTextureZero();
 
 // Global palette array containing 256 color entries used for rendering textures in the current frame.
@@ -173,6 +141,24 @@ PALETTEENTRY* getPalette();
 // Base palette array containing predefined colors used as a reference for rendering effects.
 // This palette remains constant and is used for color lookups and transformations.
 const Color(&getBasePalette())[NUM_COLORS];
+
+
+// Main Function Prototypes //
+HRESULT				D3DRenderInit(HWND hWnd);
+void				D3DRenderShutDown(void);
+void				D3DRenderBegin(room_type *room, Draw3DParams *params);
+void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
+void				D3DRenderEnableToggle(void);
+int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
+d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
+												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
+d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
+d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);
+void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
+void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
+
+LPDIRECT3DTEXTURE9  D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1, 
+	float width, float height);
 
 // D3D State Functions
 void D3DRender_SetAlphaTestState(BOOL enable, DWORD alphaRef, D3DCMPFUNC comparisonFunc);

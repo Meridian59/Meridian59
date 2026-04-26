@@ -271,7 +271,16 @@ The listener position is updated each frame via `AudioUpdateListener()`.
 
 When a sound is started for a specific game object (a monster, a player, a projectile owner), `GamePlaySound` forwards the object's `source_obj` ID all the way down to `SoundPlay`. If the resulting source is positional, the audio layer registers it in a small `g_trackedSources` table.
 
-Each frame `UpdateLoopingSounds()` calls `AudioUpdateTrackedSources()`, which drops entries whose source has stopped (one-shots clean themselves up as they finish playing), looks up the object via `GetRoomObjectById` and stops the source if the object is gone (left the room or was destroyed) to avoid lingering audio at a stale position, and otherwise refreshes `AL_POSITION` from the object's current `motion.x/y` so the sound follows the object as it moves.
+Each frame `UpdateLoopingSounds()` calls `AudioUpdateTrackedSources()`, which drops entries whose source has stopped (one-shots clean themselves up as they finish playing), looks up the object via `GetRoomObjectById`, and refreshes `AL_POSITION` from the object's current `motion.x/y` so the sound follows the object as it moves.
+
+#### Untrack on missing object
+
+If the object lookup fails, the entry is dropped from the tracker but the source is left playing at its last position. This is intentional. Object IDs can become temporarily unreachable when the server renumbers room contents (for example during a system save), even though the same prop is still present under a new ID. Stopping the source on every miss would briefly silence fountains, fire pits, and other looping world audio every save.
+
+Edge cases worth noting:
+- One-shots play to completion. The source finishes naturally and the next frame removes it via the "source no longer playing" branch.
+- After a renumber, the server resends `BK_PLAY_WAVE` for the same prop with its new ID. For looping sounds, `SoundPlay` notices the WAV is already playing on a source and returns early without starting a duplicate, so there is no overlap. The existing loop keeps playing at its last position and is no longer tracked, which is fine for stationary props (fountains, fire pits). A moving object with a loop would stop following until the next room transition clears state.
+- Genuine "this sound should stop" still flows through the server sending an explicit stop, which `Audio_StopSourcesForFilename` honors. Looping sources are also bounded by `SoundStopAll` on room transitions.
 
 Without this, a sound emitted by a moving object stays anchored at the spot where the sound first started, regardless of where the object is now. Sounds started with `source_obj == 0` (UI sounds, fixed-position room emitters such as fountains and firepits) are never registered and remain at their initial position.
 

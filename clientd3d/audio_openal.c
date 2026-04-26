@@ -1194,7 +1194,7 @@ void Audio_StopSourcesForFilename(const char* filename)
 /*
  * AudioUpdateTrackedSources: Refresh OpenAL source positions for sounds
  *   attached to moving game objects.  Drops entries whose source has stopped
- *   or whose object is no longer in the room.
+ *   or whose object can no longer be found by ID.
  */
 void AudioUpdateTrackedSources(void)
 {
@@ -1217,9 +1217,7 @@ void AudioUpdateTrackedSources(void)
       room_contents_node *obj = GetRoomObjectById(object_id);
       if (obj == NULL)
       {
-         // Object left the room or was destroyed; stop the sound so it does
-         // not linger at a stale position.
-         alSourceStop(source);
+         // Untrack but leave the source playing at its last position.
          it = g_trackedSources.erase(it);
          continue;
       }

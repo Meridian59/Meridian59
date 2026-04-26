@@ -28,7 +28,7 @@
 #include <stb_vorbis.c>
 
 // Configuration
-static const int MAX_AUDIO_SOURCES = 32;
+static const int MAX_AUDIO_SOURCES = 64;
 static const int MAX_CACHED_BUFFERS = 256;
 
 // Global state

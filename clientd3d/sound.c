@@ -86,7 +86,7 @@ void SoundInitialize(void)
  */
 M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 							BYTE flags, int src_row, int src_col, int radius,
-							int max_vol)
+							int max_vol, ID source_obj)
 {
 	if (!fname || fname[0] == '\0')
 		return false;
@@ -99,21 +99,21 @@ M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 	if (!fs::path(fname).has_parent_path())
 	{
 		std::string pathbuf = (fs::path(sound_dir) / fname).string();
-		played = SoundPlay(pathbuf.c_str(), volume, flags, src_row, src_col, radius, max_vol);
+		played = SoundPlay(pathbuf.c_str(), volume, flags, src_row, src_col, radius, max_vol, source_obj);
 		if (played)
 		{
 			actual_path = pathbuf;
 		}
 		else
 		{
-			played = SoundPlay(fname, volume, flags, src_row, src_col, radius, max_vol);
+			played = SoundPlay(fname, volume, flags, src_row, src_col, radius, max_vol, source_obj);
 			if (played)
 				actual_path = fname;
 		}
 	}
 	else
 	{
-		played = SoundPlay(fname, volume, flags, src_row, src_col, radius, max_vol);
+		played = SoundPlay(fname, volume, flags, src_row, src_col, radius, max_vol, source_obj);
 		if (played)
 			actual_path = fname;
 	}
@@ -128,7 +128,8 @@ M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
 	return played;
 }
 
-M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int radius, int max_vol)
+M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col,
+						   int radius, int max_vol, ID source_obj)
 {
 	char *name;
 
@@ -141,7 +142,7 @@ M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int
 		return;
 
 	/* Forward to PlayWaveFile which handles path resolution and ambient tracking */
-	PlayWaveFile(hMain, name, volume, flags, row, col, radius, max_vol);
+	PlayWaveFile(hMain, name, volume, flags, row, col, radius, max_vol, source_obj);
 }
 
 M59EXPORT void SoundAbort(void)
@@ -169,4 +170,7 @@ void UpdateLoopingSounds(int px, int py, int angle)
 
 	// Update OpenAL listener position and orientation
 	AudioUpdateListener((float)px, 0.0f, (float)py, forwardX, 0.0f, forwardZ);
+
+	// Refresh positions of sources attached to moving game objects
+	AudioUpdateTrackedSources();
 }

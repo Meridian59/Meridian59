@@ -87,7 +87,7 @@ graph TD
 | `SoundPlay(filename, volume, flags, ...)` | Play sound effect with optional 3D positioning |
 | `SoundStopAll()` | Stop all sound effects |
 | `AudioUpdateListener(x, y, z, ...)` | Update listener position for 3D audio |
-| `Audio_UpdateTrackedSources()` | Refresh positions of sources attached to moving game objects |
+| `AudioUpdateTrackedSources()` | Refresh positions of sources attached to moving game objects |
 
 ### Music API (music.c)
 
@@ -271,7 +271,7 @@ The listener position is updated each frame via `AudioUpdateListener()`.
 
 When a sound is started for a specific game object (a monster, a player, a projectile owner), `GamePlaySound` forwards the object's `source_obj` ID all the way down to `SoundPlay`. If the resulting source is positional, the audio layer registers it in a small `g_trackedSources` table.
 
-Each frame `UpdateLoopingSounds()` calls `Audio_UpdateTrackedSources()`, which drops entries whose source has stopped (one-shots clean themselves up as they finish playing), looks up the object via `GetRoomObjectById` and stops the source if the object is gone (left the room or was destroyed) to avoid lingering audio at a stale position, and otherwise refreshes `AL_POSITION` from the object's current `motion.x/y` so the sound follows the object as it moves.
+Each frame `UpdateLoopingSounds()` calls `AudioUpdateTrackedSources()`, which drops entries whose source has stopped (one-shots clean themselves up as they finish playing), looks up the object via `GetRoomObjectById` and stops the source if the object is gone (left the room or was destroyed) to avoid lingering audio at a stale position, and otherwise refreshes `AL_POSITION` from the object's current `motion.x/y` so the sound follows the object as it moves.
 
 Without this, a sound emitted by a moving object stays anchored at the spot where the sound first started, regardless of where the object is now. Sounds started with `source_obj == 0` (UI sounds, fixed-position room emitters such as fountains and firepits) are never registered and remain at their initial position.
 

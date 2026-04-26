@@ -172,5 +172,5 @@ void UpdateLoopingSounds(int px, int py, int angle)
 	AudioUpdateListener((float)px, 0.0f, (float)py, forwardX, 0.0f, forwardZ);
 
 	// Refresh positions of sources attached to moving game objects
-	Audio_UpdateTrackedSources();
+	AudioUpdateTrackedSources();
 }

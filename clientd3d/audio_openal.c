@@ -1198,7 +1198,7 @@ void Audio_StopSourcesForFilename(const char* filename)
 }
 
 /*
- * Audio_UpdateTrackedSources: Refresh OpenAL source positions for sounds
+ * AudioUpdateTrackedSources: Refresh OpenAL source positions for sounds
  *   attached to moving game objects.  Drops entries whose source has stopped
  *   or whose object is no longer in the room.
  */

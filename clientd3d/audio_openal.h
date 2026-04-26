@@ -41,7 +41,7 @@ void Audio_StopSourcesForFilename(const char* filename);
 
 // Update positions of sources tracked to a moving game object.  Call once
 // per frame.  Stopped sources and missing objects are pruned automatically.
-void Audio_UpdateTrackedSources(void);
+void AudioUpdateTrackedSources(void);
 
 // Sets the listener's position and facing direction for 3D audio
 void AudioUpdateListener(float x, float y, float z, 

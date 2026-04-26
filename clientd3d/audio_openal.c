@@ -77,11 +77,9 @@ static std::unordered_map<std::string, std::list<CacheNode>::iterator,
 
 // Tracked source registry: links a playing OpenAL source to a game object
 // so the source's position can be refreshed each frame as the object moves.
-struct TrackedSource {
-   ALuint source;     // OpenAL source currently playing
-   ID     object_id;  // Game object whose position the source should follow
-};
-static std::vector<TrackedSource> g_trackedSources;
+// Key is the OpenAL source ID, value is the game object whose position the
+// source should follow.
+static std::unordered_map<ALuint, ID> g_trackedSources;
 
 // Music streaming state
 static const int STREAM_NUM_BUFFERS = 4;
@@ -1113,7 +1111,7 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
    // loops at placeholder coords) ignore source_obj.
    if (isPositional && source_obj != 0)
    {
-      g_trackedSources.push_back({source, source_obj});
+      g_trackedSources[source] = source_obj;
    }
 
    return true;
@@ -1188,11 +1186,7 @@ void Audio_StopSourcesForFilename(const char* filename)
       {
          alSourceStop(g_sources[i]);
          alSourcei(g_sources[i], AL_BUFFER, 0);
-
-         // Drop any tracked entries pointing at this source
-         auto end = std::remove_if(g_trackedSources.begin(), g_trackedSources.end(),
-            [src = g_sources[i]](const TrackedSource& t) { return t.source == src; });
-         g_trackedSources.erase(end, g_trackedSources.end());
+         g_trackedSources.erase(g_sources[i]);
       }
    }
 }
@@ -1209,20 +1203,23 @@ void AudioUpdateTrackedSources(void)
 
    for (auto it = g_trackedSources.begin(); it != g_trackedSources.end(); )
    {
+      ALuint source = it->first;
+      ID object_id = it->second;
+
       ALint state = AL_STOPPED;
-      alGetSourcei(it->source, AL_SOURCE_STATE, &state);
+      alGetSourcei(source, AL_SOURCE_STATE, &state);
       if (state != AL_PLAYING && state != AL_PAUSED)
       {
          it = g_trackedSources.erase(it);
          continue;
       }
 
-      room_contents_node *obj = GetRoomObjectById(it->object_id);
+      room_contents_node *obj = GetRoomObjectById(object_id);
       if (obj == NULL)
       {
          // Object left the room or was destroyed; stop the sound so it does
          // not linger at a stale position.
-         alSourceStop(it->source);
+         alSourceStop(source);
          it = g_trackedSources.erase(it);
          continue;
       }
@@ -1230,7 +1227,7 @@ void AudioUpdateTrackedSources(void)
       int row = obj->motion.y >> LOG_FINENESS;
       int col = obj->motion.x >> LOG_FINENESS;
       // Negate X to match the listener's coordinate convention
-      alSource3f(it->source, AL_POSITION, -(float)col, 0.0f, (float)row);
+      alSource3f(source, AL_POSITION, -(float)col, 0.0f, (float)row);
       ++it;
    }
 }

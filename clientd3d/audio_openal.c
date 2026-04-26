@@ -1202,7 +1202,7 @@ void Audio_StopSourcesForFilename(const char* filename)
  *   attached to moving game objects.  Drops entries whose source has stopped
  *   or whose object is no longer in the room.
  */
-void Audio_UpdateTrackedSources(void)
+void AudioUpdateTrackedSources(void)
 {
    if (!g_initialized || g_trackedSources.empty())
       return;

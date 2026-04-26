@@ -125,158 +125,164 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool);
 /////////////////////////////
 void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 {
-	D3DCAPS9		d3dCaps;
-	HDC				hDC;
-	HBITMAP			hbmBitmap;
-	DWORD			*pBitmapBits;
-	BITMAPINFO		bmi;
-	long x = 0;
-	long y = 0;
-	TCHAR			str[2] = _T("x");
-	TCHAR			c;
-	SIZE			size;
-	D3DLOCKED_RECT	d3dlr;
-	WORD			*pDst16;
-	BYTE			bAlpha;
-
 	// Ask for a bigger font to reduce aliasing, then scale the texture
 	// down by the same amount.
-	float fontScale = 3.0;
-	HFONT hScaledFont = FontsGetScaledFont(hFont, fontScale);
+	static constexpr float FONT_SCALE = 3.0;
+	HFONT hScaledFont = FontsGetScaledFont(hFont, FONT_SCALE);
 	assert(hScaledFont);
 
 	pFont->fontHeight = GetFontHeight(hScaledFont);
-	pFont->texScale = fontScale;
+	pFont->texScale = FONT_SCALE;
 
-	if (pFont->fontHeight > 40)
-		pFont->texWidth = pFont->texHeight = 1024;
-	else if (pFont->fontHeight > 20)
-		pFont->texWidth = pFont->texHeight = 512;
+	static constexpr int LARGE_FONT_THRESHOLD = 40;
+	static constexpr int MEDIUM_FONT_THRESHOLD = 20;
+
+	static constexpr int FONT_TEXTURE_SIZE_LARGE = 1024;
+	static constexpr int FONT_TEXTURE_SIZE_MEDIUM = 512;
+	static constexpr int FONT_TEXTURE_SIZE_SMALL = 256;
+
+	if (pFont->fontHeight > LARGE_FONT_THRESHOLD)
+		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_LARGE;
+	else if (pFont->fontHeight > MEDIUM_FONT_THRESHOLD)
+		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_MEDIUM;
 	else
-		pFont->texWidth = pFont->texHeight = 256;
+		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_SMALL;
 
-	IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &d3dCaps);
+	D3DCAPS9 d3dCaps = {};
+	gpD3DDevice->GetDeviceCaps(&d3dCaps);
 
-	if (pFont->texWidth > (long) d3dCaps.MaxTextureWidth)
+	if ( pFont->texWidth > static_cast<long>(d3dCaps.MaxTextureWidth) )
 	{
-		pFont->texScale *= (float)pFont->texWidth / (float)d3dCaps.MaxTextureWidth;
+		pFont->texScale *= static_cast<float>(pFont->texWidth) / static_cast<float>(d3dCaps.MaxTextureWidth);
 		pFont->texHeight = pFont->texWidth = d3dCaps.MaxTextureWidth;
 	}
 
 	if (pFont->pTexture)
-		IDirect3DTexture9_Release(pFont->pTexture);
+		pFont->pTexture->Release();
 
-	IDirect3DDevice9_CreateTexture(
-		gpD3DDevice, pFont->texWidth,
-		pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
-		D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
+	gpD3DDevice->CreateTexture(pFont->texWidth, pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
+									D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
 
-	memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
-	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmi.bmiHeader.biWidth = (int)pFont->texWidth;
-	bmi.bmiHeader.biHeight = -(int)pFont->texHeight;
-	bmi.bmiHeader.biPlanes = 1;
-	bmi.bmiHeader.biCompression = BI_RGB;
-	bmi.bmiHeader.biBitCount = 32;
+	static constexpr int BITMAP_PLANES = 1;
+	static constexpr int BITMAP_BIT_DEPTH = 32;
 
-	hDC = CreateCompatibleDC(gBitsDC);
-	hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, nullptr, 0 );
-	SetMapMode(hDC, MM_TEXT);
+	// Initialize bitmap info. Top-down DIBs (negative height) match D3D's coordinate system.
+	BITMAPINFO bitmapInfo = {};
+	bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bitmapInfo.bmiHeader.biWidth = static_cast<int>(pFont->texWidth);
+	bitmapInfo.bmiHeader.biHeight = -static_cast<int>(pFont->texHeight);
+	bitmapInfo.bmiHeader.biPlanes = BITMAP_PLANES;
+	bitmapInfo.bmiHeader.biCompression = BI_RGB;
+	bitmapInfo.bmiHeader.biBitCount = BITMAP_BIT_DEPTH;
 
-	SelectObject(hDC, hbmBitmap);
-	SelectObject(hDC, hScaledFont);
+	// Handle to Device Context for fonts.
+	HDC fontDC = CreateCompatibleDC(gBitsDC);
+	DWORD *pBitmapBits = nullptr;
+	HBITMAP fontBitmap = CreateDIBSection(fontDC, &bitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBitmapBits), nullptr, 0);
+	SetMapMode(fontDC, MM_TEXT);
+
+	SelectObject(fontDC, fontBitmap);
+	SelectObject(fontDC, hScaledFont);
 
 	// Set text properties
-	SetTextColor(hDC, RGB(255,255,255));
-	SetBkColor(hDC, 0);
-	SetBkMode(hDC, TRANSPARENT);
-	SetTextAlign(hDC, TA_TOP);
+	SetTextColor(fontDC, RGB(255,255,255));
+	SetBkColor(fontDC, 0);
+	SetBkMode(fontDC, TRANSPARENT);
+	SetTextAlign(fontDC, TA_TOP);
 
-	for (c = 32; c < 127; c++ )
+	// Temporary string that holds both a character and a null terminator.
+	TCHAR charBuffer[2] = _T("x");
+
+	// Tracks next available pixel position in the texture atlas.
+	long atlasX = 0;
+	long atlasY = 0;
+
+	// Iterate through printable ASCII characters.
+	for (int i = 0; i < NUM_CHARS; i++)
 	{
-		int index = c-32;
+		// Skip the first 32 non-printable characters.
+		TCHAR currentChar = static_cast<TCHAR>(i + 32);
 
-		str[0] = c;
-		GetTextExtentPoint32(hDC, str, 1, &size);
+		charBuffer[0] = currentChar;
 
-		if (!GetCharABCWidths(hDC, c, c, &pFont->abc[index]))
+		SIZE size = {};
+		GetTextExtentPoint32(fontDC, charBuffer, 1, &size);
+
+		if (!GetCharABCWidths(fontDC, currentChar, currentChar, &pFont->abc[i]))
 		{
-			pFont->abc[index].abcA = 0;
-			pFont->abc[index].abcB = size.cx;
-			pFont->abc[index].abcC = 0;
+			// If font isn't TrueType, fallback to basic width (abcB).
+			pFont->abc[i] = { 0, static_cast<UINT>(size.cx), 0 };
 		}
 
-		size.cx = pFont->abc[index].abcB;
+		// Use the 'B' width (actual character body) for layout.
+		size.cx = pFont->abc[i].abcB;
 
 		// Is this row of the texture filled up?
-		if (x + size.cx >= pFont->texWidth)
+		if (atlasX + size.cx >= pFont->texWidth)
 		{
-			x = 0;
-			y += size.cy + 1;
+			atlasX = 0;
+			atlasY += (size.cy + 1);
 		}
 
-		int left_offset = pFont->abc[index].abcA;
-		ExtTextOut(hDC, x - left_offset, y+0, 0, nullptr, str, 1, nullptr);
+		int left_offset = pFont->abc[i].abcA;
+		ExtTextOut(fontDC, (atlasX - left_offset), atlasY, 0, nullptr, charBuffer, 1, nullptr);
 
-		pFont->texST[index][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
-		pFont->texST[index][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
-		pFont->texST[index][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
-		pFont->texST[index][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
+		pFont->texST[i][0] = {(static_cast<float>(atlasX) / pFont->texWidth), 
+									(static_cast<float>(atlasY) / pFont->texHeight)};
+
+		pFont->texST[i][1] = {(static_cast<float>(atlasX + size.cx) / pFont->texWidth),
+									(static_cast<float>(atlasY + size.cy) / pFont->texHeight)};
 
 		// Leave +1 space so bilinear filtering doesn't pick up neighboring character
-		x += size.cx+1;
+		atlasX += (size.cx + 1);  
 	}
 
-	IDirect3DTexture9_LockRect(pFont->pTexture, 0, &d3dlr, 0, 0);
+	D3DLOCKED_RECT d3dlr = {};
+	pFont->pTexture->LockRect(0, &d3dlr, 0, 0);
 
-	BYTE *pDstRow = (BYTE*)d3dlr.pBits;
+	BYTE *pDstRow = reinterpret_cast<BYTE*>(d3dlr.pBits);
 
-	for (y = 0; y < pFont->texHeight; y++)
+	// Convert a texture bitmask into a 16-bit pixel format.
+	for (int y = 0; y < pFont->texHeight; y++)
 	{
-		pDst16 = (WORD *)pDstRow;
-		for (x = 0; x < pFont->texWidth; x++)
+		WORD *pDst16 = reinterpret_cast<WORD*>(pDstRow);
+		for (int x = 0; x < pFont->texWidth; x++)
 		{
-			bAlpha = (BYTE)((pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4);
-			if (bAlpha > 0)
-			{
-				*pDst16++ = (bAlpha << 12) | 0x0fff;
-			}
-			else
-			{
-				*pDst16++ = 0x0000;
-			}
+			// Extract 4-bit alpha from 8-bit source.
+			BYTE bAlpha = static_cast<BYTE>( (pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4 );
+
+			// If there's any alpha, set color to white with alpha. Otherwise it's transparent.
+			*pDst16++ = (bAlpha > 0) ? (static_cast<WORD>(bAlpha << 12) | 0x0FFF) : 0x0000;
 		}
 		pDstRow += d3dlr.Pitch;
 	}
 
-	IDirect3DTexture9_UnlockRect(pFont->pTexture, 0);
+	pFont->pTexture->UnlockRect(0);
 
 	// Get kerning pairs for font
-	pFont->numKerningPairs = GetKerningPairs(hDC, 0, nullptr);
+	pFont->numKerningPairs = GetKerningPairs(fontDC, 0, nullptr);
 	pFont->kerningPairs = new KERNINGPAIR[pFont->numKerningPairs];
-	GetKerningPairs(hDC, pFont->numKerningPairs, pFont->kerningPairs);
+	GetKerningPairs(fontDC, pFont->numKerningPairs, pFont->kerningPairs);
 
-	DeleteObject(hbmBitmap);
+	DeleteObject(fontBitmap);
 	DeleteObject(hScaledFont);
-	DeleteDC(hDC);
+	DeleteDC(fontDC);
 }
 
 // new render stuff
 void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize)
 {
-	d3d_render_packet_new	*pPacket = nullptr;
-	u_int	i;
-
 	pPool->size = size;
 	pPool->curPacket = 0;
-	pPacket = reinterpret_cast<d3d_render_packet_new*>( malloc(sizeof(d3d_render_packet_new) * size) );
+
+	d3d_render_packet_new *pPacket = reinterpret_cast<d3d_render_packet_new*>( malloc(sizeof(d3d_render_packet_new) * size) );
 	assert(pPacket);
 	pPool->renderPacketList = list_create(pPacket);
 	pPool->packetSize = packetSize;
 
 	D3DRenderPoolReset(pPool, nullptr);
 
-	for (i = 0; i < pPool->size; i++)
+	for (u_int i = 0; i < pPool->size; i++)
 	{
 		pPacket->size = packetSize;
 	}
@@ -293,12 +299,12 @@ void D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc)
 	pPool->curPacket = 0;
 	pPool->numLists = 0;
 	pPool->curPacketList = pPool->renderPacketList;
-	pPool->pMaterialFctn = (MaterialFctn) pMaterialFunc;
+	pPool->pMaterialFctn = reinterpret_cast<MaterialFctn>(pMaterialFunc);
 }
 
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool)
 {
-	d3d_render_packet_new	*pPacket;
+	d3d_render_packet_new *pPacket;
 
 	if (pPool->curPacket >= pPool->size)
 	{
@@ -309,22 +315,20 @@ d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool)
 			list_add_item(pPool->renderPacketList, pPacket);
 		}
 		else
-			pPacket = (d3d_render_packet_new *)pPool->curPacketList->next->data;
+		{
+			reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->next->data);
+		}
 
 		pPool->curPacketList = pPool->curPacketList->next;
 		pPool->curPacket = 1;
 		pPool->numLists++;
 
-		pPacket = (d3d_render_packet_new *)pPool->curPacketList->data;
+		pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->data);
 	}
 	else
 	{
-		pPacket = (d3d_render_packet_new *)pPool->curPacketList->data;
+		pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->data);
 		pPacket += pPool->curPacket;
-
-		if (pPool->curPacket == 12)
-			gpPacket = pPacket;
-
 		pPool->curPacket++;
 	}
 
@@ -348,12 +352,9 @@ d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket)
 {
 	if (pPacket->curChunk >= (pPacket->size - 1))
 		return nullptr;
-	else
-	{
-		pPacket->curChunk++;
-		D3DRenderChunkInit(&pPacket->renderChunks[pPacket->curChunk - 1]);
-		return &pPacket->renderChunks[pPacket->curChunk - 1];
-	}
+	pPacket->curChunk++;
+	D3DRenderChunkInit(&pPacket->renderChunks[pPacket->curChunk - 1]);
+	return &pPacket->renderChunks[pPacket->curChunk - 1];
 }
 
 void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
@@ -374,24 +375,23 @@ void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
 	pChunk->pRenderCache = nullptr;
 }
 
-d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
+d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, IDirect3DTexture9* pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect)
 {
-	u_int						count, numPackets;
-	d3d_render_packet_new	*pPacket;
-	list_type				list;
+	d3d_render_packet_new *pPacket;
 
-	for (list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
+	for (list_type list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
 	{
 		pPacket = (d3d_render_packet_new *)list->data;
 
+		u_int numPackets;
 		if (list == pPool->curPacketList)
 			numPackets = pPool->curPacket;
 		else
 			numPackets = pPool->size;
 
 		// for each packet
-		for (count = 0; count < numPackets; count++, pPacket++)
+		for (u_int count = 0; count < numPackets; count++, pPacket++)
 		{
 			// if we find a match that isn't full already, return it
 			if ((pPacket->pDib == pDib) && (pPacket->pTexture == pTexture) &&
@@ -422,33 +422,24 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 
 void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 {
-	// Render view elements (such as the main viewport yellow ui corners)
-	int i, j;
-	float screenW, screenH, foffset;
-	int offset = 0;
-	d3d_render_packet_new *pPacket;
-	d3d_render_chunk_new *pChunk;
+	float screenW = static_cast<float>(gD3DRect.right - gD3DRect.left) / static_cast<float>(gScreenWidth);
+	float screenH = static_cast<float>(gD3DRect.bottom - gD3DRect.top) / static_cast<float>(gScreenHeight);
 
-	screenW = (float) (gD3DRect.right - gD3DRect.left) / (float) gScreenWidth;
-	screenH = (float) (gD3DRect.bottom - gD3DRect.top) / (float) gScreenHeight;
-
-	if (GetFocus() == hMain)
-		offset = 4;
-
-	foffset = 1.0f / 64.0f;
+	// Render view elements (such as the main viewport yellow ui corners).
+	int offset = (GetFocus() == hMain) ? 4 : 0;
 
 	// 0 = top-left
 	// 1 = top-right
 	// 2 = bottom-left
 	// 3 = bottom-right
-
-	for (i = 0; i < 4; ++i)
+	static constexpr int NUM_CORNERS = 4;
+	for (int i = 0; i < NUM_CORNERS; ++i)
 	{
+		float width = static_cast<float>(ViewElements[i + offset].width) / screenW;
+		float height = static_cast<float>(ViewElements[i + offset].height) / screenH;
+		
 		float left, right, top, bottom;
-
-		float width = (float)ViewElements[i + offset].width / screenW;
-		float height = (float)ViewElements[i + offset].height / screenH;
-
+	  
 		if (i % 2 == 0)  // left side
 		{
 			left = D3DRENDER_SCREEN_TO_CLIP_X(0, gScreenWidth);
@@ -471,7 +462,7 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 			bottom = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight);
 		}
 
-		pPacket = D3DRenderPacketNew(pPool);
+		d3d_render_packet_new *pPacket = D3DRenderPacketNew(pPool);
 		pPacket->pDib = nullptr;
 		pPacket->pTexture = gpViewElements[i + offset];
 		pPacket->xLat0 = 0;
@@ -479,7 +470,7 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 		pPacket->effect = 0;
 		pPacket->size = pPool->packetSize;
 
-		pChunk = D3DRenderChunkNew(pPacket);
+		d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
 		pChunk->flags = 0;
 		pChunk->numIndices = 4;
 		pChunk->numVertices = 4;
@@ -490,35 +481,22 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
 		pChunk->pMaterialFctn = D3DMaterialNone;
 
-		pChunk->xyz[0].x = left;
-		pChunk->xyz[0].z = top;
-		pChunk->xyz[0].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[1].x = left;
-		pChunk->xyz[1].z = bottom;
-		pChunk->xyz[1].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[2].x = right;
-		pChunk->xyz[2].z = bottom;
-		pChunk->xyz[2].y = VIEW_ELEMENT_Z;
-		pChunk->xyz[3].x = right;
-		pChunk->xyz[3].z = top;
-		pChunk->xyz[3].y = VIEW_ELEMENT_Z;
+		pChunk->xyz[0] = { left, VIEW_ELEMENT_Z, top };
+		pChunk->xyz[1] = { left, VIEW_ELEMENT_Z, bottom };	  
+		pChunk->xyz[2] = { right, VIEW_ELEMENT_Z, bottom };
+		pChunk->xyz[3] = { right, VIEW_ELEMENT_Z, top };	  
 
-		for (j = 0; j < 4; j++)
+		for (auto& color : pChunk->bgra)
 		{
-			pChunk->bgra[j].b = 255;
-			pChunk->bgra[j].g = 255;
-			pChunk->bgra[j].r = 255;
-			pChunk->bgra[j].a = 255;
+		 color = {255, 255, 255, 255}; // Solid white (no tinting)
 		}
 
-		pChunk->st0[0].s = foffset;
-		pChunk->st0[0].t = foffset;
-		pChunk->st0[1].s = foffset;
-		pChunk->st0[1].t = 1.0f - foffset;
-		pChunk->st0[2].s = 1.0f - foffset;
-		pChunk->st0[2].t = 1.0f - foffset;
-		pChunk->st0[3].s = 1.0f - foffset;
-		pChunk->st0[3].t = foffset;
+		// Half-pixel offset to prevent texture bleeding.
+		static constexpr float foffset = 1.0f / 64.0f;
+		pChunk->st0[0] = { foffset, foffset };
+		pChunk->st0[1] = { foffset, (1.0f - foffset) };
+		pChunk->st0[2] = { (1.0f - foffset), (1.0f - foffset) };
+		pChunk->st0[3] = { (1.0f - foffset), foffset };
 
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;

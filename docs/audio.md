@@ -159,6 +159,17 @@ Sound effects are cached using an LRU (Least Recently Used) strategy:
 
 Music is NOT cached because tracks are large and typically don't repeat rapidly. Instead, music uses streaming playback (see below).
 
+## Source Pool
+
+OpenAL plays sound effects through a fixed pool of pre-allocated sources. The pool size is set by `MAX_AUDIO_SOURCES` in `clientd3d/audio_openal.c`.
+
+- Current size: 64 sources
+- Allocated once at `AudioInit` via `alGenSources(MAX_AUDIO_SOURCES, g_sources)`
+- Each `SoundPlay` call consumes one source while the sound is active, regardless of whether the listener is in audible range
+- When the pool is full, `SoundPlay` returns false silently and the new sound is dropped
+
+The pool was originally 32 when OpenAL Soft replaced wavemix in PR #1293 (December 2025). It was raised to 64 to leave headroom for combat sounds when many ambient looping emitters (firepits, torches, braziers) are active in a room.
+
 ## Music Streaming
 
 Music files are played via streaming rather than full-file decoding. This eliminates the loading hitch that occurred when decompressing entire OGG files (30-50 MB of decoded PCM from 2-7 MB OGG files) in a single blocking call on the main thread.

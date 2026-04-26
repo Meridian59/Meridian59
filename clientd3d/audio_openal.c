@@ -1204,7 +1204,7 @@ void Audio_StopSourcesForFilename(const char* filename)
  */
 void AudioUpdateTrackedSources(void)
 {
-   if (!g_initialized || g_trackedSources.empty())
+   if (!g_initialized)
       return;
 
    for (auto it = g_trackedSources.begin(); it != g_trackedSources.end(); )

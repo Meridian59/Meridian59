@@ -316,8 +316,8 @@ Audio settings in `meridian.ini`:
 
 ```ini
 [Meridian]
-MusicVolume=40      ; 0-100
-SoundVolume=99      ; 0-100 (one-shot effects: combat, spells, doors, scream)
+MusicVolume=100      ; 0-100
+SoundVolume=100      ; 0-100 (one-shot effects: combat, spells, doors, scream)
 AmbientVolume=100   ; 0-100 (looping environmental emitters: fountain, firepit)
 ```
 

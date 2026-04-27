@@ -317,9 +317,20 @@ Audio settings in `meridian.ini`:
 ```ini
 [Meridian]
 MusicVolume=40      ; 0-100
-SoundVolume=99      ; 0-100
-AmbientVolume=100   ; 0-100 (looping/3D sounds)
+SoundVolume=99      ; 0-100 (one-shot effects: combat, spells, doors, scream)
+AmbientVolume=100   ; 0-100 (looping environmental emitters: fountain, firepit)
 ```
+
+### Volume routing
+
+The two volume sliders are selected purely by the `SF_LOOP` flag on the sound, regardless of whether the sound is positional (3D) or non-positional (centered):
+
+| Sound type | Examples | Slider |
+|------------|----------|--------|
+| `SF_LOOP` (looping) | Fountain, firepit, forge, future torches/braziers | Ambient |
+| One-shot | Combat hits, spell impacts, doors, death scream, scripted effects | Sound |
+
+The `Steady Sounds` checkbox is a master toggle for `SF_LOOP` sounds; the `Atmospheric Sounds` checkbox toggles `SF_RANDOM_PLACE` sounds (server-picked random ambient one-shots).
 
 ## HRTF and Surround Sound
 

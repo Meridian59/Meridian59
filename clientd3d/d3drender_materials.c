@@ -78,14 +78,14 @@ bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 		if (pChunk->pSector)
 		{
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-				SetZBias(gpD3DDevice, 0);
+				SetZBias(0);
 			else
-            SetZBias(gpD3DDevice, ZBIAS_WORLD);
+            SetZBias(ZBIAS_WORLD);
 		}
 	}
 	else
 	{
-		SetZBias(gpD3DDevice, ZBIAS_WORLD);
+		SetZBias(ZBIAS_WORLD);
 	}
 
 	// Clamp texture V axis if vertical tiling is disabled 
@@ -144,14 +144,14 @@ bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 		if (pChunk->pSector)
 		{
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-				SetZBias(gpD3DDevice, 0);
+				SetZBias(0);
 			else
-				SetZBias(gpD3DDevice, ZBIAS_WORLD);
+				SetZBias(ZBIAS_WORLD);
 		}
 	}
 	else
 	{
-		SetZBias(gpD3DDevice, ZBIAS_WORLD);
+		SetZBias(ZBIAS_WORLD);
 	}
 
 	// Clamp texture V axis if vertical tiling is disabled 
@@ -197,7 +197,7 @@ bool D3DMaterialMaskChunk(d3d_render_chunk_new *pChunk)
 	else
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_CW);
 
-	SetZBias(gpD3DDevice, pChunk->zBias);
+	SetZBias(pChunk->zBias);
 
 	return true;
 }
@@ -263,13 +263,13 @@ bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk)
 		{
 			const auto& current_room = getCurrentRoom();
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-				SetZBias(gpD3DDevice, 0);
+				SetZBias(0);
 			else
-				SetZBias(gpD3DDevice, ZBIAS_WORLD);
+				SetZBias(ZBIAS_WORLD);
 		}
 	}
 	else
-		SetZBias(gpD3DDevice, ZBIAS_WORLD);
+		SetZBias(ZBIAS_WORLD);
 
 	return true;
 }
@@ -286,13 +286,13 @@ bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
 		{
 			const auto& current_room = getCurrentRoom();
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-				SetZBias(gpD3DDevice, 0);
+				SetZBias(0);
 			else
-				SetZBias(gpD3DDevice, ZBIAS_WORLD);
+				SetZBias(ZBIAS_WORLD);
 		}
 	}
 	else
-      SetZBias(gpD3DDevice, ZBIAS_WORLD);
+      SetZBias(ZBIAS_WORLD);
 
 	if (pChunk->pSector)
 		if (pChunk->pSector->flags & SF_HAS_ANIMATED)
@@ -352,7 +352,7 @@ bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
 
-	SetZBias(gpD3DDevice, pChunk->zBias);
+	SetZBias(pChunk->zBias);
 
 	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
@@ -452,7 +452,7 @@ bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 {
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
 
-	SetZBias(gpD3DDevice, pChunk->zBias);
+	SetZBias(pChunk->zBias);
 
 	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,

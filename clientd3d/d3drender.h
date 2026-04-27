@@ -127,7 +127,7 @@ inline bool D3DRender_InBounds(float coordinate, float range)
 
 // Helper Function Prototypes //
 int D3DRenderIsEnabled(void);
-void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias);
+void SetZBias(int z_bias);
 int DistanceGet(int x, int y);
 bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);
 float FovHorizontal(long width);
@@ -138,7 +138,7 @@ bool isFogEnabled();
 void setWireframeMode(bool isEnabled);
 bool isWireframeMode();
 const font_3d& getFont3d();
-const LPDIRECT3DTEXTURE9 getBackBufferTextureZero();
+const IDirect3DTexture9* getBackBufferTextureZero();
 
 // Global palette array containing 256 color entries used for rendering textures in the current frame.
 // This palette is dynamically updated based on the current rendering context.

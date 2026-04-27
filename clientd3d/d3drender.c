@@ -611,23 +611,15 @@ int D3DRenderIsEnabled(void)
 	return gD3DEnabled;
 }
 
-void SetZBias(LPDIRECT3DDEVICE9 device, int z_bias) {
+void SetZBias(int z_bias)
+{
    float bias = z_bias * -0.00001f;
-   IDirect3DDevice9_SetRenderState(device, D3DRS_DEPTHBIAS,
-                                   *((DWORD *) &bias));
+   gpD3DDevice->SetRenderState(D3DRS_DEPTHBIAS, std::bit_cast<DWORD>(bias));
 }
 
 int DistanceGet(int x, int y)
 {
-	int	distance;
-	float	xf, yf;
-
-	xf = (float)x;
-	yf = (float)y;
-
-	distance = sqrt((double)(xf * xf) + (double)(yf * yf));
-
-	return (int)distance;
+	return static_cast<int>(sqrtf(static_cast<float>(x * x + y * y)));
 }
 
 // Helper function to determine if an object should be rendered in the current pass based on transparency.
@@ -636,15 +628,17 @@ bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent)
 	return transparent_pass == isTransparent;
 }
 
-// Define field of views with magic numbers for tuning
+// Defines field of views
 float FovHorizontal(long width)
 {
-	return width / (float)(main_viewport_width) * (-PI / 3.78f);
+	static constexpr float HORIZONTAL_TUNING_FACTOR  = (-PI / 3.78f);
+	return (width / static_cast<float>(main_viewport_width)) * HORIZONTAL_TUNING_FACTOR ;
 }
 
 float FovVertical(long height)
 {
-	return height / (float)(main_viewport_height) * (PI / 5.88f);
+	static constexpr float VERTICAL_TUNING_FACTOR = (PI / 5.88f);
+	return (height / static_cast<float>(main_viewport_height)) * VERTICAL_TUNING_FACTOR;
 }
 
 // Retrieve the threshold value for determining whether to round up the dimensions of a texture.
@@ -678,7 +672,7 @@ const font_3d& getFont3d()
 	return gFont;
 }
 
-const LPDIRECT3DTEXTURE9 getBackBufferTextureZero()
+const IDirect3DTexture9* getBackBufferTextureZero()
 {
 	return gpBackBufferTex[0];
 }
@@ -815,7 +809,7 @@ HRESULT D3DRenderInit(HWND hWnd)
 	gpD3DDevice->CreateVertexDeclaration(VERTEX_LAYOUT_POS_COLOR_TEX1, &g_pVertexDecl_PosColorTex1);
 	gpD3DDevice->CreateVertexDeclaration(VERTEX_LAYOUT_POS_COLOR_TEX2, &g_pVertexDecl_PosColorTex2);
 
-	SetZBias(gpD3DDevice, 0);
+	SetZBias(0);
 
 	D3DRenderLMapsBuild();
 
@@ -1042,7 +1036,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DCacheSystemReset(&gLMapCacheSystem);
 	D3DCacheSystemReset(&gWorldCacheSystem);
 
-	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
+	SetZBias(ZBIAS_DEFAULT);
 
 	UpdateRoom3D(room, params);
 
@@ -1141,7 +1135,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	}
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
-	SetZBias(gpD3DDevice, 1);
+	SetZBias(1);
 
 	if (draw_particles)
 	{
@@ -1174,7 +1168,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DRender_SetColorStage(1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 
-	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
+	SetZBias(ZBIAS_DEFAULT);
 
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, nullptr);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, g_pVertexDecl_PosColor);

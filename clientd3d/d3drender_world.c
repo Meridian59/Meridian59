@@ -62,7 +62,7 @@ long D3DRenderWorld(const WorldRenderParams &worldRenderParams, const WorldPrope
    // all opaque objects and then rendering all transparent objects in a separate pass.
    // This technique is also applied to draw_world, draw_objects, and light maps.
 
-   SetZBias(gpD3DDevice, ZBIAS_WORLD);
+   SetZBias(ZBIAS_WORLD);
    IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
    IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, worldRenderParams.vertexDeclaration);
    IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_CW);
@@ -135,7 +135,7 @@ long D3DRenderWorld(const WorldRenderParams &worldRenderParams, const WorldPrope
    D3DRenderWorldLighting(worldRenderParams, lightAndTextureParams);
 
    IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
-   SetZBias(gpD3DDevice, 1);
+   SetZBias(1);
 
    // Disable alpha testing
    D3DRender_SetAlphaTestState(FALSE, alpha_test_threshold, D3DCMP_GREATEREQUAL);
@@ -155,7 +155,7 @@ void D3DRenderWorldLighting(const WorldRenderParams &worldRenderParams,
       IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MAGFILTER, worldRenderParams.driverProfile.magFilter);
       IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MINFILTER, worldRenderParams.driverProfile.minFilter);
 
-      SetZBias(gpD3DDevice, ZBIAS_WORLD);
+      SetZBias(ZBIAS_WORLD);
       IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
       IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, worldRenderParams.vertexDeclarationSecondary);
 
@@ -414,7 +414,7 @@ void D3DRenderTransparentWallsPass(const WorldRenderParams &worldRenderParams)
    IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &matIdentity);
    IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &worldRenderParams.view);
    IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &worldRenderParams.proj);
-   SetZBias(gpD3DDevice, ZBIAS_WORLD);
+   SetZBias(ZBIAS_WORLD);
    IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
    IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, worldRenderParams.vertexDeclaration);
    IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_CW);

@@ -36,6 +36,12 @@ static constexpr float Z_RANGE = 200000.0f;
 // Standard ASCII table, minus the first 32 non-printable control characters.
 static constexpr int NUM_CHARS = 128 - 32;
 
+// Geometry constants for rendering a quad as a triangular strip.
+static constexpr int TRI_STRIP_INDICES  = 4;
+static constexpr int TRI_STRIP_VERTICES = 4;
+static constexpr int TRI_STRIP_PRIMITIVES = TRI_STRIP_VERTICES - 2;
+static constexpr int TRI_STRIP_INDICES_PATTERN[] = { 1, 2, 0, 3 };
+
 /////////////
 // Globals //
 /////////////
@@ -156,9 +162,7 @@ d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
 d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);
 void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
 void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
-
-LPDIRECT3DTEXTURE9  D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9 pTex0, LPDIRECT3DTEXTURE9 pTex1, 
-	float width, float height);
+IDirect3DTexture9*  D3DRender_CaptureEffect(IDirect3DTexture9* pTex0, IDirect3DTexture9* pTex1);
 
 // D3D State Functions
 void D3DRender_SetAlphaTestState(BOOL enable, DWORD alphaRef, D3DCMPFUNC comparisonFunc);

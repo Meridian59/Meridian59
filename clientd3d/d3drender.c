@@ -123,6 +123,12 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool);
 /////////////////////////////
 // Internal Implementation //
 /////////////////////////////
+RECT GetScreenRect()
+{
+	// RECT struct is set in this order: Left -> Top -> Right -> Bottom
+	return { 0, 0, gScreenWidth, gScreenHeight };
+}
+
 void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 {
 	// Ask for a bigger font to reduce aliasing, then scale the texture
@@ -472,9 +478,9 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 
 		d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
 		pChunk->flags = 0;
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
+		pChunk->numIndices = TRI_STRIP_INDICES;
+		pChunk->numVertices = TRI_STRIP_VERTICES;
+		pChunk->numPrimitives = TRI_STRIP_PRIMITIVES;
 		pChunk->xLat0 = 0;
 		pChunk->xLat1 = 0;
 
@@ -497,104 +503,102 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 		pChunk->st0[1] = { foffset, (1.0f - foffset) };
 		pChunk->st0[2] = { (1.0f - foffset), (1.0f - foffset) };
 		pChunk->st0[3] = { (1.0f - foffset), foffset };
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
+		
+		for (int i = 0; i < TRI_STRIP_INDICES; i++)
+		{
+			pChunk->indices[i] = TRI_STRIP_INDICES_PATTERN[i];
+		}
 	}
 }
 
-LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
-													 LPDIRECT3DTEXTURE9	pTex1,
-													 float width, float height)
+// Captures current rendered frame as a texture for post-processing effects.
+IDirect3DTexture9* D3DRender_CaptureEffect(IDirect3DTexture9* pTex0, IDirect3DTexture9* pTex1)
 {
-	LPDIRECT3DSURFACE9	pSrc, pDest[2], pZBuf;
-	RECT				rect;
-	POINT				pnt;
-	D3DMATRIX			mat;
-	d3d_render_packet_new	*pPacket;
-	d3d_render_chunk_new	*pChunk;
-	HRESULT hr;
-
 	D3DCacheSystemReset(&gEffectCacheSystem);
 	D3DRenderPoolReset(&gEffectPool, &D3DMaterialEffectPool);
 
 	// get pointer to backbuffer surface and z/stencil surface
-	IDirect3DDevice9_GetRenderTarget(gpD3DDevice, 0, &pSrc);
-	IDirect3DDevice9_GetDepthStencilSurface(gpD3DDevice, &pZBuf);
+	IDirect3DSurface9* pSrc = nullptr;
+	IDirect3DSurface9* pZBuf = nullptr;
+	gpD3DDevice->GetRenderTarget(0, &pSrc);
+	gpD3DDevice->GetDepthStencilSurface(&pZBuf);
 
 	// get pointer to texture surface for rendering
-	IDirect3DTexture9_GetSurfaceLevel(pTex0, 0, &pDest[0]);
-	IDirect3DTexture9_GetSurfaceLevel(pTex1, 0, &pDest[1]);
-
-	pnt.x = 0;
-	pnt.y = 0;
-	rect.left = rect.top = 0;
-	rect.right = gScreenWidth;
-	rect.bottom = gScreenHeight;
+	IDirect3DSurface9* pDest[2]{};
+	pTex0->GetSurfaceLevel(0, &pDest[0]);
+	pTex1->GetSurfaceLevel(0, &pDest[1]);
 
 	// copy framebuffer to texture
-	IDirect3DDevice9_StretchRect(gpD3DDevice, pSrc, &rect, pDest[0], &rect, D3DTEXF_NONE);
+	RECT rect = GetScreenRect();
+	gpD3DDevice->StretchRect(pSrc, &rect, pDest[0], &rect, D3DTEXF_NONE);
 
 	// clear local->screen transforms
-	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
+	D3DMATRIX tempMat;
+	MatrixIdentity(&tempMat);
+	gpD3DDevice->SetTransform(D3DTS_WORLD, &tempMat);
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &tempMat);
+	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &tempMat);
 
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-	IDirect3DDevice9_SetRenderTarget(gpD3DDevice, 0, pDest[1]);
+	gpD3DDevice->SetRenderTarget(0, pDest[1]);
 
-	pPacket = D3DRenderPacketNew(&gEffectPool);
+	d3d_render_packet_new *pPacket = D3DRenderPacketNew(&gEffectPool);
 	if (pPacket == nullptr)
 		return nullptr;
-	pChunk = D3DRenderChunkNew(pPacket);
+
+	d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
 	pPacket->pMaterialFctn = D3DMaterialEffectPacket;
 	pChunk->pMaterialFctn = D3DMaterialEffectChunk;
 	pPacket->pTexture = pTex0;
-	pChunk->numIndices = pChunk->numVertices = 4;
-	pChunk->numPrimitives = pChunk->numVertices - 2;
+
+	pChunk->numIndices = TRI_STRIP_INDICES;
+	pChunk->numVertices = TRI_STRIP_VERTICES;
+	pChunk->numPrimitives = TRI_STRIP_PRIMITIVES;
+
 	MatrixIdentity(&pChunk->xForm);
 
-	CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
-		0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize));
-	CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
-		0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize));
-	CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
-		0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize));
-	CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
-		0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize));
+	pChunk->xyz[0] = { D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize) };
+						
+	pChunk->xyz[1] = { D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize) };
+					
+	pChunk->xyz[2] = { D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize) };
 
-	CHUNK_ST0_SET(pChunk, 0, 0.0f, 0.0f);
-	CHUNK_ST0_SET(pChunk, 1, 0.0f, gScreenHeight / (float)gFullTextureSize);
-	CHUNK_ST0_SET(pChunk, 2, gScreenWidth / (float)gFullTextureSize, gScreenHeight / (float)gFullTextureSize);
-	CHUNK_ST0_SET(pChunk, 3, gScreenWidth / (float)gFullTextureSize, 0.0f);
+	pChunk->xyz[3] = { D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize) };
 
-	CHUNK_BGRA_SET(pChunk, 0, COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
-	CHUNK_BGRA_SET(pChunk, 1, COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
-	CHUNK_BGRA_SET(pChunk, 2, COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
-	CHUNK_BGRA_SET(pChunk, 3, COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
+	const float texSize = static_cast<float>(gFullTextureSize);
+	pChunk->st0[0] = { 0.0f, 0.0f };
+	pChunk->st0[1] = { 0.0f, (gScreenHeight / texSize) };
+	pChunk->st0[2] = { (gScreenWidth / texSize), (gScreenHeight / texSize) };
+	pChunk->st0[3] = { (gScreenWidth / texSize), 0.0f };
 
-	CHUNK_INDEX_SET(pChunk, 0, 1);
-	CHUNK_INDEX_SET(pChunk, 1, 2);
-	CHUNK_INDEX_SET(pChunk, 2, 0);
-	CHUNK_INDEX_SET(pChunk, 3, 3);
+	for (auto& color : pChunk->bgra)
+	{
+		color = {COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX};
+	}
+
+	for (int i = 0; i < TRI_STRIP_INDICES; i++)
+	{
+		pChunk->indices[i] = TRI_STRIP_INDICES_PATTERN[i];
+	}
 
 	D3DCacheFill(&gEffectCacheSystem, &gEffectPool, 1);
 	D3DCacheFlush(&gEffectCacheSystem, &gEffectPool, 1, D3DPT_TRIANGLESTRIP);
 
 	// restore render target to backbuffer
-	hr = IDirect3DDevice9_SetRenderTarget(gpD3DDevice, 0, pSrc);
-	hr = IDirect3DDevice9_SetDepthStencilSurface(gpD3DDevice, pZBuf);
-	hr = IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
+	gpD3DDevice->SetRenderTarget(0, pSrc);
+	gpD3DDevice->SetDepthStencilSurface(pZBuf);
+	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
-	IDirect3DSurface9_Release(pSrc);
-	IDirect3DSurface9_Release(pZBuf);
-	IDirect3DSurface9_Release(pDest[0]);
-	IDirect3DSurface9_Release(pDest[1]);
+	pSrc->Release();
+	pZBuf->Release();
+	pDest[0]->Release();
+	pDest[1]->Release();
 
 	return pTex1;
 }
@@ -1228,12 +1232,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
 
 	IDirect3DDevice9_EndScene(gpD3DDevice);
-	RECT rect;
 
-	rect.top = 0;
-	rect.bottom = gScreenHeight;
-	rect.left = 0;
-	rect.right = gScreenWidth;
+	RECT rect = GetScreenRect();
 
 	HRESULT hr = IDirect3DDevice9_Present(gpD3DDevice, &rect, &gD3DRect, nullptr, nullptr);
 

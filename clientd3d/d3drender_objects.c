@@ -252,8 +252,7 @@ long D3DRenderObjects(
 
 	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
 
-	D3DRenderFramebufferTextureCreate(gameObjectDataParams.backBufferTexFull, gameObjectDataParams.backBufferTex[0],
-		fontTextureParams.smallTextureSize, fontTextureParams.smallTextureSize);
+	D3DRender_CaptureEffect(gameObjectDataParams.backBufferTexFull, gameObjectDataParams.backBufferTex[0]);
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &objectsRenderParams.view);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &objectsRenderParams.proj);

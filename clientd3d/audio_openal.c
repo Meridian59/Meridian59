@@ -1065,7 +1065,10 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       alSourcef(source, AL_ROLLOFF_FACTOR, 1.0f);
 
       float gain = (float)max_vol / (float)MAX_VOLUME;
-      gain *= (float)config.ambient_volume / 100.0f;
+      if (flags & SF_LOOP)
+         gain *= (float)config.ambient_volume / 100.0f;
+      else
+         gain *= (float)config.sound_volume / 100.0f;
       alSourcef(source, AL_GAIN, gain);
    }
    else

@@ -96,6 +96,12 @@ static bool incremental_background = false;
  */
 static int background_cones = MAX_ITEMS;
 
+// Depth counter: >0 when the BSP walk is traversing the far side of a
+// translucent wall separator.  Objects in leaves visited while this is >0
+// are marked behind_translucent so the D3D post-pass can distinguish them
+// from objects behind opaque walls.
+static int translucent_wall_depth = 0;
+
 static void doDrawWall(DrawWallStruct *wall, ViewCone *c);
 static void doDrawBackground(ViewCone *c);
 static void SetMappingValues(SlopeData *slope);
@@ -499,6 +505,7 @@ static void AddObjects(room_type *room)
 
       d->ncones = 0;
       d->ncones_ptr = &d->ncones;
+      d->behind_translucent = false;
 
       // set center field
       a = (left_a * dx + left_b * dy) >> (FIX_DECIMAL - 6);
@@ -581,6 +588,7 @@ static void AddObjects(room_type *room)
       d->draw.secondtranslation = 0;
       d->ncones = 0;
       d->ncones_ptr = &d->ncones;
+      d->behind_translucent = false;
       d->draw.obj = NULL;
 
       // set center field
@@ -2388,6 +2396,11 @@ static void WalkObjects(ObjectData *objects)
    num = 0;
    for (object = objects; object; object = object->next)
    {
+      // Mark objects that are on the far side of a translucent wall separator
+      // so the D3D post-pass can include them if the BSP walk misses them.
+      if (translucent_wall_depth > 0)
+         object->behind_translucent = true;
+
       sort[num] = object;
       num++;
       if (num == MAX_OBJS_PER_LEAF)
@@ -2817,10 +2830,27 @@ static void WalkBSPtree(BSPnode *tree)
       }
 
       // lastly, traverse farther side
-      if (side > 0)
-         WalkBSPtree(tree->u.internal.neg_side);
-      else
-         WalkBSPtree(tree->u.internal.pos_side);
+      // Check if any wall in this separator plane is translucent; if so,
+      // objects in the far subtree should be eligible for the D3D post-pass.
+      {
+         bool has_translucent = false;
+         for (WallList wl = tree->u.internal.walls_in_plane; wl; wl = wl->next)
+         {
+            if (wl->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+            {
+               has_translucent = true;
+               break;
+            }
+         }
+         if (has_translucent)
+            translucent_wall_depth++;
+         if (side > 0)
+            WalkBSPtree(tree->u.internal.neg_side);
+         else
+            WalkBSPtree(tree->u.internal.pos_side);
+         if (has_translucent)
+            translucent_wall_depth--;
+      }
 
       return;
    default:
@@ -4541,6 +4571,7 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw)
    }
 
    // find items in view
+   translucent_wall_depth = 0;
    WalkBSPtree(room->tree);
 
    // D3D post-pass: objects the cone-based BSP traversal missed (e.g. behind
@@ -4553,6 +4584,11 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw)
    {
       ObjectData *od = &objectdata[i];
       if (od->ncones != 0 || !od->draw.draw)
+         continue;
+      // Only include objects that were actually behind a translucent wall
+      // during the BSP walk.  Objects behind opaque walls also have ncones==0
+      // but should NOT be added to drawdata — they are correctly hidden.
+      if (!od->behind_translucent)
          continue;
       if (nitems >= MAX_ITEMS)
          break;
@@ -4591,11 +4627,6 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw)
       item->cone.bot_b      = 0;
       item->cone.bot_d      = area.cy - 1;
       item->u.object.object = od;
-      if (od->draw.obj != NULL)
-      {
-         room_contents_node *r = (room_contents_node *)od->draw.obj;
-         r->visible = true;
-      }
       // Set ncones=1 so doDrawObject's decrement reaches 0 correctly and
       // DrawObjectDecorations is called.  Both the software renderer (via
       // DrawItems) and the D3D hardware path render these objects.

@@ -134,12 +134,19 @@ def process_message(account):
 print("Processing script has started")
 
 while True:
-    # Poll the incoming queue for messages
-    messages = sqs.receive_message(
-        QueueUrl=incoming_queue_url,
-        MaxNumberOfMessages=1,
-        WaitTimeSeconds=5,
-    )
+    # Poll the incoming queue for messages.  Wrap in try/except so that
+    # transient network failures (e.g. DNS not yet available at boot) do
+    # not exit the process and trigger a systemd restart loop.
+    try:
+        messages = sqs.receive_message(
+            QueueUrl=incoming_queue_url,
+            MaxNumberOfMessages=1,
+            WaitTimeSeconds=5,
+        )
+    except Exception as e:
+        print(f"Exception polling incoming queue: {e}")
+        time.sleep(30)
+        continue
 
     if 'Messages' in messages:
         for message in messages['Messages']:

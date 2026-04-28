@@ -128,159 +128,13 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool);
 /////////////////////////////
 // Internal Implementation //
 /////////////////////////////
-RECT GetScreenRect()
+static RECT GetScreenRect()
 {
 	// RECT struct is set in this order: Left -> Top -> Right -> Bottom
 	return {0, 0, gScreenWidth, gScreenHeight};
 }
 
-void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
-{
-	// Ask for a bigger font to reduce aliasing, then scale the texture
-	// down by the same amount.
-	static constexpr float FONT_SCALE = 3.0;
-	HFONT hScaledFont = FontsGetScaledFont(hFont, FONT_SCALE);
-	assert(hScaledFont);
-
-	pFont->fontHeight = GetFontHeight(hScaledFont);
-	pFont->texScale = FONT_SCALE;
-
-	static constexpr int LARGE_FONT_THRESHOLD = 40;
-	static constexpr int MEDIUM_FONT_THRESHOLD = 20;
-
-	static constexpr int FONT_TEXTURE_SIZE_LARGE = 1024;
-	static constexpr int FONT_TEXTURE_SIZE_MEDIUM = 512;
-	static constexpr int FONT_TEXTURE_SIZE_SMALL = 256;
-
-	if (pFont->fontHeight > LARGE_FONT_THRESHOLD)
-		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_LARGE;
-	else if (pFont->fontHeight > MEDIUM_FONT_THRESHOLD)
-		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_MEDIUM;
-	else
-		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_SMALL;
-
-	D3DCAPS9 d3dCaps = {};
-	gpD3DDevice->GetDeviceCaps(&d3dCaps);
-
-	if (pFont->texWidth > static_cast<long>(d3dCaps.MaxTextureWidth))
-	{
-		pFont->texScale *= static_cast<float>(pFont->texWidth) / static_cast<float>(d3dCaps.MaxTextureWidth);
-		pFont->texHeight = pFont->texWidth = d3dCaps.MaxTextureWidth;
-	}
-
-	if (pFont->pTexture)
-		pFont->pTexture->Release();
-
-	gpD3DDevice->CreateTexture(pFont->texWidth, pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
-									D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
-
-	static constexpr int BITMAP_PLANES = 1;
-	static constexpr int BITMAP_BIT_DEPTH = 32;
-
-	// Initialize bitmap info. Top-down DIBs (negative height) match D3D's coordinate system.
-	BITMAPINFO bitmapInfo = {};
-	bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bitmapInfo.bmiHeader.biWidth = static_cast<int>(pFont->texWidth);
-	bitmapInfo.bmiHeader.biHeight = -static_cast<int>(pFont->texHeight);
-	bitmapInfo.bmiHeader.biPlanes = BITMAP_PLANES;
-	bitmapInfo.bmiHeader.biCompression = BI_RGB;
-	bitmapInfo.bmiHeader.biBitCount = BITMAP_BIT_DEPTH;
-
-	// Handle to Device Context for fonts.
-	HDC fontDC = CreateCompatibleDC(gBitsDC);
-	DWORD *pBitmapBits = nullptr;
-	HBITMAP fontBitmap = CreateDIBSection(fontDC, &bitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBitmapBits), nullptr, 0);
-	SetMapMode(fontDC, MM_TEXT);
-
-	SelectObject(fontDC, fontBitmap);
-	SelectObject(fontDC, hScaledFont);
-
-	// Set text properties
-	SetTextColor(fontDC, RGB(255,255,255));
-	SetBkColor(fontDC, 0);
-	SetBkMode(fontDC, TRANSPARENT);
-	SetTextAlign(fontDC, TA_TOP);
-
-	// Temporary string that holds both a character and a null terminator.
-	TCHAR charBuffer[2] = _T("x");
-
-	// Tracks next available pixel position in the texture atlas.
-	long atlasX = 0;
-	long atlasY = 0;
-
-	// Iterate through printable ASCII characters.
-	for (int i = 0; i < NUM_CHARS; i++)
-	{
-		// Skip the first 32 non-printable characters.
-		auto currentChar = static_cast<TCHAR>(i + 32);
-
-		charBuffer[0] = currentChar;
-
-		SIZE size = {};
-		GetTextExtentPoint32(fontDC, charBuffer, 1, &size);
-
-		if (!GetCharABCWidths(fontDC, currentChar, currentChar, &pFont->abc[i]))
-		{
-			// If font isn't TrueType, fallback to basic width (abcB).
-			pFont->abc[i] = {0, static_cast<UINT>(size.cx), 0};
-		}
-
-		// Use the 'B' width (actual character body) for layout.
-		size.cx = pFont->abc[i].abcB;
-
-		// Is this row of the texture filled up?
-		if (atlasX + size.cx >= pFont->texWidth)
-		{
-			atlasX = 0;
-			atlasY += (size.cy + 1);
-		}
-
-		int left_offset = pFont->abc[i].abcA;
-		ExtTextOut(fontDC, (atlasX - left_offset), atlasY, 0, nullptr, charBuffer, 1, nullptr);
-
-		pFont->texST[i][0] = {(static_cast<float>(atlasX) / pFont->texWidth), 
-									(static_cast<float>(atlasY) / pFont->texHeight)};
-
-		pFont->texST[i][1] = {(static_cast<float>(atlasX + size.cx) / pFont->texWidth),
-									(static_cast<float>(atlasY + size.cy) / pFont->texHeight)};
-
-		// Leave +1 space so bilinear filtering doesn't pick up neighboring character
-		atlasX += (size.cx + 1);  
-	}
-
-	D3DLOCKED_RECT lockedFontRect = {};
-	pFont->pTexture->LockRect(0, &lockedFontRect, 0, 0);
-
-	auto pDstRow = reinterpret_cast<BYTE*>(lockedFontRect.pBits);
-
-	// Convert a texture bitmask into a 16-bit pixel format.
-	for (int y = 0; y < pFont->texHeight; y++)
-	{
-		auto pDst16 = reinterpret_cast<WORD*>(pDstRow);
-		for (int x = 0; x < pFont->texWidth; x++)
-		{
-			// Extract 4-bit alpha from 8-bit source.
-			auto bAlpha = static_cast<BYTE>((pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4);
-
-			// If there's any alpha, set color to white with alpha. Otherwise it's transparent.
-			*pDst16++ = (bAlpha > 0) ? (static_cast<WORD>(bAlpha << 12) | 0x0FFF) : 0x0000;
-		}
-		pDstRow += lockedFontRect.Pitch;
-	}
-
-	pFont->pTexture->UnlockRect(0);
-
-	// Get kerning pairs for font
-	pFont->numKerningPairs = GetKerningPairs(fontDC, 0, nullptr);
-	pFont->kerningPairs = new KERNINGPAIR[pFont->numKerningPairs];
-	GetKerningPairs(fontDC, pFont->numKerningPairs, pFont->kerningPairs);
-
-	DeleteObject(fontBitmap);
-	DeleteObject(hScaledFont);
-	DeleteDC(fontDC);
-}
-
-void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize)
+static void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize)
 {
 	pPool->size = size;
 	pPool->curPacket = 0;
@@ -298,55 +152,13 @@ void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize)
 	}
 }
 
-void D3DRenderPoolShutdown(d3d_render_pool_new *pPool)
+static void D3DRenderPoolShutdown(d3d_render_pool_new *pPool)
 {
 	list_destroy(pPool->renderPacketList);
 	memset(pPool, 0, sizeof(d3d_render_pool_new));
 }
 
-void D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc)
-{
-	pPool->curPacket = 0;
-	pPool->numLists = 0;
-	pPool->curPacketList = pPool->renderPacketList;
-	pPool->pMaterialFctn = reinterpret_cast<MaterialFctn>(pMaterialFunc);
-}
-
-d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool)
-{
-	d3d_render_packet_new *pPacket = nullptr;
-
-	if (pPool->curPacket >= pPool->size)
-	{
-		if (pPool->curPacketList->next == nullptr)
-		{
-			pPacket = reinterpret_cast<d3d_render_packet_new*>(malloc(sizeof(d3d_render_packet_new) * pPool->size));
-			assert(pPacket);
-			list_add_item(pPool->renderPacketList, pPacket);
-		}
-		else
-		{
-			pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->next->data);
-		}
-
-		pPool->curPacketList = pPool->curPacketList->next;
-		pPool->curPacket = 1;
-		pPool->numLists++;
-
-		pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->data);
-	}
-	else
-	{
-		pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->data);
-		pPacket += pPool->curPacket;
-		pPool->curPacket++;
-	}
-
-	D3DRenderPacketInit(pPacket);
-	return pPacket;
-}
-
-void D3DRenderPacketInit(d3d_render_packet_new *pPacket)
+static void D3DRenderPacketInit(d3d_render_packet_new *pPacket)
 {
 	pPacket->curChunk = 0;
 	pPacket->effect = 0;
@@ -358,16 +170,7 @@ void D3DRenderPacketInit(d3d_render_packet_new *pPacket)
 	pPacket->xLat1 = 0;
 }
 
-d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket)
-{
-	if (pPacket->curChunk >= (pPacket->size - 1))
-		return nullptr;
-	pPacket->curChunk++;
-	D3DRenderChunkInit(&pPacket->renderChunks[pPacket->curChunk - 1]);
-	return &pPacket->renderChunks[pPacket->curChunk - 1];
-}
-
-void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
+static void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
 {
 	pChunk->curIndex = 0;
 	pChunk->drawn = 0;
@@ -385,52 +188,7 @@ void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
 	pChunk->pRenderCache = nullptr;
 }
 
-d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, IDirect3DTexture9* pTexture,
-												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect)
-{
-	d3d_render_packet_new *pPacket = nullptr;
-
-	for (list_type list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
-	{
-		pPacket = static_cast<d3d_render_packet_new*>(list->data);
-
-		u_int numPackets = 0;
-		if (list == pPool->curPacketList)
-			numPackets = pPool->curPacket;
-		else
-			numPackets = pPool->size;
-
-		// for each packet
-		for (u_int count = 0; count < numPackets; count++, pPacket++)
-		{
-			// if we find a match that isn't full already, return it
-			if ((pPacket->pDib == pDib) && (pPacket->pTexture == pTexture) &&
-				(pPacket->xLat0 == xLat0) && (pPacket->xLat1 == xLat1) &&
-				(pPacket->effect == effect))
-			{
-				if (pPacket->curChunk < (pPacket->size - 1))
-					return pPacket;
-			}
-		}
-	}
-
-	// otherwise, return a new one (or NULL if no more remain)
-	pPacket = D3DRenderPacketNew(pPool);
-
-	if (pPacket)
-	{
-		pPacket->pDib = pDib;
-		pPacket->pTexture = pTexture;
-		pPacket->xLat0 = xLat0;
-		pPacket->xLat1 = xLat1;
-		pPacket->effect = effect;
-		pPacket->size = pPool->packetSize;
-	}
-
-	return pPacket;
-}
-
-void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
+static void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 {
 	float screenW = static_cast<float>(gD3DRect.right - gD3DRect.left) / static_cast<float>(gScreenWidth);
 	float screenH = static_cast<float>(gD3DRect.bottom - gD3DRect.top) / static_cast<float>(gScreenHeight);
@@ -513,98 +271,6 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 			pChunk->indices[i] = TRI_STRIP_INDICES_PATTERN[i];
 		}
 	}
-}
-
-// Captures current rendered frame as a texture for post-processing effects.
-IDirect3DTexture9* D3DRender_CaptureEffect(IDirect3DTexture9* pTex0, IDirect3DTexture9* pTex1)
-{
-	D3DCacheSystemReset(&gEffectCacheSystem);
-	D3DRenderPoolReset(&gEffectPool, &D3DMaterialEffectPool);
-
-	// get pointer to backbuffer surface and z/stencil surface
-	IDirect3DSurface9* pSrc = nullptr;
-	IDirect3DSurface9* pZBuf = nullptr;
-	gpD3DDevice->GetRenderTarget(0, &pSrc);
-	gpD3DDevice->GetDepthStencilSurface(&pZBuf);
-
-	// get pointer to texture surface for rendering
-	IDirect3DSurface9* pDest[2]{};
-	pTex0->GetSurfaceLevel(0, &pDest[0]);
-	pTex1->GetSurfaceLevel(0, &pDest[1]);
-
-	// copy framebuffer to texture
-	RECT rect = GetScreenRect();
-	gpD3DDevice->StretchRect(pSrc, &rect, pDest[0], &rect, D3DTEXF_NONE);
-
-	// clear local->screen transforms
-	D3DMATRIX tempMat;
-	MatrixIdentity(&tempMat);
-	gpD3DDevice->SetTransform(D3DTS_WORLD, &tempMat);
-	gpD3DDevice->SetTransform(D3DTS_VIEW, &tempMat);
-	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &tempMat);
-
-	gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-
-	gpD3DDevice->SetRenderTarget(0, pDest[1]);
-
-	d3d_render_packet_new *pPacket = D3DRenderPacketNew(&gEffectPool);
-	if (pPacket == nullptr)
-		return nullptr;
-
-	d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
-	pPacket->pMaterialFctn = D3DMaterialEffectPacket;
-	pChunk->pMaterialFctn = D3DMaterialEffectChunk;
-	pPacket->pTexture = pTex0;
-
-	pChunk->numIndices = TRI_STRIP_INDICES;
-	pChunk->numVertices = TRI_STRIP_VERTICES;
-	pChunk->numPrimitives = TRI_STRIP_PRIMITIVES;
-
-	MatrixIdentity(&pChunk->xForm);
-
-	pChunk->xyz[0] = {D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
-							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize)};
-						
-	pChunk->xyz[1] = {D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
-							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize)};
-					
-	pChunk->xyz[2] = {D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
-							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize)};
-
-	pChunk->xyz[3] = {D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
-							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize)};
-
-	const auto texSize = static_cast<float>(gFullTextureSize);
-	pChunk->st0[0] = {0.0f, 0.0f};
-	pChunk->st0[1] = {0.0f, (gScreenHeight / texSize)};
-	pChunk->st0[2] = {(gScreenWidth / texSize), (gScreenHeight / texSize)};
-	pChunk->st0[3] = {(gScreenWidth / texSize), 0.0f};
-
-	for (auto& color : pChunk->bgra)
-	{
-		color = {COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX};
-	}
-
-	for (int i = 0; i < TRI_STRIP_INDICES; i++)
-	{
-		pChunk->indices[i] = TRI_STRIP_INDICES_PATTERN[i];
-	}
-
-	D3DCacheFill(&gEffectCacheSystem, &gEffectPool, 1);
-	D3DCacheFlush(&gEffectCacheSystem, &gEffectPool, 1, D3DPT_TRIANGLESTRIP);
-
-	// restore render target to backbuffer
-	gpD3DDevice->SetRenderTarget(0, pSrc);
-	gpD3DDevice->SetDepthStencilSurface(pZBuf);
-	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-
-	pSrc->Release();
-	pZBuf->Release();
-	pDest[0]->Release();
-	pDest[1]->Release();
-
-	return pTex1;
 }
 
 //////////////////////
@@ -1251,6 +917,340 @@ void D3DRenderEnableToggle(void)
 		memset(gBits, 0, MAXX * MAXY);
 		memset(gBufferBits, 0, MAXX * 2 * MAXY * 2);
 	}
+}
+
+d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, IDirect3DTexture9* pTexture,
+												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect)
+{
+	d3d_render_packet_new *pPacket = nullptr;
+
+	for (list_type list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
+	{
+		pPacket = static_cast<d3d_render_packet_new*>(list->data);
+
+		u_int numPackets = 0;
+		if (list == pPool->curPacketList)
+			numPackets = pPool->curPacket;
+		else
+			numPackets = pPool->size;
+
+		// for each packet
+		for (u_int count = 0; count < numPackets; count++, pPacket++)
+		{
+			// if we find a match that isn't full already, return it
+			if ((pPacket->pDib == pDib) && (pPacket->pTexture == pTexture) &&
+				(pPacket->xLat0 == xLat0) && (pPacket->xLat1 == xLat1) &&
+				(pPacket->effect == effect))
+			{
+				if (pPacket->curChunk < (pPacket->size - 1))
+					return pPacket;
+			}
+		}
+	}
+
+	// otherwise, return a new one (or NULL if no more remain)
+	pPacket = D3DRenderPacketNew(pPool);
+
+	if (pPacket)
+	{
+		pPacket->pDib = pDib;
+		pPacket->pTexture = pTexture;
+		pPacket->xLat0 = xLat0;
+		pPacket->xLat1 = xLat1;
+		pPacket->effect = effect;
+		pPacket->size = pPool->packetSize;
+	}
+
+	return pPacket;
+}
+
+d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool)
+{
+	d3d_render_packet_new *pPacket = nullptr;
+
+	if (pPool->curPacket >= pPool->size)
+	{
+		if (pPool->curPacketList->next == nullptr)
+		{
+			pPacket = reinterpret_cast<d3d_render_packet_new*>(malloc(sizeof(d3d_render_packet_new) * pPool->size));
+			assert(pPacket);
+			list_add_item(pPool->renderPacketList, pPacket);
+		}
+		else
+		{
+			pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->next->data);
+		}
+
+		pPool->curPacketList = pPool->curPacketList->next;
+		pPool->curPacket = 1;
+		pPool->numLists++;
+
+		pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->data);
+	}
+	else
+	{
+		pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->data);
+		pPacket += pPool->curPacket;
+		pPool->curPacket++;
+	}
+
+	D3DRenderPacketInit(pPacket);
+	return pPacket;
+}
+
+d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket)
+{
+	if (pPacket->curChunk >= (pPacket->size - 1))
+		return nullptr;
+	pPacket->curChunk++;
+	D3DRenderChunkInit(&pPacket->renderChunks[pPacket->curChunk - 1]);
+	return &pPacket->renderChunks[pPacket->curChunk - 1];
+}
+
+void D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc)
+{
+	pPool->curPacket = 0;
+	pPool->numLists = 0;
+	pPool->curPacketList = pPool->renderPacketList;
+	pPool->pMaterialFctn = reinterpret_cast<MaterialFctn>(pMaterialFunc);
+}
+
+void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
+{
+	// Ask for a bigger font to reduce aliasing, then scale the texture
+	// down by the same amount.
+	static constexpr float FONT_SCALE = 3.0;
+	HFONT hScaledFont = FontsGetScaledFont(hFont, FONT_SCALE);
+	assert(hScaledFont);
+
+	pFont->fontHeight = GetFontHeight(hScaledFont);
+	pFont->texScale = FONT_SCALE;
+
+	static constexpr int LARGE_FONT_THRESHOLD = 40;
+	static constexpr int MEDIUM_FONT_THRESHOLD = 20;
+
+	static constexpr int FONT_TEXTURE_SIZE_LARGE = 1024;
+	static constexpr int FONT_TEXTURE_SIZE_MEDIUM = 512;
+	static constexpr int FONT_TEXTURE_SIZE_SMALL = 256;
+
+	if (pFont->fontHeight > LARGE_FONT_THRESHOLD)
+		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_LARGE;
+	else if (pFont->fontHeight > MEDIUM_FONT_THRESHOLD)
+		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_MEDIUM;
+	else
+		pFont->texWidth = pFont->texHeight = FONT_TEXTURE_SIZE_SMALL;
+
+	D3DCAPS9 d3dCaps = {};
+	gpD3DDevice->GetDeviceCaps(&d3dCaps);
+
+	if (pFont->texWidth > static_cast<long>(d3dCaps.MaxTextureWidth))
+	{
+		pFont->texScale *= static_cast<float>(pFont->texWidth) / static_cast<float>(d3dCaps.MaxTextureWidth);
+		pFont->texHeight = pFont->texWidth = d3dCaps.MaxTextureWidth;
+	}
+
+	if (pFont->pTexture)
+		pFont->pTexture->Release();
+
+	gpD3DDevice->CreateTexture(pFont->texWidth, pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
+									D3DPOOL_MANAGED, &pFont->pTexture, nullptr);
+
+	static constexpr int BITMAP_PLANES = 1;
+	static constexpr int BITMAP_BIT_DEPTH = 32;
+
+	// Initialize bitmap info. Top-down DIBs (negative height) match D3D's coordinate system.
+	BITMAPINFO bitmapInfo = {};
+	bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bitmapInfo.bmiHeader.biWidth = static_cast<int>(pFont->texWidth);
+	bitmapInfo.bmiHeader.biHeight = -static_cast<int>(pFont->texHeight);
+	bitmapInfo.bmiHeader.biPlanes = BITMAP_PLANES;
+	bitmapInfo.bmiHeader.biCompression = BI_RGB;
+	bitmapInfo.bmiHeader.biBitCount = BITMAP_BIT_DEPTH;
+
+	// Handle to Device Context for fonts.
+	HDC fontDC = CreateCompatibleDC(gBitsDC);
+	DWORD *pBitmapBits = nullptr;
+	HBITMAP fontBitmap = CreateDIBSection(fontDC, &bitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&pBitmapBits), nullptr, 0);
+	SetMapMode(fontDC, MM_TEXT);
+
+	SelectObject(fontDC, fontBitmap);
+	SelectObject(fontDC, hScaledFont);
+
+	// Set text properties
+	SetTextColor(fontDC, RGB(255,255,255));
+	SetBkColor(fontDC, 0);
+	SetBkMode(fontDC, TRANSPARENT);
+	SetTextAlign(fontDC, TA_TOP);
+
+	// Temporary string that holds both a character and a null terminator.
+	TCHAR charBuffer[2] = _T("x");
+
+	// Tracks next available pixel position in the texture atlas.
+	long atlasX = 0;
+	long atlasY = 0;
+
+	// Iterate through printable ASCII characters.
+	for (int i = 0; i < NUM_CHARS; i++)
+	{
+		// Skip the first 32 non-printable characters.
+		auto currentChar = static_cast<TCHAR>(i + 32);
+
+		charBuffer[0] = currentChar;
+
+		SIZE size = {};
+		GetTextExtentPoint32(fontDC, charBuffer, 1, &size);
+
+		if (!GetCharABCWidths(fontDC, currentChar, currentChar, &pFont->abc[i]))
+		{
+			// If font isn't TrueType, fallback to basic width (abcB).
+			pFont->abc[i] = {0, static_cast<UINT>(size.cx), 0};
+		}
+
+		// Use the 'B' width (actual character body) for layout.
+		size.cx = pFont->abc[i].abcB;
+
+		// Is this row of the texture filled up?
+		if (atlasX + size.cx >= pFont->texWidth)
+		{
+			atlasX = 0;
+			atlasY += (size.cy + 1);
+		}
+
+		int left_offset = pFont->abc[i].abcA;
+		ExtTextOut(fontDC, (atlasX - left_offset), atlasY, 0, nullptr, charBuffer, 1, nullptr);
+
+		pFont->texST[i][0] = {(static_cast<float>(atlasX) / pFont->texWidth), 
+									(static_cast<float>(atlasY) / pFont->texHeight)};
+
+		pFont->texST[i][1] = {(static_cast<float>(atlasX + size.cx) / pFont->texWidth),
+									(static_cast<float>(atlasY + size.cy) / pFont->texHeight)};
+
+		// Leave +1 space so bilinear filtering doesn't pick up neighboring character
+		atlasX += (size.cx + 1);  
+	}
+
+	D3DLOCKED_RECT lockedFontRect = {};
+	pFont->pTexture->LockRect(0, &lockedFontRect, 0, 0);
+
+	auto pDstRow = reinterpret_cast<BYTE*>(lockedFontRect.pBits);
+
+	// Convert a texture bitmask into a 16-bit pixel format.
+	for (int y = 0; y < pFont->texHeight; y++)
+	{
+		auto pDst16 = reinterpret_cast<WORD*>(pDstRow);
+		for (int x = 0; x < pFont->texWidth; x++)
+		{
+			// Extract 4-bit alpha from 8-bit source.
+			auto bAlpha = static_cast<BYTE>((pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4);
+
+			// If there's any alpha, set color to white with alpha. Otherwise it's transparent.
+			*pDst16++ = (bAlpha > 0) ? (static_cast<WORD>(bAlpha << 12) | 0x0FFF) : 0x0000;
+		}
+		pDstRow += lockedFontRect.Pitch;
+	}
+
+	pFont->pTexture->UnlockRect(0);
+
+	// Get kerning pairs for font
+	pFont->numKerningPairs = GetKerningPairs(fontDC, 0, nullptr);
+	pFont->kerningPairs = new KERNINGPAIR[pFont->numKerningPairs];
+	GetKerningPairs(fontDC, pFont->numKerningPairs, pFont->kerningPairs);
+
+	DeleteObject(fontBitmap);
+	DeleteObject(hScaledFont);
+	DeleteDC(fontDC);
+}
+
+// Captures current rendered frame as a texture for post-processing effects.
+IDirect3DTexture9* D3DRender_CaptureEffect(IDirect3DTexture9* pTex0, IDirect3DTexture9* pTex1)
+{
+	D3DCacheSystemReset(&gEffectCacheSystem);
+	D3DRenderPoolReset(&gEffectPool, &D3DMaterialEffectPool);
+
+	// get pointer to backbuffer surface and z/stencil surface
+	IDirect3DSurface9* pSrc = nullptr;
+	IDirect3DSurface9* pZBuf = nullptr;
+	gpD3DDevice->GetRenderTarget(0, &pSrc);
+	gpD3DDevice->GetDepthStencilSurface(&pZBuf);
+
+	// get pointer to texture surface for rendering
+	IDirect3DSurface9* pDest[2]{};
+	pTex0->GetSurfaceLevel(0, &pDest[0]);
+	pTex1->GetSurfaceLevel(0, &pDest[1]);
+
+	// copy framebuffer to texture
+	RECT rect = GetScreenRect();
+	gpD3DDevice->StretchRect(pSrc, &rect, pDest[0], &rect, D3DTEXF_NONE);
+
+	// clear local->screen transforms
+	D3DMATRIX tempMat;
+	MatrixIdentity(&tempMat);
+	gpD3DDevice->SetTransform(D3DTS_WORLD, &tempMat);
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &tempMat);
+	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &tempMat);
+
+	gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
+	gpD3DDevice->SetRenderTarget(0, pDest[1]);
+
+	d3d_render_packet_new *pPacket = D3DRenderPacketNew(&gEffectPool);
+	if (pPacket == nullptr)
+		return nullptr;
+
+	d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
+	pPacket->pMaterialFctn = D3DMaterialEffectPacket;
+	pChunk->pMaterialFctn = D3DMaterialEffectChunk;
+	pPacket->pTexture = pTex0;
+
+	pChunk->numIndices = TRI_STRIP_INDICES;
+	pChunk->numVertices = TRI_STRIP_VERTICES;
+	pChunk->numPrimitives = TRI_STRIP_PRIMITIVES;
+
+	MatrixIdentity(&pChunk->xForm);
+
+	pChunk->xyz[0] = {D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize)};
+						
+	pChunk->xyz[1] = {D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize)};
+					
+	pChunk->xyz[2] = {D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize)};
+
+	pChunk->xyz[3] = {D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize)};
+
+	const auto texSize = static_cast<float>(gFullTextureSize);
+	pChunk->st0[0] = {0.0f, 0.0f};
+	pChunk->st0[1] = {0.0f, (gScreenHeight / texSize)};
+	pChunk->st0[2] = {(gScreenWidth / texSize), (gScreenHeight / texSize)};
+	pChunk->st0[3] = {(gScreenWidth / texSize), 0.0f};
+
+	for (auto& color : pChunk->bgra)
+	{
+		color = {COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX};
+	}
+
+	for (int i = 0; i < TRI_STRIP_INDICES; i++)
+	{
+		pChunk->indices[i] = TRI_STRIP_INDICES_PATTERN[i];
+	}
+
+	D3DCacheFill(&gEffectCacheSystem, &gEffectPool, 1);
+	D3DCacheFlush(&gEffectCacheSystem, &gEffectPool, 1, D3DPT_TRIANGLESTRIP);
+
+	// restore render target to backbuffer
+	gpD3DDevice->SetRenderTarget(0, pSrc);
+	gpD3DDevice->SetDepthStencilSurface(pZBuf);
+	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+
+	pSrc->Release();
+	pZBuf->Release();
+	pDest[0]->Release();
+	pDest[1]->Release();
+
+	return pTex1;
 }
 
 // Controls alpha testing, which is a 'pass/fail' check for pixels based on their transparency.

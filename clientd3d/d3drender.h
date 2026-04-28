@@ -36,12 +36,6 @@ static constexpr float Z_RANGE = 200000.0f;
 // Standard ASCII table, minus the first 32 non-printable control characters.
 static constexpr int NUM_CHARS = 128 - 32;
 
-// Geometry constants for rendering a quad as a triangular strip.
-static constexpr int TRI_STRIP_INDICES  = 4;
-static constexpr int TRI_STRIP_VERTICES = 4;
-static constexpr int TRI_STRIP_PRIMITIVES = TRI_STRIP_VERTICES - 2;
-static constexpr int TRI_STRIP_INDICES_PATTERN[] = { 1, 2, 0, 3 };
-
 /////////////
 // Globals //
 /////////////

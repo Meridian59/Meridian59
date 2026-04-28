@@ -15,6 +15,12 @@ static constexpr int TEX_CACHE_MAX_PARTICLE = 1000000;
 // These are used for intermediate passes for things like dynamic lighting.
 static constexpr int MAX_RENDER_TARGET_POOL = 16;
 
+// Geometry constants for rendering a quad as a triangular strip.
+static constexpr int TRI_STRIP_INDICES  = 4;
+static constexpr int TRI_STRIP_VERTICES = 4;
+static constexpr int TRI_STRIP_PRIMITIVES = TRI_STRIP_VERTICES - 2;
+static constexpr int TRI_STRIP_INDICES_PATTERN[] = {1, 2, 0, 3};
+
 ///////////////
 // Variables //
 ///////////////
@@ -48,26 +54,26 @@ d3d_render_pool_new		gWallMaskPool;
 d3d_render_pool_new		gEffectPool;
 d3d_render_pool_new		gParticlePool;
 
-custom_xyz				playerOldPos = {0.0f, 0.0f, 0.0f};
-custom_xyz				playerDeltaPos = {0.0f, 0.0f, 0.0f};
+custom_xyz				playerOldPos;
+custom_xyz				playerDeltaPos;
 
 font_3d					gFont;
 
-RECT					gD3DRect = {0, 0, 0, 0};
-int						gNumObjects = 0;
+RECT					gD3DRect;
+int						gNumObjects;
 
 // Incremented in d3dcache.c to track total DrawPrimitive calls per frame.
-int						gNumDPCalls = 0;
+int						gNumDPCalls;
 
 static PALETTEENTRY		gPalette[NUM_COLORS];
 
-static unsigned int		gFrame = 0;
+static unsigned int		gFrame;
 
 // The size of the main full size render buffer and also a smaller buffer for effects.
 // The smaller buffer is used for effects that don't need full resolution.
 // As per the original specification, the smaller buffer is 1/4 the size of the full buffer.
-int						gFullTextureSize = 0;
-int						gSmallTextureSize = 0;
+int						gFullTextureSize;
+int						gSmallTextureSize;
 
 int 					d3dRenderTextureThreshold;
 
@@ -78,8 +84,8 @@ IDirect3DVertexDeclaration9* g_pVertexDecl_PosColorTex1;
 // Multi-textured layout: Position, color, and two UVs. Used for lightmapped surfaces.
 IDirect3DVertexDeclaration9* g_pVertexDecl_PosColorTex2;
 
-int						gD3DRedrawAll = 0;
-bool 					gWireframe = false;
+int						gD3DRedrawAll;
+bool 					gWireframe;
 
 // Transformation matrices for the current frame's pipeline.
 static D3DMATRIX view, mat, rot, trans, proj;
@@ -125,7 +131,7 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool);
 RECT GetScreenRect()
 {
 	// RECT struct is set in this order: Left -> Top -> Right -> Bottom
-	return { 0, 0, gScreenWidth, gScreenHeight };
+	return {0, 0, gScreenWidth, gScreenHeight};
 }
 
 void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
@@ -156,7 +162,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	D3DCAPS9 d3dCaps = {};
 	gpD3DDevice->GetDeviceCaps(&d3dCaps);
 
-	if ( pFont->texWidth > static_cast<long>(d3dCaps.MaxTextureWidth) )
+	if (pFont->texWidth > static_cast<long>(d3dCaps.MaxTextureWidth))
 	{
 		pFont->texScale *= static_cast<float>(pFont->texWidth) / static_cast<float>(d3dCaps.MaxTextureWidth);
 		pFont->texHeight = pFont->texWidth = d3dCaps.MaxTextureWidth;
@@ -206,7 +212,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	for (int i = 0; i < NUM_CHARS; i++)
 	{
 		// Skip the first 32 non-printable characters.
-		TCHAR currentChar = static_cast<TCHAR>(i + 32);
+		auto currentChar = static_cast<TCHAR>(i + 32);
 
 		charBuffer[0] = currentChar;
 
@@ -216,7 +222,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 		if (!GetCharABCWidths(fontDC, currentChar, currentChar, &pFont->abc[i]))
 		{
 			// If font isn't TrueType, fallback to basic width (abcB).
-			pFont->abc[i] = { 0, static_cast<UINT>(size.cx), 0 };
+			pFont->abc[i] = {0, static_cast<UINT>(size.cx), 0};
 		}
 
 		// Use the 'B' width (actual character body) for layout.
@@ -245,16 +251,16 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	D3DLOCKED_RECT d3dlr = {};
 	pFont->pTexture->LockRect(0, &d3dlr, 0, 0);
 
-	BYTE *pDstRow = reinterpret_cast<BYTE*>(d3dlr.pBits);
+	auto pDstRow = reinterpret_cast<BYTE*>(d3dlr.pBits);
 
 	// Convert a texture bitmask into a 16-bit pixel format.
 	for (int y = 0; y < pFont->texHeight; y++)
 	{
-		WORD *pDst16 = reinterpret_cast<WORD*>(pDstRow);
+		auto pDst16 = reinterpret_cast<WORD*>(pDstRow);
 		for (int x = 0; x < pFont->texWidth; x++)
 		{
 			// Extract 4-bit alpha from 8-bit source.
-			BYTE bAlpha = static_cast<BYTE>( (pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4 );
+			auto bAlpha = static_cast<BYTE>((pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4);
 
 			// If there's any alpha, set color to white with alpha. Otherwise it's transparent.
 			*pDst16++ = (bAlpha > 0) ? (static_cast<WORD>(bAlpha << 12) | 0x0FFF) : 0x0000;
@@ -280,7 +286,7 @@ void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize)
 	pPool->size = size;
 	pPool->curPacket = 0;
 
-	d3d_render_packet_new *pPacket = reinterpret_cast<d3d_render_packet_new*>( malloc(sizeof(d3d_render_packet_new) * size) );
+	auto pPacket = reinterpret_cast<d3d_render_packet_new*>(malloc(sizeof(d3d_render_packet_new) * size));
 	assert(pPacket);
 	pPool->renderPacketList = list_create(pPacket);
 	pPool->packetSize = packetSize;
@@ -309,19 +315,19 @@ void D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc)
 
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool)
 {
-	d3d_render_packet_new *pPacket;
+	d3d_render_packet_new *pPacket = nullptr;
 
 	if (pPool->curPacket >= pPool->size)
 	{
 		if (pPool->curPacketList->next == nullptr)
 		{
-			pPacket = reinterpret_cast<d3d_render_packet_new*>( malloc(sizeof(d3d_render_packet_new) * pPool->size) );
+			pPacket = reinterpret_cast<d3d_render_packet_new*>(malloc(sizeof(d3d_render_packet_new) * pPool->size));
 			assert(pPacket);
 			list_add_item(pPool->renderPacketList, pPacket);
 		}
 		else
 		{
-			reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->next->data);
+			pPacket = reinterpret_cast<d3d_render_packet_new*>(pPool->curPacketList->next->data);
 		}
 
 		pPool->curPacketList = pPool->curPacketList->next;
@@ -383,13 +389,13 @@ void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
 d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, IDirect3DTexture9* pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect)
 {
-	d3d_render_packet_new *pPacket;
+	d3d_render_packet_new *pPacket = nullptr;
 
 	for (list_type list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
 	{
-		pPacket = (d3d_render_packet_new *)list->data;
+		pPacket = static_cast<d3d_render_packet_new*>(list->data);
 
-		u_int numPackets;
+		u_int numPackets = 0;
 		if (list == pPool->curPacketList)
 			numPackets = pPool->curPacket;
 		else
@@ -486,10 +492,10 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 		pPacket->pMaterialFctn = D3DMaterialObjectPacket;
 		pChunk->pMaterialFctn = D3DMaterialNone;
 
-		pChunk->xyz[0] = { left, VIEW_ELEMENT_Z, top };
-		pChunk->xyz[1] = { left, VIEW_ELEMENT_Z, bottom };	  
-		pChunk->xyz[2] = { right, VIEW_ELEMENT_Z, bottom };
-		pChunk->xyz[3] = { right, VIEW_ELEMENT_Z, top };	  
+		pChunk->xyz[0] = {left, VIEW_ELEMENT_Z, top};
+		pChunk->xyz[1] = {left, VIEW_ELEMENT_Z, bottom};	  
+		pChunk->xyz[2] = {right, VIEW_ELEMENT_Z, bottom};
+		pChunk->xyz[3] = {right, VIEW_ELEMENT_Z, top};	  
 
 		for (auto& color : pChunk->bgra)
 		{
@@ -498,10 +504,10 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 
 		// Half-pixel offset to prevent texture bleeding.
 		static constexpr float foffset = 1.0f / 64.0f;
-		pChunk->st0[0] = { foffset, foffset };
-		pChunk->st0[1] = { foffset, (1.0f - foffset) };
-		pChunk->st0[2] = { (1.0f - foffset), (1.0f - foffset) };
-		pChunk->st0[3] = { (1.0f - foffset), foffset };
+		pChunk->st0[0] = {foffset, foffset};
+		pChunk->st0[1] = {foffset, (1.0f - foffset)};
+		pChunk->st0[2] = {(1.0f - foffset), (1.0f - foffset)};
+		pChunk->st0[3] = {(1.0f - foffset), foffset};
 		
 		for (int i = 0; i < TRI_STRIP_INDICES; i++)
 		{
@@ -558,23 +564,23 @@ IDirect3DTexture9* D3DRender_CaptureEffect(IDirect3DTexture9* pTex0, IDirect3DTe
 
 	MatrixIdentity(&pChunk->xForm);
 
-	pChunk->xyz[0] = { D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
-							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize) };
+	pChunk->xyz[0] = {D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize)};
 						
-	pChunk->xyz[1] = { D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
-							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize) };
+	pChunk->xyz[1] = {D3DRENDER_SCREEN_TO_CLIP_X(0, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize)};
 					
-	pChunk->xyz[2] = { D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
-							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize) };
+	pChunk->xyz[2] = {D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(gSmallTextureSize, gSmallTextureSize)};
 
-	pChunk->xyz[3] = { D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
-							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize) };
+	pChunk->xyz[3] = {D3DRENDER_SCREEN_TO_CLIP_X(gSmallTextureSize, gSmallTextureSize),
+							0, D3DRENDER_SCREEN_TO_CLIP_Y(0, gSmallTextureSize)};
 
-	const float texSize = static_cast<float>(gFullTextureSize);
-	pChunk->st0[0] = { 0.0f, 0.0f };
-	pChunk->st0[1] = { 0.0f, (gScreenHeight / texSize) };
-	pChunk->st0[2] = { (gScreenWidth / texSize), (gScreenHeight / texSize) };
-	pChunk->st0[3] = { (gScreenWidth / texSize), 0.0f };
+	const auto texSize = static_cast<float>(gFullTextureSize);
+	pChunk->st0[0] = {0.0f, 0.0f};
+	pChunk->st0[1] = {0.0f, (gScreenHeight / texSize)};
+	pChunk->st0[2] = {(gScreenWidth / texSize), (gScreenHeight / texSize)};
+	pChunk->st0[3] = {(gScreenWidth / texSize), 0.0f};
 
 	for (auto& color : pChunk->bgra)
 	{
@@ -694,7 +700,7 @@ const Color(&getBasePalette())[NUM_COLORS]
 ************************************************************************************/
 HRESULT D3DRenderInit(HWND hWnd)
 {
-	if ( (gpD3D = Direct3DCreate9(D3D_SDK_VERSION)) == nullptr )
+	if ((gpD3D = Direct3DCreate9(D3D_SDK_VERSION)) == nullptr)
 		return E_FAIL;
 
 	gD3DEnabled = D3DDriverProfileInit();
@@ -705,7 +711,7 @@ HRESULT D3DRenderInit(HWND hWnd)
 
 	// Initializes D3D viewport to match current screen dimensions.
 	// Defines screen dimensions (X, Y, Width, Height) and depth range (MinZ, MaxZ).
-	gViewport = { 0, 0, static_cast<DWORD>(gScreenWidth), static_cast<DWORD>(gScreenHeight), 0.0f, 1.0f};
+	gViewport = {0, 0, static_cast<DWORD>(gScreenWidth), static_cast<DWORD>(gScreenHeight), 0.0f, 1.0f};
 
 	gpD3DDevice->SetViewport(&gViewport);
 
@@ -813,8 +819,10 @@ HRESULT D3DRenderInit(HWND hWnd)
 
 	// create framebuffer textures
 	for (int i = 0; i < MAX_RENDER_TARGET_POOL; i++)
-	gpD3DDevice->CreateTexture(gSmallTextureSize, gSmallTextureSize, 1,D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8,
-									D3DPOOL_DEFAULT, &gpBackBufferTex[i], nullptr);
+	{
+		gpD3DDevice->CreateTexture(gSmallTextureSize, gSmallTextureSize, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8,
+			D3DPOOL_DEFAULT, &gpBackBufferTex[i], nullptr);
+	}
 
 	gpD3DDevice->CreateTexture(gFullTextureSize, gFullTextureSize, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8,
 									D3DPOOL_DEFAULT, &gpBackBufferTexFull, nullptr);
@@ -826,7 +834,7 @@ HRESULT D3DRenderInit(HWND hWnd)
 	// This will call D3DRenderFontInit to make sure the font texture is created
 	GraphicsResetFont();
 
-	playerOldPos = { 0, 0, 0 };
+	playerOldPos = {0, 0, 0};
 
 	return S_OK;
 }
@@ -920,6 +928,9 @@ void D3DRenderShutDown(void)
 
 void D3DRenderBegin(room_type *room, Draw3DParams *params)
 {
+	long timeOverall = timeGetTime();
+	long timeSetup = timeGetTime();
+	
 	// Static variable to track the player's previous ability to see. Initialize it only once.
 	static bool can_see = !effects.blind;
 
@@ -958,6 +969,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	}
 
 	gFrame++;
+	
+	long timeWorld = 0, timeObjects = 0, timeLMaps = 0, timeSkybox = 0, timeComplete = 0;
 
 	gNumObjects = 0;
 	gNumVertices = 0;
@@ -1024,6 +1037,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		static_cast<float>(params->viewer_y),
 		static_cast<float>(params->viewer_height)
 	};
+	
+	timeSetup = timeGetTime() - timeSetup;
 
 	if (draw_sky) // Render the skybox first
 	{
@@ -1092,7 +1107,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_world)
 	{
-		D3DRenderWorld(worldRenderParams, worldPropertyParams, lightAndTextureParams);
+		timeWorld = D3DRenderWorld(worldRenderParams, worldPropertyParams, lightAndTextureParams);
 
 		// DEBUG: Draw circles at static light positions
 		if (D3DLightsDebugPositionsEnabled() && config.bDynamicLighting)
@@ -1113,8 +1128,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_objects)
 	{
-		ObjectsRenderParams objectsRenderParams(g_pVertexDecl_PosColorTex1, g_pVertexDecl_PosColorTex2, gD3DDriverProfile, &gObjectPool, &gObjectCacheSystem,
-													view, proj, room, params);
+		ObjectsRenderParams objectsRenderParams(g_pVertexDecl_PosColorTex1, g_pVertexDecl_PosColorTex2, gD3DDriverProfile,
+			&gObjectPool, &gObjectCacheSystem, view, proj, room, params);
 
 		GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects, 
 			gpBackBufferTexFull, gpBackBufferTex);
@@ -1123,7 +1138,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		PlayerViewParams playerViewParams(gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
 
-		D3DRenderObjects(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
+		timeObjects = D3DRenderObjects(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
 	}
 
 	// Transparent walls are drawn LAST so that sprites/monsters behind them show
@@ -1165,6 +1180,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DFxBlurWaver(fxRenderSystemStructure);
 	}
 
+	timeComplete = timeGetTime();
+	
 	// view elements (e.g. viewport corners)
 	D3DRender_SetColorStage(1, D3DTOP_DISABLE, 0, 0);
 	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, 0, 0);
@@ -1211,6 +1228,12 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if ((gFrame & 255) == 255)
 		debug(("number of vertices = %d\nnumber of dp calls = %d\n", gNumVertices, gNumDPCalls));
+	
+	timeComplete = timeGetTime() - timeComplete;
+	timeOverall = timeGetTime() - timeOverall;
+
+	//debug(("overall = %d lightmaps = %d world = %d objects = %d skybox = %d num vertices = %d setup = %d completion = %d (%d, %d, %d)\n"
+	//, timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox, gNumVertices, timeComplete));
 }
 
 void D3DRenderResizeDisplay(int left, int top, int right, int bottom)

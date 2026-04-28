@@ -26,7 +26,7 @@ static constexpr int TRI_STRIP_INDICES_PATTERN[] = {1, 2, 0, 3};
 ///////////////
 d3d_render_packet_new	*gpPacket;
 
-IDirect3DTexture9*		gpNoLookThrough = nullptr;
+IDirect3DTexture9*		gpNoLookThrough;
 IDirect3DTexture9*		gpBackBufferTex[MAX_RENDER_TARGET_POOL];
 IDirect3DTexture9*		gpBackBufferTexFull;
 IDirect3DTexture9*		gpViewElements[NUM_VIEW_ELEMENTS];
@@ -248,10 +248,10 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 		atlasX += (size.cx + 1);  
 	}
 
-	D3DLOCKED_RECT d3dlr = {};
-	pFont->pTexture->LockRect(0, &d3dlr, 0, 0);
+	D3DLOCKED_RECT lockedFontRect = {};
+	pFont->pTexture->LockRect(0, &lockedFontRect, 0, 0);
 
-	auto pDstRow = reinterpret_cast<BYTE*>(d3dlr.pBits);
+	auto pDstRow = reinterpret_cast<BYTE*>(lockedFontRect.pBits);
 
 	// Convert a texture bitmask into a 16-bit pixel format.
 	for (int y = 0; y < pFont->texHeight; y++)
@@ -265,7 +265,7 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 			// If there's any alpha, set color to white with alpha. Otherwise it's transparent.
 			*pDst16++ = (bAlpha > 0) ? (static_cast<WORD>(bAlpha << 12) | 0x0FFF) : 0x0000;
 		}
-		pDstRow += d3dlr.Pitch;
+		pDstRow += lockedFontRect.Pitch;
 	}
 
 	pFont->pTexture->UnlockRect(0);
@@ -280,7 +280,6 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	DeleteDC(fontDC);
 }
 
-// new render stuff
 void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSize)
 {
 	pPool->size = size;
@@ -499,7 +498,7 @@ void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 
 		for (auto& color : pChunk->bgra)
 		{
-		 color = {255, 255, 255, 255}; // Solid white (no tinting)
+			color = {255, 255, 255, 255}; // Solid white (no tinting)
 		}
 
 		// Half-pixel offset to prevent texture bleeding.
@@ -970,7 +969,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	gFrame++;
 	
-	long timeWorld = 0, timeObjects = 0, timeLMaps = 0, timeSkybox = 0, timeComplete = 0;
+	long timeWorld = 0;
+	long timeObjects = 0;
 
 	gNumObjects = 0;
 	gNumVertices = 0;
@@ -1180,7 +1180,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DFxBlurWaver(fxRenderSystemStructure);
 	}
 
-	timeComplete = timeGetTime();
+	long timeComplete = timeGetTime();
 	
 	// view elements (e.g. viewport corners)
 	D3DRender_SetColorStage(1, D3DTOP_DISABLE, 0, 0);
@@ -1232,8 +1232,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	timeComplete = timeGetTime() - timeComplete;
 	timeOverall = timeGetTime() - timeOverall;
 
-	//debug(("overall = %d lightmaps = %d world = %d objects = %d skybox = %d num vertices = %d setup = %d completion = %d (%d, %d, %d)\n"
-	//, timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox, gNumVertices, timeComplete));
+	//debug(("overall = %d world = %d objects = %d num vertices = %d setup = %d completion = %d \n"
+	//	, timeOverall, timeWorld, timeObjects, gNumVertices, timeSetup, timeComplete));
 }
 
 void D3DRenderResizeDisplay(int left, int top, int right, int bottom)

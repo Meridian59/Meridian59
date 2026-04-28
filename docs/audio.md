@@ -86,6 +86,8 @@ graph TD
 | `MusicSetVolume(volume)` | Set music volume (0.0 - 1.0) |
 | `SoundPlay(filename, volume, flags, ...)` | Play sound effect with optional 3D positioning |
 | `SoundStopAll()` | Stop all sound effects |
+| `SoundStopLooping()` | Stop only `SF_LOOP` sources (used when Steady Sounds is unchecked) |
+| `ResetSoundVolume()` | Re-apply Sound and Ambient sliders to every currently-playing source |
 | `AudioUpdateListener(x, y, z, ...)` | Update listener position for 3D audio |
 | `AudioUpdateTrackedSources()` | Refresh positions of sources attached to moving game objects |
 
@@ -331,6 +333,15 @@ The two volume sliders are selected purely by the `SF_LOOP` flag on the sound, r
 | One-shot | Combat hits, spell impacts, doors, death scream, scripted effects | Sound |
 
 The `Steady Sounds` checkbox is a master toggle for `SF_LOOP` sounds; the `Atmospheric Sounds` checkbox toggles `SF_RANDOM_PLACE` sounds (server-picked random ambient one-shots).
+
+### Live slider updates
+
+All three volume sliders (`Music`, `Sound`, `Ambient`) take effect immediately when the player clicks OK in the Options dialog.  No re-login or room change is required.
+
+- `ResetMusicVolume()` re-applies the music slider to the live music source
+- `ResetSoundVolume()` re-applies the sound and ambient sliders to every currently-playing source.  Each source records two pieces of state at `SoundPlay` time: the pre-slider gain (from `max_vol` / `volume`) and a flag indicating whether it is a loop.  On refresh, gain is recomputed as `pre-slider gain * current slider`, where the slider is `Ambient` for loops and `Sound` for one-shots
+- Unchecking `Steady Sounds` calls `SoundStopLooping()` to stop loops that are already playing.  Re-checking it does not restart them; the server only sends loop packets on room entry, so loops resume on the next room change
+- Unchecking `Atmospheric Sounds` needs no immediate action; the gated one-shot sounds finish on their own within a few seconds
 
 ## HRTF and Surround Sound
 

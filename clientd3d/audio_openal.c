@@ -38,6 +38,10 @@ static ALuint g_sources[MAX_AUDIO_SOURCES];
 static int g_numSources = 0;
 static bool g_initialized = false;
 
+// Per-source state
+static bool  g_sourceIsLoop[MAX_AUDIO_SOURCES];
+static float g_sourceBaseGain[MAX_AUDIO_SOURCES];
+
 // LRU buffer cache: list ordered by recency (front = newest), map for O(1) lookup.
 struct CacheNode {
    std::string filename;
@@ -1065,6 +1069,8 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       alSourcef(source, AL_ROLLOFF_FACTOR, 1.0f);
 
       float gain = (float)max_vol / (float)MAX_VOLUME;
+      g_sourceBaseGain[sourceIndex] = gain;
+      g_sourceIsLoop[sourceIndex] = (flags & SF_LOOP) != 0;
       if (flags & SF_LOOP)
          gain *= (float)config.ambient_volume / 100.0f;
       else
@@ -1079,6 +1085,8 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
 
       // Set volume (volume is 0-MAX_VOLUME, convert to 0.0-1.0)
       float gain = (float)volume / (float)MAX_VOLUME;
+      g_sourceBaseGain[sourceIndex] = gain;
+      g_sourceIsLoop[sourceIndex] = (flags & SF_LOOP) != 0;
       if (flags & SF_LOOP)
          gain *= (float)config.ambient_volume / 100.0f;
       else
@@ -1165,6 +1173,32 @@ void SoundStopLooping(void)
       {
          alSourceStop(g_sources[i]);
       }
+   }
+}
+
+/*
+ * ResetSoundVolume:  Reapply Sound and Ambient slider values to every
+ *   currently-playing source.  Walks the source pool and recomputes each
+ *   source's gain as base * slider, where the base was recorded at SoundPlay
+ *   time and the slider is picked by the source's stored loop flag.  Idle
+ *   sources are skipped.
+ */
+void ResetSoundVolume(void)
+{
+   if (!g_initialized)
+      return;
+
+   for (int i = 0; i < g_numSources; i++)
+   {
+      ALint state;
+      alGetSourcei(g_sources[i], AL_SOURCE_STATE, &state);
+      if (state != AL_PLAYING && state != AL_PAUSED)
+         continue;
+
+      float slider = g_sourceIsLoop[i]
+         ? (float)config.ambient_volume / 100.0f
+         : (float)config.sound_volume / 100.0f;
+      alSourcef(g_sources[i], AL_GAIN, g_sourceBaseGain[i] * slider);
    }
 }
 

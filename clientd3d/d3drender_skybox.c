@@ -163,7 +163,7 @@ void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, con
 {
 	// Set render states for skybox
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
-	SetZBias(gpD3DDevice, 0);
+	SetZBias(0);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 

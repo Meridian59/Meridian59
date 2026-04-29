@@ -100,6 +100,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <bit>
 
 #include "resource.h"
 #include "proto.h"

@@ -62,7 +62,7 @@ font_3d					gFont;
 RECT					gD3DRect;
 int						gNumObjects;
 
-// Incremented in d3dcache.c to track total DrawPrimitive calls per frame.
+// Tracks total DrawPrimitive calls per frame.
 int						gNumDPCalls;
 
 static PALETTEENTRY		gPalette[NUM_COLORS];
@@ -146,7 +146,7 @@ static void D3DRenderPoolInit(d3d_render_pool_new *pPool, int size, int packetSi
 
 	D3DRenderPoolReset(pPool, nullptr);
 
-	for (u_int i = 0; i < pPool->size; i++)
+	for (auto i = 0u; i < pPool->size; i++)
 	{
 		pPacket->size = packetSize;
 	}
@@ -190,8 +190,8 @@ static void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
 
 static void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 {
-	float screenW = static_cast<float>(gD3DRect.right - gD3DRect.left) / static_cast<float>(gScreenWidth);
-	float screenH = static_cast<float>(gD3DRect.bottom - gD3DRect.top) / static_cast<float>(gScreenHeight);
+	auto screenW = static_cast<float>(gD3DRect.right - gD3DRect.left) / static_cast<float>(gScreenWidth);
+	auto screenH = static_cast<float>(gD3DRect.bottom - gD3DRect.top) / static_cast<float>(gScreenHeight);
 
 	// Render view elements (such as the main viewport yellow ui corners).
 	int offset = (GetFocus() == hMain) ? 4 : 0;
@@ -230,7 +230,7 @@ static void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 			bottom = D3DRENDER_SCREEN_TO_CLIP_Y(gScreenHeight, gScreenHeight);
 		}
 
-		d3d_render_packet_new *pPacket = D3DRenderPacketNew(pPool);
+		auto *pPacket = D3DRenderPacketNew(pPool);
 		pPacket->pDib = nullptr;
 		pPacket->pTexture = gpViewElements[i + offset];
 		pPacket->xLat0 = 0;
@@ -238,7 +238,7 @@ static void D3DRenderViewElementsDraw(d3d_render_pool_new *pPool)
 		pPacket->effect = 0;
 		pPacket->size = pPool->packetSize;
 
-		d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
+		auto *pChunk = D3DRenderChunkNew(pPacket);
 		pChunk->flags = 0;
 		pChunk->numIndices = TRI_STRIP_INDICES;
 		pChunk->numVertices = TRI_STRIP_VERTICES;
@@ -924,20 +924,17 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, IDir
 {
 	d3d_render_packet_new *pPacket = nullptr;
 
-	for (list_type list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
+	for (auto list = pPool->renderPacketList; list != pPool->curPacketList->next; list = list->next)
 	{
 		pPacket = static_cast<d3d_render_packet_new*>(list->data);
 
-		u_int numPackets = 0;
-		if (list == pPool->curPacketList)
-			numPackets = pPool->curPacket;
-		else
-			numPackets = pPool->size;
+		// Determine if we should scan up to the last active packet, or the entire block.
+		auto numPackets = (list == pPool->curPacketList) ? pPool->curPacket : pPool->size;
 
-		// for each packet
-		for (u_int count = 0; count < numPackets; count++, pPacket++)
+		// Search for a matching packet in the current block.
+		for (auto count = 0u; count < numPackets; count++, pPacket++)
 		{
-			// if we find a match that isn't full already, return it
+			// If we find a match that isn't full already, return it.
 			if ((pPacket->pDib == pDib) && (pPacket->pTexture == pTexture) &&
 				(pPacket->xLat0 == xLat0) && (pPacket->xLat1 == xLat1) &&
 				(pPacket->effect == effect))
@@ -948,7 +945,7 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, IDir
 		}
 	}
 
-	// otherwise, return a new one (or NULL if no more remain)
+	// Otherwise, return a new one (or nullptr if no more remain).
 	pPacket = D3DRenderPacketNew(pPool);
 
 	if (pPacket)
@@ -1135,10 +1132,10 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	auto pDstRow = reinterpret_cast<BYTE*>(lockedFontRect.pBits);
 
 	// Convert a texture bitmask into a 16-bit pixel format.
-	for (int y = 0; y < pFont->texHeight; y++)
+	for (auto y = 0l; y < pFont->texHeight; y++)
 	{
 		auto pDst16 = reinterpret_cast<WORD*>(pDstRow);
-		for (int x = 0; x < pFont->texWidth; x++)
+		for (auto x = 0l; x < pFont->texWidth; x++)
 		{
 			// Extract 4-bit alpha from 8-bit source.
 			auto bAlpha = static_cast<BYTE>((pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4);
@@ -1194,11 +1191,11 @@ IDirect3DTexture9* D3DRender_CaptureEffect(IDirect3DTexture9* pTex0, IDirect3DTe
 
 	gpD3DDevice->SetRenderTarget(0, pDest[1]);
 
-	d3d_render_packet_new *pPacket = D3DRenderPacketNew(&gEffectPool);
+	auto *pPacket = D3DRenderPacketNew(&gEffectPool);
 	if (pPacket == nullptr)
 		return nullptr;
 
-	d3d_render_chunk_new *pChunk = D3DRenderChunkNew(pPacket);
+	auto *pChunk = D3DRenderChunkNew(pPacket);
 	pPacket->pMaterialFctn = D3DMaterialEffectPacket;
 	pChunk->pMaterialFctn = D3DMaterialEffectChunk;
 	pPacket->pTexture = pTex0;

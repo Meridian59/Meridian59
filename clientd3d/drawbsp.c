@@ -4732,7 +4732,6 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw)
       witem->cone.rightedge = wcol1;
       witem->cone.top_a = ctop_a; witem->cone.top_b = ctop_b; witem->cone.top_d = ctop_d;
       witem->cone.bot_a = cbot_a; witem->cone.bot_b = cbot_b; witem->cone.bot_d = cbot_d;
-      w->seen = true;
    }
 
    if (draw)

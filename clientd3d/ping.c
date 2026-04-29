@@ -17,7 +17,7 @@
 
 #define PING_DELAY           5000       // # of milliseconds between pings
 
-DWORD latency = 0;
+DWORD latency = 0;                      // Latest estimate of server latency, in milliseconds
 
 // Session ping tracking
 static std::vector<int> session_ping;

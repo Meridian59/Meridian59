@@ -690,8 +690,7 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, fxRss.vertexDeclaration);
 
-	D3DRenderFramebufferTextureCreate(fxRss.backBufferTexFull, fxRss.backBufferTex[t],
-		fxRss.smallTextureSize, fxRss.smallTextureSize);
+	D3DRender_CaptureEffect(fxRss.backBufferTexFull, fxRss.backBufferTex[t]);
 
 	D3DCacheSystemReset(fxRss.effectCacheSystem);
 	D3DRenderPoolReset(fxRss.effectPool, &D3DMaterialBlurPool);

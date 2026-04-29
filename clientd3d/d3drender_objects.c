@@ -250,10 +250,9 @@ long D3DRenderObjects(
 	D3DCacheFill(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1);
 	D3DCacheFlush(objectsRenderParams.cacheSystem, objectsRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
-	SetZBias(gpD3DDevice, ZBIAS_DEFAULT);
+	SetZBias(ZBIAS_DEFAULT);
 
-	D3DRenderFramebufferTextureCreate(gameObjectDataParams.backBufferTexFull, gameObjectDataParams.backBufferTex[0],
-		fontTextureParams.smallTextureSize, fontTextureParams.smallTextureSize);
+	D3DRender_CaptureEffect(gameObjectDataParams.backBufferTexFull, gameObjectDataParams.backBufferTex[0]);
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &objectsRenderParams.view);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &objectsRenderParams.proj);

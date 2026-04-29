@@ -171,8 +171,12 @@ void StatsNumResize(list_type stats)
       MoveWindow(hStatsScroll, stats_area.cx - stats_scrollbar_width,
                y, stats_scrollbar_width, num_visible * height, FALSE);
       ShowWindow(hStatsScroll, SW_HIDE);
-      SetScrollRange(hStatsScroll, SB_CTL, 0, num_stats - num_visible, TRUE);
-      SetScrollPos(hStatsScroll, SB_CTL, top_stat, TRUE);
+      SCROLLINFO si = { sizeof(si), SIF_RANGE | SIF_PAGE | SIF_POS };
+      si.nMin  = 0;
+      si.nMax  = num_stats - 1;
+      si.nPage = num_visible;
+      si.nPos  = top_stat;
+      SetScrollInfo(hStatsScroll, SB_CTL, &si, TRUE);
       if (StatsGetCurrentGroup() != STATS_INVENTORY)  //	ajw
          ShowWindow(hStatsScroll, SW_SHOWNORMAL);
    }

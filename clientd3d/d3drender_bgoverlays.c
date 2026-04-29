@@ -226,17 +226,17 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 
 		if (
 			(
-				(D3DRENDER_CLIP(topLeft.x, 1.0f) &&
-					D3DRENDER_CLIP(topLeft.y, 1.0f)) ||
-				(D3DRENDER_CLIP(bottomLeft.x, 1.0f) &&
-					D3DRENDER_CLIP(bottomLeft.y, 1.0f)) ||
-				(D3DRENDER_CLIP(topRight.x, 1.0f) &&
-					D3DRENDER_CLIP(topRight.y, 1.0f)) ||
-				(D3DRENDER_CLIP(bottomRight.x, 1.0f) &&
-					D3DRENDER_CLIP(bottomRight.y, 1.0f)) ||
-				(D3DRENDER_CLIP(center.x, 1.0f))
+				(D3DRender_InBounds(topLeft.x, 1.0f) &&
+					D3DRender_InBounds(topLeft.y, 1.0f)) ||
+				(D3DRender_InBounds(bottomLeft.x, 1.0f) &&
+					D3DRender_InBounds(bottomLeft.y, 1.0f)) ||
+				(D3DRender_InBounds(topRight.x, 1.0f) &&
+					D3DRender_InBounds(topRight.y, 1.0f)) ||
+				(D3DRender_InBounds(bottomRight.x, 1.0f) &&
+					D3DRender_InBounds(bottomRight.y, 1.0f)) ||
+				(D3DRender_InBounds(center.x, 1.0f))
 				) &&
-			D3DRENDER_CLIP(topLeft.z, 1.0f))
+			D3DRender_InBounds(topLeft.z, 1.0f))
 		{
 
 			int tempLeft = (topLeft.x * w / 2) + (w / 2);

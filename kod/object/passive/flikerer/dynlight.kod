@@ -34,6 +34,9 @@ properties:
    % What color?  Default is pure white.
    viLightColor = LIGHT_BWHITE
 
+   % Disable flickering so it uses the original steady light appearance.
+   pbIsFlickering = FALSE
+
 messages:
 
    Constructor(iFlags = LIGHT_FLAG_ON, iIntensity = 255, iColor = LIGHT_BWHITE, bVisible=FALSE)

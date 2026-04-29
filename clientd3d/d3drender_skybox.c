@@ -163,7 +163,7 @@ void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, con
 {
 	// Set render states for skybox
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
-	SetZBias(gpD3DDevice, 0);
+	SetZBias(0);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
@@ -175,10 +175,10 @@ void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, con
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, FALSE);
 
 	// Set texture stages for the skybox
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetColorStage(0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetAlphaStage(0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetColorStage(1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, 0, 0);
 
 	// Set vertex shader and declaration for the skybox
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);

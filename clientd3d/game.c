@@ -652,7 +652,11 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
 	 volume = maxvolume - (distance * maxvolume / cutoff) ;
       }
    }
-   PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, cutoff, maxvolume);
+   // Pass the raw radius so the audio layer can tell a caller-specified
+   // radius (radius > 0) apart from "use the default" (radius == 0).
+   // source_obj is forwarded so the audio layer can keep the source's
+   // position in sync if the emitter moves while the sound plays.
+   PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, radius, maxvolume, source_obj);
 }
 /************************************************************************/
 void GameQuit(void)

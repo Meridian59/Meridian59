@@ -61,6 +61,10 @@
 	class _OWLCLASS TCheckBox;
 #endif
 
+#ifndef OWL_COMBOBOX_H
+	class _OWLCLASS TComboBox;
+#endif
+
 #ifndef __objects_h
 	#include "objects.h"	// SelPtr
 #endif
@@ -245,6 +249,9 @@ protected:
 	TRadioButton *pScrollSlowRadio[2];
 	TRadioButton *pScrollMediumRadio[2];
 	TRadioButton *pScrollFastRadio[2];
+
+	TComboBox *pTranslucencyPos;
+	TComboBox *pTranslucencyNeg;
 };    //{{TLineDefEditDialog}}
 
 

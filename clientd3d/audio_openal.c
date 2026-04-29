@@ -75,6 +75,12 @@ static std::list<CacheNode> g_cacheList;
 static std::unordered_map<std::string, std::list<CacheNode>::iterator,
                           CaseInsensitiveHash, CaseInsensitiveEqual> g_cacheMap;
 
+// Tracked source registry: links a playing OpenAL source to a game object
+// so the source's position can be refreshed each frame as the object moves.
+// Key is the OpenAL source ID, value is the game object whose position the
+// source should follow.
+static std::unordered_map<ALuint, ID> g_trackedSources;
+
 // Music streaming state
 static const int STREAM_NUM_BUFFERS = 4;
 static const int STREAM_BUFFER_SAMPLES = 4096;
@@ -188,8 +194,10 @@ bool AudioInit(HWND hWnd)
    ALfloat listenerOri[] = { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }; // forward, up
    alListenerfv(AL_ORIENTATION, listenerOri);
 
-   // Use linear distance model for predictable 3D audio falloff
+   // Use linear falloff by default, but let each source pick its own
+   // curve so they don't all have to fade out the same way.
    alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+   alEnable(AL_SOURCE_DISTANCE_MODEL);
 
    g_initialized = true;
 
@@ -946,9 +954,13 @@ static ALuint LoadAudioBuffer(const char* filename)
 
 /*
  * SoundPlay: Returns true if sound started. Supports OGG/WAV, 3D positioning, looping.
+ *   When source_obj is non-zero and the sound is positional, the source is
+ *   registered so subsequent frames refresh its position from the object's
+ *   current location.
  */
 bool SoundPlay(const char* filename, int volume, BYTE flags,
-               int src_row, int src_col, int radius, int max_vol)
+               int src_row, int src_col, int radius, int max_vol,
+               ID source_obj)
 {
    if (!g_initialized)
       return false;
@@ -1025,13 +1037,38 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       alSourcei(source, AL_SOURCE_RELATIVE, AL_FALSE);
       alSource3f(source, AL_POSITION, -(float)src_col, 0.0f, (float)src_row);
 
-      // Distance attenuation: full volume within 1 tile, silent at radius
-      alSourcef(source, AL_REFERENCE_DISTANCE, 1.0f);
-      alSourcef(source, AL_MAX_DISTANCE, (float)radius);
+      // Pick the distance attenuation curve:
+      //   - If the caller set a radius, fade linearly from full volume
+      //     at 1 tile to silence at that radius (hard cutoff).  Used
+      //     for looping sources and one-shots with an explicit range.
+      //   - Otherwise use OpenAL's "inverse" model: a 1/distance curve
+      //     that halves every time distance doubles and never reaches
+      //     zero, so distant one-shots stay faintly audible.
+      ALenum model;
+      float refDist, maxDist;
+      if ((flags & SF_LOOP) || radius > 0)
+      {
+         float r = (radius > 0) ? (float)radius : (float)VOLUME_CUTOFF_DISTANCE;
+         model   = AL_LINEAR_DISTANCE_CLAMPED;
+         refDist = 1.0f;
+         maxDist = r;
+      }
+      else
+      {
+         model   = AL_INVERSE_DISTANCE_CLAMPED;
+         refDist = 2.0f;
+         maxDist = 10000.0f;
+      }
+      alSourcei(source, AL_DISTANCE_MODEL, model);
+      alSourcef(source, AL_REFERENCE_DISTANCE, refDist);
+      alSourcef(source, AL_MAX_DISTANCE, maxDist);
       alSourcef(source, AL_ROLLOFF_FACTOR, 1.0f);
 
       float gain = (float)max_vol / (float)MAX_VOLUME;
-      gain *= (float)config.ambient_volume / 100.0f;
+      if (flags & SF_LOOP)
+         gain *= (float)config.ambient_volume / 100.0f;
+      else
+         gain *= (float)config.sound_volume / 100.0f;
       alSourcef(source, AL_GAIN, gain);
    }
    else
@@ -1072,6 +1109,14 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       return false;
    }
 
+   // Register the source for per-frame position updates if it is a positional
+   // sound emitted by a known game object.  Non-positional sounds (UI, ambient
+   // loops at placeholder coords) ignore source_obj.
+   if (isPositional && source_obj != 0)
+   {
+      g_trackedSources[source] = source_obj;
+   }
+
    return true;
 }
 
@@ -1100,6 +1145,8 @@ void SoundStopAll(void)
    {
       alSourceStop(g_sources[i]);
    }
+
+   g_trackedSources.clear();
 }
 
 /*
@@ -1142,7 +1189,47 @@ void Audio_StopSourcesForFilename(const char* filename)
       {
          alSourceStop(g_sources[i]);
          alSourcei(g_sources[i], AL_BUFFER, 0);
+         g_trackedSources.erase(g_sources[i]);
       }
+   }
+}
+
+/*
+ * AudioUpdateTrackedSources: Refresh OpenAL source positions for sounds
+ *   attached to moving game objects.  Drops entries whose source has stopped
+ *   or whose object can no longer be found by ID.
+ */
+void AudioUpdateTrackedSources(void)
+{
+   if (!g_initialized)
+      return;
+
+   for (auto it = g_trackedSources.begin(); it != g_trackedSources.end(); )
+   {
+      ALuint source = it->first;
+      ID object_id = it->second;
+
+      ALint state = AL_STOPPED;
+      alGetSourcei(source, AL_SOURCE_STATE, &state);
+      if (state != AL_PLAYING && state != AL_PAUSED)
+      {
+         it = g_trackedSources.erase(it);
+         continue;
+      }
+
+      room_contents_node *obj = GetRoomObjectById(object_id);
+      if (obj == NULL)
+      {
+         // Untrack but leave the source playing at its last position.
+         it = g_trackedSources.erase(it);
+         continue;
+      }
+
+      int row = obj->motion.y >> LOG_FINENESS;
+      int col = obj->motion.x >> LOG_FINENESS;
+      // Negate X to match the listener's coordinate convention
+      alSource3f(source, AL_POSITION, -(float)col, 0.0f, (float)row);
+      ++it;
    }
 }
 

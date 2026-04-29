@@ -38,6 +38,7 @@
 #include <owl\listbox.h>
 #endif
 
+
 #ifndef __OWL_EDIT_H
 #include <owl\edit.h>
 #endif
@@ -423,6 +424,9 @@ TDialog(parent, resId, module)
    pScrollSlowRadio[1]  = newTRadioButton(this, IDC_SCROLLSLOW2);
    pScrollMediumRadio[1]  = newTRadioButton(this, IDC_SCROLLMEDIUM2);
    pScrollFastRadio[1]  = newTRadioButton(this, IDC_SCROLLFAST2);
+
+   pTranslucencyPos = newTComboBox(this, IDC_TRANSLUCENCY_POS);
+   pTranslucencyNeg = newTComboBox(this, IDC_TRANSLUCENCY_NEG);
 }
 
 
@@ -445,7 +449,15 @@ void TLineDefEditDialog::SetupWindow ()
 {
    TDialog::SetupWindow();
    ::CenterWindow (this);
-   
+
+   // Populate translucency dropdowns
+   const char *transLabels[] = { "None", "75% transparent", "50% transparent", "25% transparent" };
+   for (int ti = 0; ti < 4; ti++)
+   {
+      pTranslucencyPos->AddString(transLabels[ti]);
+      pTranslucencyNeg->AddString(transLabels[ti]);
+   }
+
 //   InitLineDefSet();
 //   SetLineDefList();
    SetTextureList();
@@ -832,6 +844,12 @@ void TLineDefEditDialog::GetLineDef ()
       flags |= SCROLL_FAST << 25;
 
    CurLineDef.blak_flags = flags;
+
+   // Read translucency dropdowns
+   int tpos = pTranslucencyPos->GetSelIndex();
+   int tneg = pTranslucencyNeg->GetSelIndex();
+   CurLineDef.translucency_pos = (BYTE)(tpos >= 0 ? tpos : 0);
+   CurLineDef.translucency_neg = (BYTE)(tneg >= 0 ? tneg : 0);
 }
 
 
@@ -1122,6 +1140,28 @@ void TLineDefEditDialog::SetLineDef ()
    wsprintf (str, "%d", CurLineDef.end);
    pVertex2Edit->SetText (str);
 
+   // Disable transparency if attached to a sloped sector
+   BOOL bSloped = FALSE;
+   if (CurLineDef.sidedef1 != -1)
+   {
+      SHORT s1 = SideDefs[CurLineDef.sidedef1].sector;
+      if (s1 != -1 && (Sectors[s1].blak_flags & (SF_SLOPED_FLOOR | SF_SLOPED_CEILING)))
+         bSloped = TRUE;
+   }
+   if (!bSloped && CurLineDef.sidedef2 != -1)
+   {
+      SHORT s2 = SideDefs[CurLineDef.sidedef2].sector;
+      if (s2 != -1 && (Sectors[s2].blak_flags & (SF_SLOPED_FLOOR | SF_SLOPED_CEILING)))
+         bSloped = TRUE;
+   }
+
+   if (bSloped)
+   {
+      CurLineDef.translucency_pos = 0;
+      CurLineDef.translucency_neg = 0;
+      CurLineDef.blak_flags &= ~(BF_POS_TRANSPARENT | BF_NEG_TRANSPARENT);
+   }
+
    // Setup flags checkboxes
    int flags = CurLineDef.blak_flags;
    pPassPosCheck->SetCheck   (flags & BF_POS_PASSABLE ? BF_CHECKED : BF_UNCHECKED);
@@ -1144,6 +1184,18 @@ void TLineDefEditDialog::SetLineDef ()
    pNegNoVTile->SetCheck    (flags & BF_NEG_NO_VTILE ? BF_CHECKED : BF_UNCHECKED);
    pPosNoHTile->SetCheck    (flags & BF_POS_NO_HTILE ? BF_CHECKED : BF_UNCHECKED);
    pNegNoHTile->SetCheck    (flags & BF_NEG_NO_HTILE ? BF_CHECKED : BF_UNCHECKED);
+
+   // Set translucency dropdowns (clamp to 0-3 for safety)
+   int tpos = CurLineDef.translucency_pos;
+   int tneg = CurLineDef.translucency_neg;
+   pTranslucencyPos->SetSelIndex(tpos >= 0 && tpos <= 3 ? tpos : 0);
+   pTranslucencyNeg->SetSelIndex(tneg >= 0 && tneg <= 3 ? tneg : 0);
+
+   // Disable transparency options if attached to a sloped sector
+   pTransPosCheck->EnableWindow(!bSloped);
+   pTransNegCheck->EnableWindow(!bSloped);
+   pTranslucencyPos->EnableWindow(!bSloped);
+   pTranslucencyNeg->EnableWindow(!bSloped);
 
    switch (WallScrollPosDirection(flags))
    {

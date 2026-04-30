@@ -153,7 +153,6 @@ extern HINSTANCE hInst;  // module handle
 #define RequestCharInfo()            ToServer(BP_SYSTEM, msg_table, BP_SEND_CHARINFO)
 #define SendNewCharInfo(obj, name, desc, g, len1, parts, t1, t2, len2, stats, spells, skills) \
 ToServer(BP_SYSTEM, msg_table, BP_NEW_CHARINFO, obj, name, desc, g, len1, parts, t1, t2, len2, stats, spells, skills)
-#define SendAdSelected(num)          ToServer(BP_AD_SELECTED, msg_table, num)
 
 
 #endif /* #ifndef _CHAR_H */

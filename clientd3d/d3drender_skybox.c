@@ -6,122 +6,87 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
-#include <unordered_map>
+#include <filesystem>
+#include <iterator>
 
 // Variables
 
-static const float SKYBOX_DIMENSIONS = 75000.0f;
-static const float SKYBOX_Y = 37000.0f;
+static constexpr float SKYBOX_DIMENSIONS = 75000.0f;
+static constexpr float SKYBOX_Y = 37000.0f;
+static constexpr int SKYBOX_SIDES = 6;
 
-static LPDIRECT3DTEXTURE9 gpSkyboxTextures[5][6];
+static constexpr int SKYBOX_QUAD_VERTICES = 4;
+static constexpr int SKYBOX_QUAD_INDICES = 4;
+static constexpr int SKYBOX_QUAD_PRIMITIVES = SKYBOX_QUAD_VERTICES - 2;
+
 static int gCurBackground;
 static ID tempBkgnd = 0;
 
-static float gSkyboxXYZ[] =
+// Defines vertices of the skybox.
+static constexpr custom_xyz gSkyboxXYZ[] =
 {
-	// back
-	SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
+	// Back
+	{SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS},
+	{-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS},
 
-	// bottom
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
+	// Bottom
+	{-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS},
+	{SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS},
 
-	// front
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
+	// Front
+	{-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS},
+	{SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS},
 
-	// left
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
+	// Left
+	{-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS},
+	{-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS},
 
-	// right
-	SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
+	// Right
+	{SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS},
+	{SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS},
 
-	// top
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
+	// Top
+	{-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS},
+	{SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS}
 };
 
-static float gSkyboxST[] =
+// Defines the four corners of a skybox texture.
+static constexpr custom_st gSkyboxST[] =
 {
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
+	{ 0.001f, 0.001f },		// Top-Left
+	{ 0.001f, 0.999f },		// Bottom-Left
+	{ 0.999f, 0.999f },		// Bottom-Right
+	{ 0.999f, 0.001f }		// Top-Right
 };
 
-static unsigned char gSkyboxBGRA[] =
+static constexpr custom_bgra gSkyboxBGRA = {192, 192, 192, 255};
+
+// Defines which .bgf resource gets paired with its respective hardware rendered skybox.
+struct SkyboxDefinition
 {
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
+	const char* resourceName;	// The .bgf file used by the software renderer.
+	const char* fileName;		// The .bsf/.png file used in the hardware renderer.
 };
 
+// Lookup table that pairs software-rendered skyboxes to hardware-rendered skyboxes.
+// Note: In hardware rendering, Ko'catan uses the same skybox textures as the mainland.
+static constexpr SkyboxDefinition gSkyboxTable[] = 
+{
+	// Clear skies
+    {"1skya.bgf", "skya.bsf"}, 		// Index 0
+    {"2skya.bgf", "skya.bsf"}, 		
+    {"1skyb.bgf", "skyb.bsf"}, 		// Index 1
+    {"2skyb.bgf", "skyb.bsf"}, 		
+    {"1skyc.bgf", "skyc.bsf"}, 		// Index 2
+	{"2skyc.bgf", "skyc.bsf"}, 
+    {"1skyd.bgf", "skyd.bsf"}, 		// Index 3
+	{"2skyd.bgf", "skyd.bsf"}, 
+	// Frenzy
+    {"redsky.bgf", "redsky.bsf"}, 	// Index 4
+};
+
+static constexpr int NUM_SKYBOXES = static_cast<int>(std::size(gSkyboxTable));
+static LPDIRECT3DTEXTURE9 gpSkyboxTextures[NUM_SKYBOXES][SKYBOX_SIDES];
 
 // Interfaces
 
@@ -139,13 +104,17 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 {
 	if (background == 0) return false;
 
-	if (gpSkyboxTextures[0][0] == NULL)
-	{
-		D3DRenderBackgroundsLoad("./resource/skya.bsf", 0);
-		D3DRenderBackgroundsLoad("./resource/skyb.bsf", 1);
-		D3DRenderBackgroundsLoad("./resource/skyc.bsf", 2);
-		D3DRenderBackgroundsLoad("./resource/skyd.bsf", 3);
-		D3DRenderBackgroundsLoad("./resource/redsky.bsf", 4);
+	if (gpSkyboxTextures[0][0] == nullptr)
+	{	
+		for(int i = 0; i < NUM_SKYBOXES; i++)
+		{
+			std::filesystem::path fullPath = std::filesystem::path("./resource") / gSkyboxTable[i].fileName;
+			
+			// Skip any skybox that is missing.
+			if (!std::filesystem::exists(fullPath)) continue;
+			
+			D3DRenderBackgroundsLoad(fullPath.string().c_str(), i);
+		}
 	}
 	if (tempBkgnd != background)
 	{
@@ -205,70 +174,58 @@ void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, con
 */
 void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch)
 {
-	int			i, j;
-	D3DMATRIX	rot, mat;
-
-	d3d_render_packet_new* pPacket;
-	d3d_render_chunk_new* pChunk;
-
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 
+	D3DMATRIX rot, mat;
 	MatrixIdentity(&mat);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
 
-	MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
-	MatrixRotateX(&mat, (float)anglePitch * 45.0f / 414.0f * PI / 180.0f);
+	MatrixRotateY(&rot, static_cast<float>(angleHeading) * 360.0f / 4096.0f * PI / 180.0f);
+	MatrixRotateX(&mat, static_cast<float>(anglePitch) * 45.0f / 414.0f * PI / 180.0f);
 	MatrixMultiply(&mat, &rot, &mat);
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
 
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-		D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-		D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
-	for (i = 0; i < 6; i++)
+	for (int i = 0; i < SKYBOX_SIDES; i++)
 	{
-		pPacket = D3DRenderPacketFindMatch(pPool, gpSkyboxTextures[gCurBackground][i], NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		d3d_render_packet_new* pPacket = D3DRenderPacketFindMatch(pPool, gpSkyboxTextures[gCurBackground][i], NULL, 0, 0, 0);
+		if (pPacket == nullptr)
 			return;
 
-		pChunk = D3DRenderChunkNew(pPacket);
+		d3d_render_chunk_new* pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
 
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
+		pChunk->numIndices = SKYBOX_QUAD_INDICES;
+		pChunk->numVertices = SKYBOX_QUAD_VERTICES;
+		pChunk->numPrimitives = SKYBOX_QUAD_PRIMITIVES;
 		pPacket->pMaterialFctn = &D3DMaterialWorldPacket;
 		pChunk->pMaterialFctn = &D3DMaterialWorldDynamicChunk;
 		pChunk->flags |= D3DRENDER_NOAMBIENT;
 
 		// add xyz, st, and bgra data
-		for (j = 0; j < 4; j++)
+		for (int j = 0; j < SKYBOX_QUAD_VERTICES; j++)
 		{
-			pChunk->xyz[j].x = gSkyboxXYZ[(i * 4 * 3) + (j * 3)];
-			pChunk->xyz[j].z = gSkyboxXYZ[(i * 4 * 3) + (j * 3) + 1];
-			pChunk->xyz[j].y = gSkyboxXYZ[(i * 4 * 3) + (j * 3) + 2];
+			// Note that the coordinate system is z-up, so y-z are flipped here.
+			pChunk->xyz[j].x = gSkyboxXYZ[(i * 4) + j].x;
+			pChunk->xyz[j].y = gSkyboxXYZ[(i * 4) + j].z;
+			pChunk->xyz[j].z = gSkyboxXYZ[(i * 4) + j].y;
 
-			pChunk->st0[j].s = gSkyboxST[(i * 4 * 2) + (j * 2)];
-			pChunk->st0[j].t = gSkyboxST[(i * 4 * 2) + (j * 2) + 1];
+			pChunk->st0[j] = gSkyboxST[j];
 
-			pChunk->bgra[j].b = gSkyboxBGRA[(i * 4 * 4) + (j * 4)];
-			pChunk->bgra[j].g = gSkyboxBGRA[(i * 4 * 4) + (j * 4) + 1];
-			pChunk->bgra[j].r = gSkyboxBGRA[(i * 4 * 4) + (j * 4) + 2];
-			pChunk->bgra[j].a = gSkyboxBGRA[(i * 4 * 4) + (j * 4) + 3];
-
+			pChunk->bgra[j] = gSkyboxBGRA;
 		}
+		
 		pChunk->indices[0] = 1;
 		pChunk->indices[1] = 2;
 		pChunk->indices[2] = 0;
 		pChunk->indices[3] = 3;
 	}
 
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-		D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-		D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 }
 
 /**
@@ -281,22 +238,14 @@ bool D3DRenderBackgroundSet(ID background)
 
 	if (!filename) return false;
 
-	static const std::unordered_map<std::string, int> backgroundMap = {
-		{"1skya.bgf", 0},
-		{"2skya.bgf", 0},
-		{"1skyb.bgf", 1},
-		{"2skyb.bgf", 1},
-		{"1skyc.bgf", 2},
-		{"2skyc.bgf", 2},
-		{"1skyd.bgf", 3},
-		{"2skyd.bgf", 3},
-		{"redsky.bgf", 4}
-	};
-
-	auto it = backgroundMap.find(filename);
-	if (it != backgroundMap.end())
+	for (int i = 0; i < NUM_SKYBOXES; i++)
 	{
-		gCurBackground = it->second;
+        // If the string names match, then set the index.
+		if (_stricmp(filename, gSkyboxTable[i].resourceName) == 0)
+        {
+            gCurBackground = i;
+            return true;
+        }
 	}
 
 	return true;
@@ -307,14 +256,14 @@ bool D3DRenderBackgroundSet(ID background)
 */
 void D3DRenderSkyBoxShutdown()
 {
-	for (int j = 0; j < 5; j++)
+	for (int j = 0; j < NUM_SKYBOXES; j++)
 	{
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < SKYBOX_SIDES; i++)
 		{
 			if (gpSkyboxTextures[j][i])
 			{
 				IDirect3DTexture9_Release(gpSkyboxTextures[j][i]);
-				gpSkyboxTextures[j][i] = NULL;
+				gpSkyboxTextures[j][i] = nullptr;
 			}
 		}
 	}
@@ -326,109 +275,91 @@ void D3DRenderSkyBoxShutdown()
 */
 void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 {
-	FILE* pFile;
-	png_structp	pPng = NULL;
-	png_infop	pInfo = NULL;
-	png_infop	pInfoEnd = NULL;
-	png_bytepp   rows;
-
-	D3DLOCKED_RECT		lockedRect;
-	unsigned char* pBits = NULL;
-	unsigned int		w, h, b;
-	int					pitchHalf, bytePP;
-	fpos_t				pos;
-
-	pFile = fopen(pFilename, "rb");
-	if (pFile == NULL)
+	// The .bsf/.png files for skyboxes are actually six .png files stored in a single 
+	// file by appending each picture's binary data into one file.
+	//
+	// The pictures for each cubemap face are stored in this order, similarly in gSkyboxXYZ[]:
+	// Back -> Bottom -> Front -> Left -> Right -> Top
+	//
+	// Color depth is also 24-bit since the alpha channel (transparency) isn't used.
+	
+	FILE* pFile = fopen(pFilename, "rb");
+	if (pFile == nullptr)
 		return;
+	fpos_t pos = 0;
 
-	pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (NULL == pPng)
+	for (int i = 0; i < SKYBOX_SIDES; i++)
 	{
-		fclose(pFile);
-		return;
-	}
-
-	pInfo = png_create_info_struct(pPng);
-	if (NULL == pInfo)
-	{
-		png_destroy_read_struct(&pPng, NULL, NULL);
-		fclose(pFile);
-		return;
-	}
-
-	pInfoEnd = png_create_info_struct(pPng);
-	if (NULL == pInfoEnd)
-	{
-		png_destroy_read_struct(&pPng, &pInfo, NULL);
-		fclose(pFile);
-		return;
-	}
-
-	if (setjmp(png_jmpbuf(pPng)))
-	{
-		png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
-		fclose(pFile);
-		return;
-	}
-
-	png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
-
-	pos = 0;
-
-	{
-		int	i;
-		png_bytep curRow;
-
-		for (i = 0; i < 6; i++)
+		png_structp pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+		if (pPng == nullptr )
 		{
-			pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-			pInfo = png_create_info_struct(pPng);
-			pInfoEnd = png_create_info_struct(pPng);
-			setjmp(png_jmpbuf(pPng));
+			fclose(pFile);
+			return;
+		}
 
-			fseek(pFile, pos, SEEK_SET);
+		png_infop pInfo = png_create_info_struct(pPng);
+		if (pInfo == nullptr)
+		{
+			png_destroy_read_struct(&pPng, nullptr, nullptr);
+			fclose(pFile);
+			return;
+		}
 
-			png_init_io(pPng, pFile);
-			png_read_png(pPng, pInfo, PNG_TRANSFORM_IDENTITY, NULL);
-			rows = png_get_rows(pPng, pInfo);
+		png_infop pInfoEnd = png_create_info_struct(pPng);
+		if (pInfoEnd == nullptr)
+		{
+			png_destroy_read_struct(&pPng, &pInfo, nullptr);
+			fclose(pFile);
+			return;
+		}
 
-			unsigned int image_width = png_get_image_width(pPng, pInfo);
-			unsigned int image_height = png_get_image_height(pPng, pInfo);
-			bytePP = png_get_bit_depth(pPng, pInfo) / 8;
+		if (setjmp(png_jmpbuf(pPng)))
+		{
+			png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
+			fclose(pFile);
+			return;
+		}
+		
+		fseek(pFile, pos, SEEK_SET);
 
-			IDirect3DDevice9_CreateTexture(gpD3DDevice, image_width, image_height, 1, 0,
-				D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpSkyboxTextures[index][i], NULL);
+		png_init_io(pPng, pFile);
+		png_read_png(pPng, pInfo, PNG_TRANSFORM_IDENTITY, nullptr);
+		png_bytepp rows = png_get_rows(pPng, pInfo);
 
-			IDirect3DTexture9_LockRect(gpSkyboxTextures[index][i], 0, &lockedRect, NULL, 0);
+		unsigned int image_width = png_get_image_width(pPng, pInfo);
+		unsigned int image_height = png_get_image_height(pPng, pInfo);
+		int bytePP = png_get_bit_depth(pPng, pInfo) / 8;
 
-			pitchHalf = lockedRect.Pitch / 2;
+		IDirect3DDevice9_CreateTexture(gpD3DDevice, image_width, image_height, 1, 0,
+			D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpSkyboxTextures[index][i], nullptr);
 
-			pBits = (unsigned char*)lockedRect.pBits;
+		D3DLOCKED_RECT lockedRect;
+		IDirect3DTexture9_LockRect(gpSkyboxTextures[index][i], 0, &lockedRect, nullptr, 0);
 
-			for (h = 0; h < image_height; h++)
+		unsigned char *pBits = (unsigned char*)lockedRect.pBits;
+
+		for (unsigned int h = 0; h < image_height; h++)
+		{
+			png_bytep curRow = rows[h];
+
+			for (unsigned int w = 0; w < image_width; w++)
 			{
-				curRow = rows[h];
-
-				for (w = 0; w < image_width; w++)
+				for (unsigned int b = 0; b < 4; b++)
 				{
-					for (b = 0; b < 4; b++)
-					{
-						if (b == 3)
-							pBits[h * lockedRect.Pitch + w * 4 + b] = 255;
-						else
-							// Apparently PNGs are BGR, while DirectX wants RGB
-							pBits[h * lockedRect.Pitch + w * 4 + (2 - b)] =
-							curRow[(w * 3) + b];
-					}
+					if (b == 3)
+						pBits[h * lockedRect.Pitch + w * 4 + b] = 255;
+					else
+						// PNGs are in RGB, while DirectX wants BGRA.
+						pBits[h * lockedRect.Pitch + w * 4 + (2 - b)] =
+						curRow[(w * 3) + b];
 				}
 			}
-
-			IDirect3DTexture9_UnlockRect(gpSkyboxTextures[index][i], 0);
-
-			fgetpos(pFile, &pos);
-			png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
 		}
+
+		IDirect3DTexture9_UnlockRect(gpSkyboxTextures[index][i], 0);
+
+		fgetpos(pFile, &pos);
+		png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
 	}
 
 	fclose(pFile);

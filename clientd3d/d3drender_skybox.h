@@ -15,13 +15,13 @@
 #define _D3DRENDERSKYBOX_H
 
 struct SkyboxRenderParams {
-    LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
+    IDirect3DVertexDeclaration9* vertexDeclaration;
     d3d_driver_profile driverProfile;
     mutable d3d_render_pool_new renderPool;
     mutable d3d_render_cache_system cacheSystem;
 
     SkyboxRenderParams(
-        LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
+        IDirect3DVertexDeclaration9* vertexDeclarationParam,
         d3d_driver_profile driverProfileParam,
         d3d_render_pool_new renderPoolParam,
         d3d_render_cache_system cacheSystemParam)
@@ -35,7 +35,6 @@ struct SkyboxRenderParams {
 bool D3DRenderUpdateSkyBox(DWORD background);
 void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, const D3DMATRIX& view, 
     const SkyboxRenderParams& skyboxRenderParams);
-void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch);
 void D3DRenderSkyBoxShutdown();
 
 #endif	/* #ifndef _D3DRENDERSKYBOX_H */

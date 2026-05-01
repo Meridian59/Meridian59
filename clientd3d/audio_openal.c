@@ -39,8 +39,11 @@ static int g_numSources = 0;
 static bool g_initialized = false;
 
 // Per-source state
-static bool  g_sourceIsLoop[MAX_AUDIO_SOURCES];
-static float g_sourceBaseGain[MAX_AUDIO_SOURCES];
+struct SourceState {
+   float baseGain;  // pre-slider gain (max_vol / volume scaled to 0..1)
+   bool  isLoop;    // true if SF_LOOP, picks Ambient slider; else Sound slider
+};
+static SourceState g_sourceState[MAX_AUDIO_SOURCES];
 
 // LRU buffer cache: list ordered by recency (front = newest), map for O(1) lookup.
 struct CacheNode {
@@ -1069,8 +1072,8 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       alSourcef(source, AL_ROLLOFF_FACTOR, 1.0f);
 
       float gain = (float)max_vol / (float)MAX_VOLUME;
-      g_sourceBaseGain[sourceIndex] = gain;
-      g_sourceIsLoop[sourceIndex] = (flags & SF_LOOP) != 0;
+      g_sourceState[sourceIndex].baseGain = gain;
+      g_sourceState[sourceIndex].isLoop = (flags & SF_LOOP) != 0;
       if (flags & SF_LOOP)
          gain *= (float)config.ambient_volume / 100.0f;
       else
@@ -1085,8 +1088,8 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
 
       // Set volume (volume is 0-MAX_VOLUME, convert to 0.0-1.0)
       float gain = (float)volume / (float)MAX_VOLUME;
-      g_sourceBaseGain[sourceIndex] = gain;
-      g_sourceIsLoop[sourceIndex] = (flags & SF_LOOP) != 0;
+      g_sourceState[sourceIndex].baseGain = gain;
+      g_sourceState[sourceIndex].isLoop = (flags & SF_LOOP) != 0;
       if (flags & SF_LOOP)
          gain *= (float)config.ambient_volume / 100.0f;
       else
@@ -1195,10 +1198,10 @@ void ResetSoundVolume(void)
       if (state != AL_PLAYING && state != AL_PAUSED)
          continue;
 
-      float slider = g_sourceIsLoop[i]
+      float slider = g_sourceState[i].isLoop
          ? (float)config.ambient_volume / 100.0f
          : (float)config.sound_volume / 100.0f;
-      alSourcef(g_sources[i], AL_GAIN, g_sourceBaseGain[i] * slider);
+      alSourcef(g_sources[i], AL_GAIN, g_sourceState[i].baseGain * slider);
    }
 }
 

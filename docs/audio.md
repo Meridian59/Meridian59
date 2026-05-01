@@ -339,7 +339,7 @@ The `Steady Sounds` checkbox is a master toggle for `SF_LOOP` sounds; the `Atmos
 All three volume sliders (`Music`, `Sound`, `Ambient`) take effect immediately when the player clicks OK in the Options dialog.  No re-login or room change is required.
 
 - `ResetMusicVolume()` re-applies the music slider to the live music source
-- `ResetSoundVolume()` re-applies the sound and ambient sliders to every currently-playing source.  Each source records two pieces of state at `SoundPlay` time: the pre-slider gain (from `max_vol` / `volume`) and a flag indicating whether it is a loop.  On refresh, gain is recomputed as `pre-slider gain * current slider`, where the slider is `Ambient` for loops and `Sound` for one-shots
+- `ResetSoundVolume()` re-applies the sound and ambient sliders to every currently-playing source.  Each source records two pieces of state at `SoundPlay` time in a `SourceState` struct (one entry per source pool slot): the pre-slider gain (from `max_vol` / `volume`) and a flag indicating whether it is a loop.  On refresh, gain is recomputed as `pre-slider gain * current slider`, where the slider is `Ambient` for loops and `Sound` for one-shots
 - Unchecking `Steady Sounds` calls `SoundStopLooping()` to stop loops that are already playing.  Re-checking it does not restart them; the server only sends loop packets on room entry, so loops resume on the next room change
 - Unchecking `Atmospheric Sounds` needs no immediate action; the gated one-shot sounds finish on their own within a few seconds
 

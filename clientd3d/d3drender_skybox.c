@@ -16,9 +16,11 @@ static constexpr float SKYBOX_DIMENSIONS = 75000.0f;
 static constexpr float SKYBOX_Y = 37000.0f;
 static constexpr int SKYBOX_SIDES = 6;
 
+// Geometry constants for rendering a quad as a triangular strip.
 static constexpr int SKYBOX_QUAD_VERTICES = 4;
 static constexpr int SKYBOX_QUAD_INDICES = 4;
 static constexpr int SKYBOX_QUAD_PRIMITIVES = SKYBOX_QUAD_VERTICES - 2;
+static constexpr int SKYBOX_QUAD_INDICES_PATTERN[] = {1, 2, 0, 3};
 
 static constexpr custom_bgra SKYBOX_BGRA = {192, 192, 192, 255};
 
@@ -101,22 +103,26 @@ static IDirect3DTexture9* gpSkyboxTextures[NUM_SKYBOXES][SKYBOX_SIDES];
 */
 static void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 {
-	// The .bsf/.png files for skyboxes are actually six .png files stored in a single
+	// The .bsf/.png files for skyboxes are actually six PNGs stored in a single
 	// file by appending each picture's binary data into one file.
 	//
 	// The pictures for each cubemap face are stored in this order, similarly in SKYBOX_XYZ[]:
 	// Back -> Bottom -> Front -> Left -> Right -> Top
 	//
-	// Color depth is also 24-bit since the alpha channel (transparency) isn't used.
+	// The pixel-packing loop expects a 24-bit PNG file since the alpha channel isn't used.
+	// However, a 32-bit PNG can still be used even if it's larger in file size.
 
 	auto *pFile = fopen(pFilename, "rb");
 	if (pFile == nullptr)
 		return;
 
-	fpos_t pos = 0;
+	long filePosition = 0;
 
 	for (int i = 0; i < SKYBOX_SIDES; i++)
 	{
+		// Jumps to the number of bytes.
+		fseek(pFile, filePosition, SEEK_SET);
+		
 		png_structp pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 		if (pPng == nullptr)
 		{
@@ -147,15 +153,18 @@ static void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 			return;
 		}
 
-		fseek(pFile, pos, SEEK_SET);
-
 		png_init_io(pPng, pFile);
+		
+		// Discard alpha channel in case a 32-bit PNG is used, ensuring 3 bytes per pixel.
+		png_set_strip_alpha(pPng); 
+		
 		png_read_png(pPng, pInfo, PNG_TRANSFORM_IDENTITY, nullptr);
 		png_bytepp rows = png_get_rows(pPng, pInfo);
 
 		uint32_t image_width = png_get_image_width(pPng, pInfo);
 		uint32_t image_height = png_get_image_height(pPng, pInfo);
 
+		// Creates the D3D texture in a 32-bit BGRA format, even if the source PNG is 24-bit.
 		gpD3DDevice->CreateTexture(image_width, image_height, 1, 0,
 			D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpSkyboxTextures[index][i], nullptr);
 
@@ -164,26 +173,32 @@ static void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 
 		auto *pBits = reinterpret_cast<uint8_t*>(lockedRect.pBits);
 
+		// Iterate through each row of the skybox image.
 		for (uint32_t h = 0; h < image_height; h++)
 		{
-			png_bytep curRow = rows[h];
+			// Use pitch to find the start of the row, then treat it as 32-bit pixels.
+			auto *pRowDest = reinterpret_cast<uint32_t*>(pBits + (h * lockedRect.Pitch));
+			
+			// Get the source row from the PNG data.
+			png_bytep pSourceRow = rows[h];
 
 			for (uint32_t w = 0; w < image_width; w++)
 			{
-				for (uint32_t b = 0; b < 4; b++)
-				{
-					if (b == 3)
-						pBits[h * lockedRect.Pitch + w * 4 + b] = 255;
-					else
-						// PNGs are in RGB, while DirectX wants BGRA.
-						pBits[h * lockedRect.Pitch + w * 4 + (2 - b)] = curRow[(w * 3) + b];
-				}
+				// Reads 24-bit RGB data from the PNG row.
+				uint8_t r = pSourceRow[w * 3 + 0];
+				uint8_t g = pSourceRow[w * 3 + 1];
+				uint8_t b = pSourceRow[w * 3 + 2];
+
+				// Converts RGB to 32-bit BGRA (D3D native) using bit-shifting.
+				// Alpha is set to '0xFF' to keep the skybox fully opaque.
+				pRowDest[w] = (0xFF << 24) | (r << 16) | (g << 8) | b;
 			}
 		}
 
 		gpSkyboxTextures[index][i]->UnlockRect(0);
 
-		fgetpos(pFile, &pos);
+		// Save current byte count so the next iteration finds the next PNG header.
+		filePosition = ftell(pFile);
 		png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
 	}
 
@@ -239,10 +254,10 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 			pChunk->bgra[j] = SKYBOX_BGRA;
 		}
 
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
+		for (int i = 0; i < SKYBOX_QUAD_INDICES; i++)
+		{
+			pChunk->indices[i] = SKYBOX_QUAD_INDICES_PATTERN[i];
+		}
 	}
 
 	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);

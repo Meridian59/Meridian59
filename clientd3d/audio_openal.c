@@ -40,8 +40,8 @@ static bool g_initialized = false;
 
 // Per-source state
 struct SourceState {
-   float baseGain;  // pre-slider gain (max_vol / volume scaled to 0..1)
-   bool  isLoop;    // true if SF_LOOP, picks Ambient slider; else Sound slider
+   float baseGain;
+   bool  isLoop;
 };
 static SourceState g_sourceState[MAX_AUDIO_SOURCES];
 

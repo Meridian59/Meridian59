@@ -655,7 +655,7 @@ messages:
          {
             iRadius = 0;
             iMaxVol = 0;
-            oSource = 0;
+            oSource = $;
             if length(lLoopSound) > 3
             {
                iRadius = Nth(lLoopSound,4);
@@ -693,7 +693,7 @@ messages:
          % Send sound to all players
          iRadius = 0;
          iMaxVol = 0;
-         oSource = 0;
+         oSource = $;
          if length(lSoundData) > 3
          {
             iRadius = Nth(lSoundData,4);

@@ -7,8 +7,9 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
-void D3DParticleDestroy(particle *pParticle);
-
+//////////////////////
+// Public Functions //
+//////////////////////
 void D3DParticleSystemReset(particle_system *pParticleSystem)
 {
 	list_destroy(pParticleSystem->emitterList);
@@ -92,7 +93,7 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 
 			if (--pParticle->energy <= 0)
 			{
-				D3DParticleDestroy(pParticle);
+				pParticle->energy = 0;
 				pEmitter->numParticles--;
 			}
 			else
@@ -251,9 +252,4 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 
 	D3DCacheFill(pCacheSystem, pPool, 0);
 	D3DCacheFlush(pCacheSystem, pPool, 0, D3DPT_LINESTRIP);
-}
-
-void D3DParticleDestroy(particle *pParticle)
-{
-	pParticle->energy = 0;
 }

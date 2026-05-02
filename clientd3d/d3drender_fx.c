@@ -7,55 +7,20 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
-// Variables
-
+///////////////
+// Variables //
+///////////////
 static particle_system particleSystem;
 
-// Interfaces
-
-static void SandstormInit(void);
-
-// Implementations
-
-/**
-* Initializes the particle effects, specifically the sandstorm particle emitters.
-*/
-void D3DFxInit()
-{
-	SandstormInit();
-}
-
-/**
-* Updates and renders all active particle emitters, including the sandstorm effect, 
-* in the current frame.
-*/
-void D3DRenderParticles(const ParticleSystemStructure& pss)
-{
-	list_type	list;
-	emitter		*pEmitter;
-
-	for (list = particleSystem.emitterList; list != NULL; list = list->next)
-	{
-		pEmitter = (emitter *)list->data;
-
-		if (pEmitter)
-			D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
-	}
-
-	if (effects.sand)
-	{
-		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
-
-		D3DParticleSystemUpdate(&particleSystem, pss.particlePool, pss.particleCacheSystem);
-	}
-}
+/////////////////////////////
+// Internal Implementation //
+/////////////////////////////
 
 /**
 * Initializes the sandstorm particle emitters with predefined positions, energy, and colors for the 
 * particle system.
 */
-void SandstormInit(void)
+static void SandstormInit(void)
 {
 	static const int EMITTER_RADIUS = 12;
 	static const int EMITTER_ENERGY = 40;
@@ -241,6 +206,44 @@ void SandstormInit(void)
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
 		1, 1024, 2);
+}
+
+////////////////////////////
+// Public Implementations //
+////////////////////////////
+
+/**
+* Initializes the particle effects, specifically the sandstorm particle emitters.
+*/
+void D3DFxInit()
+{
+	SandstormInit();
+}
+
+/**
+* Updates and renders all active particle emitters, including the sandstorm effect, 
+* in the current frame.
+*/
+void D3DRenderParticles(const ParticleSystemStructure& pss)
+{
+	list_type	list;
+	emitter		*pEmitter;
+
+	for (list = particleSystem.emitterList; list != NULL; list = list->next)
+	{
+		pEmitter = (emitter *)list->data;
+
+		if (pEmitter)
+			D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
+	}
+
+	if (effects.sand)
+	{
+		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
+
+		D3DParticleSystemUpdate(&particleSystem, pss.particlePool, pss.particleCacheSystem);
+	}
 }
 
 /**

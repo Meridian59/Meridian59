@@ -8,18 +8,16 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-#define MAX_PARTICLES	128
+static constexpr int MAX_PARTICLES = 128;
 #define SANDSTORM_R		226
 #define SANDSTORM_G		153
 #define SANDSTORM_B		6
 #define SANDSTORM_A		255
 
-#define RAIN_R			128
-#define RAIN_G			128
-#define RAIN_B			128
-#define RAIN_A			128
-
-typedef struct particle
+////////////////
+// Structures //
+////////////////
+struct particle
 {
 	int			energy;
 	custom_xyz	pos;
@@ -27,11 +25,9 @@ typedef struct particle
 	custom_xyz	velocity;
 	custom_xyz	rotation;
 	custom_bgra	bgra;
-	float		size;
-	float		weight;
-} particle;
+};
 
-typedef struct emitter
+struct emitter
 {
 	int			numParticles;
 	int			energy;
@@ -46,21 +42,23 @@ typedef struct emitter
 	custom_bgra	bgra;
 	particle	particles[MAX_PARTICLES];
 	bool		bRandomize;
-} emitter;
+};
 
-typedef struct particle_system
+struct particle_system
 {
 	int			numParticles;
 	list_type	emitterList;
-} particle_system;
+};
 
+////////////////
+// Prototypes //
+////////////////
 void	D3DParticleSystemReset(particle_system *pParticleSystem);
 void	D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
 							float velX, float velY, float velZ, unsigned char b, unsigned char g,
 							unsigned char r, unsigned char a, int energy, int timerBase,
 							float rotX, float rotY, float rotZ, bool bRandomize, int randomPos, int randomRot);
 void	D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
-//void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
 void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem);
 

@@ -12,6 +12,9 @@
 #ifndef _D3DRENDERFX_H
 #define _D3DRENDERFX_H
 
+////////////////
+// Structures //
+////////////////
 struct ParticleSystemStructure {
     LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
     const custom_xyz& playerDeltaPos;
@@ -75,9 +78,12 @@ struct FxRenderSystemStructure {
     {}
 };
 
+////////////////
+// Prototypes //
+////////////////
 void D3DFxInit();
-void D3DFxBlurWaver(const FxRenderSystemStructure& renderSystemStructure);
-void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss);
 void D3DRenderParticles(const ParticleSystemStructure& pss);
+void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss);
+void D3DFxBlurWaver(const FxRenderSystemStructure& renderSystemStructure);
 
 #endif	/* #ifndef _D3DRENDERFX_H */

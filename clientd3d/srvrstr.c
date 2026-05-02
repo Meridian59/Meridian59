@@ -277,7 +277,31 @@ static FormatCode code_table[] = {
 { 'n', CODE_STYLE, STYLE_RESET },
 };
 
+// Dark theme code table; same length and order as code_table.
+static FormatCode code_table_dark[] = {
+{ 'r', CODE_COLOR, PALETTERGB(230, 100, 100) }, // Soft Red
+{ 'g', CODE_COLOR, PALETTERGB( 80, 200, 120) }, // Bright Green
+{ 'l', CODE_COLOR, PALETTERGB(  0, 255,   0) }, // Lime Green
+{ 'b', CODE_COLOR, PALETTERGB(100, 149, 237) }, // Cornflower Blue
+{ 'c', CODE_COLOR, PALETTERGB(100, 220, 220) }, // Soft Cyan
+{ 'k', CODE_COLOR, PALETTERGB(160, 160, 160) }, // Gray
+{ 'w', CODE_COLOR, PALETTERGB(255, 255, 255) }, // White
+{ 'y', CODE_COLOR, PALETTERGB(255, 255,   0) }, // Yellow
+{ 'o', CODE_COLOR, PALETTERGB(255, 172,  28) }, // Bright Orange
+{ 'p', CODE_COLOR, PALETTERGB(255, 192, 203) }, // Pink
+{ 'B', CODE_STYLE, STYLE_BOLD },
+{ 'I', CODE_STYLE, STYLE_ITALIC },
+{ 'U', CODE_STYLE, STYLE_UNDERLINE },
+{ 'n', CODE_STYLE, STYLE_RESET },
+};
+
 static int num_format_codes = sizeof(code_table) / sizeof(FormatCode);
+
+// Returns the color code table for the active theme.
+static FormatCode *ColorCodeTableForTheme(int theme)
+{
+   return (theme == THEME_DEFAULT) ? code_table : code_table_dark;
+}
 
 /************************************************************************/
 /*
@@ -342,20 +366,21 @@ void DisplayMessage(const char *message, COLORREF start_color, BYTE start_style)
 	 break;
 
       new_type = 0;
+      FormatCode *active_table = ColorCodeTableForTheme(config.theme);
       for (i=0; i < num_format_codes; i++)
       {
-	 if (code_table[i].code != ch)
+	 if (active_table[i].code != ch)
 	    continue;
 
-	 switch (code_table[i].type)
+	 switch (active_table[i].type)
 	 {
 	 case CODE_COLOR:
-	    new_color = code_table[i].data;
+	    new_color = active_table[i].data;
 	    new_type |= CODE_COLOR;
 	    break;
 
 	 case CODE_STYLE:
-	    switch (code_table[i].data)
+	    switch (active_table[i].data)
 	    {
 	    case STYLE_NORMAL:
 	       new_style = STYLE_NORMAL;
@@ -368,7 +393,7 @@ void DisplayMessage(const char *message, COLORREF start_color, BYTE start_style)
 	       break;
 	       
 	    default:
-	       new_style = style ^ code_table[i].data;  // Toggle style
+	       new_style = style ^ active_table[i].data;  // Toggle style
 	       break;
 	    }
 	       
@@ -376,7 +401,7 @@ void DisplayMessage(const char *message, COLORREF start_color, BYTE start_style)
 	    break;
 
 	 default:
-	    debug(("DisplayServerMessage got unknown code type %d\n", code_table[i].type));
+	    debug(("DisplayServerMessage got unknown code type %d\n", active_table[i].type));
 	    break;
 	 }
       }

@@ -25,9 +25,12 @@ static HBRUSH hDefaultBrush;
 
 static COLORREF CustColors[16];  /* User's custom colors for Choose Color dialog */
 
-/* Default color information structures */
-// default colors changed for grey background in new client - mistery
-static char colorinfo[][15] = {
+// Theme color tables.  See docs/themes.md for details.
+// Each theme has a parallel table of MAXCOLORS "R,G,B" strings indexed
+// by the COLOR_* enum from color.h.
+
+// Default theme.
+static char colorinfo_default[][15] = {
 	{ "0,0,0"},         /* COLOR_BGD */
 	{ "255,255,255"},   /* COLOR_FGD */
 	{ "255,255,255"},   /* COLOR_LISTSELBGD */
@@ -63,7 +66,58 @@ static char colorinfo[][15] = {
 	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED       - red    */
 };
 
-static char color_section[] = "Colors";  /* Section for colors in INI file */
+// Dark theme.
+static char colorinfo_dark[][15] = {
+	{ "0,0,0"},         /* COLOR_BGD */
+	{ "212,212,212"},   /* COLOR_FGD */
+	{ "255,255,255"},   /* COLOR_LISTSELBGD - matches default for dialog list highlights */
+	{ "0,0,0"},         /* COLOR_LISTSELFGD - matches default for dialog list highlights */
+	{ "50,50,53"},      /* COLOR_MAILBGD */
+	{ "212,212,212"},   /* COLOR_MAILFGD */
+	{ "240,208,25"},    /* COLOR_HIGHLITE */
+	{ "212,212,212"},   /* COLOR_EDITFGD */
+	{ "60,60,64"},      /* COLOR_EDITBGD */
+	{ "200,160,255"},   /* COLOR_SYSMSGFGD */
+	{ "212,212,212"},   /* COLOR_MAINEDITFGD */
+	{ "50,50,53"},      /* COLOR_MAINEDITBGD */
+	{ "255,255,255"},   /* COLOR_LISTFGD - matches default for dialog lists */
+	{ "0,0,0"},         /* COLOR_LISTBGD - matches default for dialog lists */
+	{ "230,100,100"},   /* COLOR_RMMSGFGD */
+	{ "50,50,53"},      /* COLOR_RMMSGBGD */
+	{ "212,212,212"},   /* COLOR_STATSFGD */
+	{ "50,50,53"},      /* COLOR_STATSBGD */
+	{ "0,128,0"},       /* COLOR_BAR1 - bar fill (health/mana/vigor) */
+	{ "128,0,0"},       /* COLOR_BAR2 - limit/damage bar */
+	{ "48,0,0"},        /* COLOR_BAR3 - bar background */
+	{ "255,255,255"},   /* COLOR_BAR4 - bar numbers */
+	{ "180,180,180"},   /* COLOR_INVNUMFGD */
+	{ "50,50,53"},      /* COLOR_INVNUMBGD */
+	{ "141,242,242"},   /* COLOR_ITEM_TEXT_UNCOMMON */
+	{ "0,255,0"},       /* COLOR_ITEM_TEXT_RARE */
+	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY */
+	{ "252,128,0"},     /* COLOR_ITEM_TEXT_UNIDENTIFIED */
+	{ "255,0,0"},       /* COLOR_ITEM_TEXT_CURSED */
+};
+
+// INI section names; one section per theme.
+static char color_section_default[] = "Colors";
+static char color_section_dark[]    = "ColorsDark";
+static char INIColorVersion[]       = "ColorVersion";
+
+// Bump when default values for any color change.
+static const int THEME_COLOR_VERSION = 5;
+
+// Returns the INI section name for the active theme.
+static const char *ColorSectionForTheme(int theme)
+{
+	return (theme == THEME_DEFAULT) ? color_section_default : color_section_dark;
+}
+
+// Returns the default color table for the active theme.
+static char (*ColorDefaultsForTheme(int theme))[15]
+{
+	return (theme == THEME_DEFAULT) ? colorinfo_default : colorinfo_dark;
+}
 
 // Colors for drawing player names
 #define NAME_COLOR_NORMAL_FG   PALETTERGB(255, 255, 255)
@@ -94,6 +148,18 @@ void ColorsCreate(bool use_defaults)
 	const char *separators = ",";
 	bool success;
 
+	const char *section = ColorSectionForTheme(config.theme);
+	char (*defaults)[15] = ColorDefaultsForTheme(config.theme);
+
+	// Discard saved colors when the version doesn't match.
+	if (!use_defaults)
+	{
+		int saved_version = GetPrivateProfileInt(section, INIColorVersion,
+			0, ini_file);
+		if (saved_version != THEME_COLOR_VERSION)
+			use_defaults = true;
+	}
+
 	DefaultColor = PALETTERGB(255, 255, 255);
 	hDefaultBrush = (HBRUSH) GetStockObject(BLACK_BRUSH);
 
@@ -106,11 +172,11 @@ void ColorsCreate(bool use_defaults)
 		for (i=0; i < MAXCOLORS; i++)
 		{
 			if (use_defaults)
-				strcpy(str, colorinfo[i]);
+				strcpy(str, defaults[i]);
 			else
 			{
 				snprintf(name, sizeof(name), "Color%d", i);
-				GetPrivateProfileString(color_section, name, colorinfo[i], str, 100, ini_file);
+				GetPrivateProfileString(section, name, defaults[i], str, 100, ini_file);
 			}
 
 			success = true;
@@ -125,7 +191,7 @@ void ColorsCreate(bool use_defaults)
 			else blue = temp;
 
 			if (success)
-				SetColor(i, PALETTERGB(red, green, blue));
+				SetColor(i, RGB(red, green, blue));
 			else SetColor(i, DefaultColor);
 
 			brushes[i] = NULL;
@@ -148,8 +214,11 @@ COLORREF GetColor(WORD color)
 		debug(("Illegal color #%u in GetColor\n", color));
 		return DefaultColor;
 	}
-	// Return palette-relative color
-	return MAKEPALETTERGB(colors[color]);
+	// Default theme snaps to the indexed game palette; other themes pass
+	// raw 24-bit RGB.
+	if (config.theme == THEME_DEFAULT)
+		return MAKEPALETTERGB(colors[color]);
+	return colors[color] & 0x00FFFFFF;
 }
 /************************************************************************/
 HBRUSH GetBrush(WORD color)
@@ -181,8 +250,11 @@ bool SetColor(WORD color, COLORREF cr)
 		return false;
 	}
 
-	/* Round color to nearest match in our palette; this lets transparency work */
-	colors[color] = GetNearestPaletteColor(cr);
+	// See GetColor.
+	if (config.theme == THEME_DEFAULT)
+		colors[color] = GetNearestPaletteColor(cr);
+	else
+		colors[color] = cr & 0x00FFFFFF;
 
 	if (brushes[color] != NULL)
 	{
@@ -199,6 +271,7 @@ void ColorsSave(void)
 {
 	int i;
 	char str[100], name[10];
+	const char *section = ColorSectionForTheme(config.theme);
 
 	for (i=0; i < MAXCOLORS; i++)
 	{
@@ -206,8 +279,12 @@ void ColorsSave(void)
 			GetRValue(colors[i]), GetGValue(colors[i]), GetBValue(colors[i]));
 		snprintf(name, sizeof(name), "Color%d", i);
 
-		WritePrivateProfileString(color_section, name, str, ini_file);
+		WritePrivateProfileString(section, name, str, ini_file);
 	}
+
+	// Stamp the version so future loads can detect stale saved colors.
+	snprintf(str, sizeof(str), "%d", THEME_COLOR_VERSION);
+	WritePrivateProfileString(section, INIColorVersion, str, ini_file);
 }
 /************************************************************************/
 void ColorsRestoreDefaults(void)
@@ -359,9 +436,11 @@ HBRUSH MainCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 		SetBkColor(hdc, GetColor(COLOR_MAINEDITBGD));
 		return GetBrush(COLOR_MAINEDITBGD);
 
-	case CTLCOLOR_SCROLLBAR:  /* Don't color scrollbars */
-		//return (HBRUSH) FALSE;
-		return (HBRUSH) GetStockObject( BLACK_BRUSH );		//	xxx
+	case CTLCOLOR_SCROLLBAR:
+		// Default paints scrollbars black; other themes use the system look.
+		if (config.theme != THEME_DEFAULT)
+			return (HBRUSH) FALSE;
+		return (HBRUSH) GetStockObject( BLACK_BRUSH );
 
 	default:
 		SelectPalette(hdc, hPal, FALSE);
@@ -372,23 +451,40 @@ HBRUSH MainCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 }
 /****************************************************************************/
 /*
-* DialogCtlColor:  Handle CTLCOLOR messages for dialog boxes.
+* DialogCtlColor:  Returns a brush and sets DC colors for dialog controls.
+*   Only the default theme reads from GetColor().  Other themes use stock
+*   white/black brushes so theme palettes stay out of dialogs.  See
+*   docs/themes.md.
 */
 HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 {
 	switch (type)
 	{
 	case CTLCOLOR_EDIT:
-		SelectPalette(hdc, hPal, FALSE);
-		SetTextColor(hdc, GetColor(COLOR_EDITFGD));
-		SetBkColor(hdc, GetColor(COLOR_EDITBGD));
-		return GetBrush(COLOR_EDITBGD);
-
 	case CTLCOLOR_LISTBOX:
 		SelectPalette(hdc, hPal, FALSE);
-		SetTextColor(hdc, GetColor(COLOR_LISTFGD));
-		SetBkColor(hdc, GetColor(COLOR_LISTBGD));
-		return GetBrush(COLOR_LISTBGD);
+		if (config.theme == THEME_DEFAULT)
+		{
+			if (type == CTLCOLOR_EDIT)
+			{
+				SetTextColor(hdc, GetColor(COLOR_EDITFGD));
+				SetBkColor(hdc, GetColor(COLOR_EDITBGD));
+				return GetBrush(COLOR_EDITBGD);
+			}
+			SetTextColor(hdc, GetColor(COLOR_LISTFGD));
+			SetBkColor(hdc, GetColor(COLOR_LISTBGD));
+			return GetBrush(COLOR_LISTBGD);
+		}
+		// Other themes use stock dialog colors.
+		if (type == CTLCOLOR_EDIT)
+		{
+			SetTextColor(hdc, PALETTERGB(0, 0, 0));
+			SetBkColor(hdc, PALETTERGB(255, 255, 255));
+			return (HBRUSH)GetStockObject(WHITE_BRUSH);
+		}
+		SetTextColor(hdc, PALETTERGB(255, 255, 255));
+		SetBkColor(hdc, PALETTERGB(0, 0, 0));
+		return (HBRUSH)GetStockObject(BLACK_BRUSH);
 
 	case CTLCOLOR_SCROLLBAR:
 		return (HBRUSH) FALSE;

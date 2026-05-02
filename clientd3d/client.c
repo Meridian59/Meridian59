@@ -274,6 +274,21 @@ void ClearMessageQueue(void)
 	}
 }
 /************************************************************************/
+/*
+ * ThemeApply:  Reload the color palette for the active theme and force
+ *   a repaint of the main window.  Called when the user changes themes
+ *   in the Preferences dialog.
+ */
+void ThemeApply(void)
+{
+	ColorsDestroy();
+	ColorsCreate(false);
+	MainChangeColor();
+	ModuleEvent(EVENT_COLORCHANGED, -1, 0);
+	if (hMain != NULL)
+		InvalidateRect(hMain, NULL, TRUE);
+}
+/************************************************************************/
 void SetUpCrashReporting() {
 #ifdef M59_RETAIL
   static MiniDmpSender *pSender;

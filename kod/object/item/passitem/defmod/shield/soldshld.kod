@@ -129,6 +129,19 @@ messages:
       propagate;
    }
 
+   ReqUseSomething(what = $)
+   "Returns TRUE to keep the shield equipped when a two-handed hand item is "
+   "equipped, since the shield slings on its own back to free a hand instead."
+   {
+      if (Send(what,@GetItemUseType) & ITEM_USE_HAND)
+         AND Send(what,@GetItemUseAmount) >= 2
+      {
+         return TRUE;
+      }
+
+      propagate;
+   }
+
    Delete()
    {
       if poOwner <> $ AND IsClass(poOwner,&Player)

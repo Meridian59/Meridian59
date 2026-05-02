@@ -518,7 +518,19 @@ messages:
    }
 
    ReqUseSomething(what = $)
+   "Returns TRUE if `self` permits the player to also equip `what`, FALSE to "
+   "block the equip.  Default: if `self` and `what` both want hand slots and "
+   "their combined hand use exceeds two, `self` unequips itself to make room "
+   "and returns the result of that unequip."
    {
+      if (viUse_type & ITEM_USE_HAND)
+         AND (Send(what,@GetItemUseType) & ITEM_USE_HAND)
+         AND (viUse_amount + Send(what,@GetItemUseAmount) > 2)
+         AND FindListElem(Send(poOwner,@GetPlayerUsing),self) <> 0
+      {
+         return Send(poOwner,@TryUnuseItem,#what=self);
+      }
+
       return TRUE;
    }
 

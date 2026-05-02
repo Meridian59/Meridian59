@@ -130,11 +130,12 @@ messages:
    }
 
    ReqUseSomething(what = $)
-   "Returns TRUE to keep the shield equipped when a two-handed hand item is "
-   "equipped, since the shield slings on its own back to free a hand instead."
+   "Returns TRUE for any incoming hand item.  The soldier's shield cannot be "
+   "unequipped on player request, so it never yields to make room.  Two-hand "
+   "item equips sling it on its back via CheckPosition; other hand items must "
+   "free room from elsewhere or be blocked by the hand-space check."
    {
-      if (Send(what,@GetItemUseType) & ITEM_USE_HAND)
-         AND Send(what,@GetItemUseAmount) >= 2
+      if Send(what,@GetItemUseType) & ITEM_USE_HAND
       {
          return TRUE;
       }

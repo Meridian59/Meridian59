@@ -1179,16 +1179,20 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             config.play_music = IsDlgButtonChecked(hDlg, IDC_MUSIC);
             UserToggleMusic(config.play_music);
             config.play_sound = IsDlgButtonChecked(hDlg, IDC_SOUNDFX);
+            bool old_loop_sounds = config.play_loop_sounds;
             config.play_loop_sounds = IsDlgButtonChecked(hDlg, IDC_LOOPSOUNDS);
             config.play_random_sounds = IsDlgButtonChecked(hDlg, IDC_RANDSOUNDS);
             if (!config.play_sound)
               SoundStopAll();
+            else if (old_loop_sounds && !config.play_loop_sounds)
+              SoundStopLooping();
             config.halocolor = IsDlgButtonChecked(hDlg, IDC_TARGETHALO1) == BST_CHECKED ? 0 :
                                IsDlgButtonChecked(hDlg, IDC_TARGETHALO2) == BST_CHECKED ? 1 : 2;
             config.colorcodes = IsDlgButtonChecked(hDlg, IDC_COLORCODES);
 
             config.sound_volume = Trackbar_GetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME));
             config.ambient_volume = Trackbar_GetPos(GetDlgItem(hDlg, IDC_AMBIENT_VOLUME));
+            ResetSoundVolume();
             auto new_val = Trackbar_GetPos(GetDlgItem(hDlg, IDC_MUSIC_VOLUME));
             if (new_val != config.music_volume)
             {

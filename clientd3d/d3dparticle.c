@@ -6,247 +6,174 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include <chrono>
+#include <random>
+
+///////////////
+// Constants //
+///////////////
+static constexpr uint32_t PARTICLE_INDICES = 2;
+static constexpr uint32_t PARTICLE_VERTICES = 2;
+static constexpr uint32_t PARTICLE_PRIMITIVES = 1;
+
+///////////////
+// Variables //
+///////////////
+static std::mt19937 gen(static_cast<uint32_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
+
+////////////////////////
+// Internal Functions //
+////////////////////////
+static float GetRandomFloatRange(float min, float max)
+{
+	if (min >= max)
+	{
+		return min;
+	}
+	std::uniform_real_distribution<float> dist(min, max);
+
+    return dist(gen);
+}
+
+// Returns a new XYZ after adjusting the base XYZ with a specified variance range (if any).
+static custom_xyz GetVariedXYZ(const custom_xyz& base, const custom_xyz& min, const custom_xyz& max)
+{
+	custom_xyz result = base;
+	result.x += GetRandomFloatRange(min.x, max.x);
+	result.y += GetRandomFloatRange(min.y, max.y);
+	result.z += GetRandomFloatRange(min.z, max.z);
+	return result;
+}
+
+static void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render_pool_new *pPool)
+{
+	// Skip inactive particles so they don't get added to rendering.
+	if (pParticle->isActive == false)
+		return;
+
+	if (--pParticle->timeLeft <= 0)
+	{
+		pParticle->isActive = false;
+		return;
+	}
+
+	custom_xyzw velocity = {pParticle->velocity.x, pParticle->velocity.y, pParticle->velocity.z, 1.0f};
+
+	D3DMATRIX rotate, matrix;
+	MatrixRotateX(&matrix, pParticle->rotation.x);
+	MatrixRotateY(&rotate, pParticle->rotation.y);
+	MatrixMultiply(&rotate, &matrix, &rotate);
+	MatrixRotateZ(&matrix, pParticle->rotation.z);
+	MatrixMultiply(&rotate, &rotate, &matrix);
+
+	MatrixMultiplyVector(&velocity, &rotate, &velocity);
+	pParticle->velocity.x = velocity.x;
+	pParticle->velocity.y = velocity.y;
+	pParticle->velocity.z = velocity.z;
+	pParticle->oldPosition = pParticle->position;
+	pParticle->position.x += pParticle->velocity.x;
+	pParticle->position.y += pParticle->velocity.y;
+	pParticle->position.z += pParticle->velocity.z;
+
+	auto *pPacket = D3DRenderPacketFindMatch(pPool, nullptr, nullptr, 0, 0, 0);
+	assert(pPacket);
+	pPacket->pMaterialFctn = &D3DMaterialParticlePacket;
+
+	auto *pChunk = D3DRenderChunkNew(pPacket);
+	assert(pChunk);
+	pChunk->numIndices = PARTICLE_INDICES;
+	pChunk->numVertices = PARTICLE_VERTICES;
+	pChunk->numPrimitives = PARTICLE_PRIMITIVES;
+	pChunk->pMaterialFctn = &D3DMaterialParticleChunk;
+
+	MatrixTranslate(&pChunk->xForm, pParticle->position.x, pParticle->position.z, pParticle->position.y);
+
+	CHUNK_XYZ_SET(pChunk, 0, 0, 0, 0);
+	CHUNK_XYZ_SET(pChunk, 1, -pParticle->velocity.x, -pParticle->velocity.y, -pParticle->velocity.z);
+	CHUNK_BGRA_SET(pChunk, 0, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r, pParticle->bgra.a);
+	CHUNK_BGRA_SET(pChunk, 1, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r, 0);
+	CHUNK_INDEX_SET(pChunk, 0, 0);
+	CHUNK_INDEX_SET(pChunk, 1, 1);
+}
+
+// Gets a particle from the object pool
+static void D3DParticleInitialize(emitter *pEmitter, particle *pParticle)
+{
+	// Advance to the next slot in the circular buffer and reset the emitter's timer,
+	// regardless if the recycled particle should show up in its new location or not.
+	pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES;
+	if (pEmitter->numParticles < MAX_PARTICLES)
+	{
+		pEmitter->numParticles++;
+	}
+	pEmitter->timer = pEmitter->timerBase;
+
+	// Apply position/velocity/rotation settings to the particle, and with variance if any.
+	pParticle->position = GetVariedXYZ(pEmitter->position, pEmitter->positionVarianceMin, pEmitter->positionVarianceMax);
+	pParticle->velocity = GetVariedXYZ(pEmitter->velocity, pEmitter->velocityVarianceMin, pEmitter->velocityVarianceMax);
+	pParticle->rotation = GetVariedXYZ(pEmitter->rotation, pEmitter->rotationVarianceMin, pEmitter->rotationVarianceMax);
+
+	pParticle->bgra = pEmitter->bgra;
+	pParticle->timeLeft = pEmitter->particleLifetime;
+
+	// Once the particle is all set, make it active so it can be included in the rendering.
+	pParticle->isActive = true;
+}
 
 //////////////////////
 // Public Functions //
 //////////////////////
 void D3DParticleSystemReset(particle_system *pParticleSystem)
 {
-	list_destroy(pParticleSystem->emitterList);
-	pParticleSystem->emitterList = NULL;
+	// Free memory from each emitter before clearing the pointers.
+	for (auto pEmitter : pParticleSystem->emitterList)
+	{
+		if (pEmitter != nullptr)
+		{
+			SafeFree(pEmitter);
+		}
+	}
+
+	pParticleSystem->emitterList.clear();
 }
 
-void D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
-							float velX, float velY, float velZ, unsigned char b, unsigned char g,
-							unsigned char r, unsigned char a, int energy, int timerBase,
-							float rotX, float rotY, float rotZ, bool bRandomize, int randomPos,
-							int randomRot)
+emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int time)
 {
-	emitter	*pEmitter = NULL;
+	emitter	*pEmitter = reinterpret_cast<emitter*>(ZeroSafeMalloc(sizeof(emitter)));
 
-	if (pParticleSystem == NULL)
-		return;
+	pEmitter->timer = time;
+	pEmitter->timerBase = time;
 
-	pEmitter = (emitter *)SafeMalloc(sizeof(emitter));
-
-	if (pEmitter == NULL)
-		return;
-
-	memset(pEmitter, 0, sizeof(emitter));
-
-	pEmitter->numParticles = 0;
-	pEmitter->bRandomize = bRandomize;
-	pEmitter->pos.x = posX;
-	pEmitter->pos.y = posY;
-	pEmitter->pos.z = posZ;
-	pEmitter->rotation.x = rotX;
-	pEmitter->rotation.y = rotY;
-	pEmitter->rotation.z = rotZ;
-	pEmitter->velocity.x = velX;
-	pEmitter->velocity.y = velY;
-	pEmitter->velocity.z = velZ;
-	pEmitter->energy = energy;
-	pEmitter->timer = timerBase;
-	pEmitter->timerBase = timerBase;
-	pEmitter->bgra.b = b;
-	pEmitter->bgra.g = g;
-	pEmitter->bgra.r = r;
-	pEmitter->bgra.a = a;
-	pEmitter->randomPos = randomPos;
-	pEmitter->randomRot = randomRot;
-
-	if (NULL == pParticleSystem->emitterList)
-		pParticleSystem->emitterList =
-			list_create(pEmitter);
-	else
-		list_add_item(pParticleSystem->emitterList, pEmitter);
+	pParticleSystem->emitterList.push_back(pEmitter);
+	return pEmitter;
 }
 
-void D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ)
+void D3DParticleEmitterUpdate(emitter *pEmitter, custom_xyz deltaPosition)
 {
-	pEmitter->pos.x += posX;
-	pEmitter->pos.y += posY;
-	pEmitter->pos.z += posZ;
+	pEmitter->position.x += deltaPosition.x;
+	pEmitter->position.y += deltaPosition.y;
+	pEmitter->position.z += deltaPosition.z;
 }
 
 void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem)
 {
-	int						curParticle;
-	list_type				list;
-	emitter					*pEmitter;
-	particle				*pParticle;
-	d3d_render_packet_new	*pPacket;
-	d3d_render_chunk_new	*pChunk;
-	D3DMATRIX				rotate, matrix;
-
 	D3DCacheSystemReset(pCacheSystem);
 	D3DRenderPoolReset(pPool, &D3DMaterialParticlePool);
 
-	for (list = pParticleSystem->emitterList; list != NULL; list = list->next)
+	for (auto pEmitter : pParticleSystem->emitterList)
 	{
-		pEmitter = (emitter *)list->data;
-
-		for (curParticle = 0; curParticle < pEmitter->numParticles; curParticle++)
+		// Update existing particles.
+		for (int i = 0; i < pEmitter->numParticles; i++)
 		{
-			pParticle = &pEmitter->particles[curParticle];
-
-			if (--pParticle->energy <= 0)
-			{
-				pParticle->energy = 0;
-				pEmitter->numParticles--;
-			}
-			else
-			{
-				custom_xyzw	velocity;
-
-				velocity.x = pParticle->velocity.x;
-				velocity.y = pParticle->velocity.y;
-				velocity.z = pParticle->velocity.z;
-				velocity.w = 1.0f;
-
-				MatrixRotateX(&matrix, pParticle->rotation.x);
-				MatrixRotateY(&rotate, pParticle->rotation.y);
-				MatrixMultiply(&rotate, &matrix, &rotate);
-				MatrixRotateZ(&matrix, pParticle->rotation.z);
-				MatrixMultiply(&rotate, &rotate, &matrix);
-
-				MatrixMultiplyVector(&velocity, &rotate, &velocity);
-
-				pParticle->velocity.x = velocity.x;
-				pParticle->velocity.y = velocity.y;
-				pParticle->velocity.z = velocity.z;
-
-				pParticle->oldPos.x = pParticle->pos.x;
-				pParticle->oldPos.y = pParticle->pos.y;
-				pParticle->oldPos.z = pParticle->pos.z;
-
-				pParticle->pos.x += pParticle->velocity.x;
-				pParticle->pos.y += pParticle->velocity.y;
-				pParticle->pos.z += pParticle->velocity.z;
-
-				pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
-				assert(pPacket);
-				pPacket->pMaterialFctn = &D3DMaterialParticlePacket;
-
-				pChunk = D3DRenderChunkNew(pPacket);
-				assert(pChunk);
-				pChunk->numIndices = 2;
-				pChunk->numVertices = 2;
-				pChunk->numPrimitives = 1;
-				pChunk->pMaterialFctn = &D3DMaterialParticleChunk;
-
-				MatrixTranslate(&pChunk->xForm, pParticle->pos.x, pParticle->pos.z, pParticle->pos.y);
-
-				CHUNK_XYZ_SET(pChunk, 0, 0, 0, 0);
-				CHUNK_XYZ_SET(pChunk, 1, -pParticle->velocity.x, -pParticle->velocity.y,
-					-pParticle->velocity.z);
-				CHUNK_BGRA_SET(pChunk, 0, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r,
-					pParticle->bgra.a);
-				CHUNK_BGRA_SET(pChunk, 1, pParticle->bgra.b, pParticle->bgra.g, pParticle->bgra.r,
-					0);
-				CHUNK_INDEX_SET(pChunk, 0, 0);
-				CHUNK_INDEX_SET(pChunk, 1, 1);
-			}
+			D3DParticleUpdate(pEmitter, &pEmitter->particles[i], pPool);
 		}
 
-		if (pEmitter->numParticles < MAX_PARTICLES)
+		// Initializing new particles
+		if (--pEmitter->timer <= 0)
 		{
-			int	curParticle;
-
-			if (--pEmitter->timer <= 0)
-			{
-				for (curParticle = 0; curParticle < MAX_PARTICLES; curParticle++)
-				{
-					pParticle = &pEmitter->particles[curParticle];
-
-					if (pParticle->energy == 0)
-					{
-						pParticle->pos.x = pEmitter->pos.x;
-						pParticle->pos.y = pEmitter->pos.y;
-						pParticle->pos.z = pEmitter->pos.z;
-
-						if (pEmitter->bRandomize)
-						{
-							int	sign = 1;
-
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->pos.x += sign * ((int)rand() & pEmitter->randomPos);
-
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->pos.y += sign * ((int)rand() & pEmitter->randomPos);
-
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->pos.z += sign * ((int)rand() & pEmitter->randomPos);
-						}
-
-						pParticle->velocity.x = pEmitter->velocity.x;
-						pParticle->velocity.y = pEmitter->velocity.y;
-						pParticle->velocity.z = pEmitter->velocity.z;
-
-						pParticle->rotation.x = pEmitter->rotation.x;
-						pParticle->rotation.y = pEmitter->rotation.y;
-						pParticle->rotation.z = pEmitter->rotation.z;
-
-						if (pEmitter->bRandomize)
-						{
-							float	random, sign;
-
-							sign = 1;
-
-/*							random = (int)rand() % 10;
-							random = DEGREES_TO_RADIANS(random);
-							pParticle->rotation.x += random * sign;
-
-							random = (int)rand() % 10;
-							random = DEGREES_TO_RADIANS(random);
-							pParticle->rotation.y += random * sign;
-
-							random = (int)rand() % 10;
-							random = DEGREES_TO_RADIANS(random);
-							pParticle->rotation.z += random * sign;*/
-							random = (int)rand() % pEmitter->randomRot;
-							if (random <= 1)
-								random = 2;
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->rotation.x += (pEmitter->rotation.x * random * sign);
-							pParticle->pos.x += (int)rand() % FINENESS;
-
-							random = (int)rand() % pEmitter->randomRot;
-							if (random <= 1)
-								random = 2;
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->rotation.y += (pEmitter->rotation.y * random * sign);
-							pParticle->pos.y += (int)rand() % FINENESS;
-
-							random = (int)rand() % pEmitter->randomRot;
-							if (random <= 1)
-								random = 2;
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->rotation.z += (pEmitter->rotation.z * random * sign);
-							pParticle->pos.z += (int)rand() % FINENESS;
-						}
-
-						pParticle->bgra.b = pEmitter->bgra.b;
-						pParticle->bgra.g = pEmitter->bgra.g;
-						pParticle->bgra.r = pEmitter->bgra.r;
-						pParticle->bgra.a = pEmitter->bgra.a;
-
-						pParticle->energy = pEmitter->energy;
-
-						pEmitter->numParticles++;
-						curParticle = MAX_PARTICLES;
-					}
-				}
-
-				pEmitter->timer = pEmitter->timerBase;
-			}
+			// Particles spawn one at a time and use circular buffing to track the next open particle.
+			D3DParticleInitialize(pEmitter, &pEmitter->particles[pEmitter->nextSlot]);
 		}
 	}
 

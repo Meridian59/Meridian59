@@ -97,10 +97,19 @@ static bool incremental_background = false;
 static int background_cones = MAX_ITEMS;
 
 // Depth counter: >0 when the BSP walk is traversing the far side of a
-// translucent wall separator.  Objects in leaves visited while this is >0
-// are marked behind_translucent so the D3D post-pass can distinguish them
-// from objects behind opaque walls.
+// separator plane that contains at least one translucent wall.  Used as a
+// cheap early-exit so we can skip the per-column overlap test below when no
+// translucent walls are anywhere on the current path.
 static int translucent_wall_depth = 0;
+
+// Per-screen-column ref count of how many translucent walls on the current
+// BSP path actually cover each column.  Objects in the far subtree are marked
+// behind_translucent only if their projected column range overlaps a column
+// with count > 0.  Without this, a separator plane that mixes translucent and
+// opaque walls would mark every object in the far subtree, including objects
+// entirely behind the opaque wall — those would then be re-added by the D3D
+// post-pass and rely on the depth buffer to occlude them.
+static int translucent_col_count[MAXX];
 
 static void doDrawWall(DrawWallStruct *wall, ViewCone *c);
 static void doDrawBackground(ViewCone *c);
@@ -2396,11 +2405,6 @@ static void WalkObjects(ObjectData *objects)
    num = 0;
    for (object = objects; object; object = object->next)
    {
-      // Mark objects that are on the far side of a translucent wall separator
-      // so the D3D post-pass can include them if the BSP walk misses them.
-      if (translucent_wall_depth > 0)
-         object->behind_translucent = true;
-
       sort[num] = object;
       num++;
       if (num == MAX_OBJS_PER_LEAF)
@@ -2443,6 +2447,26 @@ static void WalkObjects(ObjectData *objects)
 
       if (right >= MAXX)
          right = MAXX - 1;
+
+      // Mark behind_translucent only if this object's screen columns actually
+      // overlap a translucent wall on the BSP path.  Objects behind opaque
+      // walls in a plane that also contains a translucent wall must NOT be
+      // marked, or the D3D post-pass would re-add them and they'd appear
+      // through the opaque wall on the map.
+      if (translucent_wall_depth > 0)
+      {
+         long ovlo = std::max(left, 0L);
+         long ovhi = std::min(right, (long)MAXX - 1);
+         for (long col = ovlo; col <= ovhi; col++)
+         {
+            if (translucent_col_count[col] > 0)
+            {
+               object->behind_translucent = true;
+               break;
+            }
+         }
+      }
+
       for (c = search_for_first(left); c->cone.leftedge <= right; c = c->next)
       {
          if (nitems >= MAX_ITEMS)
@@ -2768,95 +2792,127 @@ static void WalkBSPtree(BSPnode *tree)
    /* debug(("box (%ld %ld) (%ld %ld)) opened\n",tree->bbox.x0, tree->bbox.y0,
       tree->bbox.x1, tree->bbox.y1); */
 
-   switch (tree->type)
+   if (tree->type == BSPleaftype)
    {
-   case BSPleaftype:
       WalkLeaf(&tree->u.leaf);
       return;
+   }
 
-   case BSPinternaltype:
-      side = (a = tree->u.internal.separator.a) * viewer_x + (b = tree->u.internal.separator.b) * viewer_y +
-             tree->u.internal.separator.c;
-
-      if (shade_amount != 0)
-      {
-         long lo_end = FINENESS - shade_amount;
-
-         if (side < 0)
-         {
-            a = -a;
-            b = -b;
-         }
-
-         lightscale = (long) (a * sun_vect.x + b * sun_vect.y) >> LOG_FINENESS;
-
-         lightscale = (lightscale + FINENESS) >> 1;  // map to 0 to 1 range
-
-         lightscale = lo_end + ((lightscale * shade_amount) >> LOG_FINENESS);
-
-         if (lightscale > FINENESS)
-            lightscale = FINENESS;
-         else if (lightscale < 0)
-            lightscale = 0;
-      }
-      else
-         lightscale = FINENESS;
-
-      // first, traverse closer side
-      if (side > 0)
-         WalkBSPtree(tree->u.internal.pos_side);
-      else
-         WalkBSPtree(tree->u.internal.neg_side);
-
-      // if entire screen is covered, we're done
-      if (cone_tree_root == NULL)
-         return;
-
-      // then do walls on the separator
-      if (side != 0)
-      {
-         WallList list;
-         // long     d,c = tree->u.internal.separator.c;
-
-         for (list = tree->u.internal.walls_in_plane; list; list = list->next)
-         {
-            WalkWall(list, side);
-
-            list->lightscale = lightscale;
-
-            if (cone_tree_root == NULL)
-               return;
-         }
-      }
-
-      // lastly, traverse farther side
-      // Check if any wall in this separator plane is translucent; if so,
-      // objects in the far subtree should be eligible for the D3D post-pass.
-      {
-         bool has_translucent = false;
-         for (WallList wl = tree->u.internal.walls_in_plane; wl; wl = wl->next)
-         {
-            if (wl->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
-            {
-               has_translucent = true;
-               break;
-            }
-         }
-         if (has_translucent)
-            translucent_wall_depth++;
-         if (side > 0)
-            WalkBSPtree(tree->u.internal.neg_side);
-         else
-            WalkBSPtree(tree->u.internal.pos_side);
-         if (has_translucent)
-            translucent_wall_depth--;
-      }
-
-      return;
-   default:
+   if (tree->type != BSPinternaltype)
+   {
       debug(("WalkBSPtree error!\n"));
       return;
    }
+
+   side = (a = tree->u.internal.separator.a) * viewer_x + (b = tree->u.internal.separator.b) * viewer_y +
+          tree->u.internal.separator.c;
+
+   if (shade_amount != 0)
+   {
+      long lo_end = FINENESS - shade_amount;
+
+      if (side < 0)
+      {
+         a = -a;
+         b = -b;
+      }
+
+      lightscale = (long) (a * sun_vect.x + b * sun_vect.y) >> LOG_FINENESS;
+
+      lightscale = (lightscale + FINENESS) >> 1;  // map to 0 to 1 range
+
+      lightscale = lo_end + ((lightscale * shade_amount) >> LOG_FINENESS);
+
+      if (lightscale > FINENESS)
+         lightscale = FINENESS;
+      else if (lightscale < 0)
+         lightscale = 0;
+   }
+   else
+      lightscale = FINENESS;
+
+   // first, traverse closer side
+   if (side > 0)
+      WalkBSPtree(tree->u.internal.pos_side);
+   else
+      WalkBSPtree(tree->u.internal.neg_side);
+
+   // if entire screen is covered, we're done
+   if (cone_tree_root == NULL)
+      return;
+
+   // then do walls on the separator
+   if (side != 0)
+   {
+      WallList list;
+      // long     d,c = tree->u.internal.separator.c;
+
+      for (list = tree->u.internal.walls_in_plane; list; list = list->next)
+      {
+         WalkWall(list, side);
+
+         list->lightscale = lightscale;
+
+         if (cone_tree_root == NULL)
+            return;
+      }
+   }
+
+   // lastly, traverse farther side.
+   // For each translucent wall in this separator plane, project it to screen
+   // columns and ref-count those columns in translucent_col_count.  When
+   // WalkObjects marks far-side objects, it consults this map so that an
+   // object is flagged behind_translucent only if it actually overlaps a
+   // translucent wall in screen space — not merely because the plane
+   // contained one somewhere.
+   #define MAX_TRANSLUCENT_PER_PLANE 16
+   long trans_lo[MAX_TRANSLUCENT_PER_PLANE];
+   long trans_hi[MAX_TRANSLUCENT_PER_PLANE];
+   int n_trans = 0;
+   for (WallList wl = tree->u.internal.walls_in_plane; wl; wl = wl->next)
+   {
+      if (wl->translucency_level <= WALL_TRANSLUCENCY_OPAQUE)
+         continue;
+      long t0, t1, c0, c1;
+      float wd0, wd1;
+      if (!world_to_screen(wl->x0, wl->y0, wl->x1, wl->y1, &t0, &t1, &c0, &wd0, &c1, &wd1))
+         continue;
+      if (c1 < c0)
+      {
+         long tmp;
+         SWAP(c0, c1, tmp);
+      }
+      c1--;  // fix overlap, matching WalkWall
+      if (c1 < c0)
+         continue;
+      if (c0 < 0)
+         c0 = 0;
+      if (c1 >= MAXX)
+         c1 = MAXX - 1;
+      if (n_trans >= MAX_TRANSLUCENT_PER_PLANE)
+      {
+         debug(("too many translucent walls in plane\n"));
+         break;
+      }
+      trans_lo[n_trans] = c0;
+      trans_hi[n_trans] = c1;
+      n_trans++;
+      for (long col = c0; col <= c1; col++)
+         translucent_col_count[col]++;
+   }
+   if (n_trans > 0)
+      translucent_wall_depth++;
+
+   if (side > 0)
+      WalkBSPtree(tree->u.internal.neg_side);
+   else
+      WalkBSPtree(tree->u.internal.pos_side);
+
+   if (n_trans > 0)
+      translucent_wall_depth--;
+   for (int t = 0; t < n_trans; t++)
+      for (long col = trans_lo[t]; col <= trans_hi[t]; col++)
+         translucent_col_count[col]--;
 }
 
 /*****************************************************************

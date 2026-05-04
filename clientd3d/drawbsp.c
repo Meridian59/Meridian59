@@ -97,7 +97,7 @@ static bool incremental_background = false;
 static int background_cones = MAX_ITEMS;
 
 // Depth counter: >0 when the BSP walk is traversing the far side of a
-// separator plane that contains at least one translucent wall.  Used as a
+// separator plane that contains at least one translucent wall. Used as a
 // cheap early-exit so we can skip the per-column overlap test below when no
 // translucent walls are anywhere on the current path.
 static int translucent_wall_depth = 0;
@@ -105,9 +105,9 @@ static int translucent_wall_depth = 0;
 // Per-screen-column ref count of how many translucent walls on the current
 // BSP path actually cover each column.  Objects in the far subtree are marked
 // behind_translucent only if their projected column range overlaps a column
-// with count > 0.  Without this, a separator plane that mixes translucent and
+// with count > 0. Without this, a separator plane that mixes translucent and
 // opaque walls would mark every object in the far subtree, including objects
-// entirely behind the opaque wall — those would then be re-added by the D3D
+// entirely behind the opaque wall - those would then be re-added by the D3D
 // post-pass and rely on the depth buffer to occlude them.
 static int translucent_col_count[MAXX];
 
@@ -2449,7 +2449,7 @@ static void WalkObjects(ObjectData *objects)
          right = MAXX - 1;
 
       // Mark behind_translucent only if this object's screen columns actually
-      // overlap a translucent wall on the BSP path.  Objects behind opaque
+      // overlap a translucent wall on the BSP path. Objects behind opaque
       // walls in a plane that also contains a translucent wall must NOT be
       // marked, or the D3D post-pass would re-add them and they'd appear
       // through the opaque wall on the map.
@@ -2845,7 +2845,6 @@ static void WalkBSPtree(BSPnode *tree)
    if (side != 0)
    {
       WallList list;
-      // long     d,c = tree->u.internal.separator.c;
 
       for (list = tree->u.internal.walls_in_plane; list; list = list->next)
       {
@@ -2860,7 +2859,7 @@ static void WalkBSPtree(BSPnode *tree)
 
    // lastly, traverse farther side.
    // For each translucent wall in this separator plane, project it to screen
-   // columns and ref-count those columns in translucent_col_count.  When
+   // columns and ref-count those columns in translucent_col_count. When
    // WalkObjects marks far-side objects, it consults this map so that an
    // object is flagged behind_translucent only if it actually overlaps a
    // translucent wall in screen space — not merely because the plane
@@ -4642,7 +4641,7 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw)
       if (od->ncones != 0 || !od->draw.draw)
          continue;
       // Only include objects that were actually behind a translucent wall
-      // during the BSP walk.  Objects behind opaque walls also have ncones==0
+      // during the BSP walk. Objects behind opaque walls also have ncones==0
       // but should NOT be added to drawdata — they are correctly hidden.
       if (!od->behind_translucent)
          continue;

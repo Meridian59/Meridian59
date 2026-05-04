@@ -527,14 +527,6 @@ void LogUserData(session_node *s)
    if (s->partner)
      buf += ", Partner " + std::to_string(s->partner);
 
-   buf += ", ";
-   buf += LockConfigStr(ADVERTISE_FILE1);
-   UnlockConfigStr();
-
-   buf += ", ";
-   buf += LockConfigStr(ADVERTISE_FILE2);
-   UnlockConfigStr();
-
    buf += "\n";
 
    lprintf("%s",buf.c_str());

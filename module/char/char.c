@@ -40,7 +40,6 @@ client_message msg_table[] = {
 			     PARAM_BYTE, PARAM_BYTE,
 			     PARAM_INT_ARRAY, PARAM_ID_LIST, PARAM_ID_LIST, PARAM_END }, },
 { BP_SEND_CHARINFO,        { PARAM_END }, },
-{ BP_AD_SELECTED,          { PARAM_BYTE, PARAM_END }, },
 { 0,                       { PARAM_END }, },
 };
 

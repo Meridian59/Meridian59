@@ -406,7 +406,6 @@ void GameProtocolParse(session_node *s,client_msg *msg)
 {
    user_node *u;
    int object_id;
-   char *ptr;
 
    char password[MAX_LOGIN_PASSWORD+1],new_password[MAX_LOGIN_PASSWORD+1];
    int len,index;
@@ -434,28 +433,6 @@ void GameProtocolParse(session_node *s,client_msg *msg)
       GameEchoPing(s);
       break;
 
-   case BP_AD_SELECTED :
-      /* they clicked on an ad; log it */
-      switch (msg->data[1])
-      {
-      case 1:
-	 ptr = LockConfigStr(ADVERTISE_URL1);
-	 lprintf("GameProtocolParse found account %i visited ad 1, %s\n",s->account->account_id,
-		 ptr);
-	 UnlockConfigStr();
-	 break;
-      case 2:
-	 ptr = LockConfigStr(ADVERTISE_URL2);
-	 lprintf("GameProtocolParse found account %i visited ad 2, %s\n",s->account->account_id,
-		 ptr);
-	 UnlockConfigStr();
-	 break;
-      default :
-	 eprintf("GameProtocolParse found account %i visited unknown ad %i\n",
-		 s->account->account_id,msg->data[1]);
-      }
-      break;
-         
    case BP_USE_CHARACTER :
       if (s->game->object_id == INVALID_OBJECT)
       {

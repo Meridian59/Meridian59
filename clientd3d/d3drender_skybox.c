@@ -114,7 +114,10 @@ static void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 
 	auto *pFile = fopen(pFilename, "rb");
 	if (pFile == nullptr)
+	{
+		debug(("Skybox Error: Found file but unable to open: %s\n", pFilename));
 		return;
+	}
 
 	long filePosition = 0;
 
@@ -122,7 +125,7 @@ static void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 	{
 		// Jumps to the number of bytes.
 		fseek(pFile, filePosition, SEEK_SET);
-		
+
 		png_structp pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 		if (pPng == nullptr)
 		{
@@ -148,16 +151,17 @@ static void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 
 		if (setjmp(png_jmpbuf(pPng)))
 		{
+			debug(("Skybox Error: %s has corrupt or invalid PNG data.\n", pFilename));
 			png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
 			fclose(pFile);
 			return;
 		}
 
 		png_init_io(pPng, pFile);
-		
+
 		// Discard alpha channel in case a 32-bit PNG is used, ensuring 3 bytes per pixel.
-		png_set_strip_alpha(pPng); 
-		
+		png_set_strip_alpha(pPng);
+
 		png_read_png(pPng, pInfo, PNG_TRANSFORM_IDENTITY, nullptr);
 		png_bytepp rows = png_get_rows(pPng, pInfo);
 
@@ -178,7 +182,7 @@ static void D3DRenderBackgroundsLoad(const char* pFilename, int index)
 		{
 			// Use pitch to find the start of the row, then treat it as 32-bit pixels.
 			auto *pRowDest = reinterpret_cast<uint32_t*>(pBits + (h * lockedRect.Pitch));
-			
+
 			// Get the source row from the PNG data.
 			png_bytep pSourceRow = rows[h];
 
@@ -285,14 +289,15 @@ static bool D3DRenderBackgroundSet(ID background)
         }
 	}
 
-	return true;
+	debug(("Skybox Error: '%s' is not mapped in SKYBOX_TABLE.\n", filename));
+	return false;
 }
 
 //////////////////////
 // Public Functions //
 //////////////////////
 
-/**
+/*
 * Update the skybox with the current background.
 * Return true the background has changed and false otherwise.
 * If the background has changed, the caller should trigger a redraw all.
@@ -310,7 +315,10 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 
 			// Skip any skybox that is missing.
 			if (!std::filesystem::exists(fullPath))
+			{
+				debug(("Skybox Error: File not found at %s\n", fullPath.string().c_str()));
 				continue;
+			}
 
 			D3DRenderBackgroundsLoad(fullPath.string().c_str(), i);
 		}

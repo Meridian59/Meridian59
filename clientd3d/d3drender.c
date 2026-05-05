@@ -709,8 +709,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	if (draw_sky) // Render the skybox first
 	{
-		D3DRenderSkyBox(params, angleHeading, anglePitch, view,
-			SkyboxRenderParams{g_pVertexDecl_PosColorTex1, gD3DDriverProfile, gWorldPool, gWorldCacheSystem});
+		SkyboxRenderParams skyboxRenderParams(g_pVertexDecl_PosColorTex1, gD3DDriverProfile, gWorldPool, gWorldCacheSystem);
+		D3DRenderSkyBox(params, angleHeading, anglePitch, view, skyboxRenderParams);
 	}
 
 	// Prepare our rendering parameters

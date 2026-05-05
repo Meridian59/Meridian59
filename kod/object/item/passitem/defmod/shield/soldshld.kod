@@ -129,20 +129,6 @@ messages:
       propagate;
    }
 
-   ReqUseSomething(what = $)
-   "Returns TRUE for any incoming hand item.  The soldier's shield cannot be "
-   "unequipped on player request, so it never yields to make room.  Two-hand "
-   "item equips sling it on its back via CheckPosition; other hand items must "
-   "free room from elsewhere or be blocked by the hand-space check."
-   {
-      if Send(what,@GetItemUseType) & ITEM_USE_HAND
-      {
-         return TRUE;
-      }
-
-      propagate;
-   }
-
    Delete()
    {
       if poOwner <> $ AND IsClass(poOwner,&Player)

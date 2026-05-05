@@ -2864,7 +2864,7 @@ static void WalkBSPtree(BSPnode *tree)
    // object is flagged behind_translucent only if it actually overlaps a
    // translucent wall in screen space — not merely because the plane
    // contained one somewhere.
-   #define MAX_TRANSLUCENT_PER_PLANE 16
+   static const int MAX_TRANSLUCENT_PER_PLANE = 16;
    long trans_lo[MAX_TRANSLUCENT_PER_PLANE];
    long trans_hi[MAX_TRANSLUCENT_PER_PLANE];
    int n_trans = 0;

@@ -25,9 +25,9 @@
 static const int CONFIG_MAX_TEXT_ZOOM_LIMIT = 100;  // Max value of map text zoom limit
 
 // UI themes
-enum {
-   THEME_DEFAULT = 0,
-   THEME_DARK    = 1,
+enum class Theme : int {
+   Default = 0,
+   Dark    = 1,
 };
 
 // Communication settings
@@ -96,7 +96,7 @@ typedef struct {
    bool clearCache;
 
    bool colorcodes;
-   int  theme;
+   Theme theme;
    int lastPasswordChange;
 
    int soundLibrary;             /* Reserved for struct layout compatibility */

@@ -252,7 +252,8 @@ void ConfigLoad(void)
    config.spinning_cube= GetConfigInt(interface_section, INISpinningCube, false, ini_file);
    config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 0, ini_file);
    config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, true, ini_file);
-   config.theme        = GetConfigInt(interface_section, INITheme, THEME_DEFAULT, ini_file);
+   config.theme        = static_cast<Theme>(GetConfigInt(interface_section, INITheme,
+                            static_cast<int>(Theme::Default), ini_file));
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, true, ini_file);
    config.map_text_zoom_limit = GetConfigInt(interface_section, INIMapTextZoomLimit, 50, ini_file);
 
@@ -376,7 +377,7 @@ void ConfigSave(void)
    WriteConfigInt(interface_section, INISpinningCube, config.spinning_cube, ini_file);
    WriteConfigInt(interface_section, INIHaloColor, config.halocolor, ini_file);
    WriteConfigInt(interface_section, INIColorCodes, config.colorcodes, ini_file);
-   WriteConfigInt(interface_section, INITheme, config.theme, ini_file);
+   WriteConfigInt(interface_section, INITheme, static_cast<int>(config.theme), ini_file);
    WriteConfigInt(interface_section, INIMapAnnotations, config.map_annotations, ini_file);
    WriteConfigInt(interface_section, INIMapTextZoomLimit, config.map_text_zoom_limit, ini_file);
    

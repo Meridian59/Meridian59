@@ -1138,7 +1138,7 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
 
         ComboBox_AddString(GetDlgItem(hDlg, IDC_THEME), GetString(hInst, IDS_THEME_DEFAULT));
         ComboBox_AddString(GetDlgItem(hDlg, IDC_THEME), GetString(hInst, IDS_THEME_DARK));
-        ComboBox_SetCurSel(GetDlgItem(hDlg, IDC_THEME), config.theme);
+        ComboBox_SetCurSel(GetDlgItem(hDlg, IDC_THEME), static_cast<int>(config.theme));
 
         Trackbar_SetRange(GetDlgItem(hDlg, IDC_SOUND_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
         Trackbar_SetRange(GetDlgItem(hDlg, IDC_MUSIC_VOLUME), 0, CONFIG_MAX_VOLUME, FALSE);
@@ -1191,7 +1191,7 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
                                IsDlgButtonChecked(hDlg, IDC_TARGETHALO2) == BST_CHECKED ? 1 : 2;
             config.colorcodes = IsDlgButtonChecked(hDlg, IDC_COLORCODES);
 
-            int new_theme = ComboBox_GetCurSel(GetDlgItem(hDlg, IDC_THEME));
+            Theme new_theme = static_cast<Theme>(ComboBox_GetCurSel(GetDlgItem(hDlg, IDC_THEME)));
             if (new_theme != config.theme)
             {
                 config.theme = new_theme;

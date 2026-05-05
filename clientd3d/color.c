@@ -108,15 +108,15 @@ static char INIColorVersion[]       = "ColorVersion";
 static const int THEME_COLOR_VERSION = 5;
 
 // Returns the INI section name for the active theme.
-static const char *ColorSectionForTheme(int theme)
+static const char *ColorSectionForTheme(Theme theme)
 {
-	return (theme == THEME_DEFAULT) ? color_section_default : color_section_dark;
+	return (theme == Theme::Default) ? color_section_default : color_section_dark;
 }
 
 // Returns the default color table for the active theme.
-static char (*ColorDefaultsForTheme(int theme))[15]
+static char (*ColorDefaultsForTheme(Theme theme))[15]
 {
-	return (theme == THEME_DEFAULT) ? colorinfo_default : colorinfo_dark;
+	return (theme == Theme::Default) ? colorinfo_default : colorinfo_dark;
 }
 
 // Colors for drawing player names
@@ -216,7 +216,7 @@ COLORREF GetColor(WORD color)
 	}
 	// Default theme snaps to the indexed game palette; other themes pass
 	// raw 24-bit RGB.
-	if (config.theme == THEME_DEFAULT)
+	if (config.theme == Theme::Default)
 		return MAKEPALETTERGB(colors[color]);
 	return colors[color] & 0x00FFFFFF;
 }
@@ -251,7 +251,7 @@ bool SetColor(WORD color, COLORREF cr)
 	}
 
 	// See GetColor.
-	if (config.theme == THEME_DEFAULT)
+	if (config.theme == Theme::Default)
 		colors[color] = GetNearestPaletteColor(cr);
 	else
 		colors[color] = cr & 0x00FFFFFF;
@@ -283,8 +283,8 @@ void ColorsSave(void)
 	}
 
 	// Stamp the version so future loads can detect stale saved colors.
-	snprintf(str, sizeof(str), "%d", THEME_COLOR_VERSION);
-	WritePrivateProfileString(section, INIColorVersion, str, ini_file);
+	WritePrivateProfileString(section, INIColorVersion,
+		std::to_string(THEME_COLOR_VERSION).c_str(), ini_file);
 }
 /************************************************************************/
 void ColorsRestoreDefaults(void)
@@ -438,7 +438,7 @@ HBRUSH MainCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 
 	case CTLCOLOR_SCROLLBAR:
 		// Default paints scrollbars black; other themes use the system look.
-		if (config.theme != THEME_DEFAULT)
+		if (config.theme != Theme::Default)
 			return (HBRUSH) FALSE;
 		return (HBRUSH) GetStockObject( BLACK_BRUSH );
 
@@ -463,7 +463,7 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 	case CTLCOLOR_EDIT:
 	case CTLCOLOR_LISTBOX:
 		SelectPalette(hdc, hPal, FALSE);
-		if (config.theme == THEME_DEFAULT)
+		if (config.theme == Theme::Default)
 		{
 			if (type == CTLCOLOR_EDIT)
 			{

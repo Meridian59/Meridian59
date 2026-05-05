@@ -8,9 +8,9 @@ mechanism works.
 
 This is the initial theming infrastructure.  Two themes ship today:
 
-- `THEME_DEFAULT` (0): the original Meridian 59 palette.  Unchanged
+- `Theme::Default` (0): the original Meridian 59 palette.  Unchanged
   visual behavior.
-- `THEME_DARK` (1): a starter dark theme that recolors only the main
+- `Theme::Dark` (1): a starter dark theme that recolors only the main
   background and the chat edit box.  Dialog list backgrounds, stat
   bars, bitmaps, and most other UI surfaces still use the default
   look.  Those land in follow-up work, one surface at a time.
@@ -20,8 +20,8 @@ Features.  Swaps take effect immediately without a restart.
 
 ## How a theme is selected
 
-The active theme is stored in `Config::theme` (an `int` matching the
-`THEME_*` enum in `clientd3d/config.h`).  It is loaded from the
+The active theme is stored in `Config::theme` (the scoped enum `Theme`
+defined in `clientd3d/config.h`).  It is loaded from the
 `[Interface] Theme=N` key in `meridian.ini` via `ConfigLoad` and saved
 back via `ConfigSave`.
 
@@ -54,8 +54,8 @@ Two helpers select the active table at runtime:
 Each theme stores its customized colors in its own INI section so
 switching themes does not clobber the other theme's saved values:
 
-- `[Colors]` for `THEME_DEFAULT`
-- `[ColorsDark]` for `THEME_DARK`
+- `[Colors]` for `Theme::Default`
+- `[ColorsDark]` for `Theme::Dark`
 
 Each section contains `Color0`..`ColorN-1` entries plus a
 `ColorVersion=N` stamp.
@@ -97,7 +97,7 @@ parsed by `srvrstr.c::DisplayMessage`) have a parallel
 
 ## Adding a new theme
 
-1. Add an entry to the `THEME_*` enum in `clientd3d/config.h`.
+1. Add an entry to the `Theme` enum in `clientd3d/config.h`.
 2. Add a `colorinfo_<name>[]` table and an INI section name string
    in `clientd3d/color.c`.
 3. Extend `ColorDefaultsForTheme` and `ColorSectionForTheme` with a

@@ -298,9 +298,9 @@ static FormatCode code_table_dark[] = {
 static int num_format_codes = sizeof(code_table) / sizeof(FormatCode);
 
 // Returns the color code table for the active theme.
-static FormatCode *ColorCodeTableForTheme(int theme)
+static FormatCode *ColorCodeTableForTheme(Theme theme)
 {
-   return (theme == THEME_DEFAULT) ? code_table : code_table_dark;
+   return (theme == Theme::Default) ? code_table : code_table_dark;
 }
 
 /************************************************************************/

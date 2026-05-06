@@ -146,10 +146,22 @@ struct ObjectsRenderParams {
 };
 
 long D3DRenderObjects(
-    const ObjectsRenderParams& objectsRenderParams, 
-    const GameObjectDataParams& gameObjectDataParams, 
+    const ObjectsRenderParams& objectsRenderParams,
+    const GameObjectDataParams& gameObjectDataParams,
     const LightAndTextureParams& lightAndTextureParams,
     const FontTextureParams& fontTextureParams,
+    const PlayerViewParams& playerViewParams);
+
+// Invisible-object + first-person player-overlay pass. Captures the back buffer
+// (so the invisible fishbowl effect samples it) and renders invisible world
+// objects and the local player's held overlays. Must run AFTER the translucent
+// walls pass so the captured back buffer contains those walls; otherwise the
+// fishbowl reads colours behind the wall and the wall visually disappears
+// wherever an invisible object/overlay is drawn.
+void D3DRenderInvisiblePass(
+    const ObjectsRenderParams& objectsRenderParams,
+    const GameObjectDataParams& gameObjectDataParams,
+    const LightAndTextureParams& lightAndTextureParams,
     const PlayerViewParams& playerViewParams);
 
 #endif	/* #ifndef _D3DRENDEROBJECTS_H */

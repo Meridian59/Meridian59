@@ -226,9 +226,6 @@ void D3DRenderWorldDraw(const WorldRenderParams &worldRenderParams, bool transpa
             if (!ShouldRenderInCurrentPass(transparent_pass, isTransparent))
                continue;
 
-            if (pWall->translucency_level != WALL_TRANSLUCENCY_OPAQUE)
-               continue;
-
             int flags, wallFlags;
 
             flags = 0;
@@ -301,14 +298,14 @@ void D3DRenderWorldDraw(const WorldRenderParams &worldRenderParams, bool transpa
                D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_NORMAL, -1, true);
             }
 
-            if ((pWall->translucency_level == WALL_TRANSLUCENCY_OPAQUE) && (flags & D3DRENDER_WALL_BELOW) &&
+            if ((flags & D3DRENDER_WALL_BELOW) &&
                 (((short) pWall->z1 != (short) pWall->z0) || ((short) pWall->zz1 != (short) pWall->zz0)))
             {
                D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_BELOW, 1, true);
                D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_BELOW, -1, true);
             }
 
-            if ((pWall->translucency_level == WALL_TRANSLUCENCY_OPAQUE) && (flags & D3DRENDER_WALL_ABOVE) &&
+            if ((flags & D3DRENDER_WALL_ABOVE) &&
                 (((short) pWall->z3 != (short) pWall->z2) || ((short) pWall->zz3 != (short) pWall->zz2)))
             {
                D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_ABOVE, 1, true);
@@ -335,6 +332,9 @@ void D3DRenderWorldDraw(const WorldRenderParams &worldRenderParams, bool transpa
 /**
  * Adds all walls that carry a non-zero translucency_level to the dynamic world pool so they
  * can be flushed in a dedicated SRCALPHA-blended pass after the opaque world geometry.
+ * Only WALL_NORMAL (the see-through middle pane) goes through this pass; WALL_BELOW and
+ * WALL_ABOVE are the structural caps that extend to the floor/ceiling and stay opaque
+ * (added by the regular opaque-pool builders).
  */
 void D3DRenderSemiTransparentWalls(const WorldRenderParams &worldRenderParams)
 {
@@ -357,14 +357,10 @@ void D3DRenderSemiTransparentWalls(const WorldRenderParams &worldRenderParams)
          if (pWall->pos_sidedef)
          {
             if (pWall->pos_sidedef->normal_bmap) flags |= D3DRENDER_WALL_NORMAL;
-            if (pWall->pos_sidedef->below_bmap)  flags |= D3DRENDER_WALL_BELOW;
-            if (pWall->pos_sidedef->above_bmap)  flags |= D3DRENDER_WALL_ABOVE;
          }
          if (pWall->neg_sidedef)
          {
             if (pWall->neg_sidedef->normal_bmap) flags |= D3DRENDER_WALL_NORMAL;
-            if (pWall->neg_sidedef->below_bmap)  flags |= D3DRENDER_WALL_BELOW;
-            if (pWall->neg_sidedef->above_bmap)  flags |= D3DRENDER_WALL_ABOVE;
          }
 
          pWall->separator.a = pNode->u.internal.separator.a;
@@ -376,20 +372,6 @@ void D3DRenderSemiTransparentWalls(const WorldRenderParams &worldRenderParams)
          {
             D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_NORMAL, 1, true);
             D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_NORMAL, -1, true);
-         }
-
-         if ((flags & D3DRENDER_WALL_BELOW) &&
-             (((short)pWall->z1 != (short)pWall->z0) || ((short)pWall->zz1 != (short)pWall->zz0)))
-         {
-            D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_BELOW, 1, true);
-            D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_BELOW, -1, true);
-         }
-
-         if ((flags & D3DRENDER_WALL_ABOVE) &&
-             (((short)pWall->z3 != (short)pWall->z2) || ((short)pWall->zz3 != (short)pWall->zz2)))
-         {
-            D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_ABOVE, 1, true);
-            D3DRenderPacketWallAdd(pWall, pools.worldPool, D3DRENDER_WALL_ABOVE, -1, true);
          }
       }
    }
@@ -506,9 +488,6 @@ void D3DRenderLMapsPostDraw(const WorldRenderParams &worldRenderParams,
             if (!ShouldRenderInCurrentPass(transparent_pass, isTransparent))
                continue;
 
-            if (pWall->translucency_level != WALL_TRANSLUCENCY_OPAQUE)
-               continue;
-
             flags = 0;
             wallFlags = 0;
 
@@ -571,7 +550,12 @@ void D3DRenderLMapsPostDraw(const WorldRenderParams &worldRenderParams,
             pWall->separator.b = tree->u.internal.separator.b;
             pWall->separator.c = tree->u.internal.separator.c;
 
-            if ((flags & D3DRENDER_WALL_NORMAL) && ((short) pWall->z2 != (short) pWall->z1) ||
+            // For translucent walls only the structural caps (BELOW/ABOVE) draw in the
+            // opaque pass; the see-through middle pane (NORMAL) is alpha-blended elsewhere
+            // and must not get a lightmap here or the lmap floats with no wall behind it.
+            if ((flags & D3DRENDER_WALL_NORMAL)
+                && (pWall->translucency_level == WALL_TRANSLUCENCY_OPAQUE)
+                && ((short) pWall->z2 != (short) pWall->z1) ||
                 (pWall->zz2 != pWall->zz1))
             {
                D3DRenderLMapPostWallAdd(pWall, pools.lMapPool, D3DRENDER_WALL_NORMAL, side,
@@ -666,9 +650,6 @@ void D3DRenderLMapsDynamicPostDraw(const WorldRenderParams &worldRenderParams,
             if (!ShouldRenderInCurrentPass(transparent_pass, isTransparent))
                continue;
 
-            if (pWall->translucency_level != WALL_TRANSLUCENCY_OPAQUE)
-               continue;
-
             flags = 0;
             wallFlags = 0;
 
@@ -704,7 +685,11 @@ void D3DRenderLMapsDynamicPostDraw(const WorldRenderParams &worldRenderParams,
             pWall->separator.b = tree->u.internal.separator.b;
             pWall->separator.c = tree->u.internal.separator.c;
 
-            if ((flags & D3DRENDER_WALL_NORMAL) && ((short) pWall->z2 != (short) pWall->z1) ||
+            // Skip the lightmap for the see-through middle pane of translucent walls;
+            // BELOW/ABOVE caps are opaque and still need their lmaps.
+            if ((flags & D3DRENDER_WALL_NORMAL)
+                && (pWall->translucency_level == WALL_TRANSLUCENCY_OPAQUE)
+                && ((short) pWall->z2 != (short) pWall->z1) ||
                 ((short) pWall->zz2 != (short) pWall->zz1))
             {
                D3DRenderLMapPostWallAdd(pWall, pools.lMapPool, D3DRENDER_WALL_NORMAL, side,
@@ -2187,9 +2172,6 @@ void D3DGeometryBuildNew(const WorldRenderParams &worldRenderParams, const World
             if (!ShouldRenderInCurrentPass(transparent_pass, isTransparent))
                continue;
 
-            if (pWall->translucency_level != WALL_TRANSLUCENCY_OPAQUE)
-               continue;
-
             int flags, wallFlags;
 
             flags = 0;
@@ -2234,14 +2216,14 @@ void D3DGeometryBuildNew(const WorldRenderParams &worldRenderParams, const World
                D3DRenderPacketWallAdd(pWall, pools.worldPoolStatic, D3DRENDER_WALL_NORMAL, -1, false);
             }
 
-            if ((pWall->translucency_level == WALL_TRANSLUCENCY_OPAQUE) && (flags & D3DRENDER_WALL_BELOW) && ((short) pWall->z1 != (short) pWall->z0) ||
+            if ((flags & D3DRENDER_WALL_BELOW) && ((short) pWall->z1 != (short) pWall->z0) ||
                 ((short) pWall->zz1 != (short) pWall->zz0))
             {
                D3DRenderPacketWallAdd(pWall, pools.worldPoolStatic, D3DRENDER_WALL_BELOW, 1, false);
                D3DRenderPacketWallAdd(pWall, pools.worldPoolStatic, D3DRENDER_WALL_BELOW, -1, false);
             }
 
-            if ((pWall->translucency_level == WALL_TRANSLUCENCY_OPAQUE) && (flags & D3DRENDER_WALL_ABOVE) && ((short) pWall->z3 != (short) pWall->z2) ||
+            if ((flags & D3DRENDER_WALL_ABOVE) && ((short) pWall->z3 != (short) pWall->z2) ||
                 ((short) pWall->zz3 != (short) pWall->zz2))
             {
                D3DRenderPacketWallAdd(pWall, pools.worldPoolStatic, D3DRENDER_WALL_ABOVE, 1, false);

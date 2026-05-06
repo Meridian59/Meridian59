@@ -28,9 +28,10 @@ static COLORREF CustColors[16];  /* User's custom colors for Choose Color dialog
 // Theme color tables.  See docs/themes.md for details.
 // Each theme has a parallel table of MAXCOLORS "R,G,B" strings indexed
 // by the COLOR_* enum from color.h.
+static constexpr size_t COLOR_STR_LEN = 15;
 
 // Default theme.
-static char colorinfo_default[][15] = {
+static char colorinfo_default[][COLOR_STR_LEN] = {
 	{ "0,0,0"},         /* COLOR_BGD */
 	{ "255,255,255"},   /* COLOR_FGD */
 	{ "255,255,255"},   /* COLOR_LISTSELBGD */
@@ -67,7 +68,7 @@ static char colorinfo_default[][15] = {
 };
 
 // Dark theme.
-static char colorinfo_dark[][15] = {
+static char colorinfo_dark[][COLOR_STR_LEN] = {
 	{ "0,0,0"},         /* COLOR_BGD */
 	{ "212,212,212"},   /* COLOR_FGD */
 	{ "255,255,255"},   /* COLOR_LISTSELBGD - matches default for dialog list highlights */
@@ -108,13 +109,13 @@ static char INIColorVersion[]       = "ColorVersion";
 static const int THEME_COLOR_VERSION = 5;
 
 // Returns the INI section name for the active theme.
-static const char *ColorSectionForTheme(Theme theme)
+static char *ColorSectionForTheme(Theme theme)
 {
 	return (theme == Theme::Default) ? color_section_default : color_section_dark;
 }
 
 // Returns the default color table for the active theme.
-static char (*ColorDefaultsForTheme(Theme theme))[15]
+static char (*ColorDefaultsForTheme(Theme theme))[COLOR_STR_LEN]
 {
 	return (theme == Theme::Default) ? colorinfo_default : colorinfo_dark;
 }
@@ -149,7 +150,7 @@ void ColorsCreate(bool use_defaults)
 	bool success;
 
 	const char *section = ColorSectionForTheme(config.theme);
-	char (*defaults)[15] = ColorDefaultsForTheme(config.theme);
+	char (*defaults)[COLOR_STR_LEN] = ColorDefaultsForTheme(config.theme);
 
 	// Discard saved colors when the version doesn't match.
 	if (!use_defaults)
@@ -271,7 +272,7 @@ void ColorsSave(void)
 {
 	int i;
 	char str[100], name[10];
-	const char *section = ColorSectionForTheme(config.theme);
+	char *section = ColorSectionForTheme(config.theme);
 
 	for (i=0; i < MAXCOLORS; i++)
 	{
@@ -283,8 +284,7 @@ void ColorsSave(void)
 	}
 
 	// Stamp the version so future loads can detect stale saved colors.
-	WritePrivateProfileString(section, INIColorVersion,
-		std::to_string(THEME_COLOR_VERSION).c_str(), ini_file);
+	WriteConfigInt(section, INIColorVersion, THEME_COLOR_VERSION, ini_file);
 }
 /************************************************************************/
 void ColorsRestoreDefaults(void)
@@ -438,9 +438,9 @@ HBRUSH MainCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 
 	case CTLCOLOR_SCROLLBAR:
 		// Default paints scrollbars black; other themes use the system look.
-		if (config.theme != Theme::Default)
-			return (HBRUSH) FALSE;
-		return (HBRUSH) GetStockObject( BLACK_BRUSH );
+		if (config.theme == Theme::Default)
+			return (HBRUSH) GetStockObject( BLACK_BRUSH );
+		return (HBRUSH) FALSE;
 
 	default:
 		SelectPalette(hdc, hPal, FALSE);

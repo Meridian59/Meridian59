@@ -29,7 +29,18 @@ static int inventory_bg_index;  // Palette index of color to use for window bg b
 typedef struct {
    object_node *obj;            // Pointer to node for object in inventory list
    bool         is_using;       // true iff item is in use
+   int          hotkey;         // -1 if unassigned, else 0..9 for digit binding
 } InvItem;
+
+// Number of hotkey groups (digits 0-9).
+static const int NUM_HOTKEY_GROUPS = 10;
+// Cap members per group.  Server-side use/unuse spam filter (user.kod) accepts
+// roughly 5 actions per tick, so a larger group would just get throttled.
+static const int MAX_HOTKEY_GROUP_SIZE = 5;
+
+// Action data is a void *; encode digit as (digit + 1) so it never collides with NULL.
+#define HOTKEY_DATA(digit) ((void *)(intptr_t)((digit) + 1))
+#define HOTKEY_DIGIT(data) ((int)(intptr_t)(data) - 1)
 
 static list_type items;         // List of InvItem structures for items in inventory
 static int       num_items;     // # of items currently in inventory
@@ -95,7 +106,55 @@ keymap inventory_key_table[] = {
 { VK_F11,         KEY_NONE,             A_TEXTCOMMAND, },
 { VK_F12,         KEY_NONE,             A_TEXTCOMMAND, },
 
+// Inventory hotkey groups: Ctrl+digit assigns the selected slot, plain digit triggers the group.
+{ '0',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(0) },
+{ '1',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(1) },
+{ '2',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(2) },
+{ '3',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(3) },
+{ '4',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(4) },
+{ '5',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(5) },
+{ '6',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(6) },
+{ '7',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(7) },
+{ '8',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(8) },
+{ '9',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(9) },
+{ '0',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(0) },
+{ '1',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(1) },
+{ '2',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(2) },
+{ '3',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(3) },
+{ '4',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(4) },
+{ '5',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(5) },
+{ '6',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(6) },
+{ '7',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(7) },
+{ '8',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(8) },
+{ '9',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(9) },
+
 { 0, 0, 0},   // Must end table this way
+};
+
+// Same bindings registered against GAME_PLAY so the digit hotkeys also fire
+// when the main 3D view has focus, independent of the classic/quickchat config.
+static keymap hotkey_key_table[] = {
+{ '0',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(0) },
+{ '1',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(1) },
+{ '2',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(2) },
+{ '3',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(3) },
+{ '4',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(4) },
+{ '5',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(5) },
+{ '6',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(6) },
+{ '7',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(7) },
+{ '8',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(8) },
+{ '9',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(9) },
+{ '0',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(0) },
+{ '1',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(1) },
+{ '2',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(2) },
+{ '3',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(3) },
+{ '4',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(4) },
+{ '5',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(5) },
+{ '6',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(6) },
+{ '7',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(7) },
+{ '8',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(8) },
+{ '9',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(9) },
+{ 0, 0, 0},
 };
 
 static const COLORREF COLOR_ITEM_UNCOMMON     = RGB(141,242,242);  // cyan
@@ -209,6 +268,10 @@ void InventoryBoxCreate(HWND hParent)
 
    InventoryResetFont();
    InventoryChangeColor();
+
+   // Register hotkey table so digit/Ctrl+digit work whenever main view has focus,
+   // independent of the classic/quickchat key configuration.
+   KeyAddTable(GAME_PLAY, hotkey_key_table);
 }
 /************************************************************************/
 /*
@@ -216,6 +279,8 @@ void InventoryBoxCreate(HWND hParent)
  */
 void InventoryBoxDestroy(void)
 {
+   KeyRemoveTable(GAME_PLAY, hotkey_key_table);
+
    DestroyWindow(hwndInv);
    DestroyWindow(hwndInvDialog);
    DestroyWindow(hwndInvScroll);
@@ -736,6 +801,27 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
       }
    }
 
+   // Hotkey group badge: small digit in the top-left corner.
+   if (item->hotkey >= 0 && item->hotkey < NUM_HOTKEY_GROUPS)
+   {
+      const int badgeSize = 11;
+      const int badgeLeft = area.x + 2;
+      const int badgeTop  = area.y + 2;
+      RECT rcBadge = { badgeLeft, badgeTop, badgeLeft + badgeSize, badgeTop + badgeSize };
+      HBRUSH hBg = CreateSolidBrush(RGB(0, 0, 0));
+      FillRect(hdc, &rcBadge, hBg);
+      DeleteObject(hBg);
+
+      char digit[2];
+      digit[0] = (char)('0' + item->hotkey);
+      digit[1] = '\0';
+
+      SetBkMode(hdc, TRANSPARENT);
+      SelectObject(hdc, GetFont(FONT_STATNUM));
+      SetTextColor(hdc, RGB(255, 255, 0));
+      TextOut(hdc, badgeLeft + 2, badgeTop - 1, digit, 1);
+   }
+
    ReleaseDC(hwndInv, hdc);
 }
 /************************************************************************/
@@ -1021,6 +1107,14 @@ bool InventoryKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
 	 SelectedObject(id);
       break;
 
+   case A_HOTKEY_ASSIGN:
+      InventoryHotkeyAssign(HOTKEY_DIGIT(action_data));
+      break;
+
+   case A_HOTKEY_TRIGGER:
+      InventoryHotkeyTrigger(HOTKEY_DIGIT(action_data));
+      break;
+
    default:
       PerformAction(action, action_data);
       break;
@@ -1106,6 +1200,106 @@ void ToggleUse(ID obj_id)
 }
 /************************************************************************/
 /*
+ * InventoryHotkeyAssign:  Toggle assignment of the currently selected inventory
+ *   slot to hotkey group digit (0..9).  If the slot is already in this group,
+ *   clear it.  If it is in a different group, reassign.  No-op if no slot is
+ *   selected or the digit is out of range.
+ */
+void InventoryHotkeyAssign(int digit)
+{
+   InvItem *item;
+
+   if (digit < 0 || digit >= NUM_HOTKEY_GROUPS)
+      return;
+
+   item = InventoryGetCurrentItem();
+   if (item == NULL)
+      return;
+
+   if (item->hotkey == digit)
+   {
+      item->hotkey = -1;
+      InventoryRedrawSingleItem(item);
+      return;
+   }
+
+   // Refuse to assign if the target group is already full.
+   int group_count = 0;
+   for (list_type l = items; l != NULL; l = l->next)
+   {
+      InvItem *other = (InvItem *) l->data;
+      if (other != item && other->hotkey == digit)
+         group_count++;
+   }
+   if (group_count >= MAX_HOTKEY_GROUP_SIZE)
+   {
+      debug(("Hotkey group %d is full (max %d items)\n", digit, MAX_HOTKEY_GROUP_SIZE));
+      return;
+   }
+
+   item->hotkey = digit;
+   InventoryRedrawSingleItem(item);
+}
+/************************************************************************/
+/*
+ * InventoryHotkeyTrigger:  Toggle the entire group as one unit.  If every
+ *   item in group digit (0..9) is currently in use, send unuse for each.
+ *   Otherwise send use for each item not yet in use.  This avoids per-item
+ *   toggling that would alternate state when items conflict over equip slots.
+ */
+void InventoryHotkeyTrigger(int digit)
+{
+   list_type l;
+   int total = 0;
+   int using_count = 0;
+
+   if (digit < 0 || digit >= NUM_HOTKEY_GROUPS)
+      return;
+
+   // Debounce: HandleKeys polls every frame and refires non-repeat actions
+   // every KEY_NOREPEAT_INTERVAL (400 ms) while the key is held.  Without
+   // this gate a single physical press can fire the trigger twice, which
+   // shows up as "You are already using that" or as the group toggling
+   // back to its original state.  600 ms suppresses the held-key case
+   // without preventing intentional retaps.
+   static DWORD last_trigger_time[NUM_HOTKEY_GROUPS] = { 0 };
+   DWORD now = GetTickCount();
+   if (now - last_trigger_time[digit] < 600)
+      return;
+   last_trigger_time[digit] = now;
+
+   for (l = items; l != NULL; l = l->next)
+   {
+      InvItem *item = (InvItem *) l->data;
+      if (item->hotkey != digit)
+         continue;
+      total++;
+      if (item->is_using)
+         using_count++;
+   }
+
+   if (total == 0)
+      return;
+
+   bool unuse_all = (using_count == total);
+
+   for (l = items; l != NULL; l = l->next)
+   {
+      InvItem *item = (InvItem *) l->data;
+      if (item->hotkey != digit)
+         continue;
+
+      if (unuse_all)
+         RequestUnuse(item->obj->id);
+      else if (!item->is_using)
+         RequestUse(item->obj->id);
+   }
+
+   // Return focus to the main view so the player can keep playing.
+   SetFocus(cinfo->hMain);
+}
+/************************************************************************/
+/*
  * InventoryAddItem:  Add the given object to the inventory display.
  * // XXX Maybe should pass in "using" status
  */
@@ -1116,6 +1310,7 @@ void InventoryAddItem(object_node *obj)
    new_item = (InvItem *) SafeMalloc(sizeof(InvItem));
    new_item->obj = obj;
    new_item->is_using = false;
+   new_item->hotkey = -1;
    items = list_add_item(items, new_item);
 
    num_items++;

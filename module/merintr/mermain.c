@@ -383,6 +383,14 @@ bool InterfaceAction(int action, void *action_data)
       return InterfaceTab(reinterpret_cast<std::intptr_t>(action_data), true);
    case A_TABBACK:
       return InterfaceTab(reinterpret_cast<std::intptr_t>(action_data), false);
+
+   case A_HOTKEY_ASSIGN:
+      InventoryHotkeyAssign((int)(intptr_t)action_data - 1);
+      return false;
+
+   case A_HOTKEY_TRIGGER:
+      InventoryHotkeyTrigger((int)(intptr_t)action_data - 1);
+      return false;
    }
 
    return true;

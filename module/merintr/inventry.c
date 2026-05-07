@@ -38,6 +38,12 @@ static const int NUM_HOTKEY_GROUPS = 10;
 // roughly 5 actions per tick, so a larger group would just get throttled.
 static const int MAX_HOTKEY_GROUP_SIZE = 5;
 
+// Authoritative storage for hotkey assignments.  Keyed by object id so
+// bindings survive InventoryResetData() / DisplayInventory() rebuilds that
+// happen on login, room transitions, and server-pushed inventory refreshes.
+// 0 means an empty slot.
+static ID hotkey_obj_id[10][5];
+
 // Action data is a void *; encode digit as (digit + 1) so it never collides with NULL.
 #define HOTKEY_DATA(digit) ((void *)(intptr_t)((digit) + 1))
 #define HOTKEY_DIGIT(data) ((int)(intptr_t)(data) - 1)
@@ -127,23 +133,14 @@ keymap inventory_key_table[] = {
 { '7',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(7) },
 { '8',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(8) },
 { '9',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(9) },
+{ 'X',            KEY_CTL,              A_HOTKEY_CLEAR,   NULL },
 
 { 0, 0, 0},   // Must end table this way
 };
 
-// Same bindings registered against GAME_PLAY so the digit hotkeys also fire
-// when the main 3D view has focus, independent of the classic/quickchat config.
+// Trigger bindings active in the 3D view.  The full set of hotkey actions
+// (assign and clear) requires the inventory window to have focus.
 static keymap hotkey_key_table[] = {
-{ '0',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(0) },
-{ '1',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(1) },
-{ '2',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(2) },
-{ '3',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(3) },
-{ '4',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(4) },
-{ '5',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(5) },
-{ '6',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(6) },
-{ '7',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(7) },
-{ '8',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(8) },
-{ '9',            KEY_CTL,              A_HOTKEY_ASSIGN,  HOTKEY_DATA(9) },
 { '0',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(0) },
 { '1',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(1) },
 { '2',            KEY_NONE,             A_HOTKEY_TRIGGER, HOTKEY_DATA(2) },
@@ -465,14 +462,14 @@ void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
 }
 /************************************************************************/
 /*
- * InventoryResetFont:  Called when a font has changed.
+ * InventoryResetFont:  Resets the font for the inventory display.
  */
 void InventoryResetFont(void)
 {
 }
 /************************************************************************/
 /*
- * InventoryChangeColor:  Called when a color has changed.
+ * InventoryChangeColor:  Updates inventory colors.
  */
 void InventoryChangeColor(void)
 {
@@ -1115,6 +1112,10 @@ bool InventoryKey(HWND hwnd, UINT key, bool fDown, int cRepeat, UINT flags)
       InventoryHotkeyTrigger(HOTKEY_DIGIT(action_data));
       break;
 
+   case A_HOTKEY_CLEAR:
+      InventoryHotkeyClearAll();
+      break;
+
    default:
       PerformAction(action, action_data);
       break;
@@ -1200,10 +1201,9 @@ void ToggleUse(ID obj_id)
 }
 /************************************************************************/
 /*
- * InventoryHotkeyAssign:  Toggle assignment of the currently selected inventory
- *   slot to hotkey group digit (0..9).  If the slot is already in this group,
- *   clear it.  If it is in a different group, reassign.  No-op if no slot is
- *   selected or the digit is out of range.
+ * InventoryHotkeyAssign:  Toggles the selected item in or out of the given
+ *   hotkey group.  Moves the item if it belongs to a different group.
+ *   Does nothing if no item is selected or the group is full.
  */
 void InventoryHotkeyAssign(int digit)
 {
@@ -1216,86 +1216,120 @@ void InventoryHotkeyAssign(int digit)
    if (item == NULL)
       return;
 
+   // Toggle: same digit clears the binding.
    if (item->hotkey == digit)
    {
+      for (int s = 0; s < MAX_HOTKEY_GROUP_SIZE; s++)
+         if (hotkey_obj_id[digit][s] == item->obj->id)
+            hotkey_obj_id[digit][s] = 0;
       item->hotkey = -1;
       InventoryRedrawSingleItem(item);
       return;
    }
 
-   // Refuse to assign if the target group is already full.
-   int group_count = 0;
-   for (list_type l = items; l != NULL; l = l->next)
+   // Item may already be in a different group; remove it from there first.
+   if (item->hotkey >= 0 && item->hotkey < NUM_HOTKEY_GROUPS)
    {
-      InvItem *other = (InvItem *) l->data;
-      if (other != item && other->hotkey == digit)
-         group_count++;
+      for (int s = 0; s < MAX_HOTKEY_GROUP_SIZE; s++)
+         if (hotkey_obj_id[item->hotkey][s] == item->obj->id)
+            hotkey_obj_id[item->hotkey][s] = 0;
    }
-   if (group_count >= MAX_HOTKEY_GROUP_SIZE)
+
+   // Find an empty slot in the target group.
+   int free_slot = -1;
+   for (int s = 0; s < MAX_HOTKEY_GROUP_SIZE; s++)
    {
-      debug(("Hotkey group %d is full (max %d items)\n", digit, MAX_HOTKEY_GROUP_SIZE));
+      if (hotkey_obj_id[digit][s] == 0)
+      {
+         free_slot = s;
+         break;
+      }
+   }
+   if (free_slot < 0)
+   {
       return;
    }
 
+   hotkey_obj_id[digit][free_slot] = item->obj->id;
    item->hotkey = digit;
    InventoryRedrawSingleItem(item);
 }
 /************************************************************************/
 /*
- * InventoryHotkeyTrigger:  Toggle the entire group as one unit.  If every
- *   item in group digit (0..9) is currently in use, send unuse for each.
- *   Otherwise send use for each item not yet in use.  This avoids per-item
- *   toggling that would alternate state when items conflict over equip slots.
+ * InventoryHotkeyTrigger:  Sends a toggle-group packet for all items bound
+ *   to the given hotkey digit.  Number-object ids are normalized before send.
  */
 void InventoryHotkeyTrigger(int digit)
 {
    list_type l;
-   int total = 0;
-   int using_count = 0;
+   list_type group_list = NULL;
+   object_node normalized_objs[MAX_HOTKEY_GROUP_SIZE];
+   int normalized_count = 0;
 
    if (digit < 0 || digit >= NUM_HOTKEY_GROUPS)
       return;
 
    // Debounce: HandleKeys polls every frame and refires non-repeat actions
-   // every KEY_NOREPEAT_INTERVAL (400 ms) while the key is held.  Without
-   // this gate a single physical press can fire the trigger twice, which
-   // shows up as "You are already using that" or as the group toggling
-   // back to its original state.  600 ms suppresses the held-key case
-   // without preventing intentional retaps.
-   static DWORD last_trigger_time[NUM_HOTKEY_GROUPS] = { 0 };
+   // every KEY_NOREPEAT_INTERVAL (400 ms) while the key is held.  600 ms
+   // suppresses the held-key case without blocking intentional retaps.
+   static DWORD last_trigger_time[10] = { 0 };
    DWORD now = GetTickCount();
    if (now - last_trigger_time[digit] < 600)
       return;
    last_trigger_time[digit] = now;
 
+   // Build from live inventory entries marked with this digit.  This avoids
+   // dropping members if an id lookup misses during inventory reshuffles.
    for (l = items; l != NULL; l = l->next)
    {
       InvItem *item = (InvItem *) l->data;
       if (item->hotkey != digit)
          continue;
-      total++;
-      if (item->is_using)
-         using_count++;
+
+      if (IsNumberObj(item->obj->id) && normalized_count < MAX_HOTKEY_GROUP_SIZE)
+      {
+         // Strip NUMBER_OBJECT tag bits before sending.  Server list parsing for
+         // toggle expects object IDs, and tagged number IDs can fail class checks.
+         normalized_objs[normalized_count] = *item->obj;
+         normalized_objs[normalized_count].id = GetObjId(item->obj->id);
+         group_list = list_add_item(group_list, &normalized_objs[normalized_count]);
+         normalized_count++;
+      }
+      else
+      {
+         group_list = list_add_item(group_list, item->obj);
+      }
    }
 
-   if (total == 0)
+   if (group_list == NULL)
       return;
 
-   bool unuse_all = (using_count == total);
-
-   for (l = items; l != NULL; l = l->next)
-   {
-      InvItem *item = (InvItem *) l->data;
-      if (item->hotkey != digit)
-         continue;
-
-      if (unuse_all)
-         RequestUnuse(item->obj->id);
-      else if (!item->is_using)
-         RequestUse(item->obj->id);
-   }
+   RequestToggleGroup(group_list);
+   list_delete(group_list);
 
    // Return focus to the main view so the player can keep playing.
+   SetFocus(cinfo->hMain);
+}
+/************************************************************************/
+/*
+ * InventoryHotkeyClearAll:  Clears all hotkey-group bindings and redraws
+ *   the affected inventory slots.
+ */
+void InventoryHotkeyClearAll(void)
+{
+   for (int g = 0; g < NUM_HOTKEY_GROUPS; g++)
+      for (int s = 0; s < MAX_HOTKEY_GROUP_SIZE; s++)
+         hotkey_obj_id[g][s] = 0;
+
+   for (list_type l = items; l != NULL; l = l->next)
+   {
+      InvItem *item = (InvItem *) l->data;
+      if (item->hotkey < 0)
+         continue;
+      item->hotkey = -1;
+      InventoryRedrawSingleItem(item);
+   }
+
    SetFocus(cinfo->hMain);
 }
 /************************************************************************/
@@ -1311,6 +1345,18 @@ void InventoryAddItem(object_node *obj)
    new_item->obj = obj;
    new_item->is_using = false;
    new_item->hotkey = -1;
+   // Re-attach any persisted hotkey binding for this object id.
+   for (int g = 0; g < NUM_HOTKEY_GROUPS && new_item->hotkey < 0; g++)
+   {
+      for (int s = 0; s < MAX_HOTKEY_GROUP_SIZE; s++)
+      {
+         if (hotkey_obj_id[g][s] == obj->id)
+         {
+            new_item->hotkey = g;
+            break;
+         }
+      }
+   }
    items = list_add_item(items, new_item);
 
    num_items++;
@@ -1340,6 +1386,12 @@ void InventoryRemoveItem(ID id)
    }
 
    items = list_delete_item(items, (void *) id, InventoryCompareIdItem);
+   // Drop any persisted hotkey binding so a future object with the same id
+   // (server reuses ids) does not inherit a stale assignment.
+   for (int g = 0; g < NUM_HOTKEY_GROUPS; g++)
+      for (int s = 0; s < MAX_HOTKEY_GROUP_SIZE; s++)
+         if (hotkey_obj_id[g][s] == id)
+            hotkey_obj_id[g][s] = 0;
    // Object itself freed elsewhere
    SafeFree(item);
 

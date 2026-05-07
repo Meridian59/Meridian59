@@ -391,6 +391,10 @@ bool InterfaceAction(int action, void *action_data)
    case A_HOTKEY_TRIGGER:
       InventoryHotkeyTrigger((int)(intptr_t)action_data - 1);
       return false;
+
+   case A_HOTKEY_CLEAR:
+      InventoryHotkeyClearAll();
+      return false;
    }
 
    return true;

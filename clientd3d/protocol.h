@@ -86,6 +86,7 @@ ToServer(BP_REQ_MOVE, NULL, FinenessClientToKod(y) + KOD_FINENESS, \
 #define RequestLook(id)              ToServer(BP_REQ_LOOK, NULL, id)
 #define RequestUse(id)               ToServer(BP_REQ_USE, NULL, id)
 #define RequestUnuse(id)             ToServer(BP_REQ_UNUSE, NULL, id)
+#define RequestToggleGroup(objs)     ToServer(BP_REQ_TOGGLE_GROUP, NULL, objs)
 #define RequestAttack(info, id)      ToServer(BP_REQ_ATTACK, NULL, info, id)
 #define RequestOffer(id, objs)       ToServer(BP_REQ_OFFER, NULL, id, objs)
 #define RequestDeposit(id, objs)     ToServer(BP_REQ_DEPOSIT, NULL, id, objs)

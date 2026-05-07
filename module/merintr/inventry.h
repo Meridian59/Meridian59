@@ -39,6 +39,7 @@ void DisplayInventory(list_type inventory);
 
 void InventoryHotkeyAssign(int digit);
 void InventoryHotkeyTrigger(int digit);
+void InventoryHotkeyClearAll(void);
 
 void DisplaySetUsing(ID obj_id, bool is_using);
 void DisplayUsing(list_type using_list);

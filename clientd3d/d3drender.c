@@ -815,27 +815,36 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DRenderParticles(particleSystemStructure);
 	}
 
+	ObjectsRenderParams objectsRenderParams(g_pVertexDecl_PosColorTex1, g_pVertexDecl_PosColorTex2, gD3DDriverProfile,
+		&gObjectPool, &gObjectCacheSystem, view, proj, room, params);
+
+	GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects,
+		gpBackBufferTexFull, gpBackBufferTex);
+
+	FontTextureParams fontTextureParams(&gFont, gSmallTextureSize);
+
+	PlayerViewParams playerViewParams(gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
+
 	if (draw_objects)
 	{
-		ObjectsRenderParams objectsRenderParams(g_pVertexDecl_PosColorTex1, g_pVertexDecl_PosColorTex2, gD3DDriverProfile,
-			&gObjectPool, &gObjectCacheSystem, view, proj, room, params);
-
-		GameObjectDataParams gameObjectDataParams(nitems, &num_visible_objects, &gNumObjects, drawdata, visible_objects, 
-			gpBackBufferTexFull, gpBackBufferTex);
-
-		FontTextureParams fontTextureParams(&gFont, gSmallTextureSize);
-
-		PlayerViewParams playerViewParams(gScreenWidth, gScreenHeight, main_viewport_width, main_viewport_height, gD3DRect);
-
 		timeObjects = D3DRenderObjects(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, fontTextureParams, playerViewParams);
 	}
 
-	// Transparent walls are drawn LAST so that sprites/monsters behind them show
-	// through correctly. Depth write is off during this pass; depth test remains on
-	// so walls behind opaque geometry are still occluded.
+	// Transparent walls draw AFTER opaque/translucent objects so the walls
+	// correctly occlude objects behind them (depth-test on, depth-write off).
 	if (draw_world)
 	{
 		D3DRenderTransparentWallsPass(worldRenderParams);
+	}
+
+	// Invisible-object pass runs LAST so its back-buffer capture contains the
+	// translucent walls. Without this ordering, invisible characters and the
+	// local player's first-person held overlays sample a back buffer that
+	// pre-dates the wall pass; the fishbowl effect then reads colours from
+	// behind the wall and visually erases the wall wherever they overlap.
+	if (draw_objects)
+	{
+		D3DRenderInvisiblePass(objectsRenderParams, gameObjectDataParams, lightAndTextureParams, playerViewParams);
 	}
 
 	D3DRender_SetColorStage(1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);

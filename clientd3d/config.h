@@ -24,6 +24,12 @@
 
 static const int CONFIG_MAX_TEXT_ZOOM_LIMIT = 100;  // Max value of map text zoom limit
 
+// UI themes
+enum class Theme : int {
+   Default = 0,
+   Dark    = 1,
+};
+
 // Communication settings
 typedef struct {
    WORD  timeout;                 /* # of seconds to wait before redialing */
@@ -90,6 +96,7 @@ typedef struct {
    bool clearCache;
 
    bool colorcodes;
+   Theme theme;
    int lastPasswordChange;
 
    int soundLibrary;             /* Reserved for struct layout compatibility */
@@ -144,6 +151,8 @@ void SaveSettings(void);
 
 void ConfigLoad(void);
 void ConfigSave(void);
+
+void ThemeApply(void);
 
 void WindowSettingsSave(void);
 void WindowSettingsLoad(WINDOWPLACEMENT *w);

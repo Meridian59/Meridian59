@@ -3353,6 +3353,11 @@ messages:
          return FALSE;
       }
 
+      if iUse_type & ITEM_USE_HAND
+      {
+         Send(self,@FreeHandSlotsFor,#what=what);
+      }
+
       % make sure not already using or something using disallows
       for i in plUsing
       {
@@ -3429,6 +3434,45 @@ messages:
       Send(self,@ResetPlayerFlagList);
       
       return TRUE;
+   }
+
+   FreeHandSlotsFor(what = $)
+   "Unequips currently-held hand items until there is enough free hand space "
+   "to equip `what`, or until no more held hand items are willing to yield."
+   {
+      local i, iHandUsed, iNeeded, lHandItems;
+
+      iNeeded = Send(what,@GetItemUseAmount);
+
+      iHandUsed = 0;
+      lHandItems = $;
+      for i in plUsing
+      {
+         if Send(i,@GetItemUseType) & ITEM_USE_HAND
+         {
+            iHandUsed = iHandUsed + Send(i,@GetItemUseAmount);
+            lHandItems = Cons(i,lHandItems);
+         }
+      }
+
+      if iHandUsed + iNeeded <= viHand_space
+      {
+         return;
+      }
+
+      for i in lHandItems
+      {
+         if Send(self,@TryUnuseItem,#what=i)
+         {
+            iHandUsed = iHandUsed - Send(i,@GetItemUseAmount);
+            if iHandUsed + iNeeded <= viHand_space
+            {
+               return;
+            }
+         }
+      }
+
+      return;
    }
 
    TryUnuseItem(what = $)

@@ -406,6 +406,7 @@ void GameProtocolParse(session_node *s,client_msg *msg)
 {
    user_node *u;
    int object_id;
+
    char password[MAX_LOGIN_PASSWORD+1],new_password[MAX_LOGIN_PASSWORD+1];
    int len,index;
 

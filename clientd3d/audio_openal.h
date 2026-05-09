@@ -43,6 +43,9 @@ void Audio_StopSourcesForFilename(const char* filename);
 // per frame.  Stopped sources and missing objects are pruned automatically.
 void AudioUpdateTrackedSources(void);
 
+// Reapply the Sound and Ambient slider values to every playing source
+void ResetSoundVolume(void);
+
 // Sets the listener's position and facing direction for 3D audio
 void AudioUpdateListener(float x, float y, float z, 
                          float forwardX, float forwardY, float forwardZ);

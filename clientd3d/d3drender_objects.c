@@ -252,6 +252,23 @@ long D3DRenderObjects(
 
 	SetZBias(ZBIAS_DEFAULT);
 
+	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclaration);
+
+	return timeGetTime() - timeObjects;
+}
+
+void D3DRenderInvisiblePass(
+	const ObjectsRenderParams& objectsRenderParams,
+	const GameObjectDataParams& gameObjectDataParams,
+	const LightAndTextureParams& lightAndTextureParams,
+	const PlayerViewParams& playerViewParams)
+{
+	// Capture the back buffer AFTER translucent walls have been drawn so the
+	// invisible-object fishbowl effect samples a scene that includes those
+	// walls. If the capture happens before the wall pass, invisible characters
+	// and the local player's held overlays read pre-wall colours and visually
+	// erase translucent walls wherever they overlap.
 	D3DRender_CaptureEffect(gameObjectDataParams.backBufferTexFull, gameObjectDataParams.backBufferTex[0]);
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &objectsRenderParams.view);
@@ -262,6 +279,7 @@ long D3DRenderObjects(
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclarationInvisible);
 
 	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 
 	// Render invisible world objects
 	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
@@ -303,7 +321,7 @@ long D3DRenderObjects(
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, objectsRenderParams.vertexDeclaration);
 
-	return timeGetTime() - timeObjects;
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 }
 
 /**

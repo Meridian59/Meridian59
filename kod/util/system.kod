@@ -6661,6 +6661,11 @@ messages:
       % Remove this line after PostPatchUpdates has been successfully applied. -- Aesica
       Send(&BarloqueApothecary, @SetForSale);
 
+      % Rebuild OutdoorsKA0 so the corrected plVentItems1 list (SimpleHelm in place of Helm)
+      % takes effect. Constructed only runs when the room is created, so an existing room
+      % keeps the old list until recreated. Remove after PostPatchUpdates has been applied.
+      Send(Send(self, @FindRoomByNum, #num=RID_KA0), @Recreate);
+
       return;
    }
 

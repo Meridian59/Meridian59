@@ -1093,6 +1093,19 @@ messages:
 
          return;
       }
+
+      if liClient_cmd = BP_REQ_TOGGLE_GROUP
+      {
+         if bSpam
+         {
+            return;
+         }
+
+         lItems = Nth(client_msg,2);
+         Send(self,@UserToggleItemGroup,#item_list=lItems);
+
+         return;
+      }
       
       if liClient_cmd = BP_REQ_ATTACK
       {
@@ -4602,6 +4615,107 @@ messages:
 
       Send(self,@TryUseItem,#what=what);
       
+      return;
+   }
+
+   UserToggleItemGroup(item_list = $)
+   "Toggles a list of items as one group.  If every eligible item is in use, "
+   "the group action is unuse.  Otherwise the group action is use.  Duplicate "
+   "entries and wand items are ignored."
+   {
+      local i, iTotal, iUsing, bTargetEquip, lSeen, iPos;
+
+      if NOT IsList(item_list)
+      {
+         return;
+      }
+
+      if item_list = $
+      {
+         return;
+      }
+
+      iTotal = 0;
+      iUsing = 0;
+      lSeen = $;
+      for i in item_list
+      {
+         if NOT IsClass(i,&Item)
+         {
+            continue;
+         }
+
+         iPos = FindListElem(lSeen,i);
+         if iPos <> $ AND iPos <> 0
+         {
+            continue;
+         }
+
+         if Send(i,@IsItemType,#type=ITEMTYPE_WAND)
+         {
+            continue;
+         }
+
+         lSeen = Cons(i,lSeen);
+
+         iTotal = iTotal + 1;
+         iPos = FindListElem(plUsing,i);
+         if iPos <> $ AND iPos <> 0
+         {
+            iUsing = iUsing + 1;
+         }
+      }
+
+      if iTotal = 0
+      {
+         return;
+      }
+
+      bTargetEquip = TRUE;
+      if iUsing = iTotal
+      {
+         bTargetEquip = FALSE;
+      }
+
+      lSeen = $;
+      for i in item_list
+      {
+         if NOT IsClass(i,&Item)
+         {
+            continue;
+         }
+
+         iPos = FindListElem(lSeen,i);
+         if iPos <> $ AND iPos <> 0
+         {
+            continue;
+         }
+
+         if Send(i,@IsItemType,#type=ITEMTYPE_WAND)
+         {
+            continue;
+         }
+
+         lSeen = Cons(i,lSeen);
+
+         iPos = FindListElem(plUsing,i);
+
+         if bTargetEquip
+         {
+            if iPos = $ OR iPos = 0
+            {
+               Send(self,@UserUseItem,#what=i);
+            }
+         }
+         else
+         {
+            if iPos <> $ AND iPos <> 0
+            {
+               Send(self,@UserUnuseItem,#what=i);
+            }
+         }
+      }
+
       return;
    }
 

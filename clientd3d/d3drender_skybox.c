@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2024 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -6,6 +6,7 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include "skybox_load.h"
 #include <filesystem>
 #include <iterator>
 
@@ -14,7 +15,6 @@
 ///////////////
 static constexpr float SKYBOX_DIMENSIONS = 75000.0f;
 static constexpr float SKYBOX_Y = 37000.0f;
-static constexpr int SKYBOX_SIDES = 6;
 
 // Geometry constants for rendering a quad as a triangular strip.
 static constexpr int SKYBOX_QUAD_VERTICES = 4;
@@ -99,114 +99,28 @@ static IDirect3DTexture9* gpSkyboxTextures[NUM_SKYBOXES][SKYBOX_SIDES];
 ////////////////////////
 
 /**
-* Loads a series of PNG images from a specified file and creates textures for the skybox.
+* Set the current background texture for the skybox by background ID.
+* Returns true if the background was set successfully and false otherwise.
 */
-static void D3DRenderBackgroundsLoad(const char* pFilename, int index)
+static bool D3DRenderBackgroundSet(ID background)
 {
-	// The .bsf/.png files for skyboxes are actually six PNGs stored in a single
-	// file by appending each picture's binary data into one file.
-	//
-	// The pictures for each cubemap face are stored in this order, similarly in SKYBOX_XYZ[]:
-	// Back -> Bottom -> Front -> Left -> Right -> Top
-	//
-	// The pixel-packing loop expects a 24-bit PNG file since the alpha channel isn't used.
-	// However, a 32-bit PNG can still be used even if it's larger in file size.
+	char* filename = LookupRsc(background);
 
-	auto *pFile = fopen(pFilename, "rb");
-	if (pFile == nullptr)
+	if (!filename)
+		return false;
+
+	for (int i = 0; i < NUM_SKYBOXES; i++)
 	{
-		debug(("Skybox Error: Found file but unable to open: %s\n", pFilename));
-		return;
+        // If the string names match, then set the index.
+		if (_stricmp(filename, SKYBOX_TABLE[i].resourceName) == 0)
+        {
+            gCurBackground = i;
+            return true;
+        }
 	}
 
-	long filePosition = 0;
-
-	for (int i = 0; i < SKYBOX_SIDES; i++)
-	{
-		// Jumps to the number of bytes.
-		fseek(pFile, filePosition, SEEK_SET);
-
-		png_structp pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-		if (pPng == nullptr)
-		{
-			fclose(pFile);
-			return;
-		}
-
-		png_infop pInfo = png_create_info_struct(pPng);
-		if (pInfo == nullptr)
-		{
-			png_destroy_read_struct(&pPng, nullptr, nullptr);
-			fclose(pFile);
-			return;
-		}
-
-		png_infop pInfoEnd = png_create_info_struct(pPng);
-		if (pInfoEnd == nullptr)
-		{
-			png_destroy_read_struct(&pPng, &pInfo, nullptr);
-			fclose(pFile);
-			return;
-		}
-
-		if (setjmp(png_jmpbuf(pPng)))
-		{
-			debug(("Skybox Error: %s has corrupt or invalid PNG data.\n", pFilename));
-			png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
-			fclose(pFile);
-			return;
-		}
-
-		png_init_io(pPng, pFile);
-
-		// Discard alpha channel in case a 32-bit PNG is used, ensuring 3 bytes per pixel.
-		png_set_strip_alpha(pPng);
-
-		png_read_png(pPng, pInfo, PNG_TRANSFORM_IDENTITY, nullptr);
-		png_bytepp rows = png_get_rows(pPng, pInfo);
-
-		uint32_t image_width = png_get_image_width(pPng, pInfo);
-		uint32_t image_height = png_get_image_height(pPng, pInfo);
-
-		// Creates the D3D texture in a 32-bit BGRA format, even if the source PNG is 24-bit.
-		gpD3DDevice->CreateTexture(image_width, image_height, 1, 0,
-			D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpSkyboxTextures[index][i], nullptr);
-
-		D3DLOCKED_RECT lockedRect = {};
-		gpSkyboxTextures[index][i]->LockRect(0, &lockedRect, nullptr, 0);
-
-		auto *pBits = reinterpret_cast<uint8_t*>(lockedRect.pBits);
-
-		// Iterate through each row of the skybox image.
-		for (uint32_t h = 0; h < image_height; h++)
-		{
-			// Use pitch to find the start of the row, then treat it as 32-bit pixels.
-			auto *pRowDest = reinterpret_cast<uint32_t*>(pBits + (h * lockedRect.Pitch));
-
-			// Get the source row from the PNG data.
-			png_bytep pSourceRow = rows[h];
-
-			for (uint32_t w = 0; w < image_width; w++)
-			{
-				// Reads 24-bit RGB data from the PNG row.
-				uint8_t r = pSourceRow[w * 3 + 0];
-				uint8_t g = pSourceRow[w * 3 + 1];
-				uint8_t b = pSourceRow[w * 3 + 2];
-
-				// Converts RGB to 32-bit BGRA (D3D native) using bit-shifting.
-				// Alpha is set to '0xFF' to keep the skybox fully opaque.
-				pRowDest[w] = (0xFF << 24) | (r << 16) | (g << 8) | b;
-			}
-		}
-
-		gpSkyboxTextures[index][i]->UnlockRect(0);
-
-		// Save current byte count so the next iteration finds the next PNG header.
-		filePosition = ftell(pFile);
-		png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
-	}
-
-	fclose(pFile);
+	debug(("Skybox Error: '%s' is not mapped in SKYBOX_TABLE.\n", filename));
+	return false;
 }
 
 /**
@@ -268,31 +182,6 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 }
 
-/**
-* Set the current background texture for the skybox by background ID.
-* Returns true if the background was set successfully and false otherwise.
-*/
-static bool D3DRenderBackgroundSet(ID background)
-{
-	char* filename = LookupRsc(background);
-
-	if (!filename)
-		return false;
-
-	for (int i = 0; i < NUM_SKYBOXES; i++)
-	{
-        // If the string names match, then set the index.
-		if (_stricmp(filename, SKYBOX_TABLE[i].resourceName) == 0)
-        {
-            gCurBackground = i;
-            return true;
-        }
-	}
-
-	debug(("Skybox Error: '%s' is not mapped in SKYBOX_TABLE.\n", filename));
-	return false;
-}
-
 //////////////////////
 // Public Functions //
 //////////////////////
@@ -320,7 +209,7 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 				continue;
 			}
 
-			D3DRenderBackgroundsLoad(fullPath.string().c_str(), i);
+			LoadSkyboxFaces(fullPath.string().c_str(), gpSkyboxTextures[i]);
 		}
 	}
 	if (tempBkgnd != background)

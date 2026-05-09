@@ -144,6 +144,7 @@ OBJS = \
         $(OUTDIR)\d3drender_skybox.obj \
         $(OUTDIR)\d3drender_textures.obj \
         $(OUTDIR)\d3drender_world.obj \
+        $(OUTDIR)\skybox_load.obj \
         $(OUTDIR)\matrix.obj \
         $(OUTDIR)\xform.obj \
         $(OUTDIR)\signup.obj\

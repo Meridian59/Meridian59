@@ -14,6 +14,8 @@
 #ifndef _D3DRENDERSKYBOX_H
 #define _D3DRENDERSKYBOX_H
 
+static constexpr int SKYBOX_SIDES = 6;
+
 struct SkyboxRenderParams {
     IDirect3DVertexDeclaration9* vertexDeclaration;
     d3d_driver_profile driverProfile;

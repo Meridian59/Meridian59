@@ -281,9 +281,7 @@ void D3DRenderInvisiblePass(
 	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 
-	// D3DRenderTransparentWallsPass leaves CULLMODE = CULL_CW; sprite billboards
-	// are wound such that CW culling drops them entirely, so invisible players
-	// would not render at all. Restore CULL_NONE for the invisible pass.
+	// Restore CULL_NONE for the invisible pass.
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
 
 	// Render invisible world objects

@@ -1278,8 +1278,10 @@ void InventoryHotkeyTrigger(int digit)
       return;
    last_trigger_time[digit] = now;
 
-   // Build from live inventory entries marked with this digit.  This avoids
-   // dropping members if an id lookup misses during inventory reshuffles.
+   // Add matching items to the front of the wire list so it arrives in
+   // reverse display order.  The server builds its list the same way, which
+   // flips it back, so the server processes top-left first.  Single-use
+   // items (scrolls, potions) consume in the order the player sees them.
    for (l = items; l != NULL; l = l->next)
    {
       InvItem *item = (InvItem *) l->data;
@@ -1292,12 +1294,12 @@ void InventoryHotkeyTrigger(int digit)
          // toggle expects object IDs, and tagged number IDs can fail class checks.
          normalized_objs[normalized_count] = *item->obj;
          normalized_objs[normalized_count].id = GetObjId(item->obj->id);
-         group_list = list_add_item(group_list, &normalized_objs[normalized_count]);
+         group_list = list_add_first(group_list, &normalized_objs[normalized_count]);
          normalized_count++;
       }
       else
       {
-         group_list = list_add_item(group_list, item->obj);
+         group_list = list_add_first(group_list, item->obj);
       }
    }
 

@@ -435,6 +435,7 @@
 #define IDC_EMAIL_ADDRESS               1218
 #define IDC_SIGNUP_TROUBLESHOOT         1219
 #define ID_SPINNING_CUBE                1220
+#define IDC_THEME                       1221
 #define ID_GAME_EXIT                    3002
 #define ID_FONT_MAIL                    3014
 #define ID_FONT_LIST                    3015
@@ -641,6 +642,8 @@
 #define IDS_INTRO                       3651
 #define ID_FONT_ANNOTATIONS             3652
 #define IDC_ANNOTATION_ZOOM_LIMIT       3653
+#define IDS_THEME_DEFAULT               3654
+#define IDS_THEME_DARK                  3655
 
 // Next default values for new objects
 // 
@@ -648,7 +651,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        191
 #define _APS_NEXT_COMMAND_VALUE         3513
-#define _APS_NEXT_CONTROL_VALUE         1221
+#define _APS_NEXT_CONTROL_VALUE         1222
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
 #endif

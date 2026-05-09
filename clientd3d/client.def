@@ -75,6 +75,7 @@ EXPORTS
 	ResizeDialogItem
 	ResizeDialog
 	MenuFindItemByName
+	ThemedMenuBarApply
 	SetMainCursor
 	GameWindowSetCursor
 	GetBitmapResource

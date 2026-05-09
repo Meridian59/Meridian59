@@ -11,6 +11,7 @@
 */
 
 #include <assert.h>
+#include <dwmapi.h>
 
 #include "client.h"
 
@@ -166,9 +167,13 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_INITMENUPOPUP, InitMenuPopupHandler);
 
 	case WM_MEASUREITEM:
+		if (ThemedMenuBarMeasureItem((MEASUREITEMSTRUCT *)lParam))
+			return TRUE;
 		ItemListMeasureItem(hwnd, (MEASUREITEMSTRUCT *) lParam);
 		return 0;
 	case WM_DRAWITEM:     // windowsx.h macro always returns FALSE
+		if (ThemedMenuBarDrawItem((DRAWITEMSTRUCT *)lParam))
+			return TRUE;
 		return MainDrawItem(hwnd, (const DRAWITEMSTRUCT *)(lParam));
 
 	case WM_SETCURSOR:
@@ -196,6 +201,64 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case BK_MODULEUNLOAD:
 		ModuleUnloadById(lParam);
 		break;
+
+	case WM_NCPAINT:
+	{
+		// Let Windows paint the non-client area first.
+		LRESULT res = DefWindowProc(hwnd, message, wParam, lParam);
+
+		// Windows draws bright 1px separator lines above and below the
+		// menu bar.  Paint over them with the theme's menu bar brush.
+		HBRUSH br = ThemedMenuBarBackgroundBrush();
+		if (br && GetMenu(hwnd))
+		{
+			MENUBARINFO mbi;
+			memset(&mbi, 0, sizeof(mbi));
+			mbi.cbSize = sizeof(mbi);
+			if (GetMenuBarInfo(hwnd, OBJID_MENU, 0, &mbi))
+			{
+				RECT rcWindow;
+				GetWindowRect(hwnd, &rcWindow);
+
+				POINT ptClient = { 0, 0 };
+				ClientToScreen(hwnd, &ptClient);
+
+				HDC hdc = GetWindowDC(hwnd);
+
+				// 1px line above the menu bar.
+				RECT rcTop;
+				rcTop.left   = mbi.rcBar.left   - rcWindow.left;
+				rcTop.right  = mbi.rcBar.right  - rcWindow.left;
+				rcTop.top    = mbi.rcBar.top    - rcWindow.top - 1;
+				rcTop.bottom = rcTop.top + 1;
+				FillRect(hdc, &rcTop, br);
+
+				// 1px line below the menu bar, above the client area.
+				RECT rcBottom;
+				rcBottom.left   = rcTop.left;
+				rcBottom.right  = rcTop.right;
+				rcBottom.bottom = ptClient.y - rcWindow.top;
+				rcBottom.top    = rcBottom.bottom - 1;
+				FillRect(hdc, &rcBottom, br);
+
+				ReleaseDC(hwnd, hdc);
+			}
+		}
+		return res;
+	}
+
+	case WM_NCACTIVATE:
+	{
+		// DefWindowProc paints the title bar.  Send WM_NCPAINT after so
+		// the separator paint-over is redone for the new focus state.
+		LRESULT res = DefWindowProc(hwnd, message, wParam, lParam);
+		if (ThemeMenuBarColor() != CLR_INVALID)
+		{
+			// wParam = 1 redraws the whole non-client area.
+			SendMessage(hwnd, WM_NCPAINT, (WPARAM)1, 0);
+		}
+		return res;
+	}
 	}
 
 	return DefWindowProc (hwnd, message, wParam, lParam);
@@ -275,6 +338,19 @@ void ClearMessageQueue(void)
 }
 /************************************************************************/
 /*
+ * ThemeApplyTitleAndMenu:  Apply the active theme's title bar style
+ *   and menu bar.
+ */
+static void ThemeApplyTitleAndMenu(void)
+{
+	BOOL dwmDark = ThemeUsesDarkTitleBar();
+	DwmSetWindowAttribute(hMain, DWMWA_USE_IMMERSIVE_DARK_MODE,
+		&dwmDark, sizeof(dwmDark));
+
+	ThemedMenuBarApply(GetMenu(hMain));
+}
+/************************************************************************/
+/*
  * ThemeApply:  Reload the color palette and main window background
  *   bitmap for the active theme, fire EVENT_COLORCHANGED so modules
  *   refresh their themed resources, and force a repaint of the main
@@ -282,11 +358,16 @@ void ClearMessageQueue(void)
  */
 void ThemeApply(void)
 {
+	ThemedMenuBarDestroy();
+
 	ColorsDestroy();
 	ColorsCreate(false);
 
 	// Reload main background so the theme's tiles take effect immediately.
 	CreateWindowBackground();
+
+	ThemeApplyTitleAndMenu();
+	DrawMenuBar(hMain);
 
 	MainChangeColor();
 	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);
@@ -348,6 +429,8 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		MainQuit(hMain);
 		exit(1);
 	}
+
+	ThemeApplyTitleAndMenu();
 
 	if (config.debug)
 		CreateDebugWindow();

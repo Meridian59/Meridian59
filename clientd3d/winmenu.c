@@ -11,6 +11,14 @@
 #include "client.h"
 
 static HMENU menu;          // Main menu
+static HBRUSH hMenuBarBrush = NULL;
+static HBRUSH hMenuBarSelectedBrush = NULL;
+static HFONT  hMenuBarFont  = NULL;
+
+// Extra height added to each menu bar item so the text does not sit
+// flush against the top and bottom edges.  Half goes above the text,
+// half below.
+static const int MENU_BAR_ITEM_VERTICAL_PADDING_TOTAL = 8;
 
 extern int connection;
 
@@ -235,4 +243,285 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       break;
 
    }
+}
+/************************************************************************/
+/*
+ * GetMenuFont:  Returns a cached HFONT for the system menu font.
+ */
+static HFONT GetMenuFont(void)
+{
+   if (!hMenuBarFont)
+   {
+      NONCLIENTMETRICS ncm;
+      memset(&ncm, 0, sizeof(ncm));
+      ncm.cbSize = sizeof(ncm);
+      SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0);
+      hMenuBarFont = CreateFontIndirect(&ncm.lfMenuFont);
+   }
+   return hMenuBarFont;
+}
+/************************************************************************/
+/*
+ * ThemedMenuBarBackgroundBrush:  Returns the cached menu bar brush,
+ *   or NULL when none exists.
+ */
+HBRUSH ThemedMenuBarBackgroundBrush(void)
+{
+   return hMenuBarBrush;
+}
+/************************************************************************/
+/*
+ * ThemedMenuBarApply:  Configures each top-level item of the given
+ *   menu for owner-drawn painting in the theme's menu bar color and
+ *   creates the cached brushes if they do not yet exist.  Items
+ *   already configured and separators are skipped.  Returns
+ *   immediately if the active theme has no menu bar color.
+ */
+void ThemedMenuBarApply(HMENU hMenu)
+{
+   COLORREF color = ThemeMenuBarColor();
+   if (!hMenu || color == CLR_INVALID)
+      return;
+
+   if (!hMenuBarBrush)
+      hMenuBarBrush = CreateSolidBrush(color);
+   if (!hMenuBarSelectedBrush)
+      hMenuBarSelectedBrush = CreateSolidBrush(GetColor(COLOR_EDITBGD));
+
+   MENUINFO mi;
+   memset(&mi, 0, sizeof(mi));
+   mi.cbSize = sizeof(mi);
+   mi.fMask = MIM_BACKGROUND;
+   mi.hbrBack = hMenuBarBrush;
+   SetMenuInfo(hMenu, &mi);
+
+   int count = GetMenuItemCount(hMenu);
+   for (int i = 0; i < count; i++)
+   {
+      MENUITEMINFO mii;
+      memset(&mii, 0, sizeof(mii));
+      mii.cbSize = sizeof(mii);
+      mii.fMask = MIIM_FTYPE | MIIM_STRING | MIIM_DATA;
+
+      mii.dwTypeData = NULL;
+      mii.cch = 0;
+      GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      if (mii.fType & (MFT_OWNERDRAW | MFT_SEPARATOR))
+         continue;
+
+      UINT textLen = mii.cch + 1;
+      char *text = (char *)SafeMalloc(textLen);
+      mii.dwTypeData = text;
+      mii.cch = textLen;
+      GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      mii.fMask = MIIM_FTYPE | MIIM_DATA;
+      mii.fType |= MFT_OWNERDRAW;
+      mii.dwItemData = (ULONG_PTR)text;
+      SetMenuItemInfo(hMenu, i, TRUE, &mii);
+   }
+}
+/************************************************************************/
+/*
+ * ThemedMenuBarRemove:  Restore all owner-drawn menu bar items to
+ *   standard string items and clear the menu bar background brush.
+ */
+static void ThemedMenuBarRemove(HMENU hMenu)
+{
+   if (!hMenu)
+      return;
+
+   int count = GetMenuItemCount(hMenu);
+   for (int i = 0; i < count; i++)
+   {
+      MENUITEMINFO mii;
+      memset(&mii, 0, sizeof(mii));
+      mii.cbSize = sizeof(mii);
+      mii.fMask = MIIM_FTYPE | MIIM_DATA;
+      GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      if (!(mii.fType & MFT_OWNERDRAW))
+         continue;
+
+      char *text = (char *)mii.dwItemData;
+
+      mii.fMask = MIIM_FTYPE | MIIM_STRING | MIIM_DATA;
+      mii.fType &= ~MFT_OWNERDRAW;
+      mii.dwTypeData = text;
+      mii.dwItemData = 0;
+      SetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      SafeFree(text);
+   }
+
+   MENUINFO mi;
+   memset(&mi, 0, sizeof(mi));
+   mi.cbSize = sizeof(mi);
+   mi.fMask = MIM_BACKGROUND;
+   mi.hbrBack = NULL;
+   SetMenuInfo(hMenu, &mi);
+}
+/************************************************************************/
+/*
+ * RebuildMenuItems:  Reads each top-level item out of hMenu, removes
+ *   them all, and re-inserts them with the same text, ID, sub-menu,
+ *   and state.  Forces Windows to treat each item as new so any
+ *   cached per-item width from a previous owner-drawn pass is dropped.
+ */
+static void RebuildMenuItems(HMENU hMenu)
+{
+   int count = GetMenuItemCount(hMenu);
+   if (count <= 0)
+      return;
+
+   struct SavedMenuItem
+   {
+      char text[256];
+      UINT id;
+      HMENU subMenu;
+      UINT state;
+   };
+
+   SavedMenuItem *items = (SavedMenuItem *)SafeMalloc(count * sizeof(SavedMenuItem));
+
+   for (int i = 0; i < count; i++)
+   {
+      MENUITEMINFO mii;
+      memset(&mii, 0, sizeof(mii));
+      mii.cbSize = sizeof(mii);
+      mii.fMask = MIIM_ID | MIIM_STRING | MIIM_SUBMENU | MIIM_STATE;
+      mii.dwTypeData = items[i].text;
+      mii.cch = sizeof(items[i].text);
+      GetMenuItemInfo(hMenu, i, TRUE, &mii);
+      items[i].id = mii.wID;
+      items[i].subMenu = mii.hSubMenu;
+      items[i].state = mii.fState;
+   }
+
+   // RemoveMenu detaches an item without destroying its sub-menu.
+   while (GetMenuItemCount(hMenu) > 0)
+      RemoveMenu(hMenu, 0, MF_BYPOSITION);
+
+   for (int i = 0; i < count; i++)
+   {
+      MENUITEMINFO mii;
+      memset(&mii, 0, sizeof(mii));
+      mii.cbSize = sizeof(mii);
+      mii.fMask = MIIM_ID | MIIM_STRING | MIIM_STATE;
+      mii.wID = items[i].id;
+      mii.dwTypeData = items[i].text;
+      mii.fState = items[i].state;
+      if (items[i].subMenu)
+      {
+         mii.fMask |= MIIM_SUBMENU;
+         mii.hSubMenu = items[i].subMenu;
+      }
+      InsertMenuItem(hMenu, i, TRUE, &mii);
+   }
+
+   SafeFree(items);
+}
+/************************************************************************/
+/*
+ * ThemedMenuBarDestroy:  Restores the main menu to its non-themed
+ *   state, frees the cached GDI handles, and rebuilds the top-level
+ *   menu items so Windows drops any cached widths from the previous
+ *   themed pass.
+ */
+void ThemedMenuBarDestroy(void)
+{
+   bool wasThemed = hMenuBarBrush != NULL;
+   HMENU hMenu = GetMenu(hMain);
+   if (hMenu)
+      ThemedMenuBarRemove(hMenu);
+
+   if (hMenuBarBrush)
+   {
+      DeleteObject(hMenuBarBrush);
+      hMenuBarBrush = NULL;
+   }
+   if (hMenuBarSelectedBrush)
+   {
+      DeleteObject(hMenuBarSelectedBrush);
+      hMenuBarSelectedBrush = NULL;
+   }
+   if (hMenuBarFont)
+   {
+      DeleteObject(hMenuBarFont);
+      hMenuBarFont = NULL;
+   }
+
+   if (wasThemed && hMenu)
+      RebuildMenuItems(hMenu);
+}
+/************************************************************************/
+/*
+ * ThemedMenuBarMeasureItem:  Measures an owner-drawn menu bar item
+ *   and writes its size into the given MEASUREITEMSTRUCT.  Returns
+ *   true when handled, false otherwise.
+ */
+bool ThemedMenuBarMeasureItem(MEASUREITEMSTRUCT *mis)
+{
+   if (mis->CtlType != ODT_MENU)
+      return false;
+   if (ThemeMenuBarColor() == CLR_INVALID)
+      return false;
+
+   const char *text = (const char *)mis->itemData;
+   if (!text)
+      return false;
+
+   HDC hdc = GetDC(hMain);
+   HFONT hOldFont = (HFONT)SelectObject(hdc, GetMenuFont());
+
+   SIZE size;
+   GetTextExtentPoint32(hdc, text, (int)strlen(text), &size);
+
+   mis->itemWidth = size.cx;
+   mis->itemHeight = size.cy + MENU_BAR_ITEM_VERTICAL_PADDING_TOTAL;
+
+   SelectObject(hdc, hOldFont);
+   ReleaseDC(hMain, hdc);
+
+   return true;
+}
+/************************************************************************/
+/*
+ * ThemedMenuBarDrawItem:  Paints an owner-drawn menu bar item.
+ *   Returns true when painted, false otherwise.
+ */
+bool ThemedMenuBarDrawItem(DRAWITEMSTRUCT *dis)
+{
+   if (dis->CtlType != ODT_MENU)
+      return false;
+   if (ThemeMenuBarColor() == CLR_INVALID)
+      return false;
+
+   const char *text = (const char *)dis->itemData;
+   if (!text)
+      return false;
+
+   HDC hdc = dis->hDC;
+   RECT rc = dis->rcItem;
+
+   HBRUSH bgBrush = (dis->itemState & ODS_SELECTED) ? hMenuBarSelectedBrush
+                                                    : hMenuBarBrush;
+   FillRect(hdc, &rc, bgBrush);
+
+   SetTextColor(hdc, GetColor(COLOR_FGD));
+   SetBkMode(hdc, TRANSPARENT);
+
+   HFONT hOldFont = (HFONT)SelectObject(hdc, GetMenuFont());
+
+   // Hide the accelerator underlines when Windows says so for this
+   // draw, matching the system default menu bar behavior.
+   UINT drawFlags = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
+   if (dis->itemState & ODS_NOACCEL)
+      drawFlags |= DT_HIDEPREFIX;
+   DrawText(hdc, text, -1, &rc, drawFlags);
+
+   SelectObject(hdc, hOldFont);
+
+   return true;
 }

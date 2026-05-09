@@ -64,6 +64,8 @@ M59EXPORT COLORREF GetColor(WORD color);
 M59EXPORT HBRUSH GetBrush(WORD color);
 M59EXPORT Theme ThemeCurrent(void);
 int MainThemeResourceId(int id);
+COLORREF ThemeMenuBarColor(void);
+bool ThemeUsesDarkTitleBar(void);
 COLORREF GetPlayerNameColor(int flags,const char*name);
 
 void UserSelectColor(WORD color);

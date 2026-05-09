@@ -37,9 +37,9 @@
 #define A_CAST          (A_MODULE + 200)
 #define A_CASTSPELL     (A_MODULE + 201)
 #define A_LOOKINVENTORY (A_MODULE + 202)    // Examine item in inventory
-#define A_HOTKEY_ASSIGN (A_MODULE + 210)    // Ctrl+digit: assign selected inventory slot to a hotkey group
-#define A_HOTKEY_TRIGGER (A_MODULE + 211)   // digit: toggle use on every inventory item in a hotkey group
-#define A_HOTKEY_CLEAR (A_MODULE + 212)     // Ctrl+X: clear every hotkey group binding
+#define A_HOTKEY_ASSIGN (A_MODULE + 210)    // Assign selected inventory slot to a hotkey group
+#define A_HOTKEY_TRIGGER (A_MODULE + 211)   // Toggle use on every inventory item in a hotkey group
+#define A_HOTKEY_CLEAR (A_MODULE + 212)     // Clear every inventory hotkey group binding
 
 // Window messages
 #define BK_CREATED      (WM_USER + 100)

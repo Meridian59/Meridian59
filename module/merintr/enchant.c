@@ -291,7 +291,10 @@ bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
       p.x = r.left;
       p.y = r.top;
       ScreenToClient(cinfo->hMain, &p);
-      OffscreenWindowBackground(NULL, p.x, p.y, ENCHANT_SIZE, ENCHANT_SIZE);
+      // Paint the enchantment icon background to match the surrounding
+      // sidebar fill.
+      RawBitmap *bg = ThemeSidebarUsesInventoryFill() ? pinventory_bkgnd() : NULL;
+      OffscreenWindowBackground(bg, p.x, p.y, ENCHANT_SIZE, ENCHANT_SIZE);
 
       area.x = area.y = 0;
       area.cx = area.cy = ENCHANT_SIZE;

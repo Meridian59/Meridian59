@@ -330,7 +330,7 @@ void InterfaceLoadElement(InterfaceElement *element)
 {
    BITMAPINFOHEADER *ptr;
    
-   ptr = GetBitmapResource(hInst, element->id);
+   ptr = GetBitmapResource(hInst, ThemeResourceId(element->id));
    if (ptr == NULL)
    {
      element->bits = NULL;
@@ -760,8 +760,30 @@ void InterfaceDrawResize(int xsize, int ysize, AREA *view)
 
   hdc = GetDC(cinfo->hMain);
   SelectPalette(hdc, cinfo->hPal, FALSE);
+  InterfaceDrawSidebarBackground(hdc);
   InterfaceDrawElements(hdc);
   ReleaseDC(cinfo->hMain, hdc);
+}
+/****************************************************************************/
+/*
+ * InterfaceDrawSidebarBackground:  Fill the right sidebar (enchantments,
+ *   portrait, stats) with the inventory texture for themes that opt in
+ *   via ThemeSidebarUsesInventoryFill.  Drawn before the frame elements
+ *   so the ornamental edges paint on top.
+ */
+void InterfaceDrawSidebarBackground(HDC hdc)
+{
+   if (!ThemeSidebarUsesInventoryFill())
+      return;
+
+   RECT r;
+   r.left   = player_enchant_x - 1;
+   r.top    = TOP_BORDER + EDGETREAT_HEIGHT + ENCHANT_BORDER - 1;
+   r.right  = r.left + USERAREA_WIDTH + stat_width + (stat_bar_x - stat_x) + MAPTREAT_WIDTH + 1;
+   r.bottom = r.top + (player_enchant_bottom - player_enchant_y) + USERAREA_HEIGHT +
+              ENCHANT_BORDER + MAPTREAT_HEIGHT;
+
+   DrawWindowBackgroundColor(pinventory_bkgnd(), hdc, &r, r.left, r.top, -1);
 }
 /****************************************************************************/
 /*
@@ -782,6 +804,15 @@ void InterfaceDrawElements(HDC hdc)
 	  if( i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT )
 		  continue;
 
+	  // Skip silver stats frame corners for themes that opt out via
+	  // ThemeSkipSilverFrame; the silver artwork conflicts with their
+	  // sidebar fill or palette.
+	  if (ThemeSkipSilverFrame())
+	  {
+		  if (i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT)
+			  continue;
+	  }
+
     OffscreenWindowBackground(NULL, elements[i].x, elements[i].y, elements[i].width, elements[i].height);
     
     OffscreenBitBlt(hdc, elements[i].x, elements[i].y, elements[i].width, elements[i].height,
@@ -800,6 +831,14 @@ void InterfaceDrawElements(HDC hdc)
 		continue;
 	if( i == ELEMENT_BBOTTOM )
 		continue;
+
+	// Skip silver stats edge repeaters for themes that opt out via
+	// ThemeSkipSilverFrame.
+	if (ThemeSkipSilverFrame())
+	{
+		if (i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT)
+			continue;
+	}
 
 	e = &repeaters[i].element;
     x = e->x;

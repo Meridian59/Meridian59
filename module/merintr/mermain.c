@@ -106,6 +106,15 @@ void InterfaceFontChanged(WORD font_id, LOGFONT *font)
 /****************************************************************************/
 void InterfaceColorChanged(WORD color_id, COLORREF color)
 {
+   // For a global theme change (color_id == -1), reload theme-dependent
+   // bitmaps so the inventory texture and frame elements pick up the new
+   // theme without needing to relog.
+   if (color_id == (WORD)-1)
+   {
+      InventoryReloadBackground();
+      InterfaceDrawInit();
+   }
+
    InventoryChangeColor();   
    StatsChangeColor();
    StatsMainChangeColor();
@@ -130,6 +139,7 @@ void InterfaceResizeModule(int xsize, int ysize, AREA *view)
 void InterfaceRedrawModule(HDC hdc)
 {
   UserAreaRedraw();
+  InterfaceDrawSidebarBackground(hdc);
   InterfaceDrawElements(hdc);
   StatsDrawBorder();
   StatsMainRedraw();

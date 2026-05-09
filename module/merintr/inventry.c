@@ -191,10 +191,10 @@ void InventoryBoxCreate(HWND hParent)
       selftrgt_bits = NULL;
    else selftrgt_bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 
-   if (!GetBitmapResourceInfo(hInst, IDB_INVBKGND, &inventory_bkgnd))
+   if (!GetBitmapResourceInfo(hInst, ThemeResourceId(IDB_INVBKGND), &inventory_bkgnd))
      debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
 
-	if( !( ptr = GetBitmapResource( hInst, IDB_INVBKGND ) ) )
+	if( !( ptr = GetBitmapResource( hInst, ThemeResourceId(IDB_INVBKGND) ) ) )
 		debug(("InventoryBoxCreate couldn't load inventory scroll bar texture bitmap\n"));
 
 	logbrush.lbStyle = BS_DIBPATTERNPT;
@@ -1433,4 +1433,28 @@ HWND GetHwndInvDialog()
 RawBitmap* pinventory_bkgnd()
 {
 	return &inventory_bkgnd;
+}
+/************************************************************************/
+/*
+ * InventoryReloadBackground:  Re-fetch the inventory background bitmap
+ *   for the active theme and rebuild the scrollbar pattern brush.
+ */
+void InventoryReloadBackground(void)
+{
+	BITMAPINFOHEADER *ptr;
+	LOGBRUSH logbrush;
+
+	if (!GetBitmapResourceInfo(hInst, ThemeResourceId(IDB_INVBKGND), &inventory_bkgnd))
+		debug(("InventoryReloadBackground couldn't load inventory background bitmap\n"));
+
+	if (!(ptr = GetBitmapResource(hInst, ThemeResourceId(IDB_INVBKGND))))
+		debug(("InventoryReloadBackground couldn't load scroll bar texture bitmap\n"));
+
+	if (hbrushScrollBack)
+		DeleteObject(hbrushScrollBack);
+
+	logbrush.lbStyle = BS_DIBPATTERNPT;
+	logbrush.lbColor = DIB_RGB_COLORS;
+	logbrush.lbHatch = (ULONG_PTR) ptr;
+	hbrushScrollBack = CreateBrushIndirect(&logbrush);
 }

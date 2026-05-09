@@ -170,7 +170,10 @@ void StatsMainRedraw(void)
 
       obj->icon_res = s->name_res;
 
-      OffscreenWindowBackground(NULL, a.x, a.y, a.cx, a.cy);
+      // Paint the stat icon and graph bar border to match the surrounding
+      // sidebar fill.
+      RawBitmap *bg = ThemeSidebarUsesInventoryFill() ? pinventory_bkgnd() : NULL;
+      OffscreenWindowBackground(bg, a.x, a.y, a.cx, a.cy);
       DrawStretchedObjectDefault(hdc, obj, &a, NULL); 
       GdiFlush();
 
@@ -178,7 +181,7 @@ void StatsMainRedraw(void)
       b.cx = stat_width;
       b.y  = a.y + STATS_MAIN_SPACING;
       b.cy = s->cy - 4 * STATS_MAIN_SPACING;
-      InterfaceDrawBarBorder(NULL, hdc, &b);
+      InterfaceDrawBarBorder(bg, hdc, &b);
    }
 
    ObjectDestroyAndFree(obj);

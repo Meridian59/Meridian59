@@ -106,7 +106,7 @@ static char color_section_dark[]    = "ColorsDark";
 static char INIColorVersion[]       = "ColorVersion";
 
 // Bump when default values for any color change.
-static const int THEME_COLOR_VERSION = 5;
+static const int THEME_COLOR_VERSION = 7;
 
 // Returns the INI section name for the active theme.
 static char *ColorSectionForTheme(Theme theme)
@@ -285,6 +285,33 @@ void ColorsSave(void)
 
 	// Stamp the version so future loads can detect stale saved colors.
 	WriteConfigInt(section, INIColorVersion, THEME_COLOR_VERSION, ini_file);
+}
+/************************************************************************/
+/*
+ * ThemeIsDark:  Returns true if the active theme is the dark theme.
+ *   Single source of truth for theme-aware code paths in the client and
+ *   in modules that link against the client's exports.
+ */
+bool ThemeIsDark(void)
+{
+	return config.theme == Theme::Dark;
+}
+/************************************************************************/
+/*
+ * ThemeResourceId:  Returns the variant of a bitmap resource ID for the
+ *   active theme.  Returns the input ID unchanged when the default theme
+ *   is active or when no variant exists.  Lets callers stay theme-blind.
+ */
+int ThemeResourceId(int id)
+{
+	if (!ThemeIsDark())
+		return id;
+
+	switch (id)
+	{
+	case IDB_BACKGROUND: return IDB_BACKGROUND_DARK;
+	default:             return id;
+	}
 }
 /************************************************************************/
 void ColorsRestoreDefaults(void)

@@ -26,6 +26,7 @@ void InventoryRedraw(void);
 bool InventoryDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void InventoryResetFont(void);
 void InventoryChangeColor(void);
+void InventoryReloadBackground(void);
 void InventorySetFocus(bool forward);
 void InventoryChangeItem(object_node *obj);
 void InventorySelChange(void);

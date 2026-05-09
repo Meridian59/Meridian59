@@ -281,6 +281,11 @@ void D3DRenderInvisiblePass(
 	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 
+	// D3DRenderTransparentWallsPass leaves CULLMODE = CULL_CW; sprite billboards
+	// are wound such that CW culling drops them entirely, so invisible players
+	// would not render at all. Restore CULL_NONE for the invisible pass.
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
+
 	// Render invisible world objects
 	D3DRenderPoolReset(objectsRenderParams.renderPool, &D3DMaterialObjectInvisiblePool);
 	D3DCacheSystemReset(objectsRenderParams.cacheSystem);
@@ -2478,13 +2483,15 @@ bool D3DObjectLightingCalc(
 	// Only apply visual flickering when sector_light <= 127 (dark/nighttime)
 	// sector_light > 127 means outdoor/daytime (ambient light affects sector)
 	// This matches the software renderer's GetLightPalette behavior in draw3d.c
+	// OF_FLASHING (used e.g. for detect-invisible reveal) must pulse regardless
+	// of daylight, so only OF_FLICKERING is daylight-gated.
 	int effectiveLightAdjust = pRNode->obj.lightAdjust;
 	if (light > 127 && (pRNode->obj.flags & OF_FLICKERING))
 	{
 		effectiveLightAdjust = 0;  // Disable visual flicker during daytime
 	}
 
-	if (pRNode->obj.flags & OF_FLICKERING)
+	if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
 		light = GetLightPaletteIndex(intDistance, light, FINENESS, effectiveLightAdjust);
 	else
 		light = GetLightPaletteIndex(intDistance, light, FINENESS, 0);
@@ -2502,8 +2509,8 @@ bool D3DObjectLightingCalc(
 		bgra->g = std::min((float)COLOR_AMBIENT, bgra->g + (lastDistance * pDLight->color.g / COLOR_AMBIENT));
 		bgra->r = std::min((float)COLOR_AMBIENT, bgra->r + (lastDistance * pDLight->color.r / COLOR_AMBIENT));
 		
-		// Apply flickering adjustment to the combined lighting (base + dynamic)
-		if (pRNode->obj.flags & OF_FLICKERING)
+		// Apply flickering/flashing adjustment to the combined lighting (base + dynamic)
+		if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
 		{
 			float adjustment = (float)pRNode->obj.lightAdjust / GetFlickerLevel();
 			bgra->b = std::min((float)COLOR_AMBIENT, bgra->b + (bgra->b * adjustment));

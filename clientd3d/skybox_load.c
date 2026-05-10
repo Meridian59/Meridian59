@@ -34,28 +34,34 @@ static bool LoadPngChunkToTexture(FILE* pFile, IDirect3DTexture9*& pTexture)
 	uint32_t image_height = png_get_image_height(pPng, pInfo);	
 	
 	// Creates the D3D texture in a 32-bit BGRA format, even if the source PNG is 24-bit.
-	HRESULT hr = gpD3DDevice->CreateTexture(image_width, image_height, 1, 0,
+	HRESULT hrTex = gpD3DDevice->CreateTexture(image_width, image_height, 1, 0,
 						D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &pTexture, nullptr);
 
-    if (FAILED(hr))
+    if (FAILED(hrTex))
 	{
 		debug(("Skybox Error: Failed to create %dx%d texture (HRESULT: 0x%08X). Possible VRAM limit.\n", 
-				image_width, image_height, hr));
+				image_width, image_height, hrTex));
 		png_destroy_read_struct(&pPng, &pInfo, nullptr);
         return false;
     }
 
 	D3DLOCKED_RECT lockedRect = {};
-	if (SUCCEEDED(pTexture->LockRect(0, &lockedRect, nullptr, 0)))
+	HRESULT hrLock = pTexture->LockRect(0, &lockedRect, nullptr, 0);
+	if (FAILED(hrLock))
 	{
-        // Read directly into the texture buffer, row-by-row.
-        for (uint32_t h = 0; h < image_height; h++)
-		{
-            uint8_t* pRowDest = static_cast<uint8_t*>(lockedRect.pBits) + (h * lockedRect.Pitch);
-            png_read_row(pPng, pRowDest, nullptr);
-        }
-		pTexture->UnlockRect(0);
+		debug(("Skybox Error: LockRect failed (HRESULT: 0x%08X). Skybox face will be empty.\n", hrLock));
+		png_destroy_read_struct(&pPng, &pInfo, nullptr);
+		return false;
 	}
+	
+	// Read directly into the texture buffer, row-by-row.
+	for (uint32_t h = 0; h < image_height; h++)
+	{
+		uint8_t* pRowDest = static_cast<uint8_t*>(lockedRect.pBits) + (h * lockedRect.Pitch);
+		png_read_row(pPng, pRowDest, nullptr);
+	}
+	pTexture->UnlockRect(0);
+	
 	png_read_end(pPng, pInfo); 
 	png_destroy_read_struct(&pPng, &pInfo, nullptr);
 	return true;

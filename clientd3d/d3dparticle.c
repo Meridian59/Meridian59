@@ -57,8 +57,6 @@ static void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render
 		return;
 	}
 
-	custom_xyzw velocity = {pParticle->velocity.x, pParticle->velocity.y, pParticle->velocity.z, 1.0f};
-
 	D3DMATRIX rotate, matrix;
 	MatrixRotateX(&matrix, pParticle->rotation.x);
 	MatrixRotateY(&rotate, pParticle->rotation.y);
@@ -66,10 +64,10 @@ static void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render
 	MatrixRotateZ(&matrix, pParticle->rotation.z);
 	MatrixMultiply(&rotate, &rotate, &matrix);
 
-	MatrixMultiplyVector(&velocity, &rotate, &velocity);
-	pParticle->velocity.x = velocity.x;
-	pParticle->velocity.y = velocity.y;
-	pParticle->velocity.z = velocity.z;
+	custom_xyzw rotatedVelocity = {pParticle->velocity.x, pParticle->velocity.y, pParticle->velocity.z, 1.0f};
+	MatrixMultiplyVector(&rotatedVelocity, &rotate, &rotatedVelocity);
+	pParticle->velocity = {rotatedVelocity.x, rotatedVelocity.y, rotatedVelocity.z};
+
 	pParticle->oldPosition = pParticle->position;
 	pParticle->position.x += pParticle->velocity.x;
 	pParticle->position.y += pParticle->velocity.y;
@@ -101,17 +99,20 @@ static void D3DParticleInitialize(emitter *pEmitter, particle *pParticle)
 {
 	// Advance to the next slot in the circular buffer and reset the emitter's timer,
 	// regardless if the recycled particle should show up in its new location or not.
-	pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES;
-	if (pEmitter->numParticles < MAX_PARTICLES)
+	pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES_PER_EMITTER;
+	if (pEmitter->numParticles < MAX_PARTICLES_PER_EMITTER)
 	{
 		pEmitter->numParticles++;
 	}
 	pEmitter->timer = pEmitter->timerBase;
 
 	// Apply position/velocity/rotation settings to the particle, and with variance if any.
-	pParticle->position = GetVariedXYZ(pEmitter->position, pEmitter->positionVarianceMin, pEmitter->positionVarianceMax);
-	pParticle->velocity = GetVariedXYZ(pEmitter->velocity, pEmitter->velocityVarianceMin, pEmitter->velocityVarianceMax);
-	pParticle->rotation = GetVariedXYZ(pEmitter->rotation, pEmitter->rotationVarianceMin, pEmitter->rotationVarianceMax);
+	pParticle->position = GetVariedXYZ(pEmitter->position,
+		pEmitter->positionVarianceMin, pEmitter->positionVarianceMax);
+	pParticle->velocity = GetVariedXYZ(pEmitter->velocity,
+		pEmitter->velocityVarianceMin, pEmitter->velocityVarianceMax);
+	pParticle->rotation = GetVariedXYZ(pEmitter->rotation,
+		pEmitter->rotationVarianceMin, pEmitter->rotationVarianceMax);
 
 	pParticle->bgra = pEmitter->bgra;
 	pParticle->timeLeft = pEmitter->particleLifetime;
@@ -128,10 +129,7 @@ void D3DParticleSystemReset(particle_system *pParticleSystem)
 	// Free memory from each emitter before clearing the pointers.
 	for (auto pEmitter : pParticleSystem->emitterList)
 	{
-		if (pEmitter != nullptr)
-		{
-			SafeFree(pEmitter);
-		}
+		SafeFree(pEmitter);
 	}
 
 	pParticleSystem->emitterList.clear();

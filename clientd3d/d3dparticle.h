@@ -11,7 +11,7 @@
 ///////////////
 // Constants //
 ///////////////
-static constexpr int MAX_PARTICLES = 128;
+static constexpr int MAX_PARTICLES_PER_EMITTER = 128;
 
 ////////////////
 // Structures //
@@ -36,12 +36,14 @@ struct emitter
 	int			timer;
 	int			timerBase;
 
-	// Base transform settings
+	// The world position of the emitter.
 	custom_xyz	position;
+
+	// Base velocity/rotation for newly initialized particles.
 	custom_xyz	velocity;
 	custom_xyz	rotation;
 
-	// Randomization ranges to apply to the base transform settings.
+	// Randomization ranges to apply to the base transform settings for particles.
 	// Setting both min and max to 0 means no variance.
 	custom_xyz		positionVarianceMin;
 	custom_xyz		positionVarianceMax;
@@ -51,7 +53,7 @@ struct emitter
 	custom_xyz		velocityVarianceMax;
 
 	custom_bgra	bgra;
-	particle	particles[MAX_PARTICLES];
+	particle	particles[MAX_PARTICLES_PER_EMITTER];
 };
 
 struct particle_system

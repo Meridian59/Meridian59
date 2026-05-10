@@ -16,13 +16,13 @@
 // Structures //
 ////////////////
 struct ParticleSystemStructure {
-    LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
+    IDirect3DVertexDeclaration9* vertexDeclaration;
     const custom_xyz& playerDeltaPos;
     d3d_render_pool_new* particlePool;
     d3d_render_cache_system* particleCacheSystem;
 
     ParticleSystemStructure(
-        LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
+        IDirect3DVertexDeclaration9* vertexDeclarationParam,
         const custom_xyz& playerDeltaPosParam,
         d3d_render_pool_new* particlePoolParam,
         d3d_render_cache_system* particleCacheSystemParam)
@@ -34,13 +34,13 @@ struct ParticleSystemStructure {
 };
 
 struct FxRenderSystemStructure {
-    LPDIRECT3DVERTEXDECLARATION9 vertexDeclaration;
+    IDirect3DVertexDeclaration9* vertexDeclaration;
     d3d_render_pool_new* objectPool;
     d3d_render_cache_system* objectCacheSystem;
     d3d_render_pool_new* effectPool;
     d3d_render_cache_system* effectCacheSystem;
-    LPDIRECT3DTEXTURE9 (&backBufferTex)[16];
-    LPDIRECT3DTEXTURE9 backBufferTexFull;
+    IDirect3DTexture9* (&backBufferTex)[16];
+    IDirect3DTexture9* backBufferTexFull;
     int fullTextureSize;
     int smallTextureSize;
     const D3DMATRIX& transformMatrix;
@@ -49,13 +49,13 @@ struct FxRenderSystemStructure {
     int	screenHeight;
 
     FxRenderSystemStructure(
-        LPDIRECT3DVERTEXDECLARATION9 vertexDeclarationParam,
+        IDirect3DVertexDeclaration9* vertexDeclarationParam,
         d3d_render_pool_new* objectPoolParam,
         d3d_render_cache_system* objectCacheSystemParam,
         d3d_render_pool_new* effectPoolParam,
         d3d_render_cache_system* effectCacheSystemParam,
-        LPDIRECT3DTEXTURE9 (&backBufferTexParam)[16],
-        LPDIRECT3DTEXTURE9 backBufferTexFullParam,
+        IDirect3DTexture9* (&backBufferTexParam)[16],
+        IDirect3DTexture9* backBufferTexFullParam,
         int fullTextureSizeParam,
         int smallTextureSizeParam,
         const D3DMATRIX& transformMatrixParam,

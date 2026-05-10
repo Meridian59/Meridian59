@@ -24,7 +24,7 @@ static particle_system sandParticleSystem;
 */
 static void SandstormInit(void)
 {
-	static constexpr int SAND_EMITTER_COUNT = 16;
+	static constexpr int SAND_EMITTER_COUNT = 8;
 	static constexpr int SAND_LIFETIME = 40;
 	static constexpr float SAND_EMITTER_RADIUS = 10000.0f;
 	static constexpr float SAND_Z_VARIANCE = 1000.0f;
@@ -34,10 +34,9 @@ static void SandstormInit(void)
 	static constexpr custom_bgra SANDSTORM_COLOR = {6,153,226,255};
 
 	D3DParticleSystemReset(&sandParticleSystem);
-	emitter* newEmitter = nullptr;
 	for (int i = 0; i < SAND_EMITTER_COUNT; i++)
 	{
-		newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_TIMER);
+		emitter* newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_TIMER);
 		newEmitter->particleLifetime = SAND_LIFETIME;
 		newEmitter->positionVarianceMin = {-SAND_EMITTER_RADIUS, -SAND_EMITTER_RADIUS, -SAND_Z_VARIANCE};
 		newEmitter->positionVarianceMax = {SAND_EMITTER_RADIUS, SAND_EMITTER_RADIUS, SAND_Z_VARIANCE * 2.0f};
@@ -87,10 +86,7 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 		// Update world position of each emitter in the particle system.
 		for (emitter* pEmitter : pSystem->emitterList)
 		{
-			if (pEmitter)
-			{
-				D3DParticleEmitterUpdate(pEmitter, {pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z});
-			}
+			D3DParticleEmitterUpdate(pEmitter, {pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z});
 		}
 
 		// If a particle system is active, update its particles.

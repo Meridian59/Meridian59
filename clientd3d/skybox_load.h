@@ -6,12 +6,9 @@
 //
 // Meridian is a registered trademark.
 
-#ifndef _D3DCUBEMAP_H
-#define _D3DCUBEMAP_H
+#ifndef _SKYBOXLOAD_H
+#define _SKYBOXLOAD_H
 
-////////////////
-// Prototypes //
-////////////////
 void LoadSkyboxFaces(const char* pFilename, IDirect3DTexture9** ppSkyboxFace);
 
-#endif	/* #ifndef _D3DCUBEMAP_H */
+#endif	/* #ifndef _SKYBOXLOAD_H */

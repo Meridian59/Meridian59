@@ -13,8 +13,6 @@
 ///////////////
 // Constants //
 ///////////////
-static constexpr float SKYBOX_DIMENSIONS = 75000.0f;
-static constexpr float SKYBOX_Y = 37000.0f;
 
 // Geometry constants for rendering a quad as a triangular strip.
 static constexpr int SKYBOX_QUAD_VERTICES = 4;
@@ -23,6 +21,9 @@ static constexpr int SKYBOX_QUAD_PRIMITIVES = SKYBOX_QUAD_VERTICES - 2;
 static constexpr int SKYBOX_QUAD_INDICES_PATTERN[] = {1, 2, 0, 3};
 
 static constexpr custom_bgra SKYBOX_BGRA = {192, 192, 192, 255};
+
+static constexpr float SKYBOX_DIMENSIONS = 75000.0f;
+static constexpr float SKYBOX_Y = 37000.0f;
 
 // Defines vertices of the skybox.
 static constexpr custom_xyz SKYBOX_XYZ[] =
@@ -182,6 +183,22 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 }
 
+// Checks if a skybox is already set up, and copies the pointers over if a match is found..
+// Used for hardware rendered skyboxes that is shared with both the mainland and Ko'catan island.
+static bool CheckExistingSkyboxTextures(int currentIndex)
+{
+    for (int i = 0; i < currentIndex; i++)
+    {
+        if (_stricmp(SKYBOX_TABLE[currentIndex].fileName, SKYBOX_TABLE[i].fileName) == 0)
+        {
+            // Copy the pointers from the existing skybox over to this one.
+            memcpy(gpSkyboxTextures[currentIndex], gpSkyboxTextures[i], sizeof(gpSkyboxTextures[currentIndex]));
+            return true;
+        }
+    }
+    return false;	
+}
+
 //////////////////////
 // Public Functions //
 //////////////////////
@@ -193,32 +210,35 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 */
 bool D3DRenderUpdateSkyBox(DWORD background)
 {
-	if (background == 0)
+	// Skip if there's no background yet or if it's already set.
+	if (background == 0 || tempBkgnd == background)
 		return false;
 
-	if (gpSkyboxTextures[0][0] == nullptr)
+	static bool bSkyboxesInitialized = false;
+	if (!bSkyboxesInitialized)
 	{
 		for (int i = 0; i < NUM_SKYBOXES; i++)
 		{
+			// If the skybox was already set up, just copy the pointers over and skip.
+			if (CheckExistingSkyboxTextures(i))
+				continue;
+			
+			// Otherwise, load the PNG as normal.
 			auto fullPath = std::filesystem::path("./resource") / SKYBOX_TABLE[i].fileName;
-
-			// Skip any skybox that is missing.
-			if (!std::filesystem::exists(fullPath))
+			if (std::filesystem::exists(fullPath))
+			{
+				LoadSkyboxFaces(fullPath.string().c_str(), gpSkyboxTextures[i]);
+			}
+			else
 			{
 				debug(("Skybox Error: File not found at %s\n", fullPath.string().c_str()));
-				continue;
 			}
-
-			LoadSkyboxFaces(fullPath.string().c_str(), gpSkyboxTextures[i]);
 		}
-	}
-	if (tempBkgnd != background)
-	{
-		tempBkgnd = background;
-		return D3DRenderBackgroundSet(tempBkgnd);
+		bSkyboxesInitialized = true;
 	}
 
-	return false;
+	tempBkgnd = background;
+	return D3DRenderBackgroundSet(tempBkgnd);
 }
 
 /**

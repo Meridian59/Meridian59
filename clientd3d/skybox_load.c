@@ -9,9 +9,6 @@
 #include <filesystem>
 #include <iterator>
 
-////////////////////////
-// Internal Functions //
-////////////////////////
 static bool LoadPngChunkToTexture(FILE* pFile, IDirect3DTexture9*& pTexture)
 {
 	png_structp pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -63,10 +60,6 @@ static bool LoadPngChunkToTexture(FILE* pFile, IDirect3DTexture9*& pTexture)
 	png_destroy_read_struct(&pPng, &pInfo, nullptr);
 	return true;
 }
-
-//////////////////////
-// Public Functions //
-//////////////////////
 
 /**
 * Loads a series of PNG images from a specified file and creates textures for the skybox.

@@ -196,7 +196,7 @@ static bool CheckExistingSkyboxTextures(int currentIndex)
             return true;
         }
     }
-    return false;	
+    return false;
 }
 
 //////////////////////
@@ -222,17 +222,15 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 			// If the skybox was already set up, just copy the pointers over and skip.
 			if (CheckExistingSkyboxTextures(i))
 				continue;
-			
-			// Otherwise, load the PNG as normal.
+
+			// Otherwise, check if the file exists before attempting to load the PNG.
 			auto fullPath = std::filesystem::path("./resource") / SKYBOX_TABLE[i].fileName;
-			if (std::filesystem::exists(fullPath))
-			{
-				LoadSkyboxFaces(fullPath.string().c_str(), gpSkyboxTextures[i]);
-			}
-			else
+			if (!std::filesystem::exists(fullPath))
 			{
 				debug(("Skybox Error: File not found at %s\n", fullPath.string().c_str()));
+				continue;
 			}
+			LoadSkyboxFaces(fullPath.string().c_str(), gpSkyboxTextures[i]);
 		}
 		bSkyboxesInitialized = true;
 	}

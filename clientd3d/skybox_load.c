@@ -26,20 +26,20 @@ static bool LoadPngChunkToTexture(FILE* pFile, IDirect3DTexture9*& pTexture)
 	// Remove alpha in case a 32-bit PNG is used. Then fill in the 4th byte with 0xFF (opaque).
 	png_set_strip_alpha(pPng);
 	png_set_filler(pPng, 0xFF, PNG_FILLER_AFTER);
-	
+
 	png_set_bgr(pPng); // Swap red and blue to match D3D's BGRA format.
 	png_read_update_info(pPng, pInfo);
-	
+
 	uint32_t image_width = png_get_image_width(pPng, pInfo);
-	uint32_t image_height = png_get_image_height(pPng, pInfo);	
-	
+	uint32_t image_height = png_get_image_height(pPng, pInfo);
+
 	// Creates the D3D texture in a 32-bit BGRA format, even if the source PNG is 24-bit.
 	HRESULT hrTex = gpD3DDevice->CreateTexture(image_width, image_height, 1, 0,
 						D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &pTexture, nullptr);
 
     if (FAILED(hrTex))
 	{
-		debug(("Skybox Error: Failed to create %dx%d texture (HRESULT: 0x%08X). Possible VRAM limit.\n", 
+		debug(("Skybox Error: Failed to create %dx%d texture (HRESULT: 0x%08X). Possible VRAM limit.\n",
 				image_width, image_height, hrTex));
 		png_destroy_read_struct(&pPng, &pInfo, nullptr);
         return false;
@@ -53,7 +53,7 @@ static bool LoadPngChunkToTexture(FILE* pFile, IDirect3DTexture9*& pTexture)
 		png_destroy_read_struct(&pPng, &pInfo, nullptr);
 		return false;
 	}
-	
+
 	// Read directly into the texture buffer, row-by-row.
 	for (uint32_t h = 0; h < image_height; h++)
 	{
@@ -61,8 +61,8 @@ static bool LoadPngChunkToTexture(FILE* pFile, IDirect3DTexture9*& pTexture)
 		png_read_row(pPng, pRowDest, nullptr);
 	}
 	pTexture->UnlockRect(0);
-	
-	png_read_end(pPng, pInfo); 
+
+	png_read_end(pPng, pInfo);
 	png_destroy_read_struct(&pPng, &pInfo, nullptr);
 	return true;
 }
@@ -70,7 +70,7 @@ static bool LoadPngChunkToTexture(FILE* pFile, IDirect3DTexture9*& pTexture)
 /**
 * Loads a series of PNG images from a specified file and creates textures for the skybox.
 */
-void LoadSkyboxFaces(const char* pFilename, IDirect3DTexture9** ppSkyboxFace)
+void LoadSkyboxFaces(const char* pFilePath, IDirect3DTexture9** ppSkyboxFace)
 {
 	// The .bsf/.png files for skyboxes are actually six PNGs stored in a single
 	// file by appending each picture's binary data into one file.
@@ -81,11 +81,14 @@ void LoadSkyboxFaces(const char* pFilename, IDirect3DTexture9** ppSkyboxFace)
 	// The pixel-packing loop expects a 24-bit PNG file since the alpha channel isn't used.
 	// However, a 32-bit PNG can still be used even if it's larger in file size.
 
-	auto *pFile = fopen(pFilename, "rb");
+	// The calling function should verify that the file exists.
+	auto *pFile = fopen(pFilePath, "rb");
 
 	if (pFile == nullptr)
 	{
-		debug(("Skybox Error: Found file but unable to open: %s\n", pFilename));
+		// If 'fopen' fails here, the file exists and is verified by the caller, but cannot be opened.
+		// It's possible that it's locked by another process, or has restricted permissions.
+		debug(("Skybox Error: File is inaccessible at: %s\n", pFilePath));
 		return;
 	}
 
@@ -93,7 +96,7 @@ void LoadSkyboxFaces(const char* pFilename, IDirect3DTexture9** ppSkyboxFace)
 	{
 		if(!LoadPngChunkToTexture(pFile, ppSkyboxFace[i]))
 		{
-            debug(("Skybox Error: Failed to load face %d in %s\n", i, pFilename));
+            debug(("Skybox Error: Failed to load face %d in %s\n", i, pFilePath));
             break;
 		}
 	}

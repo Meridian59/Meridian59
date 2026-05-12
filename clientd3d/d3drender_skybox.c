@@ -70,7 +70,6 @@ struct SkyboxDefinition
 };
 
 // Lookup table that pairs software-rendered skyboxes to hardware-rendered skyboxes.
-// Note: In hardware rendering, Ko'catan uses the same skybox textures as the mainland.
 static constexpr SkyboxDefinition SKYBOX_TABLE[] =
 {
 	// Clear skies
@@ -183,18 +182,31 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 }
 
-// Checks if a skybox is already set up, and copies the pointers over if a match is found..
-// Used for hardware rendered skyboxes that is shared with both the mainland and Ko'catan island.
-static bool CheckExistingSkyboxTextures(int currentIndex)
+// Checks if a skybox is already loaded. If a match is found, the existing texture pointers are copied
+// over to the new index. Used for hardware-rendered skyboxes that are shared with multiple BGF files.
+static bool TryMapToExistingSkybox(int targetIndex)
 {
-    for (int i = 0; i < currentIndex; i++)
+    // 'targetIndex' is passed in so this function only checks against indices that have already been loaded.
+	for (int existingIndex = 0; existingIndex < targetIndex; existingIndex++)
     {
-        if (_stricmp(SKYBOX_TABLE[currentIndex].fileName, SKYBOX_TABLE[i].fileName) == 0)
-        {
-            // Copy the pointers from the existing skybox over to this one.
-            memcpy(gpSkyboxTextures[currentIndex], gpSkyboxTextures[i], sizeof(gpSkyboxTextures[currentIndex]));
-            return true;
-        }
+        // Compare filenames in the lookup table to find duplicates.
+		if (_stricmp(SKYBOX_TABLE[targetIndex].fileName, SKYBOX_TABLE[existingIndex].fileName) != 0)
+            continue;
+
+		// Once a match is found, copy the pointers over.
+		for (int side = 0; side < SKYBOX_SIDES; side++)
+		{
+			IDirect3DTexture9* pSharedTex = gpSkyboxTextures[existingIndex][side];
+			gpSkyboxTextures[targetIndex][side] = pSharedTex;
+
+			// Increment the reference count so the texture isn't
+			// freed while another skybox index is still using it.
+			if (pSharedTex != nullptr)
+			{
+				pSharedTex->AddRef();
+			}
+		}
+		return true;
     }
     return false;
 }
@@ -219,8 +231,9 @@ bool D3DRenderUpdateSkyBox(DWORD background)
 	{
 		for (int i = 0; i < NUM_SKYBOXES; i++)
 		{
-			// If the skybox was already set up, just copy the pointers over and skip.
-			if (CheckExistingSkyboxTextures(i))
+			// Check if the skybox was already set up in a previous index.
+			// If so, map the new index to the existing pointers and skip PNG loading.
+			if (TryMapToExistingSkybox(i))
 				continue;
 
 			// Otherwise, check if the file exists before attempting to load the PNG.

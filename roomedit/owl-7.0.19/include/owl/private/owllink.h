@@ -39,8 +39,10 @@
 
 #define OWL_LIB_COMPILER "v"
 
-#if _MSC_VER >= 1950
+#if _MSC_VER >= 1960
 #error OWLNext: Unsupported compiler version (too new; please add support).
+#elif _MSC_VER >= 1950 // VS 2026 (_MSC_VER: 1950)
+#define OWL_LIB_COMPILER_VERSION "1950" // Platform toolset "v145"
 #elif _MSC_VER >= 1930 // VS 2022 (_MSC_VER: 1930-1949)
 #define OWL_LIB_COMPILER_VERSION "1930" // Platform toolset "v143" (14.30-14.49)
 #elif _MSC_VER >= 1920 // VS 2019

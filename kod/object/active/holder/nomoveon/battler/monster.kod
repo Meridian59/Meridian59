@@ -2917,6 +2917,12 @@ messages:
    {
       local lAction, iNum, oTarget, i, oLibrary;
 
+      % Clear timer, as function has some early exits
+      if NOT test
+      {
+         ptRandom = $;
+      }
+
       % Clear spam list
       plSpamList = $;
 

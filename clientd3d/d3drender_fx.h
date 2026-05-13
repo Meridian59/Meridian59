@@ -6,7 +6,7 @@
 //
 // Meridian is a registered trademark.
 //
-// Render area visual effects such as sandstorm, rain, etc as well as visual effects such 
+// Render area visual effects such as sandstorm, rain, etc as well as visual effects such
 // as being dazzled or blinded are provided here.
 //
 #ifndef _D3DRENDERFX_H
@@ -82,6 +82,7 @@ struct FxRenderSystemStructure {
 // Prototypes //
 ////////////////
 void D3DFxInit();
+void D3DFxShutdown();
 void D3DRenderParticles(const ParticleSystemStructure& pss);
 void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss);
 void D3DFxBlurWaver(const FxRenderSystemStructure& renderSystemStructure);

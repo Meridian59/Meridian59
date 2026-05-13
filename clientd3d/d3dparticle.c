@@ -124,8 +124,11 @@ static void D3DParticleInitialize(emitter *pEmitter, particle *pParticle)
 //////////////////////
 // Public Functions //
 //////////////////////
-void D3DParticleSystemReset(particle_system *pParticleSystem)
+void D3DParticleSystemClear(particle_system *pParticleSystem)
 {
+	if (pParticleSystem == nullptr)
+		return;
+
 	// Free memory from each emitter before clearing the pointers.
 	for (auto pEmitter : pParticleSystem->emitterList)
 	{

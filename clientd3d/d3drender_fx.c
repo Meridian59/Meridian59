@@ -31,7 +31,7 @@ static void SandstormInit(void)
 	static constexpr float SAND_RAND_ROT = PI / 1000.0f;
 	static constexpr custom_bgra SANDSTORM_COLOR = {6,153,226,255};
 
-	D3DParticleSystemReset(&sandParticleSystem);
+	D3DParticleSystemClear(&sandParticleSystem);
 	for (int i = 0; i < SAND_EMITTER_COUNT; i++)
 	{
 		emitter* newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_TIMER);
@@ -61,6 +61,11 @@ static void SandstormInit(void)
 void D3DFxInit()
 {
 	SandstormInit();
+}
+
+void D3DFxShutdown()
+{
+	D3DParticleSystemClear(&sandParticleSystem);
 }
 
 /**

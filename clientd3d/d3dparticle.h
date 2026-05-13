@@ -64,7 +64,7 @@ struct particle_system
 ////////////////
 // Prototypes //
 ////////////////
-void	D3DParticleSystemReset(particle_system *pParticleSystem);
+void	D3DParticleSystemClear(particle_system *pParticleSystem);
 emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int time);
 void	D3DParticleEmitterUpdate(emitter *pEmitter, custom_xyz deltaPosition);
 void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,

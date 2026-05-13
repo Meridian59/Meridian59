@@ -19,7 +19,7 @@ static constexpr uint32_t PARTICLE_PRIMITIVES = 1;
 ///////////////
 // Variables //
 ///////////////
-static std::mt19937 gen(static_cast<uint32_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
+static std::mt19937 rng(static_cast<uint32_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
 
 ////////////////////////
 // Internal Functions //
@@ -32,7 +32,7 @@ static float GetRandomFloatRange(float min, float max)
 	}
 	std::uniform_real_distribution<float> dist(min, max);
 
-    return dist(gen);
+    return dist(rng);
 }
 
 // Returns a new XYZ after adjusting the base XYZ with a specified variance range (if any).

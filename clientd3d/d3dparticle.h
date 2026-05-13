@@ -59,8 +59,6 @@ struct emitter
 struct particle_system
 {
 	std::vector<emitter*>	emitterList;
-	// Points to an external bool that determines if this particle system is active.
-	bool*					pIsActive;	
 };
 
 ////////////////

@@ -10,8 +10,6 @@
 ///////////////
 // Variables //
 ///////////////
-static std::vector<particle_system*> particleSystemList;
-
 static particle_system sandParticleSystem;
 
 /////////////////////////////
@@ -51,9 +49,6 @@ static void SandstormInit(void)
 		newEmitter->velocity.y = directionY * SAND_VELOCITY;
 		newEmitter->bgra = SANDSTORM_COLOR;
 	}
-
-	sandParticleSystem.pIsActive = &effects.sand;
-	particleSystemList.push_back(&sandParticleSystem);
 }
 
 ////////////////////////////
@@ -65,7 +60,6 @@ static void SandstormInit(void)
 */
 void D3DFxInit()
 {
-	particleSystemList.clear();
 	SandstormInit();
 }
 
@@ -78,22 +72,16 @@ void D3DRenderParticles(const ParticleSystemStructure& pss)
 	gpD3DDevice->SetVertexShader(nullptr);
 	gpD3DDevice->SetVertexDeclaration(pss.vertexDeclaration);
 
-	for (particle_system* pSystem : particleSystemList)
+	// Update world position of each emitter in the particle system.
+	for (emitter* pEmitter : sandParticleSystem.emitterList)
 	{
-		// Check if the particle system being iterated is active.
-		bool particleSystemActive = (pSystem->pIsActive != nullptr && *(pSystem->pIsActive));
+		D3DParticleEmitterUpdate(pEmitter, {pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z});
+	}
 
-		// Update world position of each emitter in the particle system.
-		for (emitter* pEmitter : pSystem->emitterList)
-		{
-			D3DParticleEmitterUpdate(pEmitter, {pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z});
-		}
-
-		// If a particle system is active, update its particles.
-		if (particleSystemActive)
-		{
-			D3DParticleSystemUpdate(pSystem, pss.particlePool, pss.particleCacheSystem);
-		}
+	// If the particle system is active, update its particles.
+	if (effects.sand)
+	{
+		D3DParticleSystemUpdate(&sandParticleSystem, pss.particlePool, pss.particleCacheSystem);
 	}
 }
 

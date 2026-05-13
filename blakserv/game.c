@@ -523,7 +523,7 @@ void GameProtocolParse(session_node *s,client_msg *msg)
 
    default :
       ClientToBlakodUser(s,msg->len,msg->data);
-      
+
       break;
    }
 }
@@ -578,7 +578,7 @@ void GameSendEachUserChoice(user_node *u)
 {
    val_type name_val,num_val;
    resource_node *r;
-   
+
    AddIntToPacket(u->object_id);
 
    name_val.int_val = SendTopLevelBlakodMessage(u->object_id,USER_NAME_MSG,0,NULL);
@@ -615,11 +615,11 @@ void GameSendSystemEnter(session_node *s)
 
    session_id_const.v.tag = TAG_SESSION;
    session_id_const.v.data = s->session_id;
-   
+
    p.type = CONSTANT;
    p.value = session_id_const.int_val;
    p.name_id = SESSION_ID_PARM;
-   
+
    SendTopLevelBlakodMessage(GetSystemObjectID(),SYSTEM_ENTER_GAME_MSG,1,&p);
 
 }

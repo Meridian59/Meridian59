@@ -37,3 +37,4 @@
 #define BK_FILESIZE       (WM_USER + 130)
 #define BK_PROGRESS       (WM_USER + 131)
 #define BK_FILEDONE       (WM_USER + 132)
+#define BK_ENTERGAME      (WM_USER + 133)

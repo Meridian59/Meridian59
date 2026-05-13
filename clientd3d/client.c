@@ -185,6 +185,14 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		MainReadSocket(hwnd, WSAGETSELECTEVENT(lParam), (SOCKET) wParam, WSAGETSELECTERROR(lParam));
 		return 0;
 
+	case BK_ENTERGAME:
+	{
+		// Deferred from EnterGame() to avoid the WriteSocket spin-loop deadlock.
+		int encodednum = (((MAJOR_REV * 100) + MINOR_REV) * P_CATCH) + P_CATCH;
+		RequestGame(config.download_time, encodednum, inihost);
+		return 0;
+	}
+
 	case BK_NEWSOUND:
 		NewMusic(wParam, lParam);
 		break;

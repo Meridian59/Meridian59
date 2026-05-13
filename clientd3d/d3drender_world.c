@@ -2076,7 +2076,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
          {
             for (i = 0; i < 4; i++)
             {
-               falloff = (xyz[i].x - pDLightCache->dLights[numLights].xyz.x) * invXScale;
+               falloff = (xyz[i].x - pDLightCache->dLights[numLights].xyz.x) * invZScale;
 
                if (falloff < 0)
                   falloff = -falloff;
@@ -2096,7 +2096,7 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
          {
             for (i = 0; i < 4; i++)
             {
-               falloff = (xyz[i].y - pDLightCache->dLights[numLights].xyz.y) * invYScale;
+               falloff = (xyz[i].y - pDLightCache->dLights[numLights].xyz.y) * invZScale;
 
                if (falloff < 0)
                   falloff = -falloff;

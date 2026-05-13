@@ -35,6 +35,7 @@ void RedrawForce(void);
 
 void GraphicsAreaCreate(HWND hwnd);
 void GraphicsAreaDestroy();
+void GraphicsFlushPerfReport(void);
 void GraphicsAreaRedraw(HDC hdc);
 void GraphicsSizeRoom(room_type room);
 void GraphicsAreaResize(int xsize, int ysize);

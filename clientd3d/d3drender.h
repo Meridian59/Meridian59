@@ -121,6 +121,10 @@ inline bool D3DRender_InBounds(float coordinate, float range)
 
 // Helper Function Prototypes //
 int D3DRenderIsEnabled(void);
+void D3DGetAdapterInfo(char *gpuDesc, int descLen,
+                       unsigned int *vramMB,
+                       DWORD *vendorId, DWORD *deviceId,
+                       WORD *driverMajor, WORD *driverMinor);
 void SetZBias(int z_bias);
 int DistanceGet(int x, int y);
 bool ShouldRenderInCurrentPass(bool transparent_pass, bool isTransparent);

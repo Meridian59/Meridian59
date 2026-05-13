@@ -10,6 +10,115 @@
  */
 
 #include "client.h"
+#include <dxgi.h>
+
+// Well-known device setup class GUID for display adapters (GUID_DEVCLASS_DISPLAY).
+// See: https://learn.microsoft.com/en-us/windows-hardware/drivers/install/system-defined-device-setup-classes-available-to-vendors
+static const char REGPATH_DISPLAY_CLASS[] =
+   "SYSTEM\\CurrentControlSet\\Control\\Class\\{4d36e968-e325-11ce-bfc1-08002be10318}";
+
+// Query real dedicated VRAM via DXGI by matching the adapter's VendorId+DeviceId.
+// Returns MB, or 0 if DXGI is unavailable or no match found.
+static unsigned int GetDXGIDedicatedVRAMMB(DWORD vendorId, DWORD deviceId)
+{
+   if (vendorId == 0 || deviceId == 0)
+      return 0;
+
+   IDXGIFactory *pFactory = NULL;
+   if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void **)&pFactory)) || !pFactory)
+      return 0;
+
+   unsigned int vramMB = 0;
+   for (UINT i = 0; ; ++i)
+   {
+      IDXGIAdapter *pAdapter = NULL;
+      if (pFactory->EnumAdapters(i, &pAdapter) == DXGI_ERROR_NOT_FOUND)
+         break;
+      if (pAdapter)
+      {
+         DXGI_ADAPTER_DESC desc = {};
+         if (SUCCEEDED(pAdapter->GetDesc(&desc))
+             && desc.VendorId == vendorId
+             && desc.DeviceId == deviceId)
+         {
+            vramMB = (unsigned int)(desc.DedicatedVideoMemory >> 20);
+
+            // On 32-bit apps, DedicatedVideoMemory (SIZE_T) wraps at 4GB.
+            // Fall back to the registry display-adapter class to get the real 64-bit value.
+            HKEY hClassKey;
+            if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, REGPATH_DISPLAY_CLASS, 0, KEY_READ, &hClassKey) == ERROR_SUCCESS)
+            {
+               char targetDev[64];
+               sprintf_s(targetDev, sizeof(targetDev), "pci\\ven_%04x&dev_%04x", vendorId, deviceId);
+               
+               DWORD index = 0;
+               char subKey[256];
+               while (RegEnumKeyA(hClassKey, index++, subKey, sizeof(subKey)) == ERROR_SUCCESS)
+               {
+                  HKEY hDevKey;
+                  if (RegOpenKeyExA(hClassKey, subKey, 0, KEY_READ, &hDevKey) == ERROR_SUCCESS)
+                  {
+                     char hwId[256] = {0};
+                     DWORD dwSize = sizeof(hwId);
+                     if (RegQueryValueExA(hDevKey, "MatchingDeviceId", NULL, NULL, (LPBYTE)hwId, &dwSize) == ERROR_SUCCESS)
+                     {
+                        if (_strnicmp(hwId, targetDev, strlen(targetDev)) == 0)
+                        {
+                           ULONGLONG qwMemSize = 0;
+                           DWORD dwMemLen = sizeof(ULONGLONG);
+                           if (RegQueryValueExA(hDevKey, "HardwareInformation.qwMemorySize", NULL, NULL, (LPBYTE)&qwMemSize, &dwMemLen) == ERROR_SUCCESS)
+                           {
+                              vramMB = (unsigned int)(qwMemSize >> 20);
+                              RegCloseKey(hDevKey);
+                              break;
+                           }
+                           else
+                           {
+                              DWORD dwMemory = 0;
+                              dwMemLen = sizeof(DWORD);
+                              if (RegQueryValueExA(hDevKey, "HardwareInformation.MemorySize", NULL, NULL, (LPBYTE)&dwMemory, &dwMemLen) == ERROR_SUCCESS)
+                              {
+                                 vramMB = (unsigned int)(((ULONGLONG)dwMemory) >> 20);
+                                 RegCloseKey(hDevKey);
+                                 break;
+                              }
+                           }
+                        }
+                     }
+                     RegCloseKey(hDevKey);
+                  }
+               }
+               RegCloseKey(hClassKey);
+            }
+
+            pAdapter->Release();
+            break;
+         }
+         pAdapter->Release();
+      }
+   }
+   pFactory->Release();
+   return vramMB;
+}
+
+// Map session duration (seconds) to a 4-bit bucket for wire encoding.
+// 0=no data, 1=<1min, 2=1-5min, 3=5-15min, 4=15-30min, 5=30-60min,
+// 6=1-2hr, 7=2-4hr, 8=4-6hr, 9=6-8hr, 10=8-12hr, 11=12+hr
+static int SessionSecsToBucket(int secs)
+{
+   if (secs <= 0)    return 0;
+   if (secs < 60)    return 1;
+   if (secs < 300)   return 2;
+   if (secs < 900)   return 3;
+   if (secs < 1800)  return 4;
+   if (secs < 3600)  return 5;
+   if (secs < 7200)  return 6;
+   if (secs < 14400) return 7;
+   if (secs < 21600) return 8;
+   if (secs < 28800) return 9;
+   if (secs < 43200) return 10;
+   return 11;
+}
 
 int mem_allocated = 0;   // Count of bytes allocated - bytes freed
 
@@ -440,67 +549,79 @@ extern unsigned short gCRC16;
 
 void GetSystemStats(SystemInfo *s)
 {
-   OSVERSIONINFO version;
-   MEMORYSTATUS mem;
+   MEMORYSTATUSEX mem;
    SYSTEM_INFO sys;
-   int iModeNum;
-   DWORD display = 0;
    unsigned long crc32;
    HDC dc;
 
-   version.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-   GetVersionEx(&version);
+   OSVERSIONINFO v = { sizeof(v) };
 
-   mem.dwLength = sizeof(MEMORYSTATUS);
-   GlobalMemoryStatus(&mem);
+#pragma warning(suppress: 4996)  // GetVersionEx deprecated
+   GetVersionEx(&v);
+   s->platform       = v.dwPlatformId;
+   s->platform_major = v.dwMajorVersion;
+   s->platform_minor = v.dwMinorVersion;
+   s->os_build_number = 0;
 
+   mem.dwLength = sizeof(MEMORYSTATUSEX);
+   GlobalMemoryStatusEx(&mem);
    GetSystemInfo(&sys);
-
    crc32 = gCRC16;
 
-   s->platform = version.dwPlatformId;
-   s->platform_minor = version.dwMinorVersion;
-   s->platform_major = version.dwMajorVersion;
-   s->memory = mem.dwTotalPhys;
-   s->chip = (crc32<<16)|sys.dwProcessorType;
-   iModeNum = 0;
-   while (EnumDisplaySettings(NULL,iModeNum,&devMode[0]))
+   ULONGLONG totalMemoryKB = 0;
+   if (GetPhysicallyInstalledSystemMemory(&totalMemoryKB))
+      s->memory = (int)(totalMemoryKB / 1024);
+   else
+      s->memory = (int)std::min((DWORDLONG)(mem.ullTotalPhys / (1024 * 1024)), (DWORDLONG)INT_MAX);
+
+   s->crc16 = (int)(crc32 & 0xFFFF);
+   s->last_max_fps = config.last_max_fps;
+
+   s->is_wine = 0;
+   HKEY hWineKey;
+   if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Wine", 0, KEY_READ, &hWineKey) == ERROR_SUCCESS)
    {
-      int shift = 0;
-      int disp = 0;
-      switch (devMode[0].dmBitsPerPel) {
-      case 8: shift = DISP_8BIT_SHIFT; break;
-      case 15: case 16: shift = DISP_16BIT_SHIFT; break;
-      case 24: shift = DISP_24BIT_SHIFT; break;
-      case 32: shift = DISP_32BIT_SHIFT; break;
-      default: shift = DISP_8BIT_SHIFT; break;
-      }
-      switch (devMode[0].dmPelsWidth) {
-      case 640: disp = DISP_640x480; break;
-      case 800: disp = DISP_800x600; break;
-      case 1024: disp = DISP_1024x768; break;
-      case 1152: disp = DISP_1152x882; break;
-      case 1280: disp = DISP_1280x1024; break;
-      case 1600: disp = DISP_1600x1200; break;
-      default:
-	 if (devMode[0].dmPelsWidth > 1600)
-	    disp = DISP_HIGHER;
-	 break;
-      }
-      display |= disp << shift;
-      iModeNum++;
+      s->is_wine = 1;
+      RegCloseKey(hWineKey);
    }
-   s->color_depth = display;
-   s->bandwidth = SIBW_UNKNOWN;
+
    dc = GetDC(GetDesktopWindow());
    s->screen_width  = GetSystemMetrics(SM_CXSCREEN);
    s->screen_height = GetSystemMetrics(SM_CYSCREEN);
 
-   s->reserved = GetDeviceCaps(dc,BITSPIXEL); //devMode[0].dmBitsPerPel;
-   s->reserved &= 0xFF;
+   char gpuDesc[64];
+   unsigned int vramMBD3D = 0;
+   DWORD vendorId = 0, deviceId = 0;
+   WORD driverMaj = 0, driverMin = 0;
+   D3DGetAdapterInfo(gpuDesc, sizeof(gpuDesc), &vramMBD3D, &vendorId, &deviceId,
+                     &driverMaj, &driverMin);
+   int renderer_mode = !D3DRenderIsEnabled() ? 0 : (config.gpuEfficiency ? 2 : 1);
 
-   s->reserved |= (GetPartnerCode() << 8);
-   s->reserved &= 0xFFFF;
+   // Use DXGI to get real dedicated VRAM; fall back to D3D9 estimate if unavailable.
+   unsigned int vramMB = GetDXGIDedicatedVRAMMB(vendorId, deviceId);
+   if (vramMB == 0)
+      vramMB = vramMBD3D;
+
+   s->renderer_mode = renderer_mode;
+   s->vram_mb       = (int)vramMB;
+   s->session_bucket = SessionSecsToBucket(config.last_session_secs);
+   s->gpu_vendor_id = (int)vendorId;
+   strncpy_s(s->gpu_desc, sizeof(s->gpu_desc), gpuDesc, _TRUNCATE);
+   s->color_depth   = (int)GetDeviceCaps(dc, BITSPIXEL);
+   s->partner_code  = GetPartnerCode();
+   s->last_avg_fps  = config.last_avg_fps;
+   s->last_low_fps  = config.last_low_fps;
+
+   // Append ping stats to gpuDesc if available
+   if (config.last_avg_ping > 0)
+   {
+      const char *colorStr = (config.last_ping_color == 2) ? "Red" :
+                             (config.last_ping_color == 1) ? "Orange" : "Green";
+      char pingStr[128];
+      snprintf(pingStr, sizeof(pingStr), " | Ping %dms avg, %d low 1%%, %d best (%s)", 
+               config.last_avg_ping, config.last_high_ping, config.last_min_ping, colorStr);
+      strncat_s(s->gpu_desc, sizeof(s->gpu_desc), pingStr, _TRUNCATE);
+   }
 
    ReleaseDC(GetDesktopWindow(),dc);
 }

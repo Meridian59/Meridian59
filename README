@@ -1,7 +1,7 @@
 Meridian 59 v1.1, January, 2015
 Andrew Kirmse and Chris Kirmse
 
-Copyright 1994-2025 Andrew Kirmse and Chris Kirmse
+Copyright 1994-2026 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
 
@@ -29,7 +29,7 @@ OpenAL Soft, whose prebuilt binaries are included in external/.
 
 BUILD INSTRUCTIONS
 
-The code has been built successfully with Microsoft Visual Studio 2022
+The code has been built successfully with Microsoft Visual Studio 2026
 Community Edition, which you can download for free at 
 https://visualstudio.microsoft.com/downloads/
 

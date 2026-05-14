@@ -94,16 +94,24 @@ void GarbageCollect()
 
    ResetTable(); /* tables are not GC'ed yet, so we gotta clear 'em. */
 
+   /* Mark live objects first so the list phase can exclude dead objects.
+    * Without this, list nodes reachable only from dead (but not yet C-deleted)
+    * objects would survive list compaction, and the objects inside them could
+    * then be deleted by the object phase, leaving dangling list→object refs. */
+   ForEachObject(ClearObjectGarbageRef);
+   ForEachUser(MarkUserObjectNodes);
+   MarkObject(GetSystemObjectID());
+
    /* first, garbage collect the list nodes */
 
-   /* 
+   /*
     * This is complicated, because there can be multiple references
     * to a list node out there.
     *
     * However, it's still O(number of list nodes + number of object nodes)
     *
     * first, mark all list nodes unreferenced.
-    *  then, mark used list nodes referenced.
+    *  then, mark used list nodes referenced (only from live objects).
     *  then, go through each list node in increasing numerical order and
     *        set the garbage_ref to what its new list node id will be.
     *  then, go through each object & list node and change its
@@ -114,25 +122,25 @@ void GarbageCollect()
 
    ForEachListNode(ClearListNodeGarbageRef);
    ForEachObject(MarkObjectListNodes);
-   
+
    next_renumber = SERVER_MERGE_BASE;
-   
+
    ForEachListNode(RenumberListNode);
    ForEachObject(RenumberObjectListNodeReferences);
    ForEachListNode(CompactListNode);
 
    SetNumListNodes(next_renumber);
-   
+
    /* now garbage collect the object nodes */
 
-   /* 
-    * This is complicated, because there are multiple references to 
+   /*
+    * This is complicated, because there are multiple references to
     * objects out there.
     *
     * However, it's still O(number of list nodes + number of object nodes)
     *
-    * First, go through every user and system and mark referenced objects.
-    *  then, delete the unreferenced ones.
+    * Object liveness was already determined above (before list GC).
+    *  now, delete the unreferenced ones.
     *  then, go through each object in increasing numerical order and
     *        set the garbage_ref to what its new object id will be.
     *  then, go through each object, list node, user, session, and timer,
@@ -141,9 +149,6 @@ void GarbageCollect()
     *        move it to its new object id spot.
     */
 
-   ForEachObject(ClearObjectGarbageRef);
-   ForEachUser(MarkUserObjectNodes);
-   MarkObject(GetSystemObjectID());
    ForEachObject(DeleteUnreferencedObject);
 
    next_renumber = SERVER_MERGE_BASE;
@@ -217,6 +222,12 @@ void MarkObjectListNodes(object_node *o)
 {
    int i;
 
+   /* Only mark lists from live objects; dead objects' lists must not survive
+    * list compaction because the objects inside them may be GC'd, which would
+    * leave the surviving list nodes with dangling object references. */
+   if (o->garbage_ref != REFERENCED)
+      return;
+
    for (i=0;i<o->num_props;i++)
    {
       if (o->p[i].val.v.tag == TAG_LIST)
@@ -262,7 +273,12 @@ void RenumberListNode(list_node *l,int list_id)
 void RenumberObjectListNodeReferences(object_node *o)
 {
    int i;
-   
+
+   /* Dead objects' lists were not marked; skip them to avoid trying to
+    * renumber UNREFERENCED list nodes. */
+   if (o->garbage_ref != REFERENCED)
+      return;
+
    for (i=0;i<o->num_props;i++)
    {
       if (o->p[i].val.v.tag == TAG_LIST)

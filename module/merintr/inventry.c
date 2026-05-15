@@ -191,10 +191,11 @@ void InventoryBoxCreate(HWND hParent)
       selftrgt_bits = NULL;
    else selftrgt_bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 
-   if (!GetBitmapResourceInfo(hInst, ThemeResourceId(IDB_INVBKGND), &inventory_bkgnd))
+   int inv_bkgnd_id = ThemeResourceId(IDB_INVBKGND);
+   if (!GetBitmapResourceInfo(hInst, inv_bkgnd_id, &inventory_bkgnd))
      debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
 
-	if( !( ptr = GetBitmapResource( hInst, ThemeResourceId(IDB_INVBKGND) ) ) )
+	if( !( ptr = GetBitmapResource( hInst, inv_bkgnd_id ) ) )
 		debug(("InventoryBoxCreate couldn't load inventory scroll bar texture bitmap\n"));
 
 	logbrush.lbStyle = BS_DIBPATTERNPT;
@@ -1443,11 +1444,12 @@ void InventoryReloadBackground(void)
 {
 	BITMAPINFOHEADER *ptr;
 	LOGBRUSH logbrush;
+	int inv_bkgnd_id = ThemeResourceId(IDB_INVBKGND);
 
-	if (!GetBitmapResourceInfo(hInst, ThemeResourceId(IDB_INVBKGND), &inventory_bkgnd))
+	if (!GetBitmapResourceInfo(hInst, inv_bkgnd_id, &inventory_bkgnd))
 		debug(("InventoryReloadBackground couldn't load inventory background bitmap\n"));
 
-	if (!(ptr = GetBitmapResource(hInst, ThemeResourceId(IDB_INVBKGND))))
+	if (!(ptr = GetBitmapResource(hInst, inv_bkgnd_id)))
 		debug(("InventoryReloadBackground couldn't load scroll bar texture bitmap\n"));
 
 	if (hbrushScrollBack)

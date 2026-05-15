@@ -197,9 +197,9 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 			pChunk->bgra[j] = SKYBOX_BGRA;
 		}
 
-		for (int i = 0; i < SKYBOX_QUAD_INDICES; i++)
+		for (int k = 0; k < SKYBOX_QUAD_INDICES; k++)
 		{
-			pChunk->indices[i] = SKYBOX_QUAD_INDICES_PATTERN[i];
+			pChunk->indices[k] = SKYBOX_QUAD_INDICES_PATTERN[k];
 		}
 	}
 

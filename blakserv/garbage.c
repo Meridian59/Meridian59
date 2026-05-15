@@ -56,6 +56,7 @@ bool ResetObjectReference(val_type *vobject_ptr);
 void CompactObject(object_node *o);
 
 /* timer garbage collection (well, renumbering) */
+void CancelOrphanedTimer(timer_node *t);
 void RenumberTimer(timer_node *t);
 void RenumberObjectTimerReferences(object_node *o);
 void RenumberListNodeTimerReferences(list_node *l,int list_id);
@@ -147,8 +148,21 @@ void GarbageCollect()
     *        and change its object id to that object's new object id.
     *  then, go through each object in increasing numerical order and
     *        move it to its new object id spot.
+    *
+    * We also cancel any timers that point to unreachable objects.  An
+    * alternative would be to instead consider timers' target objects
+    * as reachable GC roots.  The problem with that is that Blakod
+    * bugs that fail to correctly cancel timers could lead to objects
+    * that are kept live forever (timer fires, new timer is set up in
+    * handler function -> object never dies).  The symptom would be
+    * ever-increasing memory usage that would be very difficult to
+    * track down.
     */
 
+   ForEachObject(ClearObjectGarbageRef);
+   ForEachUser(MarkUserObjectNodes);
+   MarkObject(GetSystemObjectID());
+   ForEachTimer(CancelOrphanedTimer);
    ForEachObject(DeleteUnreferencedObject);
 
    next_renumber = SERVER_MERGE_BASE;
@@ -510,6 +524,15 @@ bool ResetObjectReference(val_type *vobject_ptr)
 void CompactObject(object_node *o)
 {
    MoveObject(o->garbage_ref,o->object_id);
+}
+
+// If the timer targets an otherwise-unreachable object, delete the
+// timer.
+void CancelOrphanedTimer(timer_node *t)
+{
+   object_node *o = GetObjectByID(t->object_id);
+   if (o == NULL || o->garbage_ref == UNREFERENCED)
+      DeleteTimer(t->timer_id);
 }
 
 void RenumberTimer(timer_node *t)

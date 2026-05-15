@@ -532,6 +532,7 @@ void D3DRenderShutDown(void)
 	D3DRenderPoolShutdown(&gParticlePool);
 
 	D3DRenderLightsShutdown();
+	D3DFxShutdown();
 
 	if (gpNoLookThrough)
 	{

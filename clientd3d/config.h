@@ -131,6 +131,7 @@ typedef struct {
    // for more stable, power-efficient rendering.
    bool gpuEfficiency;
    bool show_inventory_rarity;   /* Add inventory item rarity symbols? */
+   bool flickering_lights;       /* Enable flickering/flashing dynamic lights in the D3D renderer? */
 } Config;
 
 void ConfigInit(void);

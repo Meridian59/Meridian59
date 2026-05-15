@@ -32,6 +32,22 @@ The wrapper ornaments live in `module/merintr/drawint.c`.  Five groups exist tod
 | `B*` | Chat edit box | No (silver in dark) |
 | `I*` | Inventory area | No (skipped for every theme) |
 
+## Sidebar fill
+
+The right sidebar (enchantments, portrait, stat bars) sits inside the main window.  Two fill strategies exist for the sidebar area:
+
+- Show the main window background through any gaps between drawn elements.
+- Paint the sidebar with the inventory texture so it has its own fill.
+
+Each theme uses one of the two.  The choice depends on whether the main window background reads well behind the portrait and stat bars.  For example, the dark theme paints the inventory texture across the sidebar because the dark main window background lacks contrast against the portrait; the default theme leaves the main window background visible.
+
+Two functions paint the sidebar with the inventory texture:
+
+- `InterfaceDrawSidebarBackground` paints the entire sidebar area in one pass.
+- `OffscreenSidebarBackground` paints a single rectangle on the sidebar.  Used for per-element redraws (portrait, stat icons, enchantment buttons).
+
+Both functions do nothing when the active theme uses the main window background for the sidebar.
+
 ## Per-module bitmap resolvers
 
 Each module owns its own bitmap IDs in its own `resource.h`.  The ID values are not shared across modules, so each module ships its own resolver:

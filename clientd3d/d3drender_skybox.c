@@ -164,7 +164,7 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
-	for (int i = 0; i < SKYBOX_SIDES; i++)
+	for (size_t i = 0; i < SKYBOX_SIDES; i++)
 	{
 		// Ensure the pointer slot is valid before fetching.
 		if (i >= gpActiveSkyboxTextures.size() || gpActiveSkyboxTextures[i] == nullptr)

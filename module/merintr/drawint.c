@@ -767,9 +767,8 @@ void InterfaceDrawResize(int xsize, int ysize, AREA *view)
 /****************************************************************************/
 /*
  * InterfaceDrawSidebarBackground:  Fill the right sidebar (enchantments,
- *   portrait, stats) with the inventory texture for themes that opt in
- *   via ThemeSidebarUsesInventoryFill.  Drawn before the frame elements
- *   so the ornamental edges paint on top.
+ *   portrait, stats) with the inventory texture.  Does nothing when the
+ *   active theme keeps the default window background.
  */
 void InterfaceDrawSidebarBackground(HDC hdc)
 {
@@ -784,6 +783,19 @@ void InterfaceDrawSidebarBackground(HDC hdc)
               ENCHANT_BORDER + MAPTREAT_HEIGHT;
 
    DrawWindowBackgroundColor(pinventory_bkgnd(), hdc, &r, r.left, r.top, -1);
+}
+/****************************************************************************/
+/*
+ * OffscreenSidebarBackground:  Set up the offscreen buffer for a
+ *   rectangle on the sidebar.  Uses the inventory texture when the
+ *   active theme paints the sidebar with that texture, otherwise the
+ *   default window background.  Returns the background bitmap used.
+ */
+RawBitmap *OffscreenSidebarBackground(int x, int y, int cx, int cy)
+{
+   RawBitmap *bg = ThemeSidebarUsesInventoryFill() ? pinventory_bkgnd() : NULL;
+   OffscreenWindowBackground(bg, x, y, cx, cy);
+   return bg;
 }
 /****************************************************************************/
 /*

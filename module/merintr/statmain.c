@@ -170,11 +170,8 @@ void StatsMainRedraw(void)
 
       obj->icon_res = s->name_res;
 
-      // Paint the stat icon and graph bar border to match the surrounding
-      // sidebar fill.
-      RawBitmap *bg = ThemeSidebarUsesInventoryFill() ? pinventory_bkgnd() : NULL;
-      OffscreenWindowBackground(bg, a.x, a.y, a.cx, a.cy);
-      DrawStretchedObjectDefault(hdc, obj, &a, NULL); 
+      RawBitmap *bg = OffscreenSidebarBackground(a.x, a.y, a.cx, a.cy);
+      DrawStretchedObjectDefault(hdc, obj, &a, NULL);
       GdiFlush();
 
       b.x  = stat_bar_x;

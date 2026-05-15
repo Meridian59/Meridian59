@@ -60,9 +60,7 @@ void UserAreaRedraw(void)
       debug(("DrawUserBitmap got NULL player object or area\n"));
    else
    {
-      // Paint the portrait background to match the surrounding sidebar fill.
-      RawBitmap *bg = ThemeSidebarUsesInventoryFill() ? pinventory_bkgnd() : NULL;
-      OffscreenWindowBackground(bg, user_area.x, user_area.y, user_area.cx, user_area.cy);
+      OffscreenSidebarBackground(user_area.x, user_area.y, user_area.cx, user_area.cy);
 
 	  if (GetUserTargetID() == GetPlayer()->id)
 		OffscreenStretchBlt(hdc, 0, 0, user_area.cx, user_area.cy,

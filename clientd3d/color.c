@@ -298,7 +298,9 @@ bool ThemeIsDark(void)
 /*
  * ThemeResourceId:  Returns the variant of a bitmap resource ID for the
  *   active theme.  Returns the input ID unchanged when the default theme
- *   is active or when no variant exists.  Lets callers stay theme-blind.
+ *   is active or when no variant exists.
+ *
+ *   TODO: add cases here as more bitmaps get dark variants.
  */
 int ThemeResourceId(int id)
 {

@@ -7,6 +7,7 @@
 // Meridian is a registered trademark.
 #include "client.h"
 #include "skybox_load.h"
+#include <unordered_map>
 #include <filesystem>
 #include <iterator>
 
@@ -62,37 +63,30 @@ static constexpr custom_st SKYBOX_ST[] =
 	{ 0.999f, 0.001f }		// Top-Right
 };
 
-// Defines which .bgf resource gets paired with its respective hardware rendered skybox.
-struct SkyboxDefinition
-{
-	const char* resourceName;	// The .bgf file used by the software renderer.
-	const char* fileName;		// The .bsf/.png file used in the hardware renderer.
-};
-
 // Lookup table that pairs software-rendered skyboxes to hardware-rendered skyboxes.
-static constexpr SkyboxDefinition SKYBOX_TABLE[] =
+static const std::unordered_map<std::string, std::string> SKYBOX_ASSET_MAPPING =
 {
 	// Clear skies
-    {"1skya.bgf", "skya.bsf"}, 		// Index 0
-    {"2skya.bgf", "skya.bsf"},
-    {"1skyb.bgf", "skyb.bsf"}, 		// Index 1
-    {"2skyb.bgf", "skyb.bsf"},
-    {"1skyc.bgf", "skyc.bsf"}, 		// Index 2
+	{"1skya.bgf", "skya.bsf"},
+	{"2skya.bgf", "skya.bsf"},
+	{"1skyb.bgf", "skyb.bsf"},
+	{"2skyb.bgf", "skyb.bsf"},
+	{"1skyc.bgf", "skyc.bsf"},
 	{"2skyc.bgf", "skyc.bsf"},
-    {"1skyd.bgf", "skyd.bsf"}, 		// Index 3
+	{"1skyd.bgf", "skyd.bsf"},
 	{"2skyd.bgf", "skyd.bsf"},
 	// Frenzy
-    {"redsky.bgf", "redsky.bsf"}, 	// Index 4
+	{"redsky.bgf", "redsky.bsf"},
 };
-
-static constexpr int NUM_SKYBOXES = static_cast<int>(std::size(SKYBOX_TABLE));
 
 /////////////////////
 // Local Variables //
 /////////////////////
-static int gCurBackground;
-static ID tempBkgnd = 0;
-static IDirect3DTexture9* gpSkyboxTextures[NUM_SKYBOXES][SKYBOX_SIDES];
+static ID gCachedBackgroundID = 0;
+// Dynamic texture cache that maps filenames of hardware-rendered skyboxes to their loaded texture pointers.
+static std::unordered_map<std::string, std::vector<IDirect3DTexture9*>> gSkyboxCache;
+// Holds the six texture pointers for the skybox actively being rendered on screen this frame.
+static std::vector<IDirect3DTexture9*> gpActiveSkyboxTextures;
 
 ////////////////////////
 // Internal Functions //
@@ -105,22 +99,46 @@ static IDirect3DTexture9* gpSkyboxTextures[NUM_SKYBOXES][SKYBOX_SIDES];
 static bool D3DRenderBackgroundSet(ID background)
 {
 	char* filename = LookupRsc(background);
-
 	if (!filename)
 		return false;
 
-	for (int i = 0; i < NUM_SKYBOXES; i++)
+	// Check if the .bgf file is in the lookup table.
+	auto assetIt = SKYBOX_ASSET_MAPPING.find(filename);
+	if (assetIt == SKYBOX_ASSET_MAPPING.end())
 	{
-        // If the string names match, then set the index.
-		if (_stricmp(filename, SKYBOX_TABLE[i].resourceName) == 0)
-        {
-            gCurBackground = i;
-            return true;
-        }
+		debug(("Skybox Error: '%s' is not mapped in SKYBOX_ASSET_MAPPING.\n", filename));
+		return false;
+	}
+	// If found, get the filename of the hardware-rendered counterpart.
+	const std::string& hwFilename = assetIt->second;
+
+	// Now check if we can reuse skybox textures that are already cached.
+	auto cacheIt = gSkyboxCache.find(hwFilename);
+	if (cacheIt != gSkyboxCache.end())
+	{
+		gpActiveSkyboxTextures = cacheIt->second;
+		return true;
 	}
 
-	debug(("Skybox Error: '%s' is not mapped in SKYBOX_TABLE.\n", filename));
-	return false;
+	// Otherwise, check if the file exists before attempting to load the PNG.
+	auto fullPath = std::filesystem::path("./resource") / hwFilename;
+	if (!std::filesystem::exists(fullPath))
+	{
+		debug(("Skybox Error: File missing at %s\n", fullPath.string().c_str()));
+		return false;
+	}
+
+	// Allocate space for the six dynamic texture pointers.
+	std::vector<IDirect3DTexture9*> newTextures(SKYBOX_SIDES, nullptr);
+
+	// Load the PNG file data directly into the pre-allocated data.
+	LoadSkyboxFaces(fullPath.string().c_str(), newTextures.data());
+
+	// Save into the dynamic cache map and mark as active for rendering.
+	gSkyboxCache[hwFilename] = newTextures;
+	gpActiveSkyboxTextures = newTextures;
+
+	return true;
 }
 
 /**
@@ -128,6 +146,9 @@ static bool D3DRenderBackgroundSet(ID background)
 */
 static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch)
 {
+	if (gpActiveSkyboxTextures.empty())
+		return;
+	
 	gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
 	D3DMATRIX rot, mat;
@@ -145,7 +166,11 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 
 	for (int i = 0; i < SKYBOX_SIDES; i++)
 	{
-		auto *pPacket = D3DRenderPacketFindMatch(pPool, gpSkyboxTextures[gCurBackground][i], nullptr, 0, 0, 0);
+		// Ensure the pointer slot is valid before fetching.
+		if (i >= gpActiveSkyboxTextures.size() || gpActiveSkyboxTextures[i] == nullptr)
+			continue;
+		
+		auto *pPacket = D3DRenderPacketFindMatch(pPool, gpActiveSkyboxTextures[i], nullptr, 0, 0, 0);
 		if (pPacket == nullptr)
 			return;
 
@@ -182,35 +207,6 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 }
 
-// Checks if a skybox is already loaded. If a match is found, the existing texture pointers are copied
-// over to the new index. Used for hardware-rendered skyboxes that are shared with multiple BGF files.
-static bool TryMapToExistingSkybox(int targetIndex)
-{
-    // 'targetIndex' is passed in so this function only checks against indices that have already been loaded.
-	for (int existingIndex = 0; existingIndex < targetIndex; existingIndex++)
-    {
-        // Compare filenames in the lookup table to find duplicates.
-		if (_stricmp(SKYBOX_TABLE[targetIndex].fileName, SKYBOX_TABLE[existingIndex].fileName) != 0)
-            continue;
-
-		// Once a match is found, copy the pointers over.
-		for (int side = 0; side < SKYBOX_SIDES; side++)
-		{
-			IDirect3DTexture9* pSharedTex = gpSkyboxTextures[existingIndex][side];
-			gpSkyboxTextures[targetIndex][side] = pSharedTex;
-
-			// Increment the reference count so the texture isn't
-			// freed while another skybox index is still using it.
-			if (pSharedTex != nullptr)
-			{
-				pSharedTex->AddRef();
-			}
-		}
-		return true;
-    }
-    return false;
-}
-
 //////////////////////
 // Public Functions //
 //////////////////////
@@ -223,33 +219,11 @@ static bool TryMapToExistingSkybox(int targetIndex)
 bool D3DRenderUpdateSkyBox(DWORD background)
 {
 	// Skip if there's no background yet or if it's already set.
-	if (background == 0 || tempBkgnd == background)
+	if (background == 0 || gCachedBackgroundID == background)
 		return false;
 
-	static bool bSkyboxesInitialized = false;
-	if (!bSkyboxesInitialized)
-	{
-		for (int i = 0; i < NUM_SKYBOXES; i++)
-		{
-			// Check if the skybox was already set up in a previous index.
-			// If so, map the new index to the existing pointers and skip PNG loading.
-			if (TryMapToExistingSkybox(i))
-				continue;
-
-			// Otherwise, check if the file exists before attempting to load the PNG.
-			auto fullPath = std::filesystem::path("./resource") / SKYBOX_TABLE[i].fileName;
-			if (!std::filesystem::exists(fullPath))
-			{
-				debug(("Skybox Error: File not found at %s\n", fullPath.string().c_str()));
-				continue;
-			}
-			LoadSkyboxFaces(fullPath.string().c_str(), gpSkyboxTextures[i]);
-		}
-		bSkyboxesInitialized = true;
-	}
-
-	tempBkgnd = background;
-	return D3DRenderBackgroundSet(tempBkgnd);
+	gCachedBackgroundID = background;
+	return D3DRenderBackgroundSet(gCachedBackgroundID);
 }
 
 /**
@@ -301,15 +275,18 @@ void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, con
 */
 void D3DRenderSkyBoxShutdown()
 {
-	for (int j = 0; j < NUM_SKYBOXES; j++)
+	// Release each skybox texture that was stored in the skybox cache.
+	for (auto& [hwFilename, textures] : gSkyboxCache)
 	{
-		for (int i = 0; i < SKYBOX_SIDES; i++)
+		for (auto* pTexture : textures)
 		{
-			if (gpSkyboxTextures[j][i])
+			if (pTexture != nullptr)
 			{
-				gpSkyboxTextures[j][i]->Release();
-				gpSkyboxTextures[j][i] = nullptr;
+				pTexture->Release();
 			}
 		}
 	}
+	gSkyboxCache.clear();
+	gpActiveSkyboxTextures.clear();
+	gCachedBackgroundID = 0;
 }

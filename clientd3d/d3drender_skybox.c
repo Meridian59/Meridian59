@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2024 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -6,173 +6,243 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include "skybox_load.h"
 #include <unordered_map>
+#include <filesystem>
+#include <iterator>
+#include <string_view>
 
-// Variables
+///////////////
+// Constants //
+///////////////
+static constexpr std::string_view RESOURCE_DIRECTORY = "resource";
 
-static const float SKYBOX_DIMENSIONS = 75000.0f;
-static const float SKYBOX_Y = 37000.0f;
+// Geometry constants for rendering a quad as a triangular strip.
+static constexpr int SKYBOX_QUAD_VERTICES = 4;
+static constexpr int SKYBOX_QUAD_INDICES = 4;
+static constexpr int SKYBOX_QUAD_PRIMITIVES = SKYBOX_QUAD_VERTICES - 2;
+static constexpr int SKYBOX_QUAD_INDICES_PATTERN[] = {1, 2, 0, 3};
 
-static LPDIRECT3DTEXTURE9 gpSkyboxTextures[5][6];
-static int gCurBackground;
-static ID tempBkgnd = 0;
+static constexpr custom_bgra SKYBOX_BGRA = {192, 192, 192, 255};
 
-static float gSkyboxXYZ[] =
+static constexpr float SKYBOX_DIMENSIONS = 75000.0f;
+static constexpr float SKYBOX_Y = 37000.0f;
+
+// Defines vertices of the skybox.
+static constexpr custom_xyz SKYBOX_XYZ[] =
 {
-	// back
-	SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
+	// Back
+	{SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS},
+	{-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS},
 
-	// bottom
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
+	// Bottom
+	{-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS},
+	{SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS},
 
-	// front
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
+	// Front
+	{-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS},
+	{SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS},
 
-	// left
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
+	// Left
+	{-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS},
+	{-SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS},
 
-	// right
-	SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
+	// Right
+	{SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, -SKYBOX_Y, SKYBOX_DIMENSIONS},
+	{SKYBOX_DIMENSIONS, -SKYBOX_Y, -SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS},
 
-	// top
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
-	-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS,
-	SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS,
+	// Top
+	{-SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS}, {-SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS},
+	{SKYBOX_DIMENSIONS, SKYBOX_Y, SKYBOX_DIMENSIONS}, {SKYBOX_DIMENSIONS, SKYBOX_Y, -SKYBOX_DIMENSIONS}
 };
 
-static float gSkyboxST[] =
+// Defines the four corners of a skybox texture.
+static constexpr custom_st SKYBOX_ST[] =
 {
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
-
-	0.001f, 0.001f,
-	0.001f, 0.999f,
-	0.999f, 0.999f,
-	0.999f, 0.001f,
+	{ 0.001f, 0.001f },		// Top-Left
+	{ 0.001f, 0.999f },		// Bottom-Left
+	{ 0.999f, 0.999f },		// Bottom-Right
+	{ 0.999f, 0.001f }		// Top-Right
 };
 
-static unsigned char gSkyboxBGRA[] =
+// Lookup table that pairs software-rendered skyboxes to hardware-rendered skyboxes.
+static const std::unordered_map<std::string, std::string> SKYBOX_ASSET_MAPPING =
 {
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
-	192, 192, 192, 255,
+	// Clear skies
+	{"1skya.bgf", "skya.bsf"},
+	{"2skya.bgf", "skya.bsf"},
+	{"1skyb.bgf", "skyb.bsf"},
+	{"2skyb.bgf", "skyb.bsf"},
+	{"1skyc.bgf", "skyc.bsf"},
+	{"2skyc.bgf", "skyc.bsf"},
+	{"1skyd.bgf", "skyd.bsf"},
+	{"2skyd.bgf", "skyd.bsf"},
+	// Frenzy
+	{"redsky.bgf", "redsky.bsf"},
 };
 
+/////////////////////
+// Local Variables //
+/////////////////////
+static ID gCachedBackgroundID = 0;
+// Dynamic texture cache that maps filenames of hardware-rendered skyboxes to their loaded texture pointers.
+static std::unordered_map<std::string, std::vector<IDirect3DTexture9*>> gSkyboxCache;
+// Holds the six texture pointers for the skybox actively being rendered on screen this frame.
+static std::vector<IDirect3DTexture9*> gpActiveSkyboxTextures;
 
-// Interfaces
-
-static void D3DRenderBackgroundsLoad(const char* pFilename, int index);
-static bool D3DRenderBackgroundSet(ID background);
-
-// Implementations
+////////////////////////
+// Internal Functions //
+////////////////////////
 
 /**
+* Set the current background texture for the skybox by background ID.
+* Returns true if the background was set successfully and false otherwise.
+*/
+static bool D3DRenderBackgroundSet(ID background)
+{
+	char* filename = LookupRsc(background);
+	if (!filename)
+		return false;
+
+	// Check if the .bgf file is in the lookup table.
+	auto assetIt = SKYBOX_ASSET_MAPPING.find(filename);
+	if (assetIt == SKYBOX_ASSET_MAPPING.end())
+	{
+		debug(("Skybox Error: '%s' is not mapped in SKYBOX_ASSET_MAPPING.\n", filename));
+		return false;
+	}
+	// If found, get the filename of the hardware-rendered counterpart.
+	const std::string& hwFilename = assetIt->second;
+
+	// Now check if we can reuse skybox textures that are already cached.
+	auto cacheIt = gSkyboxCache.find(hwFilename);
+	if (cacheIt != gSkyboxCache.end())
+	{
+		gpActiveSkyboxTextures = cacheIt->second;
+		return true;
+	}
+
+	// Otherwise, check if the file exists before attempting to load the PNG.
+	auto fullPath = std::filesystem::path(RESOURCE_DIRECTORY) / hwFilename;
+	if (!std::filesystem::exists(fullPath))
+	{
+		debug(("Skybox Error: File missing at %s\n", fullPath.string().c_str()));
+		return false;
+	}
+
+	// Allocate space for the six dynamic texture pointers.
+	std::vector<IDirect3DTexture9*> newTextures(SKYBOX_SIDES, nullptr);
+
+	// Load the PNG file data directly into the pre-allocated data.
+	LoadSkyboxFaces(fullPath.string().c_str(), newTextures.data());
+
+	// Save into the dynamic cache map and mark as active for rendering.
+	gSkyboxCache[hwFilename] = newTextures;
+	gpActiveSkyboxTextures = newTextures;
+
+	return true;
+}
+
+/**
+* Function to draw the individual faces of the skybox.
+*/
+static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch)
+{
+	gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+
+	D3DMATRIX rot, mat;
+	MatrixIdentity(&mat);
+	gpD3DDevice->SetTransform(D3DTS_WORLD, &mat);
+
+	MatrixRotateY(&rot, static_cast<float>(angleHeading) * 360.0f / 4096.0f * PI / 180.0f);
+	MatrixRotateX(&mat, static_cast<float>(anglePitch) * 45.0f / 414.0f * PI / 180.0f);
+	MatrixMultiply(&mat, &rot, &mat);
+
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &mat);
+
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+
+	for (size_t i = 0; i < SKYBOX_SIDES; i++)
+	{
+		// Ensure the pointer slot is valid before fetching.
+		if (i >= gpActiveSkyboxTextures.size() || gpActiveSkyboxTextures[i] == nullptr)
+			continue;
+		
+		auto *pPacket = D3DRenderPacketFindMatch(pPool, gpActiveSkyboxTextures[i], nullptr, 0, 0, 0);
+		if (pPacket == nullptr)
+			return;
+
+		auto *pChunk = D3DRenderChunkNew(pPacket);
+		assert(pChunk);
+
+		pChunk->numIndices = SKYBOX_QUAD_INDICES;
+		pChunk->numVertices = SKYBOX_QUAD_VERTICES;
+		pChunk->numPrimitives = SKYBOX_QUAD_PRIMITIVES;
+		pPacket->pMaterialFctn = &D3DMaterialWorldPacket;
+		pChunk->pMaterialFctn = &D3DMaterialWorldDynamicChunk;
+		pChunk->flags |= D3DRENDER_NOAMBIENT;
+
+		// add xyz, st, and bgra data
+		for (int j = 0; j < SKYBOX_QUAD_VERTICES; j++)
+		{
+			// Note that the coordinate system is z-up, so y-z are flipped here.
+			pChunk->xyz[j].x = SKYBOX_XYZ[(i * 4) + j].x;
+			pChunk->xyz[j].y = SKYBOX_XYZ[(i * 4) + j].z;
+			pChunk->xyz[j].z = SKYBOX_XYZ[(i * 4) + j].y;
+
+			pChunk->st0[j] = SKYBOX_ST[j];
+
+			pChunk->bgra[j] = SKYBOX_BGRA;
+		}
+
+		for (int k = 0; k < SKYBOX_QUAD_INDICES; k++)
+		{
+			pChunk->indices[k] = SKYBOX_QUAD_INDICES_PATTERN[k];
+		}
+	}
+
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	gpD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+}
+
+//////////////////////
+// Public Functions //
+//////////////////////
+
+/*
 * Update the skybox with the current background.
 * Return true the background has changed and false otherwise.
 * If the background has changed, the caller should trigger a redraw all.
 */
 bool D3DRenderUpdateSkyBox(DWORD background)
 {
-	if (background == 0) return false;
+	// Skip if there's no background yet or if it's already set.
+	if (background == 0 || gCachedBackgroundID == background)
+		return false;
 
-	if (gpSkyboxTextures[0][0] == NULL)
-	{
-		D3DRenderBackgroundsLoad("./resource/skya.bsf", 0);
-		D3DRenderBackgroundsLoad("./resource/skyb.bsf", 1);
-		D3DRenderBackgroundsLoad("./resource/skyc.bsf", 2);
-		D3DRenderBackgroundsLoad("./resource/skyd.bsf", 3);
-		D3DRenderBackgroundsLoad("./resource/redsky.bsf", 4);
-	}
-	if (tempBkgnd != background)
-	{
-		tempBkgnd = background;
-		return D3DRenderBackgroundSet(tempBkgnd);
-	}
-	return false;
+	gCachedBackgroundID = background;
+	return D3DRenderBackgroundSet(gCachedBackgroundID);
 }
 
 /**
 * Function to render the skybox with the current background.
 */
-void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, const D3DMATRIX& view, 
+void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, const D3DMATRIX& view,
 	const SkyboxRenderParams& skyboxRenderParams)
 {
 	// Set render states for skybox
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
+	gpD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	SetZBias(0);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 
 	// Disable alpha blending and alpha testing for the skybox
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	// Disable fog for the skybox
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
 
 	// Set texture stages for the skybox
 	D3DRender_SetColorStage(0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
@@ -181,125 +251,22 @@ void D3DRenderSkyBox(Draw3DParams* params, int angleHeading, int anglePitch, con
 	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, 0, 0);
 
 	// Set vertex shader and declaration for the skybox
-	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, skyboxRenderParams.vertexDeclaration);
+	gpD3DDevice->SetVertexShader(nullptr);
+	gpD3DDevice->SetVertexDeclaration(skyboxRenderParams.vertexDeclaration);
 
 	// Render the skybox
 	D3DRenderPoolReset(&skyboxRenderParams.renderPool, &D3DMaterialWorldPool);
 	D3DRenderSkyboxDraw(&skyboxRenderParams.renderPool, angleHeading, anglePitch);
 	D3DCacheFill(&skyboxRenderParams.cacheSystem, &skyboxRenderParams.renderPool, 1);
-	D3DCacheFlush(&skyboxRenderParams.cacheSystem, &skyboxRenderParams.renderPool, 1, 
-		D3DPT_TRIANGLESTRIP);
+	D3DCacheFlush(&skyboxRenderParams.cacheSystem, &skyboxRenderParams.renderPool, 1, D3DPT_TRIANGLESTRIP);
 
 	// Restore render states after skybox rendering
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
 
 	// restore the correct view matrix
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
-}
-
-/**
-* Function to draw the individual faces of the skybox.
-*/
-void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch)
-{
-	int			i, j;
-	D3DMATRIX	rot, mat;
-
-	d3d_render_packet_new* pPacket;
-	d3d_render_chunk_new* pChunk;
-
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
-
-	MatrixIdentity(&mat);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &mat);
-
-	MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
-	MatrixRotateX(&mat, (float)anglePitch * 45.0f / 414.0f * PI / 180.0f);
-	MatrixMultiply(&mat, &rot, &mat);
-
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
-
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-		D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-		D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-
-	for (i = 0; i < 6; i++)
-	{
-		pPacket = D3DRenderPacketFindMatch(pPool, gpSkyboxTextures[gCurBackground][i], NULL, 0, 0, 0);
-		if (NULL == pPacket)
-			return;
-
-		pChunk = D3DRenderChunkNew(pPacket);
-		assert(pChunk);
-
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pPacket->pMaterialFctn = &D3DMaterialWorldPacket;
-		pChunk->pMaterialFctn = &D3DMaterialWorldDynamicChunk;
-		pChunk->flags |= D3DRENDER_NOAMBIENT;
-
-		// add xyz, st, and bgra data
-		for (j = 0; j < 4; j++)
-		{
-			pChunk->xyz[j].x = gSkyboxXYZ[(i * 4 * 3) + (j * 3)];
-			pChunk->xyz[j].z = gSkyboxXYZ[(i * 4 * 3) + (j * 3) + 1];
-			pChunk->xyz[j].y = gSkyboxXYZ[(i * 4 * 3) + (j * 3) + 2];
-
-			pChunk->st0[j].s = gSkyboxST[(i * 4 * 2) + (j * 2)];
-			pChunk->st0[j].t = gSkyboxST[(i * 4 * 2) + (j * 2) + 1];
-
-			pChunk->bgra[j].b = gSkyboxBGRA[(i * 4 * 4) + (j * 4)];
-			pChunk->bgra[j].g = gSkyboxBGRA[(i * 4 * 4) + (j * 4) + 1];
-			pChunk->bgra[j].r = gSkyboxBGRA[(i * 4 * 4) + (j * 4) + 2];
-			pChunk->bgra[j].a = gSkyboxBGRA[(i * 4 * 4) + (j * 4) + 3];
-
-		}
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
-	}
-
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-		D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-		D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-}
-
-/**
-* Set the current background texture for the skybox by background ID.
-* Returns true if the background was set successfully and false otherwise.
-*/
-bool D3DRenderBackgroundSet(ID background)
-{
-	char* filename = LookupRsc(background);
-
-	if (!filename) return false;
-
-	static const std::unordered_map<std::string, int> backgroundMap = {
-		{"1skya.bgf", 0},
-		{"2skya.bgf", 0},
-		{"1skyb.bgf", 1},
-		{"2skyb.bgf", 1},
-		{"1skyc.bgf", 2},
-		{"2skyc.bgf", 2},
-		{"1skyd.bgf", 3},
-		{"2skyd.bgf", 3},
-		{"redsky.bgf", 4}
-	};
-
-	auto it = backgroundMap.find(filename);
-	if (it != backgroundMap.end())
-	{
-		gCurBackground = it->second;
-	}
-
-	return true;
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &view);
 }
 
 /**
@@ -307,129 +274,18 @@ bool D3DRenderBackgroundSet(ID background)
 */
 void D3DRenderSkyBoxShutdown()
 {
-	for (int j = 0; j < 5; j++)
+	// Release each skybox texture that was stored in the skybox cache.
+	for (auto& [hwFilename, textures] : gSkyboxCache)
 	{
-		for (int i = 0; i < 6; i++)
+		for (auto* pTexture : textures)
 		{
-			if (gpSkyboxTextures[j][i])
+			if (pTexture != nullptr)
 			{
-				IDirect3DTexture9_Release(gpSkyboxTextures[j][i]);
-				gpSkyboxTextures[j][i] = NULL;
+				pTexture->Release();
 			}
 		}
 	}
-}
-
-
-/**
-* Loads a series of PNG images from a specified file and creates textures for the skybox.
-*/
-void D3DRenderBackgroundsLoad(const char* pFilename, int index)
-{
-	FILE* pFile;
-	png_structp	pPng = NULL;
-	png_infop	pInfo = NULL;
-	png_infop	pInfoEnd = NULL;
-	png_bytepp   rows;
-
-	D3DLOCKED_RECT		lockedRect;
-	unsigned char* pBits = NULL;
-	unsigned int		w, h, b;
-	int					pitchHalf, bytePP;
-	fpos_t				pos;
-
-	pFile = fopen(pFilename, "rb");
-	if (pFile == NULL)
-		return;
-
-	pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (NULL == pPng)
-	{
-		fclose(pFile);
-		return;
-	}
-
-	pInfo = png_create_info_struct(pPng);
-	if (NULL == pInfo)
-	{
-		png_destroy_read_struct(&pPng, NULL, NULL);
-		fclose(pFile);
-		return;
-	}
-
-	pInfoEnd = png_create_info_struct(pPng);
-	if (NULL == pInfoEnd)
-	{
-		png_destroy_read_struct(&pPng, &pInfo, NULL);
-		fclose(pFile);
-		return;
-	}
-
-	if (setjmp(png_jmpbuf(pPng)))
-	{
-		png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
-		fclose(pFile);
-		return;
-	}
-
-	png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
-
-	pos = 0;
-
-	{
-		int	i;
-		png_bytep curRow;
-
-		for (i = 0; i < 6; i++)
-		{
-			pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-			pInfo = png_create_info_struct(pPng);
-			pInfoEnd = png_create_info_struct(pPng);
-			setjmp(png_jmpbuf(pPng));
-
-			fseek(pFile, pos, SEEK_SET);
-
-			png_init_io(pPng, pFile);
-			png_read_png(pPng, pInfo, PNG_TRANSFORM_IDENTITY, NULL);
-			rows = png_get_rows(pPng, pInfo);
-
-			unsigned int image_width = png_get_image_width(pPng, pInfo);
-			unsigned int image_height = png_get_image_height(pPng, pInfo);
-			bytePP = png_get_bit_depth(pPng, pInfo) / 8;
-
-			IDirect3DDevice9_CreateTexture(gpD3DDevice, image_width, image_height, 1, 0,
-				D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &gpSkyboxTextures[index][i], NULL);
-
-			IDirect3DTexture9_LockRect(gpSkyboxTextures[index][i], 0, &lockedRect, NULL, 0);
-
-			pitchHalf = lockedRect.Pitch / 2;
-
-			pBits = (unsigned char*)lockedRect.pBits;
-
-			for (h = 0; h < image_height; h++)
-			{
-				curRow = rows[h];
-
-				for (w = 0; w < image_width; w++)
-				{
-					for (b = 0; b < 4; b++)
-					{
-						if (b == 3)
-							pBits[h * lockedRect.Pitch + w * 4 + b] = 255;
-						else
-							// Apparently PNGs are BGR, while DirectX wants RGB
-							pBits[h * lockedRect.Pitch + w * 4 + (2 - b)] =
-							curRow[(w * 3) + b];
-					}
-				}
-			}
-
-			IDirect3DTexture9_UnlockRect(gpSkyboxTextures[index][i], 0);
-
-			fgetpos(pFile, &pos);
-			png_destroy_read_struct(&pPng, &pInfo, &pInfoEnd);
-		}
-	}
-
-	fclose(pFile);
+	gSkyboxCache.clear();
+	gpActiveSkyboxTextures.clear();
+	gCachedBackgroundID = 0;
 }

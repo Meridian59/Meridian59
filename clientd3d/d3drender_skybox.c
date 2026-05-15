@@ -10,10 +10,12 @@
 #include <unordered_map>
 #include <filesystem>
 #include <iterator>
+#include <string_view>
 
 ///////////////
 // Constants //
 ///////////////
+static constexpr std::string_view RESOURCE_DIRECTORY = "resource";
 
 // Geometry constants for rendering a quad as a triangular strip.
 static constexpr int SKYBOX_QUAD_VERTICES = 4;
@@ -121,7 +123,7 @@ static bool D3DRenderBackgroundSet(ID background)
 	}
 
 	// Otherwise, check if the file exists before attempting to load the PNG.
-	auto fullPath = std::filesystem::path("./resource") / hwFilename;
+	auto fullPath = std::filesystem::path(RESOURCE_DIRECTORY) / hwFilename;
 	if (!std::filesystem::exists(fullPath))
 	{
 		debug(("Skybox Error: File missing at %s\n", fullPath.string().c_str()));
@@ -146,9 +148,6 @@ static bool D3DRenderBackgroundSet(ID background)
 */
 static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, int anglePitch)
 {
-	if (gpActiveSkyboxTextures.empty())
-		return;
-	
 	gpD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
 	D3DMATRIX rot, mat;

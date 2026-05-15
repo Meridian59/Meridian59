@@ -57,7 +57,7 @@ void ColorsDestroy(void);
 M59EXPORT COLORREF GetColor(WORD color);
 M59EXPORT HBRUSH GetBrush(WORD color);
 M59EXPORT bool ThemeIsDark(void);
-int ThemeResourceId(int id);
+int MainThemeResourceId(int id);
 COLORREF GetPlayerNameColor(int flags,const char*name);
 
 void UserSelectColor(WORD color);

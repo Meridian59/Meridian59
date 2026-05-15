@@ -296,13 +296,15 @@ bool ThemeIsDark(void)
 }
 /************************************************************************/
 /*
- * ThemeResourceId:  Returns the variant of a bitmap resource ID for the
- *   active theme.  Returns the input ID unchanged when the default theme
- *   is active or when no variant exists.
+ * MainThemeResourceId:  Returns the variant of a main-client bitmap
+ *   resource ID for the active theme.  Returns the input ID unchanged
+ *   when the default theme is active or when no variant exists.
  *
- *   TODO: add cases here as more bitmaps get dark variants.
+ *   See docs/themes.md.
+ *
+ *   TODO: add cases here as more main-client bitmaps get dark variants.
  */
-int ThemeResourceId(int id)
+int MainThemeResourceId(int id)
 {
 	if (!ThemeIsDark())
 		return id;

@@ -191,7 +191,7 @@ void InventoryBoxCreate(HWND hParent)
       selftrgt_bits = NULL;
    else selftrgt_bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 
-   int inv_bkgnd_id = ThemeResourceId(IDB_INVBKGND);
+   int inv_bkgnd_id = MerintrThemeResourceId(IDB_INVBKGND);
    if (!GetBitmapResourceInfo(hInst, inv_bkgnd_id, &inventory_bkgnd))
      debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
 
@@ -1444,7 +1444,7 @@ void InventoryReloadBackground(void)
 {
 	BITMAPINFOHEADER *ptr;
 	LOGBRUSH logbrush;
-	int inv_bkgnd_id = ThemeResourceId(IDB_INVBKGND);
+	int inv_bkgnd_id = MerintrThemeResourceId(IDB_INVBKGND);
 
 	if (!GetBitmapResourceInfo(hInst, inv_bkgnd_id, &inventory_bkgnd))
 		debug(("InventoryReloadBackground couldn't load inventory background bitmap\n"));

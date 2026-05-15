@@ -15,12 +15,14 @@
 
 /****************************************************************************/
 /*
- * ThemeResourceId:  Returns the variant of a merintr bitmap resource ID
- *   that matches the active theme.  When no override exists for the
- *   given ID (or the default theme is active), returns the input ID
- *   unchanged.  Callers stay theme-blind.
+ * MerintrThemeResourceId:  Returns the variant of a merintr bitmap
+ *   resource ID that matches the active theme.  When no override exists
+ *   for the given ID (or the default theme is active), returns the
+ *   input ID unchanged.  Callers stay theme-blind.
+ *
+ *   See docs/themes.md.
  */
-int ThemeResourceId(int id)
+int MerintrThemeResourceId(int id)
 {
    if (!ThemeIsDark())
       return id;

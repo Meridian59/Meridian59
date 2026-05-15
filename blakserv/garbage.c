@@ -98,7 +98,7 @@ void GarbageCollect()
    /* Mark live objects first so the list phase can exclude dead objects.
     * Without this, list nodes reachable only from dead (but not yet C-deleted)
     * objects would survive list compaction, and the objects inside them could
-    * then be deleted by the object phase, leaving dangling list→object refs. */
+    * then be deleted by the object phase, leaving dangling list to object refs. */
    ForEachObject(ClearObjectGarbageRef);
    ForEachUser(MarkUserObjectNodes);
    MarkObject(GetSystemObjectID());

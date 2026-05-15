@@ -69,12 +69,11 @@ bool ThemeSidebarUsesInventoryFill(void)
 }
 /****************************************************************************/
 /*
- * ThemeSkipSilverFrame:  Returns true if the silver stats frame elements
- *   (corners and edge repeaters) should be skipped during interface
- *   element drawing.  Used by themes whose sidebar fill or color palette
- *   makes the silver artwork visually wrong.
+ * ThemeSkipStatsAreaFrame:  Returns true if the active theme skips the
+ *   ornamental frame (corners and edge repeaters) drawn around
+ *   stats_area (the right-side tabbed panel).
  */
-bool ThemeSkipSilverFrame(void)
+bool ThemeSkipStatsAreaFrame(void)
 {
    return ThemeIsDark();
 }

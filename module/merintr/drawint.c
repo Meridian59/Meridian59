@@ -804,10 +804,8 @@ void InterfaceDrawElements(HDC hdc)
 	  if( i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT )
 		  continue;
 
-	  // Skip silver stats frame corners for themes that opt out via
-	  // ThemeSkipSilverFrame; the silver artwork conflicts with their
-	  // sidebar fill or palette.
-	  if (ThemeSkipSilverFrame())
+	  // Skip stats_area frame corners if the active theme opts out.
+	  if (ThemeSkipStatsAreaFrame())
 	  {
 		  if (i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT)
 			  continue;
@@ -832,9 +830,8 @@ void InterfaceDrawElements(HDC hdc)
 	if( i == ELEMENT_BBOTTOM )
 		continue;
 
-	// Skip silver stats edge repeaters for themes that opt out via
-	// ThemeSkipSilverFrame.
-	if (ThemeSkipSilverFrame())
+	// Skip stats_area edge repeaters if the active theme opts out.
+	if (ThemeSkipStatsAreaFrame())
 	{
 		if (i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT)
 			continue;

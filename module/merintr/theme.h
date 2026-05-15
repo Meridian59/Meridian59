@@ -18,6 +18,6 @@
 
 int ThemeResourceId(int id);
 bool ThemeSidebarUsesInventoryFill(void);
-bool ThemeSkipSilverFrame(void);
+bool ThemeSkipStatsAreaFrame(void);
 
 #endif /* #ifndef _MERINTR_THEME_H */

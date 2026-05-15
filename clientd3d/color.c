@@ -289,8 +289,6 @@ void ColorsSave(void)
 /************************************************************************/
 /*
  * ThemeIsDark:  Returns true if the active theme is the dark theme.
- *   Single source of truth for theme-aware code paths in the client and
- *   in modules that link against the client's exports.
  */
 bool ThemeIsDark(void)
 {

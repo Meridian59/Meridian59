@@ -278,16 +278,14 @@ void ClearMessageQueue(void)
  * ThemeApply:  Reload the color palette and main window background
  *   bitmap for the active theme, fire EVENT_COLORCHANGED so modules
  *   refresh their themed resources, and force a repaint of the main
- *   window.  Called when the user changes themes in the Preferences
- *   dialog.
+ *   window.
  */
 void ThemeApply(void)
 {
 	ColorsDestroy();
 	ColorsCreate(false);
 
-	// Reload the main background bitmap so the new theme's tiles take effect
-	// without needing to relog.
+	// Reload main background so the theme's tiles take effect immediately.
 	CreateWindowBackground();
 
 	MainChangeColor();

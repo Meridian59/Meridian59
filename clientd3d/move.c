@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -853,7 +853,7 @@ void UserTurnPlayer(int action)
    }
    else if (dt > (4*TURN_DELAY))
    {
-      delta = (delta * (int)(GetFrameTime()) / TURN_DELAY) / 2;
+      delta = (delta * GetDeltaTimeMs() / TURN_DELAY) / 2;
    }
    last_turn_time = now;
 
@@ -1001,7 +1001,7 @@ void PlayerChangeHeight(int dz)
    }
    else if (dt > (4*HEIGHT_DELAY))
    {
-      dz = (dz * (int)(GetFrameTime()) / HEIGHT_DELAY) / 2;
+      dz = (dz * GetDeltaTimeMs() / HEIGHT_DELAY) / 2;
    }
    last_time = now;
 

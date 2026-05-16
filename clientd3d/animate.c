@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -75,11 +75,6 @@ void AnimationTimerAbort(void)
    }
 }
 
-DWORD GetFrameTime(void)
-{
-   return timeLastFrame;
-}
-
 float GetFlickerLevel(void)
 {
    return FLICKER_LEVEL;
@@ -88,25 +83,14 @@ float GetFlickerLevel(void)
 void AnimationTimerProc(HWND hwnd, UINT timer)
 {
    bool need_redraw = false;
-   static DWORD last_animate_time = 0;
-   DWORD dt, now;
 
    PingTimerProc(hwnd, 0, 0, 0);
 
    if (!(GameGetState() == GAME_PLAY || GameGetState() == GAME_SELECT))
       return;
 
-   if (last_animate_time == 0)
-   {
-	   last_animate_time = timeGetTime();
-	   return;
-   }
-
    config.quickstart = false;
-   now = timeGetTime();
-   dt = now - last_animate_time;
-   last_animate_time = now;
-   timeLastFrame = dt;
+   DWORD dt = static_cast<DWORD>(GetDeltaTimeMs());
 
    /* Send event to modules */
    ModuleEvent(EVENT_ANIMATE, dt);
@@ -130,7 +114,7 @@ void AnimationTimerProc(HWND hwnd, UINT timer)
 
       need_redraw = AnimateEffects(dt) || need_redraw;
       if (need_redraw)
-	 RedrawAll();
+	     RedrawAll();
    }
 
    if (GetGameDataValid())

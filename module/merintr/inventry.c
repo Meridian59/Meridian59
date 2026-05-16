@@ -1441,7 +1441,7 @@ RawBitmap* pinventory_bkgnd()
 }
 /************************************************************************/
 /*
- * InventoryReloadBackground:  Re-fetch the inventory background bitmap
+ * InventoryReloadBackground:  Reload the inventory background bitmap
  *   for the active theme and rebuild the scrollbar pattern brush.
  */
 static void InventoryReloadBackground(void)

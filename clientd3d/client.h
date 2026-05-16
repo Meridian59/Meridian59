@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -216,6 +216,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include "zlib.h"
 #include "signup.h"
 #include "preferences.h"
+#include "clock.h"
 
 // Only include externs if compiling main client
 #ifdef BLAKCLIENT

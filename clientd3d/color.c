@@ -302,7 +302,7 @@ Theme ThemeCurrent(void)
  *
  *   See docs/themes.md.
  *
- *   TODO: add cases here as more main-client bitmaps get dark variants.
+ *   TODO: extend as more bitmap variants or themes are added.
  */
 int MainThemeResourceId(int id)
 {

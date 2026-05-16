@@ -40,7 +40,7 @@ classvars:
    viSpell_level = 3
    viMana = 10
    viSpellExertion = 10
-   viCast_time = 30000
+   viCast_time = 7000
 
    viChance_To_Increase = 25
 

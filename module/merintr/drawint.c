@@ -330,7 +330,7 @@ void InterfaceLoadElement(InterfaceElement *element)
 {
    BITMAPINFOHEADER *ptr;
    
-   ptr = GetBitmapResource(hInst, MerintrThemeResourceId(element->id));
+   ptr = GetBitmapResource(hInst, InterfaceThemeResourceId(element->id));
    if (ptr == NULL)
    {
      element->bits = NULL;

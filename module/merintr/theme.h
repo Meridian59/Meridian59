@@ -16,7 +16,7 @@
 #ifndef _MERINTR_THEME_H
 #define _MERINTR_THEME_H
 
-int MerintrThemeResourceId(int id);
+int InterfaceThemeResourceId(int id);
 bool ThemeSidebarUsesInventoryFill(void);
 bool ThemeSkipStatsAreaFrame(void);
 

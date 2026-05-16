@@ -6,7 +6,7 @@
 //
 // Meridian is a registered trademark.
 /*
- * theme.c:  Theme-aware helpers for the merintr module: bitmap
+ * theme.c:  Theme-aware helpers for the interface module: bitmap
  *   resource ID lookup and capability flags.
  */
 
@@ -15,14 +15,14 @@
 
 /****************************************************************************/
 /*
- * MerintrThemeResourceId:  Returns the variant of a merintr bitmap
- *   resource ID that matches the active theme.  Returns the input ID
- *   unchanged when no variant exists for the active theme.  Callers
- *   stay theme-blind.
+ * InterfaceThemeResourceId:  Returns the variant of an interface
+ *   bitmap resource ID that matches the active theme.  Returns the
+ *   input ID unchanged when no variant exists for the active theme.
+ *   Callers stay theme-blind.
  *
  *   See docs/themes.md
  */
-int MerintrThemeResourceId(int id)
+int InterfaceThemeResourceId(int id)
 {
    switch (ThemeCurrent())
    {

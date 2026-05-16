@@ -554,7 +554,7 @@ void CreateWindowBackground(void)
 {
 	BITMAPINFOHEADER *ptr;
 	
-	ptr = (BITMAPINFOHEADER *) GetBitmapResource(hInst, IDB_BACKGROUND);
+	ptr = (BITMAPINFOHEADER *) GetBitmapResource(hInst, MainThemeResourceId(IDB_BACKGROUND));
 	if (ptr == NULL)
 		debug(("Couldn't lock resource!\n"));      
 	bkgnd.bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);

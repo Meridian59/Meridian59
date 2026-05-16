@@ -16,6 +16,8 @@ void InterfaceDrawInit(void);
 void InterfaceDrawExit(void);
 void InterfaceDrawResize(int xsize, int ysize, AREA *view);
 void InterfaceDrawElements(HDC hdc);
+void InterfaceDrawSidebarBackground(HDC hdc);
+RawBitmap *OffscreenSidebarBackground(int x, int y, int cx, int cy);
 //void InterfaceDrawBarBorder(HDC hdc, AREA *a);
 void InterfaceDrawBarBorder( RawBitmap* prawbmpBackground, HDC hdc, AREA *a );
 

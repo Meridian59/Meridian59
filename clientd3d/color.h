@@ -52,10 +52,16 @@ enum { UNSEL_FGD, UNSEL_BGD, SEL_FGD, SEL_BGD };
 // Turn normal RGB color into palette-relative RGB color
 #define MAKEPALETTERGB(c) ((c) | 0x02000000)
 
+// Sentinel color_id meaning "every color may have changed at once."
+// Used when themes switch or when colors are reset to defaults.
+static const WORD COLOR_ID_ALL = (WORD)-1;
+
 void ColorsCreate(bool use_defaults);
 void ColorsDestroy(void);
 M59EXPORT COLORREF GetColor(WORD color);
 M59EXPORT HBRUSH GetBrush(WORD color);
+M59EXPORT Theme ThemeCurrent(void);
+int MainThemeResourceId(int id);
 COLORREF GetPlayerNameColor(int flags,const char*name);
 
 void UserSelectColor(WORD color);

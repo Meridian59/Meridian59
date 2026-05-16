@@ -60,8 +60,7 @@ void UserAreaRedraw(void)
       debug(("DrawUserBitmap got NULL player object or area\n"));
    else
    {
-      // Set up window background under user bitmap
-      OffscreenWindowBackground(NULL, user_area.x, user_area.y, user_area.cx, user_area.cy);
+      OffscreenSidebarBackground(user_area.x, user_area.y, user_area.cx, user_area.cy);
 
 	  if (GetUserTargetID() == GetPlayer()->id)
 		OffscreenStretchBlt(hdc, 0, 0, user_area.cx, user_area.cy,

@@ -73,7 +73,7 @@ Each module owns its own bitmap IDs in its own `resource.h`.  The ID values are 
 | `clientd3d` | `MainThemeResourceId` | Main window background |
 | `module/merintr` | `MerintrThemeResourceId` | Inventory texture; window-edge and minimap wrapper ornaments |
 
-Other client modules (`admin`, `char`, `chess`, `dm`, `mailnews`) ship bitmaps but have no themed variants today.  When one does, it adds its own resolver.
+Other client modules (`admin`, `char`, `chess`, `dm`, `mailnews`) contain bitmaps but have no themed variants today.
 
 A resolver takes a default-theme bitmap ID and returns the variant for the active theme.  If the active theme has no variant for that ID, the resolver returns the input unchanged.
 

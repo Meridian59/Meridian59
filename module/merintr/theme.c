@@ -20,7 +20,7 @@
  *   unchanged when no variant exists for the active theme.  Callers
  *   stay theme-blind.
  *
- *   See docs/themes.md.
+ *   See docs/themes.md
  */
 int MerintrThemeResourceId(int id)
 {

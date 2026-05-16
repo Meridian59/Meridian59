@@ -300,7 +300,7 @@ Theme ThemeCurrent(void)
  *   resource ID for the active theme.  Returns the input ID unchanged
  *   when no variant exists for the active theme.
  *
- *   See docs/themes.md.
+ *   See docs/themes.md
  *
  *   TODO: extend as more bitmap variants or themes are added.
  */

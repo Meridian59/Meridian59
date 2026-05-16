@@ -812,8 +812,8 @@ void InterfaceDrawElements(HDC hdc)
 	  /* Skip inventory corner bitmaps.  The inventory edge repeaters
 	     (ELEMENT_ITOP through ELEMENT_IRIGHT) are already skipped in
 	     the repeater loop below, so these corners have no connecting
-	     edges and draw as floating fragments.  Also skip stats_area
-	     frame corners when the active theme opts out. */
+	     edges and draw as floating fragments.  Stats-area corners are
+	     also skipped, depending on the active theme. */
 	  if ((i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT) ||
 	      (ThemeSkipStatsAreaFrame() && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT))
 		  continue;
@@ -834,8 +834,8 @@ void InterfaceDrawElements(HDC hdc)
 	  //	disable xxx
 	if( i >= ELEMENT_TOP && i <= ELEMENT_RIGHT )
 		continue;
-	// Skip the edit-box bottom repeater, and stats_area edge repeaters
-	// when the active theme opts out.
+	// Skip the edit-box bottom repeater.  Stats-area edge repeaters
+	// are also skipped, depending on the active theme.
 	if ((i == ELEMENT_BBOTTOM) ||
 	    (ThemeSkipStatsAreaFrame() && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT))
 		continue;

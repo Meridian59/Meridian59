@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -232,13 +232,7 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 /************************************************************************/
 void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
 {
-   static DWORD timeLastFrame = 0;
-   DWORD timeCurrent, timeDelta;
    int amount;
-
-   timeCurrent = timeGetTime();
-   timeDelta = timeCurrent - timeLastFrame;
-   timeLastFrame = timeCurrent;
 
    // May be drawn over room or map.
 
@@ -268,7 +262,7 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
    if (effects.flashxlat != XLAT_IDENTITY)
    {
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(effects.flashxlat));
-      effects.duration -= (int)timeDelta;
+      effects.duration -= GetDeltaTimeMs();
       if (effects.duration <= 0)
       {
 	 effects.flashxlat = XLAT_IDENTITY;

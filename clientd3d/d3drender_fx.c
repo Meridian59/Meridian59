@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2024 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -103,22 +103,16 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	D3DCacheSystemReset(fxrss.objectCacheSystem);
 	D3DRenderPoolReset(fxrss.objectPool, &D3DMaterialObjectPool);
 
-	static DWORD			timeLastFrame = 0;
-	DWORD					timeCurrent, timeDelta;
 	int						i;
 	d3d_render_chunk_new	*pChunk;
 	d3d_render_packet_new	*pPacket;
-
-	timeCurrent = timeGetTime();
-	timeDelta = timeCurrent - timeLastFrame;
-	timeLastFrame = timeCurrent;
 
 	// Flash of XLAT.  Could be color, blindness, whatever.
 	if (effects.flashxlat != XLAT_IDENTITY)
 	{
 		custom_bgra	bgra;
 
-		effects.duration -= (int)timeDelta;
+		effects.duration -= GetDeltaTimeMs();
 		switch (effects.flashxlat)
 		{
 			case XLAT_BLEND10RED:

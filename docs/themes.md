@@ -71,7 +71,7 @@ Each module owns its own bitmap IDs in its own `resource.h`.  The ID values are 
 | Module | Resolver | Themed bitmaps today |
 | ------ | -------- | -------------------- |
 | `clientd3d` | `MainThemeResourceId` | Main window background |
-| `module/merintr` | `MerintrThemeResourceId` | Inventory texture; window-edge and minimap wrapper ornaments |
+| `module/merintr` | `InterfaceThemeResourceId` | Inventory texture; window-edge and minimap wrapper ornaments |
 
 Other client modules (`admin`, `char`, `chess`, `dm`, `mailnews`) contain bitmaps but have no themed variants today.
 
@@ -80,7 +80,7 @@ A resolver takes a default-theme bitmap ID and returns the variant for the activ
 ```mermaid
 flowchart LR
     A[Caller in clientd3d] --> M[MainThemeResourceId]
-    B[Caller in merintr] --> R[MerintrThemeResourceId]
+    B[Caller in merintr] --> R[InterfaceThemeResourceId]
     M --> Q{variant for<br/>active theme?}
     R --> Q
     Q -->|yes| V[return themed ID]
@@ -103,7 +103,7 @@ Example: adding a dark variant for an existing bitmap.
 Call sites pass the canonical ID through the resolver:
 
 ```c
-LoadBitmap(hInst, MAKEINTRESOURCE(MerintrThemeResourceId(IDB_X)));
+LoadBitmap(hInst, MAKEINTRESOURCE(InterfaceThemeResourceId(IDB_X)));
 ```
 
 ## Adding a new theme
@@ -114,5 +114,5 @@ The major components are:
 2. **Color tables.**  In `clientd3d/color.c`, add a `colorinfo_<name>[]` table and an INI section string.  Extend `ColorDefaultsForTheme` and `ColorSectionForTheme`.  Bump `THEME_COLOR_VERSION`.
 3. **Server message codes (optional).**  In `clientd3d/srvrstr.c`, add a `code_table_<name>[]` and extend `ColorCodeTableForTheme`.
 4. **Settings UI.**  Add a localized string (`IDS_THEME_<NAME>`) in `clientd3d/client.rc` for each locale.  Append it to the `IDC_THEME` combo in `clientd3d/preferences.c`.
-5. **Bitmap variants (optional).**  Author `_<NAME>` BMP variants.  In `MainThemeResourceId` (`clientd3d/color.c`) or `MerintrThemeResourceId` (`module/merintr/theme.c`), add a `case Theme::<NewName>:` block with an inner switch over bitmap IDs.
+5. **Bitmap variants (optional).**  Author `_<NAME>` BMP variants.  In `MainThemeResourceId` (`clientd3d/color.c`) or `InterfaceThemeResourceId` (`module/merintr/theme.c`), add a `case Theme::<NewName>:` block with an inner switch over bitmap IDs.
 6. **Capability flags.**  In `module/merintr/theme.c`, add a `case Theme::<NewName>: return ...;` to each yes/no function (`ThemeSidebarUsesInventoryFill`, `ThemeSkipStatsAreaFrame`).

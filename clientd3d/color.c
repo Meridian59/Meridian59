@@ -288,17 +288,17 @@ void ColorsSave(void)
 }
 /************************************************************************/
 /*
- * ThemeIsDark:  Returns true if the active theme is the dark theme.
+ * ThemeCurrent:  Returns the active theme.
  */
-bool ThemeIsDark(void)
+Theme ThemeCurrent(void)
 {
-	return config.theme == Theme::Dark;
+	return config.theme;
 }
 /************************************************************************/
 /*
  * MainThemeResourceId:  Returns the variant of a main-client bitmap
  *   resource ID for the active theme.  Returns the input ID unchanged
- *   when the default theme is active or when no variant exists.
+ *   when no variant exists for the active theme.
  *
  *   See docs/themes.md.
  *
@@ -306,13 +306,16 @@ bool ThemeIsDark(void)
  */
 int MainThemeResourceId(int id)
 {
-	if (!ThemeIsDark())
-		return id;
-
-	switch (id)
+	switch (ThemeCurrent())
 	{
-	case IDB_BACKGROUND: return IDB_BACKGROUND_DARK;
-	default:             return id;
+	case Theme::Dark:
+		switch (id)
+		{
+		case IDB_BACKGROUND: return IDB_BACKGROUND_DARK;
+		default:             return id;
+		}
+	default:
+		return id;
 	}
 }
 /************************************************************************/

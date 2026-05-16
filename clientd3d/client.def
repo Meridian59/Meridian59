@@ -59,7 +59,7 @@ EXPORTS
 	GetFont
 	GetColor
 	GetBrush
-	ThemeIsDark
+	ThemeCurrent
 	CenterWindow
 	GetFontHeight	
 	EditBoxScroll

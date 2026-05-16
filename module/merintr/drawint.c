@@ -812,16 +812,11 @@ void InterfaceDrawElements(HDC hdc)
 	  /* Skip inventory corner bitmaps.  The inventory edge repeaters
 	     (ELEMENT_ITOP through ELEMENT_IRIGHT) are already skipped in
 	     the repeater loop below, so these corners have no connecting
-	     edges and draw as floating fragments. */
-	  if( i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT )
+	     edges and draw as floating fragments.  Also skip stats_area
+	     frame corners when the active theme opts out. */
+	  if ((i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT) ||
+	      (ThemeSkipStatsAreaFrame() && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT))
 		  continue;
-
-	  // Skip stats_area frame corners if the active theme opts out.
-	  if (ThemeSkipStatsAreaFrame())
-	  {
-		  if (i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT)
-			  continue;
-	  }
 
     OffscreenWindowBackground(NULL, elements[i].x, elements[i].y, elements[i].width, elements[i].height);
     
@@ -839,15 +834,11 @@ void InterfaceDrawElements(HDC hdc)
 	  //	disable xxx
 	if( i >= ELEMENT_TOP && i <= ELEMENT_RIGHT )
 		continue;
-	if( i == ELEMENT_BBOTTOM )
+	// Skip the edit-box bottom repeater, and stats_area edge repeaters
+	// when the active theme opts out.
+	if ((i == ELEMENT_BBOTTOM) ||
+	    (ThemeSkipStatsAreaFrame() && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT))
 		continue;
-
-	// Skip stats_area edge repeaters if the active theme opts out.
-	if (ThemeSkipStatsAreaFrame())
-	{
-		if (i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT)
-			continue;
-	}
 
 	e = &repeaters[i].element;
     x = e->x;

@@ -106,18 +106,13 @@ void InterfaceFontChanged(WORD font_id, LOGFONT *font)
 /****************************************************************************/
 void InterfaceColorChanged(WORD color_id, COLORREF color)
 {
-   // For a global theme change (color_id == -1), reload theme-dependent
-   // bitmaps so the inventory texture and frame elements pick up the new
-   // theme without needing to relog.
-   if (color_id == (WORD)-1)
-   {
-      InventoryReloadBackground();
-      InterfaceDrawInit();
-   }
-
-   InventoryChangeColor();   
+   InventoryChangeColor(color_id);
    StatsChangeColor();
    StatsMainChangeColor();
+
+   // Reload frame element bitmaps when every color changes (theme switch).
+   if (color_id == COLOR_ID_ALL)
+      InterfaceDrawInit();
 }
 /****************************************************************************/
 /*

@@ -289,7 +289,7 @@ void ThemeApply(void)
 	CreateWindowBackground();
 
 	MainChangeColor();
-	ModuleEvent(EVENT_COLORCHANGED, -1, 0);
+	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);
 	if (hMain != NULL)
 	{
 		// RDW_ALLCHILDREN forces sidebar/inventory child windows to repaint

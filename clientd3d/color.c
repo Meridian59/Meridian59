@@ -325,7 +325,7 @@ void ColorsRestoreDefaults(void)
 	ColorsCreate(true);
 	MainChangeColor();
 
-	ModuleEvent(EVENT_COLORCHANGED, -1, 0);
+	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);
 }
 
 

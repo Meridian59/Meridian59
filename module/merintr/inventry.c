@@ -128,6 +128,7 @@ static bool InventoryDropCurrentItem(room_contents_node *container);
 static bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
+static void InventoryReloadBackground(void);
 
 /************************************************************************/
 /*
@@ -209,7 +210,7 @@ void InventoryBoxCreate(HWND hParent)
    inventory_bg_index = GetClosestPaletteIndex(RGB(84, 40, 0));
 
    InventoryResetFont();
-   InventoryChangeColor();
+   InventoryChangeColor(COLOR_ID_ALL);
 }
 /************************************************************************/
 /*
@@ -408,10 +409,13 @@ void InventoryResetFont(void)
 }
 /************************************************************************/
 /*
- * InventoryChangeColor:  Called when a color has changed.
+ * InventoryChangeColor:  Refresh inventory state for a color change.
+ *   Reloads themed resources when color_id is COLOR_ID_ALL.
  */
-void InventoryChangeColor(void)
+void InventoryChangeColor(WORD color_id)
 {
+   if (color_id == COLOR_ID_ALL)
+      InventoryReloadBackground();
 }
 /************************************************************************/
 void InventorySetFocus(bool forward)
@@ -1440,7 +1444,7 @@ RawBitmap* pinventory_bkgnd()
  * InventoryReloadBackground:  Re-fetch the inventory background bitmap
  *   for the active theme and rebuild the scrollbar pattern brush.
  */
-void InventoryReloadBackground(void)
+static void InventoryReloadBackground(void)
 {
 	BITMAPINFOHEADER *ptr;
 	LOGBRUSH logbrush;

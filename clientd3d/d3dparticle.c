@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -15,6 +15,9 @@
 static constexpr uint32_t PARTICLE_INDICES = 2;
 static constexpr uint32_t PARTICLE_VERTICES = 2;
 static constexpr uint32_t PARTICLE_PRIMITIVES = 1;
+
+// Scales legacy 'units per frame' to 'units per second' (based on 60 FPS) when multiplied by delta time.
+static constexpr float UNIT_FRAME_TO_SEC = 60.0f;
 
 ///////////////
 // Variables //
@@ -51,7 +54,8 @@ static void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render
 	if (pParticle->isActive == false)
 		return;
 
-	if (--pParticle->timeLeft <= 0)
+	pParticle->timeLeft_s -= GetDeltaTime();
+	if (pParticle->timeLeft_s <= 0.0f)
 	{
 		pParticle->isActive = false;
 		return;
@@ -69,9 +73,9 @@ static void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render
 	pParticle->velocity = {rotatedVelocity.x, rotatedVelocity.y, rotatedVelocity.z};
 
 	pParticle->oldPosition = pParticle->position;
-	pParticle->position.x += pParticle->velocity.x;
-	pParticle->position.y += pParticle->velocity.y;
-	pParticle->position.z += pParticle->velocity.z;
+	pParticle->position.x += pParticle->velocity.x * GetDeltaTime() * UNIT_FRAME_TO_SEC;
+	pParticle->position.y += pParticle->velocity.y * GetDeltaTime() * UNIT_FRAME_TO_SEC;
+	pParticle->position.z += pParticle->velocity.z * GetDeltaTime() * UNIT_FRAME_TO_SEC;
 
 	auto *pPacket = D3DRenderPacketFindMatch(pPool, nullptr, nullptr, 0, 0, 0);
 	assert(pPacket);
@@ -97,15 +101,6 @@ static void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render
 // Gets a particle from the object pool
 static void D3DParticleInitialize(emitter *pEmitter, particle *pParticle)
 {
-	// Advance to the next slot in the circular buffer and reset the emitter's timer,
-	// regardless if the recycled particle should show up in its new location or not.
-	pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES_PER_EMITTER;
-	if (pEmitter->numParticles < MAX_PARTICLES_PER_EMITTER)
-	{
-		pEmitter->numParticles++;
-	}
-	pEmitter->timer = pEmitter->timerBase;
-
 	// Apply position/velocity/rotation settings to the particle, and with variance if any.
 	pParticle->position = GetVariedXYZ(pEmitter->position,
 		pEmitter->positionVarianceMin, pEmitter->positionVarianceMax);
@@ -115,7 +110,7 @@ static void D3DParticleInitialize(emitter *pEmitter, particle *pParticle)
 		pEmitter->rotationVarianceMin, pEmitter->rotationVarianceMax);
 
 	pParticle->bgra = pEmitter->bgra;
-	pParticle->timeLeft = pEmitter->particleLifetime;
+	pParticle->timeLeft_s = pEmitter->particleLifetime_s;
 
 	// Once the particle is all set, make it active so it can be included in the rendering.
 	pParticle->isActive = true;
@@ -138,12 +133,12 @@ void D3DParticleSystemClear(particle_system *pParticleSystem)
 	pParticleSystem->emitterList.clear();
 }
 
-emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int time)
+emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, float time)
 {
 	emitter	*pEmitter = reinterpret_cast<emitter*>(ZeroSafeMalloc(sizeof(emitter)));
 
-	pEmitter->timer = time;
-	pEmitter->timerBase = time;
+	pEmitter->timer_s = time;
+	pEmitter->timerBase_s = time;
 
 	pParticleSystem->emitterList.push_back(pEmitter);
 	return pEmitter;
@@ -170,11 +165,20 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 			D3DParticleUpdate(pEmitter, &pEmitter->particles[i], pPool);
 		}
 
-		// Initializing new particles
-		if (--pEmitter->timer <= 0)
+		// Initializing new particles.
+		pEmitter->timer_s -= GetDeltaTime();
+		if (pEmitter->timer_s <= 0.0f)
 		{
-			// Particles spawn one at a time and use circular buffing to track the next open particle.
 			D3DParticleInitialize(pEmitter, &pEmitter->particles[pEmitter->nextSlot]);
+
+			// Advance to the next slot in the circular buffer and reset the emitter's timer.
+			pEmitter->nextSlot = (pEmitter->nextSlot + 1) % MAX_PARTICLES_PER_EMITTER;
+			if (pEmitter->numParticles < MAX_PARTICLES_PER_EMITTER)
+			{
+				pEmitter->numParticles++;
+			}
+
+			pEmitter->timer_s = pEmitter->timerBase_s;
 		}
 	}
 

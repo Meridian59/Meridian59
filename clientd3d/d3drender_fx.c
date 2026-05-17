@@ -23,25 +23,30 @@ static particle_system sandParticleSystem;
 static void SandstormInit(void)
 {
 	static constexpr int SAND_EMITTER_COUNT = 8;
-	static constexpr int SAND_LIFETIME = 40;
-	static constexpr float SAND_EMITTER_RADIUS = 10000.0f;
-	static constexpr float SAND_Z_VARIANCE = 1000.0f;
-	static constexpr float SAND_VELOCITY = 400.0f;
-	static constexpr float SAND_TIMER = 1;
-	static constexpr float SAND_RAND_ROT = PI / 1000.0f;
+	static constexpr float SAND_EMITTER_TIMER_S = 0.015f;
+
+	// Sand particle fly really fast, so their duration are short to use up less resources.
+	static constexpr float SAND_LIFETIME_S = 0.3f;
+	static constexpr float SAND_VELOCITY = 1200.0f;
+
+	static constexpr float SAND_EMITTER_RADIUS = 5000.0f;
+	static constexpr float SAND_Z_VARIANCE = 2000.0f;
+	static constexpr float SAND_RAND_ROT = PI / 180.0f;  // Adds a slight 1-degree curvature.
+
 	static constexpr custom_bgra SANDSTORM_COLOR = {6,153,226,255};
 
 	D3DParticleSystemClear(&sandParticleSystem);
 	for (int i = 0; i < SAND_EMITTER_COUNT; i++)
 	{
-		emitter* newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_TIMER);
-		newEmitter->particleLifetime = SAND_LIFETIME;
+		emitter* newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_EMITTER_TIMER_S);
+		newEmitter->particleLifetime_s = SAND_LIFETIME_S;
 		newEmitter->positionVarianceMin = {-SAND_EMITTER_RADIUS, -SAND_EMITTER_RADIUS, -SAND_Z_VARIANCE};
-		newEmitter->positionVarianceMax = {SAND_EMITTER_RADIUS, SAND_EMITTER_RADIUS, SAND_Z_VARIANCE * 2.0f};
+		newEmitter->positionVarianceMax = {SAND_EMITTER_RADIUS, SAND_EMITTER_RADIUS, SAND_Z_VARIANCE};
 		newEmitter->rotationVarianceMin = {-SAND_RAND_ROT, -SAND_RAND_ROT, -SAND_RAND_ROT};
 		newEmitter->rotationVarianceMax = {SAND_RAND_ROT, SAND_RAND_ROT, SAND_RAND_ROT};
 
-		// Each emitters fire sand particles at 22.5 degrees in a full circle.
+		// Each emitter fires sand particles at 45-degrees in a full circle around the player.
+		// The randomized particle rotations help hide the 8-direction "emitter lines".
 		float angle = (static_cast<float>(i) * 2.0f * PI) / static_cast<float>(SAND_EMITTER_COUNT);
 		float directionX = cosf(angle);
 		float directionY = sinf(angle);

@@ -380,7 +380,6 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	while (!bQuit)
 	{
-		UpdateTime();
 		MainIdle();
 
 		while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))

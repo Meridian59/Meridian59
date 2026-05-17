@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -386,6 +386,7 @@ void GameIdle(void)
 {
    MoveUpdateServer();       // Update our position on server, if necessary
 
+   UpdateTime();
    AnimationTimerProc(hMain, 0);
    HandleKeys();
 

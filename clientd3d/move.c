@@ -144,7 +144,6 @@ void UserMovePlayer(int action)
    int depth;
    DWORD now;
    room_contents_node *player_obj;
-   static DWORD last_move_time = 0;
    bool bounce = true;
    bool changed_square = false;
    BSPleaf *leaf;
@@ -204,7 +203,7 @@ void UserMovePlayer(int action)
    if (now < next_move_time)
       return;
 
-   dt = now - last_move_time;
+   dt = GetDeltaTimeMs();
 
    // Watch for int wraparound in timeGetTime()
    if (dt <= 0)
@@ -219,7 +218,6 @@ void UserMovePlayer(int action)
    {
       gravityAdjust = (double)MOVE_DELAY / (double)dt;
    }
-   last_move_time = now;
 
    switch (action)
    {
@@ -816,8 +814,6 @@ void MoveSetValidity(bool valid)
 void UserTurnPlayer(int action)
 {
    int dt, delta;  /* # of degrees to turn */
-   DWORD now;
-   static DWORD last_turn_time = 0;
 
    if (effects.paralyzed)
       return;
@@ -843,19 +839,18 @@ void UserTurnPlayer(int action)
 
    // Find out how far to turn based on time elapsed:  always turn at a rate of
    // TURNDEGREES per TURN_DELAY milliseconds.
-   now = timeGetTime();
-   dt = now - last_turn_time;
-   if (last_turn_time == 0 || dt <= 0)
+   dt = GetDeltaTimeMs();
+   if (dt <= 0)
       dt = 1;
+
    if (dt < TURN_DELAY)
    {
       delta = delta * dt / TURN_DELAY;
    }
    else if (dt > (4*TURN_DELAY))
    {
-      delta = (delta * GetDeltaTimeMs() / TURN_DELAY) / 2;
+      delta = (delta * dt / TURN_DELAY) / 2;
    }
-   last_turn_time = now;
 
    if (player.viewID)
    {
@@ -985,29 +980,24 @@ void BounceUser(int dt)
  */
 void PlayerChangeHeight(int dz)
 {
-   DWORD now;
-   int dt;
-   static DWORD last_time = 0;
-
    dz = SGN(dz) * HEIGHT_INCREMENT;
 
-   now = timeGetTime();
-   dt = now - last_time;
-   if (last_time == 0 || dt <= 0)
+   int dt = GetDeltaTimeMs();
+   if (dt <= 0)
       dt = 1;
+
    if (dt < HEIGHT_DELAY)
    {
       dz = dz * dt / HEIGHT_DELAY;
    }
-   else if (dt > (4*HEIGHT_DELAY))
+   else if (dt > (4 * HEIGHT_DELAY))
    {
-      dz = (dz * GetDeltaTimeMs() / HEIGHT_DELAY) / 2;
+      dz = (dz * dt / HEIGHT_DELAY) / 2;
    }
-   last_time = now;
 
    height_offset += dz;
-   height_offset = std::min(height_offset, (long)HEIGHT_MAX_OFFSET);
-   height_offset = std::max(height_offset, (long)- HEIGHT_MAX_OFFSET);
+   height_offset = std::min(height_offset, static_cast<long>(HEIGHT_MAX_OFFSET));
+   height_offset = std::max(height_offset, static_cast<long>(-HEIGHT_MAX_OFFSET));
    RedrawAll();
 }
 

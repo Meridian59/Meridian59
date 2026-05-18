@@ -8,12 +8,15 @@
 #include "client.h"
 #include <chrono>
 
-using steady_clock_time_point = std::chrono::time_point<std::chrono::steady_clock>;
+//////////////////////
+// Local Namespaces //
+//////////////////////
+using namespace std::chrono;
 
 ///////////////
 // Variables //
 ///////////////
-static steady_clock_time_point lastEndFrame;
+static time_point<steady_clock> lastEndFrame;
 
 // Elapsed time between frames (in seconds).
 static float deltaTime_s;
@@ -45,33 +48,32 @@ void InitializeTime()
 	deltaTime_ms = 0;
 	msAccumulator = 0.0f;
 
-	lastEndFrame = std::chrono::steady_clock::now();
+	lastEndFrame = steady_clock::now();
 }
 
 void UpdateTime()
 {
 	// Get current time first.
-	auto currentTime = std::chrono::steady_clock::now();
+	auto currentTime = steady_clock::now();
 
 	// Calculate delta time (in seconds) since last frame.
 	auto frameTime = currentTime - lastEndFrame;
-	deltaTime_s = std::chrono::duration<float>(frameTime).count();
+	deltaTime_s = duration<float>(frameTime).count();
 
 	// Cap the max allowed delta time to roughly an equivalent to 10 FPS. This prevents things
 	// like game logic or animations from "spiking" if the window halts (e.g. during a resize).
-	if (deltaTime_s > 0.1f)
-	{
-		deltaTime_s = 0.1f;
+	static constexpr duration<float> DELTA_TIME_CAP = duration<float>(0.1f);
 
-		// Sync frameTime duration back down to match the safety cap.
-		frameTime = std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<float>(0.1f));
-	}
+	// Sync frameTime duration back down to match the safety cap.
+	frameTime = std::min(frameTime, duration_cast<steady_clock::duration>(DELTA_TIME_CAP));
+	deltaTime_s = duration<float>(frameTime).count();
+
 	// Always slide the time window completely forward to prevent catch-up loops.
 	lastEndFrame = currentTime;
 
 	// Also calculate delta time in milliseconds for systems that still use it.
 	// msAccumulator keeps track of fractional time so it isn't lost between frames.
-	float totalMs = (std::chrono::duration<float, std::milli>(frameTime).count()) + msAccumulator;
+	float totalMs = (duration<float, std::milli>(frameTime).count()) + msAccumulator;
 	deltaTime_ms = static_cast<int>(totalMs);
 	msAccumulator = totalMs - static_cast<float>(deltaTime_ms);
 }

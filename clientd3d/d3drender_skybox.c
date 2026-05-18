@@ -154,8 +154,8 @@ static void D3DRenderSkyboxDraw(d3d_render_pool_new* pPool, int angleHeading, in
 	MatrixIdentity(&mat);
 	gpD3DDevice->SetTransform(D3DTS_WORLD, &mat);
 
-	MatrixRotateY(&rot, static_cast<float>(angleHeading) * 360.0f / 4096.0f * PI / 180.0f);
-	MatrixRotateX(&mat, static_cast<float>(anglePitch) * 45.0f / 414.0f * PI / 180.0f);
+	MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
+	MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_RAD);
 	MatrixMultiply(&mat, &rot, &mat);
 
 	gpD3DDevice->SetTransform(D3DTS_VIEW, &mat);

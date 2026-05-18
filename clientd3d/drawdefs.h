@@ -67,6 +67,17 @@
 #define DegToRad(x) ((float) (x) * PITWICE / NUMDEGREES)
 #define RadToDeg(x) ((long)  ((x) * NUMDEGREES / PITWICE))
 
+constexpr float deg_to_rad(float degrees)
+{
+	constexpr float DEG_TO_RAD_FACTOR = PITWICE / 360.0f;
+	return degrees * DEG_TO_RAD_FACTOR;
+}
+constexpr float rad_to_deg(float radians)
+{	
+	constexpr float RAD_TO_DEG_FACTOR = 360.0f / PITWICE;
+	return radians * RAD_TO_DEG_FACTOR;
+}
+
 #define NUM_COLORS 256
 #define MAX_LIGHT 256  
 #define LIGHT_LEVELS 64

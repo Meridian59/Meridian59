@@ -98,15 +98,11 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 		MatrixIdentity(&mat);
 		MatrixIdentity(&rot);
 
-		const float FULL_CIRCLE_TO_DEGREES = 360.0f / 4096.0f;
-		const float DEGREES_TO_RADIANS = PI / 180.0f;
-		const float ANGLE_RANGE_TO_DEGREES = 45.0f / 414.0f;
-
 		const auto& angleHeading = bgoSceneParams.angleHeading;
 		const auto& anglePitch = bgoSceneParams.anglePitch;
 
-		MatrixRotateY(&rot, (float)angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
-		MatrixRotateX(&mat, (float)anglePitch * ANGLE_RANGE_TO_DEGREES * DEGREES_TO_RADIANS);
+		MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
+		MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_RAD);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, bg_overlay_pos.x, bg_overlay_pos.z, bg_overlay_pos.y);
 		MatrixMultiply(&pChunk->xForm, &rot, &mat);

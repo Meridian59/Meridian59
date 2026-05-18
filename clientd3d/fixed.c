@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -37,7 +37,7 @@ FixedPoint fpMul(FixedPoint m1, FixedPoint m2)
 
 int intATan2(int dy, int dx)
 {
-   return RadToDeg(atan2((float) dy,dx));
+   return rad_to_game_angle(atan2(static_cast<float>(dy), static_cast<float>(dx)));
 }
 
 int Distance(int dx, int dy)

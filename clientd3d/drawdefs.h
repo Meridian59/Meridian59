@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -63,10 +63,6 @@
 #define VIEWER_DISTANCE  (FINENESS >> 1)         /* Distance from viewer to screen in pixels */
 #define LOG_VIEWER_DISTANCE  (LOG_FINENESS - 1)
 
-/* Convert from pseudo degrees to radians */
-#define DegToRad(x) ((float) (x) * PITWICE / NUMDEGREES)
-#define RadToDeg(x) ((long)  ((x) * NUMDEGREES / PITWICE))
-
 constexpr float deg_to_rad(float degrees)
 {
 	constexpr float DEG_TO_RAD_FACTOR = PITWICE / 360.0f;
@@ -76,6 +72,18 @@ constexpr float rad_to_deg(float radians)
 {	
 	constexpr float RAD_TO_DEG_FACTOR = 360.0f / PITWICE;
 	return radians * RAD_TO_DEG_FACTOR;
+}
+
+/* Convert between pseudo degrees and radians */
+constexpr float game_angle_to_rad(float angle)
+{
+	constexpr float GAME_ANGLE_TO_RAD_FACTOR = PITWICE / static_cast<float>(NUMDEGREES);
+	return angle * GAME_ANGLE_TO_RAD_FACTOR;
+}
+constexpr long rad_to_game_angle(float radians)
+{
+	constexpr float RAD_TO_GAME_ANGLE_FACTOR = static_cast<float>(NUMDEGREES) / PITWICE;
+	return radians * RAD_TO_GAME_ANGLE_FACTOR;
 }
 
 #define NUM_COLORS 256

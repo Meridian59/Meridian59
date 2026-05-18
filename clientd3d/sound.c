@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -164,7 +164,7 @@ void NewSound(WPARAM type, ID rsc)
  */
 void UpdateLoopingSounds(int px, int py, int angle)
 {
-	float radians = DegToRad(angle);
+	float radians = game_angle_to_rad(angle);
 	float forwardX = (float)cos(radians);
 	float forwardZ = (float)-sin(radians);  // Negate so north faces -Z
 

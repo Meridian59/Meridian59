@@ -47,7 +47,7 @@ static std::vector<double> fps_store;
 static const int fps_window_size = 60;  // Number of fps values to consider in the rolling window.
 static int average_fps = 0;
 typedef std::chrono::time_point<std::chrono::steady_clock> steady_clock_time_point;
-static steady_clock_time_point lastEndFrame;
+
 // The clock to use for fps calculations - updating here will update throughout.
 static auto& chrono_time_now = std::chrono::steady_clock::now;
 
@@ -340,26 +340,26 @@ void RedrawForce(void)
    auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
 
+   int deltaTimeMs = GetDeltaTimeMs();
+
    auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
-   fps = 1000 / std::max(1LL, elapsedMilliseconds);
+   fps = 1000 / std::max(1, deltaTimeMs);
 
    if (maxFPS)
    {
       if (fps > maxFPS)
       {
           // Clamp the fps to the maximum.
-          int msSleep = (1000 / maxFPS) - elapsedMilliseconds;
+          int msSleep = (1000 / maxFPS) - deltaTimeMs;
           Sleep(msSleep);
 
           // Reclaulate the fps following the sleep.
           endFrame = chrono_time_now();
-          elapsedTime = (endFrame - lastEndFrame);
+          elapsedTime = (endFrame - startFrame);
           elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
           fps = 1000 / std::max(1LL, elapsedMilliseconds);
       }
    }
-
-   lastEndFrame = endFrame;
 
    if (config.showFPS)
    {

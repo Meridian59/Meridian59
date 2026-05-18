@@ -54,7 +54,9 @@ static void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render
 	if (pParticle->isActive == false)
 		return;
 
-	pParticle->timeLeft_s -= GetDeltaTime();
+	float deltaTime_s = GetDeltaTime();
+
+	pParticle->timeLeft_s -= deltaTime_s;
 	if (pParticle->timeLeft_s <= 0.0f)
 	{
 		pParticle->isActive = false;
@@ -73,9 +75,9 @@ static void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render
 	pParticle->velocity = {rotatedVelocity.x, rotatedVelocity.y, rotatedVelocity.z};
 
 	pParticle->oldPosition = pParticle->position;
-	pParticle->position.x += pParticle->velocity.x * GetDeltaTime() * UNIT_FRAME_TO_SEC;
-	pParticle->position.y += pParticle->velocity.y * GetDeltaTime() * UNIT_FRAME_TO_SEC;
-	pParticle->position.z += pParticle->velocity.z * GetDeltaTime() * UNIT_FRAME_TO_SEC;
+	pParticle->position.x += pParticle->velocity.x * deltaTime_s * UNIT_FRAME_TO_SEC;
+	pParticle->position.y += pParticle->velocity.y * deltaTime_s * UNIT_FRAME_TO_SEC;
+	pParticle->position.z += pParticle->velocity.z * deltaTime_s * UNIT_FRAME_TO_SEC;
 
 	auto *pPacket = D3DRenderPacketFindMatch(pPool, nullptr, nullptr, 0, 0, 0);
 	assert(pPacket);

@@ -99,7 +99,6 @@ void DownloadFiles(DownloadInfo *params)
          if (retval == IDOK)
          {
             // Clear cached resources so newly downloaded files are used
-            debug(("Download complete - clearing resource caches\n"));
             FreeResources();
             CacheClearAll();
 

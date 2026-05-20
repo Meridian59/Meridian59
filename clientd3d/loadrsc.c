@@ -99,7 +99,6 @@ bool LoadResources(void)
 	/* Check if resources are already loaded */
 	if (t != NULL)
 	{
-		debug(("LoadResources: Resources already loaded, skipping\n"));
 		return true;
 	}
 	

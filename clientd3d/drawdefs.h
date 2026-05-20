@@ -74,7 +74,7 @@ constexpr float rad_to_deg(float radians)
 	return radians * RAD_TO_DEG_FACTOR;
 }
 
-/* Convert between pseudo degrees and radians */
+/* Convert between game units and radians */
 constexpr float game_angle_to_rad(float angle)
 {
 	constexpr float GAME_ANGLE_TO_RAD_FACTOR = PITWICE / static_cast<float>(NUMDEGREES);
@@ -83,7 +83,7 @@ constexpr float game_angle_to_rad(float angle)
 constexpr long rad_to_game_angle(float radians)
 {
 	constexpr float RAD_TO_GAME_ANGLE_FACTOR = static_cast<float>(NUMDEGREES) / PITWICE;
-	return radians * RAD_TO_GAME_ANGLE_FACTOR;
+	return static_cast<long>(radians * RAD_TO_GAME_ANGLE_FACTOR);
 }
 
 #define NUM_COLORS 256

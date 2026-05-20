@@ -746,6 +746,7 @@ static void init_cone_tree()
    c->cone.bot_a = 1;
    c->cone.bot_b = 0;
    c->cone.bot_d = area.cy - 1;
+   c->cone.seen_translucent = false;
 
 #if CHECK_DEPTH
    max_depth = 0;
@@ -2156,6 +2157,28 @@ static void WalkWall(WallData *wall, long side)
    debug(("WalkWall %d %d\n",col0,col1));
 #endif
 
+   // A translucent wall deliberately does NOT narrow the BSP cone (so geometry
+   // behind it stays visible).  Opaque walls walked behind it therefore inherit
+   // an over-sized cone that spans the whole see-through region instead of just
+   // their own extent.  Mark exactly the cone columns this translucent wall
+   // covers so doDrawWall can clamp those opaque walls to their true geometry.
+   // Splitting the cone here keeps the mark precise; ordinary opaque walls
+   // (un-marked cones) keep the "extend to cone" behaviour that prevents
+   // 1-pixel background-revealing seams in normal geometry.
+   if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+   {
+      ConeTreeNode *mc, *mnext;
+      for (mc = search_for_first(col0); mc->cone.leftedge <= col1; mc = mnext)
+      {
+         mnext = mc->next;  // capture before splitting
+         if (col0 > mc->cone.leftedge)
+            mc = split_cone(mc, col0 - 1, false);
+         if (col1 < mc->cone.rightedge)
+            mc = split_cone(mc, col1, true);
+         mc->cone.seen_translucent = true;
+      }
+   }
+
    // Look for lower wall
    if (sidedef->below_bmap != NULL && ((z1 != z0) || (zz1 != zz0)))
    {
@@ -3313,21 +3336,29 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          clipstart = rowstart;
          clipend   = rowend;
       }
-      else
+      else if (c->seen_translucent)
       {
-         // Opaque walls: clamp drawing range to actual geometry rows.
-         // clipstart/clipend come from the BSP cone, which may be much larger than the
-         // wall's actual screen extent when far-side geometry is visible through a
-         // translucent wall (the cone wasn't narrowed for the transparent wall).
-         // Without updating clipstart/clipend here, total_steps = clipend-clipstart+1
-         // would span the full cone, causing the texture to tile into the floor/ceiling
-         // and above/below the wall's actual section.  For near-room walls the cone
-         // already matches the geometry (within 1 px rounding), so this is a no-op.
+         // Opaque wall behind a translucent wall: clamp the drawing range to the
+         // wall's actual geometry rows.  clipstart/clipend come from a BSP cone
+         // that a translucent wall left un-narrowed, so it is much larger than
+         // this wall's real screen extent.  Without this clamp, total_steps =
+         // clipend-clipstart+1 would span the full cone, tiling the wall texture
+         // into the floor/ceiling and above/below the wall's actual section.
          if (rowstart < clipstart) rowstart = clipstart;
          if (rowend > clipend)    rowend   = clipend;
          if (rowstart > rowend) continue;
          clipstart = rowstart;
          clipend   = rowend;
+      }
+      else
+      {
+         // Ordinary opaque wall: extend the wall to cover its entire cone so
+         // there are no holes.  The cone exactly abuts the neighbouring geometry
+         // (floors, ceilings, adjacent walls); integer rounding in the
+         // perspective projection above can leave rowstart/rowend a pixel inside
+         // the cone, and drawing only that range would leave a 1-pixel gap that
+         // reveals the background.  Leaving clipstart/clipend at the cone bounds
+         // fills the whole cone and guarantees abutting geometry meets seamlessly.
       }
 
       // get palette
@@ -4787,6 +4818,10 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw)
       witem->cone.rightedge = wcol1;
       witem->cone.top_a = ctop_a; witem->cone.top_b = ctop_b; witem->cone.top_d = ctop_d;
       witem->cone.bot_a = cbot_a; witem->cone.bot_b = cbot_b; witem->cone.bot_d = cbot_d;
+      // This cone is built from the wall's own geometry, so treat it as an
+      // ordinary opaque wall (extend to cone).  drawdata is a reused static
+      // array, so clear the flag explicitly rather than inheriting a stale one.
+      witem->cone.seen_translucent = false;
    }
 
    if (draw)

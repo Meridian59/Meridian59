@@ -36,6 +36,21 @@ static constexpr float Z_RANGE = 200000.0f;
 // Standard ASCII table, minus the first 32 non-printable control characters.
 static constexpr int NUM_CHARS = 128 - 32;
 
+// The software renderer's angles are in game units. A full 360-degree circle is 4096 game units.
+// Note that matrix rotations expect radians.
+static constexpr float GAME_ANGLE_TO_RAD = (2.0f * PI) / static_cast<float>(NUMDEGREES);
+
+// Player camera rotation is offset by 270 degrees to align it with the legacy engine orientation.
+static constexpr int LEGACY_HEADING_OFFSET = (3 * NUMDEGREES) / 4;
+
+// Maps legacy software y-offset units to world-space pitch for rendering objects.
+// Derived from software renderer's max vertical offset calculation in 'move.c'.
+static constexpr float Y_UNIT_TO_OBJECT_PITCH_RAD = deg_to_rad(50.0f) / static_cast<float>((3 * CLASSIC_HEIGHT) / 2);
+
+// Maps legacy software y-offset units to view-space pitch for rendering backgrounds and player view.
+// The angle here is instead 45 degrees to help prevent sliding artifacts.
+static constexpr float Y_UNIT_TO_VIEW_PITCH_RAD = deg_to_rad(45.0f) / static_cast<float>((3 * CLASSIC_HEIGHT) / 2);
+
 /////////////
 // Globals //
 /////////////
@@ -87,16 +102,6 @@ struct font_3d
 //////////////////////
 // Helper Functions //
 //////////////////////
-constexpr float deg_to_rad(float degrees)
-{
-	constexpr float DEG_TO_RAD_FACTOR = PITWICE / 360.0f;
-	return degrees * DEG_TO_RAD_FACTOR;
-}
-constexpr float rad_to_deg(float radians)
-{	
-	constexpr float RAD_TO_DEG_FACTOR = 360.0f / PITWICE;
-	return radians * RAD_TO_DEG_FACTOR;
-}
 
 // Calculates light range in world units.
 constexpr float dlight_scale(float intensity)

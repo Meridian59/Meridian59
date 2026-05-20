@@ -170,7 +170,7 @@ long D3DRenderObjects(
 	int angleHeading = objectsRenderParams.params->viewer_angle + 3 * NUMDEGREES / 4;
 	if (angleHeading >= NUMDEGREES)
 		angleHeading -= NUMDEGREES;
-	float theta = (float)angleHeading * (2.0f * PI / (float)NUMDEGREES);
+	float theta = static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD;
 	float fwdX = sinf(theta);
 	float fwdY = cosf(theta);
 
@@ -430,7 +430,7 @@ void D3DRenderNamesDraw3D(
 			}
 		}
 
-		MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
+		MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, (float)pRNode->motion.x, (float)std::max(bottom,
 			(long)pRNode->motion.z) - depth +
@@ -657,7 +657,7 @@ void D3DRenderOverlaysDraw(
 
 	const auto* player = GetPlayerInfo();;
 
-	angleHeading = objectsRenderParams.params->viewer_angle + 3 * NUMDEGREES / 4;
+	angleHeading = objectsRenderParams.params->viewer_angle + LEGACY_HEADING_OFFSET;
 	if (angleHeading >= NUMDEGREES)
 		angleHeading -= NUMDEGREES;
 
@@ -1028,7 +1028,7 @@ void D3DRenderOverlaysDraw(
 						}
 					}
 
-					MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
+					MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
 					MatrixTranspose(&rot, &rot);
 					MatrixTranslate(&mat, (float)pRNode->motion.x, (float)std::max(bottom,
 						(long)pRNode->motion.z) - depthf, (float)pRNode->motion.y);
@@ -1124,8 +1124,8 @@ void D3DRenderOverlaysDraw(
 						bottomRight.z = 0;
 						bottomRight.w = 1.0f;
 
-						MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
-						MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
+						MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
+						MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_OBJECT_PITCH_RAD);
 						MatrixMultiply(&rot, &rot, &mat);
 						MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
 							-(float)objectsRenderParams.params->viewer_height, -(float)objectsRenderParams.params->viewer_y);
@@ -1534,7 +1534,7 @@ void D3DRenderObjectsDraw(
 			}
 		}
 
-		MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
+		MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, (float)pRNode->motion.x, std::max(bottom, (long)pRNode->motion.z) - depth,
 			(float)pRNode->motion.y);
@@ -1671,8 +1671,8 @@ void D3DRenderObjectsDraw(
 			bottomRight.z = 0;
 			bottomRight.w = 1.0f;
 
-			MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
-			MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
+			MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
+			MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_OBJECT_PITCH_RAD);
 			MatrixMultiply(&rot, &rot, &mat);
 			MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
 				-(float)objectsRenderParams.params->viewer_height, -(float)objectsRenderParams.params->viewer_y);
@@ -1924,7 +1924,7 @@ int D3DRenderProjectilesDraw(const ObjectsRenderParams& objectsRenderParams)
 		if (angle < -NUMDEGREES)
 			angle += NUMDEGREES;
 
-		MatrixRotateY(&rot, (float)angleHeading * 360.0f / (float)NUMDEGREES * PI / 180.0f);
+		MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, (float)pProjectile->motion.x, (float)pProjectile->motion.z,
 			(float)pProjectile->motion.y);

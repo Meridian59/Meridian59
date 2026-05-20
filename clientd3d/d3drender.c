@@ -657,16 +657,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	MatrixIdentity(&mat);
 	gpD3DDevice->SetTransform(D3DTS_WORLD, &mat);
 
-	// A full 360-degree circle is 4096 game units. Player camera rotation is offset
-	// by 270 degrees (3072 game units) to align it with the legacy engine orientation.
-	int angleHeading = params->viewer_angle + 3072;
-	if (angleHeading >= 4096)
-		angleHeading -= 4096;
+	int angleHeading = params->viewer_angle + LEGACY_HEADING_OFFSET;
+	if (angleHeading >= NUMDEGREES)
+		angleHeading -= NUMDEGREES;
 
 	int anglePitch = PlayerGetHeightOffset();
 
-	MatrixRotateY(&rot, static_cast<float>(angleHeading) * 360.0f / 4096.0f * PI / 180.0f);
-	MatrixRotateX(&mat, static_cast<float>(anglePitch) * 45.0f / 414.0f * PI / 180.0f);
+	MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
+	MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_PITCH_RAD);
 	MatrixMultiply(&rot, &rot, &mat);
 	MatrixTranslate(&trans, -static_cast<float>(params->viewer_x), 
 							-static_cast<float>(params->viewer_height), 

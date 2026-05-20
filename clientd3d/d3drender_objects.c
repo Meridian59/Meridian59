@@ -1125,7 +1125,7 @@ void D3DRenderOverlaysDraw(
 						bottomRight.w = 1.0f;
 
 						MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
-						MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_WORLD_RAD);
+						MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_OBJECT_PITCH_RAD);
 						MatrixMultiply(&rot, &rot, &mat);
 						MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
 							-(float)objectsRenderParams.params->viewer_height, -(float)objectsRenderParams.params->viewer_y);
@@ -1672,7 +1672,7 @@ void D3DRenderObjectsDraw(
 			bottomRight.w = 1.0f;
 
 			MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
-			MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_WORLD_RAD);
+			MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_OBJECT_PITCH_RAD);
 			MatrixMultiply(&rot, &rot, &mat);
 			MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
 				-(float)objectsRenderParams.params->viewer_height, -(float)objectsRenderParams.params->viewer_y);

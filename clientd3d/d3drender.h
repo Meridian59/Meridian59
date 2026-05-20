@@ -40,12 +40,13 @@ static constexpr int NUM_CHARS = 128 - 32;
 // Note that matrix rotations expect radians.
 static constexpr float GAME_ANGLE_TO_RAD = (2.0f * PI) / static_cast<float>(NUMDEGREES);
 
-// Maps legacy software y-offset units (max 414 units from the center view) to world-space pitch (50 degrees).
-// Derived from software renderer's max vertical offset calculation: (3 * CLASSIC_HEIGHT / 2), where CLASSIC_HEIGHT = 276.
-static constexpr float Y_UNIT_TO_WORLD_RAD = deg_to_rad(50.0f) / 414.0f;
+// Maps legacy software y-offset units to world-space pitch for rendering objects.
+// Derived from software renderer's max vertical offset calculation in 'move.c'.
+static constexpr float Y_UNIT_TO_OBJECT_PITCH_RAD = deg_to_rad(50.0f) / static_cast<float>((3 * CLASSIC_HEIGHT) / 2);
 
-// For the backgrounds and player camera, the angle is instead 45 degrees.  Helps prevent sliding artifacts. 
-static constexpr float Y_UNIT_TO_VIEW_RAD = deg_to_rad(45.0f) / 414.0f;
+// Maps legacy software y-offset units to view-space pitch for rendering backgrounds and player view.
+// The angle here is instead 45 degrees to help prevent sliding artifacts.
+static constexpr float Y_UNIT_TO_VIEW_PITCH_RAD = deg_to_rad(45.0f) / static_cast<float>((3 * CLASSIC_HEIGHT) / 2);
 
 /////////////
 // Globals //

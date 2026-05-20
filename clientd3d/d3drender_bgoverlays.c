@@ -102,7 +102,7 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 		const auto& anglePitch = bgoSceneParams.anglePitch;
 
 		MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
-		MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_RAD);
+		MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_PITCH_RAD);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, bg_overlay_pos.x, bg_overlay_pos.z, bg_overlay_pos.y);
 		MatrixMultiply(&pChunk->xForm, &rot, &mat);

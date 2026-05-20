@@ -666,7 +666,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	int anglePitch = PlayerGetHeightOffset();
 
 	MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
-	MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_RAD);
+	MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_PITCH_RAD);
 	MatrixMultiply(&rot, &rot, &mat);
 	MatrixTranslate(&trans, -static_cast<float>(params->viewer_x), 
 							-static_cast<float>(params->viewer_height), 

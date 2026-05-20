@@ -13,12 +13,12 @@
 #ifndef _DRAWDEFS_H
 #define _DRAWDEFS_H
 
-#define NUMDEGREES 4096
+constexpr int NUMDEGREES = 4096;
 #define LOG_NUMDEGREES 12
 #define NUMDEGREES_MASK 0xfff
 
-#define PI      3.1415926f
-#define PITWICE 6.2831853f
+constexpr float PI = 3.1415926f;
+constexpr float PITWICE = 6.2831853f;
 #define PIHALF  1.5707963f
 
 /* Turning MACROs */
@@ -27,8 +27,8 @@
 #define TURN_BACK(angle) ((angle + NUMDEGREES / 2) % NUMDEGREES)
 
 /* Original game clients view port size -- must be DWORD aligned for WinG */
-#define CLASSIC_WIDTH 452
-#define CLASSIC_HEIGHT 276
+constexpr int CLASSIC_WIDTH = 452;
+constexpr int CLASSIC_HEIGHT = 276;
 
 /* Scaler used to increase the classic view port x,y values */
 #define VIEW_SCALER 5

@@ -98,6 +98,10 @@ void DownloadFiles(DownloadInfo *params)
          advert = FALSE;
          if (retval == IDOK)
          {
+            // Clear cached resources so newly downloaded files are used
+            FreeResources();
+            CacheClearAll();
+
             MainSetState(STATE_LOGIN);
             i = (((MAJOR_REV * 100) + MINOR_REV) * P_CATCH) + P_CATCH;
             RequestGame(config.download_time,i,config.comm.hostname);

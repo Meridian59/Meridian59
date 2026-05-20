@@ -96,6 +96,12 @@ bool LoadResources(void)
 {
 	bool rsc_loaded, rsb_loaded;
 	
+	/* Check if resources are already loaded */
+	if (t != NULL)
+	{
+		return true;
+	}
+	
 	/* Initialize new table */
 	t = table_create(TABLE_SIZE);
 	
@@ -234,6 +240,7 @@ void ChangeResource(ID res, char *value)
 void FreeResources(void)
 {
 	table_destroy(t, FreeRsc);
+	t = NULL;  // Set to NULL after destroying to avoid dangling pointer
 }
 /******************************************************************************/
 /*

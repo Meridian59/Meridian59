@@ -18,8 +18,7 @@ constexpr int NUMDEGREES = 4096;
 #define NUMDEGREES_MASK 0xfff
 
 constexpr float PI = 3.1415926f;
-constexpr float PITWICE = 6.2831853f;
-#define PIHALF  1.5707963f
+constexpr float PITWICE = 2.0f * PI;
 
 /* Turning MACROs */
 #define TURN_LEFT(angle) ((angle + 3 * NUMDEGREES / 4) % NUMDEGREES)
@@ -65,25 +64,21 @@ constexpr int CLASSIC_HEIGHT = 276;
 
 constexpr float deg_to_rad(float degrees)
 {
-	constexpr float DEG_TO_RAD_FACTOR = PITWICE / 360.0f;
-	return degrees * DEG_TO_RAD_FACTOR;
+	return degrees * (PITWICE / 360.0f);
 }
 constexpr float rad_to_deg(float radians)
 {	
-	constexpr float RAD_TO_DEG_FACTOR = 360.0f / PITWICE;
-	return radians * RAD_TO_DEG_FACTOR;
+	return radians * (360.0f / PITWICE);
 }
 
 /* Convert between game units and radians */
 constexpr float game_angle_to_rad(float angle)
 {
-	constexpr float GAME_ANGLE_TO_RAD_FACTOR = PITWICE / static_cast<float>(NUMDEGREES);
-	return angle * GAME_ANGLE_TO_RAD_FACTOR;
+	return angle * (PITWICE / static_cast<float>(NUMDEGREES));
 }
 constexpr long rad_to_game_angle(float radians)
 {
-	constexpr float RAD_TO_GAME_ANGLE_FACTOR = static_cast<float>(NUMDEGREES) / PITWICE;
-	return static_cast<long>(radians * RAD_TO_GAME_ANGLE_FACTOR);
+	return static_cast<long>(radians * (static_cast<float>(NUMDEGREES) / PITWICE));
 }
 
 #define NUM_COLORS 256

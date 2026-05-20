@@ -157,7 +157,7 @@ properties:
    % no flicker effect is drawn.  Admins can flip this to globally turn the
    % flickering light effect on or off (e.g. for players sensitive to flashing
    % light).  Takes effect for each player as they next load a room.
-   pbFlickeringLightsEnabled = FALSE
+   pbFlickeringLightsEnabled = TRUE
 
 messages:
 

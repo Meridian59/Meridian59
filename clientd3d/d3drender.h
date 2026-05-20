@@ -40,6 +40,9 @@ static constexpr int NUM_CHARS = 128 - 32;
 // Note that matrix rotations expect radians.
 static constexpr float GAME_ANGLE_TO_RAD = (2.0f * PI) / static_cast<float>(NUMDEGREES);
 
+// Player camera rotation is offset by 270 degrees to align it with the legacy engine orientation.
+static constexpr int LEGACY_HEADING_OFFSET = (3 * NUMDEGREES) / 4;
+
 // Maps legacy software y-offset units to world-space pitch for rendering objects.
 // Derived from software renderer's max vertical offset calculation in 'move.c'.
 static constexpr float Y_UNIT_TO_OBJECT_PITCH_RAD = deg_to_rad(50.0f) / static_cast<float>((3 * CLASSIC_HEIGHT) / 2);

@@ -657,7 +657,7 @@ void D3DRenderOverlaysDraw(
 
 	const auto* player = GetPlayerInfo();;
 
-	angleHeading = objectsRenderParams.params->viewer_angle + 3 * NUMDEGREES / 4;
+	angleHeading = objectsRenderParams.params->viewer_angle + LEGACY_HEADING_OFFSET;
 	if (angleHeading >= NUMDEGREES)
 		angleHeading -= NUMDEGREES;
 

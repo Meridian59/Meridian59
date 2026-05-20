@@ -80,7 +80,6 @@ static char INIColorCodes[]  = "ColorCodes";
 static char INITheme[]       = "Theme";
 static char INIMapAnnotations[] = "MapAnnotations";
 static char INIMapTextZoomLimit[] = "MapTextZoomLimit";
-static char INIFlickeringLights[] = "FlickeringLights";
 
 static char window_section[] = "Window";         /* Section in INI file for window info */
 static char INILeft[]        = "NormalLeft";
@@ -257,7 +256,6 @@ void ConfigLoad(void)
                             static_cast<int>(Theme::Default), ini_file));
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, true, ini_file);
    config.map_text_zoom_limit = GetConfigInt(interface_section, INIMapTextZoomLimit, 50, ini_file);
-   config.flickering_lights = GetConfigInt(interface_section, INIFlickeringLights, true, ini_file);
 
    config.lastPasswordChange = GetConfigInt(misc_section, INILastPass, 0, ini_file);
 
@@ -382,7 +380,6 @@ void ConfigSave(void)
    WriteConfigInt(interface_section, INITheme, static_cast<int>(config.theme), ini_file);
    WriteConfigInt(interface_section, INIMapAnnotations, config.map_annotations, ini_file);
    WriteConfigInt(interface_section, INIMapTextZoomLimit, config.map_text_zoom_limit, ini_file);
-   WriteConfigInt(interface_section, INIFlickeringLights, config.flickering_lights, ini_file);
    
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
 

@@ -151,6 +151,14 @@ properties:
    % If disabled, only the player opening the door hears the sound.
    pbDoorSoundShared = TRUE
 
+   % If enabled, flickering light objects (torches, braziers, candles, lamps,
+   % campfires, etc.) tell clients to render their light as flickering/flashing.
+   % If disabled, those objects report themselves as steady lights instead, so
+   % no flicker effect is drawn.  Admins can flip this to globally turn the
+   % flickering light effect on or off (e.g. for players sensitive to flashing
+   % light).  Takes effect for each player as they next load a room.
+   pbFlickeringLightsEnabled = FALSE
+
 messages:
 
    Constructor(server_num = $)

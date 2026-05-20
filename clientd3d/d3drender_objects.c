@@ -2489,7 +2489,7 @@ bool D3DObjectLightingCalc(
 		effectiveLightAdjust = 0;  // Disable visual flicker during daytime
 	}
 
-	if (config.flickering_lights && (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING)))
+	if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
 		light = GetLightPaletteIndex(intDistance, light, FINENESS, effectiveLightAdjust);
 	else
 		light = GetLightPaletteIndex(intDistance, light, FINENESS, 0);
@@ -2508,7 +2508,7 @@ bool D3DObjectLightingCalc(
 		bgra->r = std::min((float)COLOR_AMBIENT, bgra->r + (lastDistance * pDLight->color.r / COLOR_AMBIENT));
 		
 		// Apply flickering/flashing adjustment to the combined lighting (base + dynamic)
-		if (config.flickering_lights && (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING)))
+		if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
 		{
 			float adjustment = (float)pRNode->obj.lightAdjust / GetFlickerLevel();
 			bgra->b = std::min((float)COLOR_AMBIENT, bgra->b + (bgra->b * adjustment));

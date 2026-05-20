@@ -973,7 +973,6 @@ static INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARA
         CheckDlgButton(hDlg, IDC_SOFTWARE, m_software);
         CheckDlgButton(hDlg, IDC_ATTACKONTARGET, m_attackontarget);
         CheckDlgButton(hDlg, IDC_GPU_EFFICIENCY, m_gpuefficiency);
-        CheckDlgButton(hDlg, IDC_FLICKERINGLIGHTS, config.flickering_lights);
         return (INT_PTR)TRUE;
     case WM_COMMAND:
         switch (LOWORD(wParam))
@@ -1035,21 +1034,6 @@ static INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARA
             m_software = IsDlgButtonChecked(hDlg, IDC_SOFTWARE);
             m_attackontarget = IsDlgButtonChecked(hDlg, IDC_ATTACKONTARGET);
             m_gpuefficiency = IsDlgButtonChecked(hDlg, IDC_GPU_EFFICIENCY);
-
-            // Flickering lights is a live preference (no restart required): persisted
-            // in meridian.ini via ConfigSave() rather than in config.ini via UpdateINIFile.
-            bool old_flickering_lights = config.flickering_lights;
-            config.flickering_lights = IsDlgButtonChecked(hDlg, IDC_FLICKERINGLIGHTS);
-            if ((bool)config.flickering_lights != old_flickering_lights)
-            {
-               // Force a full static-geometry rebuild so previously-flickering lights
-               // migrate between the static and dynamic light caches and their baked
-               // lightmaps are re-computed. Without this, stale bright patches remain
-               // around the old light sources until the next room load.
-               extern int gD3DRedrawAll;
-               gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
-               RedrawForce();
-            }
 
             UpdateINIFile();
             SetWindowLongPtr(hDlg, DWLP_MSGRESULT, PSNRET_NOERROR);

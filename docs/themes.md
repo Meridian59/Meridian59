@@ -41,24 +41,13 @@ The right sidebar (enchantments, portrait, stat bars) sits inside the main windo
 
 Each theme picks one.  The choice depends on whether the main window background reads well behind the portrait and stat bars.  For example, the dark theme paints the inventory texture across the sidebar because the dark main window background lacks contrast against the portrait; the default theme leaves the main window background visible.
 
-The choice lives in `ThemeSidebarUsesInventoryFill` in `module/merintr/theme.c`.  It is a switch over `ThemeCurrent()` that returns true for themes that paint with the inventory texture, false for the rest.  To activate the inventory fill for a new theme, add a `case Theme::<NewName>: return true;` to that switch.
-
-Two paint functions read the answer:
-
-- `InterfaceDrawSidebarBackground` paints the entire sidebar area in one pass.
-- `OffscreenSidebarBackground` paints a single rectangle on the sidebar.  Used for per-element redraws (portrait, stat icons, enchantment buttons).
-
-Both return without painting when `ThemeSidebarUsesInventoryFill` returns false.
-
 ```mermaid
 flowchart LR
-    A[Caller paints<br/>a sidebar region] --> P[OffscreenSidebarBackground<br/>or InterfaceDrawSidebarBackground]
-    P --> Q{ThemeSidebarUsesInventoryFill?}
-    Q -->|true| F[Fill with inventory texture]
-    Q -->|false| D[Return without painting]
+    A[Caller paints<br/>a sidebar region] --> Q{active theme uses<br/>inventory fill?}
+    Q -->|yes| F[Fill with inventory texture]
+    Q -->|no| D[Return without painting]
 
     style A fill:#1971c2,color:#fff
-    style P fill:#2f9e44,color:#fff
     style Q fill:#b08000,color:#fff
     style F fill:#333,color:#fff
     style D fill:#333,color:#fff
@@ -95,24 +84,13 @@ flowchart LR
     style D fill:#333,color:#fff
 ```
 
-Example: adding a dark variant for an existing bitmap.
-
-1. Add `IDB_X_DARK` next to `IDB_X` in the same module's `.rc` file
-2. Add a `case IDB_X: return IDB_X_DARK;` to the resolver in the same module
-
-Call sites pass the canonical ID through the resolver:
-
-```c
-LoadBitmap(hInst, MAKEINTRESOURCE(InterfaceThemeResourceId(IDB_X)));
-```
-
 ## Adding a new theme
 
-The major components are:
+The major components to touch:
 
-1. **Theme enum.**  Add the new value to the `Theme` enum in `clientd3d/config.h`.
-2. **Color tables.**  In `clientd3d/color.c`, add a `colorinfo_<name>[]` table and an INI section string.  Extend `ColorDefaultsForTheme` and `ColorSectionForTheme`.  Bump `THEME_COLOR_VERSION`.
-3. **Server message codes (optional).**  In `clientd3d/srvrstr.c`, add a `code_table_<name>[]` and extend `ColorCodeTableForTheme`.
-4. **Settings UI.**  Add a localized string (`IDS_THEME_<NAME>`) in `clientd3d/client.rc` for each locale.  Append it to the `IDC_THEME` combo in `clientd3d/preferences.c`.
-5. **Bitmap variants (optional).**  Author `_<NAME>` BMP variants.  In `MainThemeResourceId` (`clientd3d/color.c`) or `InterfaceThemeResourceId` (`module/merintr/theme.c`), add a `case Theme::<NewName>:` block with an inner switch over bitmap IDs.
-6. **Capability flags.**  In `module/merintr/theme.c`, add a `case Theme::<NewName>: return ...;` to each yes/no function (`ThemeSidebarUsesInventoryFill`, `ThemeSkipStatsAreaFrame`).
+1. The `Theme` enum in `clientd3d/config.h`.
+2. The color tables and INI machinery in `clientd3d/color.c`.
+3. Server message colors in `clientd3d/srvrstr.c` (optional).
+4. The Settings UI: localized string in `clientd3d/client.rc` and combo entry in `clientd3d/preferences.c`.
+5. Bitmap variants (optional): author `_<NAME>` BMP files and extend the per-module bitmap resolvers in `clientd3d/color.c` and `module/merintr/theme.c`.
+6. Theme capability switches in `module/merintr/theme.c`.

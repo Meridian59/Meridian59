@@ -26,12 +26,12 @@ static void SandstormInit(void)
 	static constexpr float SAND_EMITTER_TIMER_S = 0.015f;
 
 	// Sand particle fly really fast, so their duration are short to use up less resources.
-	static constexpr float SAND_LIFETIME_S = 0.3f;
+	static constexpr float SAND_LIFETIME_S = 0.2f;
 	static constexpr float SAND_VELOCITY = 1200.0f;
 
-	static constexpr float SAND_EMITTER_RADIUS = 5000.0f;
-	static constexpr float SAND_Z_VARIANCE = 2000.0f;
-	static constexpr float SAND_RAND_ROT = PI / 180.0f;  // Adds a slight 1-degree curvature.
+	static constexpr float SAND_EMITTER_RADIUS = 8000.0f;
+	static constexpr float SAND_Z_VARIANCE = 1800.0f;
+	static constexpr float SAND_RAND_ROT = PI / 360.0f;  // Adds a slight half-degree curvature.
 
 	static constexpr custom_bgra SANDSTORM_COLOR = {6,153,226,255};
 
@@ -47,7 +47,7 @@ static void SandstormInit(void)
 
 		// Each emitter fires sand particles at 45-degrees in a full circle around the player.
 		// The randomized particle rotations help hide the 8-direction "emitter lines".
-		float angle = (static_cast<float>(i) * 2.0f * PI) / static_cast<float>(SAND_EMITTER_COUNT);
+		float angle = (static_cast<float>(i) * PITWICE) / static_cast<float>(SAND_EMITTER_COUNT);
 		float directionX = cosf(angle);
 		float directionY = sinf(angle);
 		newEmitter->velocity.x = directionX * SAND_VELOCITY;

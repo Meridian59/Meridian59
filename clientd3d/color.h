@@ -12,6 +12,10 @@
 #ifndef _COLOR_H
 #define _COLOR_H
 
+// Forward declaration of Theme required for ThemeCurrent() to
+// avoid issues with include-order in client.h
+enum class Theme : int;
+
 /* Color identifiers */
 enum { 
    COLOR_BGD = 0,         /* Main window background */

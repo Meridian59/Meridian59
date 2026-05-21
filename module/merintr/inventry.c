@@ -153,7 +153,6 @@ static COLORREF GetItemRarityColor(item_rarity_grade rarity)
 void InventoryBoxCreate(HWND hParent)
 {
    BITMAPINFOHEADER *ptr;
-	LOGBRUSH logbrush;
 
    hwndInvDialog = CreateDialog(hInst, MAKEINTRESOURCE(IDD_INVENTORY), 
 				hParent, InventoryDialogProc);
@@ -192,19 +191,7 @@ void InventoryBoxCreate(HWND hParent)
       selftrgt_bits = NULL;
    else selftrgt_bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 
-   int inv_bkgnd_id = InterfaceThemeResourceId(IDB_INVBKGND);
-   if (!GetBitmapResourceInfo(hInst, inv_bkgnd_id, &inventory_bkgnd))
-     debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
-
-	if( !( ptr = GetBitmapResource( hInst, inv_bkgnd_id ) ) )
-		debug(("InventoryBoxCreate couldn't load inventory scroll bar texture bitmap\n"));
-
-	logbrush.lbStyle = BS_DIBPATTERNPT;
-	logbrush.lbColor = DIB_RGB_COLORS;
-	logbrush.lbHatch = (ULONG_PTR) ptr;
-	
-	hbrushScrollBack = CreateBrushIndirect( &logbrush );
-	//	ajw end...
+   InventoryReloadBackground();
 
    // Compute background palette index
    inventory_bg_index = GetClosestPaletteIndex(RGB(84, 40, 0));

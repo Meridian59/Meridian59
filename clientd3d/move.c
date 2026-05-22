@@ -203,7 +203,7 @@ void UserMovePlayer(int action)
    if (now < next_move_time)
       return;
 
-   dt = GetDeltaTimeMs();
+   dt = GetCappedDeltaTime_Ms();
 
    // Watch for int wraparound in timeGetTime()
    if (dt <= 0)
@@ -839,7 +839,7 @@ void UserTurnPlayer(int action)
 
    // Find out how far to turn based on time elapsed:  always turn at a rate of
    // TURNDEGREES per TURN_DELAY milliseconds.
-   dt = GetDeltaTimeMs();
+   dt = GetCappedDeltaTime_Ms();
    if (dt <= 0)
       dt = 1;
 
@@ -982,7 +982,7 @@ void PlayerChangeHeight(int dz)
 {
    dz = SGN(dz) * HEIGHT_INCREMENT;
 
-   int dt = GetDeltaTimeMs();
+   int dt = GetCappedDeltaTime_Ms();
    if (dt <= 0)
       dt = 1;
 

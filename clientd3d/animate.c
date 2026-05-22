@@ -90,7 +90,7 @@ void AnimationTimerProc(HWND hwnd, UINT timer)
       return;
 
    config.quickstart = false;
-   DWORD dt = static_cast<DWORD>(GetDeltaTimeMs());
+   DWORD dt = static_cast<DWORD>(GetCappedDeltaTime_Ms());
 
    /* Send event to modules */
    ModuleEvent(EVENT_ANIMATE, dt);

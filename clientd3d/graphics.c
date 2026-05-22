@@ -340,17 +340,17 @@ void RedrawForce(void)
    auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
 
-   int deltaTimeMs = GetDeltaTimeMs();
+   int deltaTime_Ms = GetDeltaTime_Ms();
 
    auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
-   fps = 1000 / std::max(1, deltaTimeMs);
+   fps = 1000 / std::max(1, deltaTime_Ms);
 
    if (maxFPS)
    {
       if (fps > maxFPS)
       {
           // Clamp the fps to the maximum.
-          int msSleep = (1000 / maxFPS) - deltaTimeMs;
+          int msSleep = (1000 / maxFPS) - deltaTime_Ms;
           Sleep(msSleep);
 
           // Reclaulate the fps following the sleep.

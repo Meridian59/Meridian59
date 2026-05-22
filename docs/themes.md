@@ -60,9 +60,10 @@ Each module owns its own bitmap IDs in its own `resource.h`.  The ID values are 
 | Module | Resolver | Themed bitmaps today |
 | ------ | -------- | -------------------- |
 | `clientd3d` | `MainThemeResourceId` | Main window background |
-| `module/merintr` | `InterfaceThemeResourceId` | Inventory texture; window-edge and minimap wrapper ornaments |
+| `module/merintr` | `InterfaceThemeResourceId` | Inventory texture; window-edge and minimap wrapper ornaments; toolbar and stat-tab button icons |
+| `module/mailnews` | `MailboxResolveBitmapId` | Mailbox toolbar icon |
 
-Other client modules (`admin`, `char`, `chess`, `dm`, `mailnews`) contain bitmaps but have no themed variants today.
+Other client modules (`admin`, `char`, `chess`, `dm`) contain bitmaps but have no themed variants today.
 
 A resolver takes a default-theme bitmap ID and returns the variant for the active theme.  If the active theme has no variant for that ID, the resolver returns the input unchanged.
 
@@ -92,5 +93,5 @@ The major components to touch:
 2. The color tables and INI machinery in `clientd3d/color.c`.
 3. Server message colors in `clientd3d/srvrstr.c` (optional).
 4. The Settings UI: localized string in `clientd3d/client.rc` and combo entry in `clientd3d/preferences.c`.
-5. Bitmap variants (optional): author `_<NAME>` BMP files and extend the per-module bitmap resolvers in `clientd3d/color.c` and `module/merintr/theme.c`.
+5. Bitmap variants (optional): author `_<NAME>` BMP files and extend each module's bitmap resolver.
 6. Theme capability switches in `module/merintr/theme.c`.

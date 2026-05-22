@@ -99,7 +99,8 @@ bool __cdecl ToolbarAddButton(AddButton *s)
       return false;
    }
 
-   ptr = GetBitmapResource(s->hModule, s->bitmap_id);
+   int id = s->ResolveBitmapId ? s->ResolveBitmapId(s->bitmap_id) : s->bitmap_id;
+   ptr = GetBitmapResource(s->hModule, id);
    if (ptr == NULL)
       return false;
 
@@ -128,11 +129,33 @@ bool __cdecl ToolbarAddButton(AddButton *s)
    buttons[num_buttons].bits         = bits;
    buttons[num_buttons].x            = x;
    buttons[num_buttons].pressed      = false;
+   buttons[num_buttons].bitmap_id    = s->bitmap_id;
+   buttons[num_buttons].hModule      = s->hModule;
+   buttons[num_buttons].ResolveBitmapId = s->ResolveBitmapId;
    num_buttons++;
 
    Lagbox_Reposition();
 
    return true;
+}
+/****************************************************************************/
+/*
+ * ToolbarReloadBitmaps:  Reload each toolbar button's bitmap and repaint it.
+ */
+M59EXPORT void ToolbarReloadBitmaps(void)
+{
+   int i;
+   for (i = 0; i < num_buttons; i++)
+   {
+      if (buttons[i].ResolveBitmapId == NULL)
+         continue;
+      int themed_id = buttons[i].ResolveBitmapId(buttons[i].bitmap_id);
+      BITMAPINFOHEADER *ptr = GetBitmapResource(buttons[i].hModule, themed_id);
+      if (ptr == NULL)
+         continue;
+      buttons[i].bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
+      InvalidateRect(buttons[i].hwnd, NULL, TRUE);
+   }
 }
 /****************************************************************************/
 /*

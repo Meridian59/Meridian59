@@ -258,6 +258,16 @@
 #define IDB_MLREPEAT_DARK               322
 #define IDB_MRREPEAT_DARK               323
 #define IDB_MBREPEAT_DARK               324
+#define IDB_HELP_DARK                   325
+#define IDB_DROP_DARK                   326
+#define IDB_GET_DARK                    327
+#define IDB_REST_DARK                   328
+#define IDB_SBUTTON1_LEFT_DARK          329
+#define IDB_SBUTTON2_LEFT_DARK          330
+#define IDB_SBUTTON3_LEFT_DARK          331
+#define IDB_SBUTTON4_LEFT_DARK          332
+#define IDB_SBUTTON_MID_DARK            333
+#define IDB_SBUTTON_RIGHT_DARK          334
 
 #define IDS_MENU_GUILD                  236
 #define IDS_MENU_WAVE                   237

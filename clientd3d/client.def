@@ -159,6 +159,7 @@ EXPORTS
 ; Interface components
 	ToolbarAddButton
 	ToolbarSetButtonState
+	ToolbarReloadBitmaps
 	TooltipAddRectangle
 	TooltipAddWindow
 	TooltipForwardMessage

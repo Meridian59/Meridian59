@@ -32,6 +32,7 @@ typedef struct {
    HMODULE hModule;     // Module to load name resource string from
    int     bitmap_id;   // Resource identifier for bitmap to display in button; 0 for separator
    int     name;        // Resource identifier for name string (0 if none)
+   int   (*ResolveBitmapId)(int);  // Returns the bitmap ID for the active theme (NULL if no themed variant)
 } AddButton;
 
 // Data per toolbar button
@@ -45,6 +46,9 @@ typedef struct {
    BYTE   *bits;         // Pointer to bits of bitmap for button
    int     x;            // x position of button on main window
    bool    pressed;      // true when button is pressed in (only applies if button is a toggle)
+   int     bitmap_id;    // Resource identifier for bitmap to display in button
+   HMODULE hModule;      // Module that owns the bitmap resource
+   int   (*ResolveBitmapId)(int);  // Returns the bitmap ID for the active theme (NULL if no themed variant)
 } Button;
 
 void ToolbarCreate(void);
@@ -54,6 +58,7 @@ void ToolbarResize(int xsize, int ysize, AREA view);
 M59EXPORT bool __cdecl ToolbarAddButton(AddButton *s);
 M59EXPORT bool ToolbarSetButtonState(int action, const void *action_data, bool state);
 M59EXPORT void ToolbarGetUnionRect(RECT* prcRect);
+M59EXPORT void ToolbarReloadBitmaps(void);
 
 void ToolbarCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 bool ToolbarDrawButton(HWND hwnd, const DRAWITEMSTRUCT *lpdis);

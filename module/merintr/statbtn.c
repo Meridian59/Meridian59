@@ -77,7 +77,7 @@ void StatButtonsCreate(void)
 
 	for (i=0; i < NUM_BUTTONS; i++)
 	{
-		ptr = GetBitmapResource(hInst, buttons[i].idLeft);
+		ptr = GetBitmapResource(hInst, InterfaceThemeResourceId(buttons[i].idLeft));
 		if (ptr == NULL)
 		{
 			buttons[i].bitsLeft = NULL;
@@ -87,7 +87,7 @@ void StatButtonsCreate(void)
 		buttons[i].bitsLeft = (char *) ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 		buttons[i].iWidthLeft	= ptr->biWidth / 2;		//	Bitmap has up and down images in it, so divide by 2.
 
-		ptr = GetBitmapResource(hInst, buttons[i].idMid);
+		ptr = GetBitmapResource(hInst, InterfaceThemeResourceId(buttons[i].idMid));
 		if (ptr == NULL)
 		{
 			buttons[i].bitsMid = NULL;
@@ -96,7 +96,7 @@ void StatButtonsCreate(void)
 		buttons[i].bitsMid =  (char *) ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 		buttons[i].iWidthMid	= ptr->biWidth / 2;		//	Bitmap has up and down images in it, so divide by 2.
 
-		ptr = GetBitmapResource(hInst, buttons[i].idRight);
+		ptr = GetBitmapResource(hInst, InterfaceThemeResourceId(buttons[i].idRight));
 		if (ptr == NULL)
 		{
 			buttons[i].bitsRight = NULL;
@@ -112,6 +112,17 @@ void StatButtonsCreate(void)
  */
 void StatButtonsDestroy(void)
 {
+}
+/************************************************************************/
+/*
+ * StatButtonsReload:  Reload stat button bitmaps and repaint each button.
+ */
+void StatButtonsReload(void)
+{
+	StatButtonsCreate();
+	for (int i = 0; i < NUM_BUTTONS; i++)
+		if (buttons[i].hwnd != NULL)
+			InvalidateRect(buttons[i].hwnd, NULL, TRUE);
 }
 /************************************************************************/
 /*

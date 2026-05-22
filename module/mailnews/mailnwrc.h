@@ -62,6 +62,7 @@
 #define IDB_MAILBOX                     102
 #define IDB_UPARROW                     103
 #define IDB_DOWNARROW                   104
+#define IDB_MAILBOX_DARK                105
 #define IDD_MAILSEND                    111
 #define IDD_NEWSREAD                    144
 #define IDD_NEWSPOST                    145
@@ -90,7 +91,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        105
+#define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           101

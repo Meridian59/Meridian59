@@ -54,6 +54,22 @@ int InterfaceThemeResourceId(int id)
       case IDB_MLREPEAT:   return IDB_MLREPEAT_DARK;
       case IDB_MRREPEAT:   return IDB_MRREPEAT_DARK;
       case IDB_MBREPEAT:   return IDB_MBREPEAT_DARK;
+      case IDB_HELP:       return IDB_HELP_DARK;
+      case IDB_DROP:       return IDB_DROP_DARK;
+      case IDB_GET:        return IDB_GET_DARK;
+      case IDB_REST:       return IDB_REST_DARK;
+      case IDB_SBUTTON1_LEFT:  return IDB_SBUTTON1_LEFT_DARK;
+      case IDB_SBUTTON2_LEFT:  return IDB_SBUTTON2_LEFT_DARK;
+      case IDB_SBUTTON3_LEFT:  return IDB_SBUTTON3_LEFT_DARK;
+      case IDB_SBUTTON4_LEFT:  return IDB_SBUTTON4_LEFT_DARK;
+      case IDB_SBUTTON1_MID:
+      case IDB_SBUTTON2_MID:
+      case IDB_SBUTTON3_MID:
+      case IDB_SBUTTON4_MID:   return IDB_SBUTTON_MID_DARK;
+      case IDB_SBUTTON1_RIGHT:
+      case IDB_SBUTTON2_RIGHT:
+      case IDB_SBUTTON3_RIGHT:
+      case IDB_SBUTTON4_RIGHT: return IDB_SBUTTON_RIGHT_DARK;
       default:             return id;
       }
    default:

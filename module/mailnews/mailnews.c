@@ -62,6 +62,26 @@ static AddButton mail_buttons[] = {
 };
 static int num_buttons = (sizeof(mail_buttons) / sizeof(AddButton));
 
+/****************************************************************************/
+/*
+ * MailboxResolveBitmapId:  Returns the mailbox icon ID for the active
+ *   theme, or the input ID unchanged when no themed variant exists.
+ */
+static int MailboxResolveBitmapId(int id)
+{
+   switch (ThemeCurrent())
+   {
+   case Theme::Dark:
+      switch (id)
+      {
+      case IDB_MAILBOX: return IDB_MAILBOX_DARK;
+      default:          return id;
+      }
+   default:
+      return id;
+   }
+}
+
 static TypedCommand commands[] = {
 { "mail",      CommandMail, },
 { NULL,        NULL},    // Must end table this way
@@ -110,6 +130,7 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
    for (i = 0; i < num_buttons; i++)
    {
       mail_buttons[i].hModule = hInst;
+      mail_buttons[i].ResolveBitmapId = MailboxResolveBitmapId;
       ToolbarAddButton(&mail_buttons[i]);
    }
 }

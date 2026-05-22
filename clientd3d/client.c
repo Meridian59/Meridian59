@@ -288,6 +288,8 @@ void ThemeApply(void)
 	// Reload main background so the theme's tiles take effect immediately.
 	CreateWindowBackground();
 
+	ToolbarReloadBitmaps();
+
 	MainChangeColor();
 	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);
 	if (hMain != NULL)

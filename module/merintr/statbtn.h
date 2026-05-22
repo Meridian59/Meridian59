@@ -14,6 +14,7 @@
 
 void StatButtonsCreate(void);
 void StatButtonsDestroy(void);
+void StatButtonsReload(void);
 void StatsSetButtons(int num_groups);
 void StatsDestroyButtons(void);
 void StatsMoveButtons(void);

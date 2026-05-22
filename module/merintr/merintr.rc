@@ -1432,6 +1432,17 @@ IDB_MLREPEAT_DARK       BITMAP                  "bitmap\\maptreat_lrepeat_dark.b
 IDB_MRREPEAT_DARK       BITMAP                  "bitmap\\maptreat_rrepeat_dark.bmp"
 IDB_MBREPEAT_DARK       BITMAP                  "bitmap\\maptreat_brepeat_dark.bmp"
 
+IDB_HELP_DARK           BITMAP                  "bitmap\\help_dark.bmp"
+IDB_DROP_DARK           BITMAP                  "bitmap\\drop_dark.bmp"
+IDB_GET_DARK            BITMAP                  "bitmap\\get_dark.bmp"
+IDB_REST_DARK           BITMAP                  "bitmap\\rest_dark.bmp"
+IDB_SBUTTON1_LEFT_DARK  BITMAP                  "bitmap\\statbtn_left_stats_dark.bmp"
+IDB_SBUTTON2_LEFT_DARK  BITMAP                  "bitmap\\statbtn_left_spell_dark.bmp"
+IDB_SBUTTON3_LEFT_DARK  BITMAP                  "bitmap\\statbtn_left_skills_dark.bmp"
+IDB_SBUTTON4_LEFT_DARK  BITMAP                  "bitmap\\statbtn_left_invent_dark.bmp"
+IDB_SBUTTON_MID_DARK    BITMAP                  "bitmap\\statbtn_mid_dark.bmp"
+IDB_SBUTTON_RIGHT_DARK  BITMAP                  "bitmap\\statbtn_right_dark.bmp"
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // String Table

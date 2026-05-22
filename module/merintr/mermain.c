@@ -43,6 +43,7 @@ void InterfaceInit(void)
    for (i = 0; i < num_default_buttons; i++)
    {
       default_buttons[i].hModule = hInst;
+      default_buttons[i].ResolveBitmapId = InterfaceThemeResourceId;
       ToolbarAddButton(&default_buttons[i]);
    }
 
@@ -110,9 +111,12 @@ void InterfaceColorChanged(WORD color_id, COLORREF color)
    StatsChangeColor();
    StatsMainChangeColor();
 
-   // Reload frame element bitmaps when every color changes (theme switch).
+   // Reload frame and stat-tab bitmaps when all colors change.
    if (color_id == COLOR_ID_ALL)
+   {
       InterfaceDrawInit();
+      StatButtonsReload();
+   }
 }
 /****************************************************************************/
 /*

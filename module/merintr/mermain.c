@@ -106,9 +106,13 @@ void InterfaceFontChanged(WORD font_id, LOGFONT *font)
 /****************************************************************************/
 void InterfaceColorChanged(WORD color_id, COLORREF color)
 {
-   InventoryChangeColor();   
+   InventoryChangeColor(color_id);
    StatsChangeColor();
    StatsMainChangeColor();
+
+   // Reload frame element bitmaps when every color changes (theme switch).
+   if (color_id == COLOR_ID_ALL)
+      InterfaceDrawInit();
 }
 /****************************************************************************/
 /*
@@ -130,6 +134,7 @@ void InterfaceResizeModule(int xsize, int ysize, AREA *view)
 void InterfaceRedrawModule(HDC hdc)
 {
   UserAreaRedraw();
+  InterfaceDrawSidebarBackground(hdc);
   InterfaceDrawElements(hdc);
   StatsDrawBorder();
   StatsMainRedraw();

@@ -31,6 +31,7 @@
 #include "actions.h"
 #include "drawint.h"
 #include "groupdlg.h"
+#include "theme.h"
 
 #define MODULE_ID 100    // Unique module id #
 

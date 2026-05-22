@@ -128,6 +128,7 @@ static bool InventoryDropCurrentItem(room_contents_node *container);
 static bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
+static void InventoryReloadBackground(void);
 
 /************************************************************************/
 /*
@@ -152,7 +153,6 @@ static COLORREF GetItemRarityColor(item_rarity_grade rarity)
 void InventoryBoxCreate(HWND hParent)
 {
    BITMAPINFOHEADER *ptr;
-	LOGBRUSH logbrush;
 
    hwndInvDialog = CreateDialog(hInst, MAKEINTRESOURCE(IDD_INVENTORY), 
 				hParent, InventoryDialogProc);
@@ -191,24 +191,13 @@ void InventoryBoxCreate(HWND hParent)
       selftrgt_bits = NULL;
    else selftrgt_bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 
-   if (!GetBitmapResourceInfo(hInst, IDB_INVBKGND, &inventory_bkgnd))
-     debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
-
-	if( !( ptr = GetBitmapResource( hInst, IDB_INVBKGND ) ) )
-		debug(("InventoryBoxCreate couldn't load inventory scroll bar texture bitmap\n"));
-
-	logbrush.lbStyle = BS_DIBPATTERNPT;
-	logbrush.lbColor = DIB_RGB_COLORS;
-	logbrush.lbHatch = (ULONG_PTR) ptr;
-	
-	hbrushScrollBack = CreateBrushIndirect( &logbrush );
-	//	ajw end...
+   InventoryReloadBackground();
 
    // Compute background palette index
    inventory_bg_index = GetClosestPaletteIndex(RGB(84, 40, 0));
 
    InventoryResetFont();
-   InventoryChangeColor();
+   InventoryChangeColor(COLOR_ID_ALL);
 }
 /************************************************************************/
 /*
@@ -407,10 +396,13 @@ void InventoryResetFont(void)
 }
 /************************************************************************/
 /*
- * InventoryChangeColor:  Called when a color has changed.
+ * InventoryChangeColor:  Refresh inventory state for a color change.
+ *   Reloads themed resources when color_id is COLOR_ID_ALL.
  */
-void InventoryChangeColor(void)
+void InventoryChangeColor(WORD color_id)
 {
+   if (color_id == COLOR_ID_ALL)
+      InventoryReloadBackground();
 }
 /************************************************************************/
 void InventorySetFocus(bool forward)
@@ -1433,4 +1425,29 @@ HWND GetHwndInvDialog()
 RawBitmap* pinventory_bkgnd()
 {
 	return &inventory_bkgnd;
+}
+/************************************************************************/
+/*
+ * InventoryReloadBackground:  Reload the inventory background bitmap
+ *   for the active theme and rebuild the scrollbar pattern brush.
+ */
+static void InventoryReloadBackground(void)
+{
+	BITMAPINFOHEADER *ptr;
+	LOGBRUSH logbrush;
+	int inv_bkgnd_id = InterfaceThemeResourceId(IDB_INVBKGND);
+
+	if (!GetBitmapResourceInfo(hInst, inv_bkgnd_id, &inventory_bkgnd))
+		debug(("InventoryReloadBackground couldn't load inventory background bitmap\n"));
+
+	if (!(ptr = GetBitmapResource(hInst, inv_bkgnd_id)))
+		debug(("InventoryReloadBackground couldn't load scroll bar texture bitmap\n"));
+
+	if (hbrushScrollBack)
+		DeleteObject(hbrushScrollBack);
+
+	logbrush.lbStyle = BS_DIBPATTERNPT;
+	logbrush.lbColor = DIB_RGB_COLORS;
+	logbrush.lbHatch = (ULONG_PTR) ptr;
+	hbrushScrollBack = CreateBrushIndirect(&logbrush);
 }

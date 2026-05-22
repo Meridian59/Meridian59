@@ -170,15 +170,15 @@ void StatsMainRedraw(void)
 
       obj->icon_res = s->name_res;
 
-      OffscreenWindowBackground(NULL, a.x, a.y, a.cx, a.cy);
-      DrawStretchedObjectDefault(hdc, obj, &a, NULL); 
+      RawBitmap *bg = OffscreenSidebarBackground(a.x, a.y, a.cx, a.cy);
+      DrawStretchedObjectDefault(hdc, obj, &a, NULL);
       GdiFlush();
 
       b.x  = stat_bar_x;
       b.cx = stat_width;
       b.y  = a.y + STATS_MAIN_SPACING;
       b.cy = s->cy - 4 * STATS_MAIN_SPACING;
-      InterfaceDrawBarBorder(NULL, hdc, &b);
+      InterfaceDrawBarBorder(bg, hdc, &b);
    }
 
    ObjectDestroyAndFree(obj);

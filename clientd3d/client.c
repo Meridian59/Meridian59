@@ -275,18 +275,28 @@ void ClearMessageQueue(void)
 }
 /************************************************************************/
 /*
- * ThemeApply:  Reload the color palette for the active theme and force
- *   a repaint of the main window.  Called when the user changes themes
- *   in the Preferences dialog.
+ * ThemeApply:  Reload the color palette and main window background
+ *   bitmap for the active theme, fire EVENT_COLORCHANGED so modules
+ *   refresh their themed resources, and force a repaint of the main
+ *   window.
  */
 void ThemeApply(void)
 {
 	ColorsDestroy();
 	ColorsCreate(false);
+
+	// Reload main background so the theme's tiles take effect immediately.
+	CreateWindowBackground();
+
 	MainChangeColor();
-	ModuleEvent(EVENT_COLORCHANGED, -1, 0);
+	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);
 	if (hMain != NULL)
-		InvalidateRect(hMain, NULL, TRUE);
+	{
+		// RDW_ALLCHILDREN forces sidebar/inventory child windows to repaint
+		// over the refreshed main background.
+		RedrawWindow(hMain, NULL, NULL,
+			RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+	}
 }
 /************************************************************************/
 void SetUpCrashReporting() {

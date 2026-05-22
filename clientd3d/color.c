@@ -106,7 +106,7 @@ static char color_section_dark[]    = "ColorsDark";
 static char INIColorVersion[]       = "ColorVersion";
 
 // Bump when default values for any color change.
-static const int THEME_COLOR_VERSION = 5;
+static const int THEME_COLOR_VERSION = 7;
 
 // Returns the INI section name for the active theme.
 static char *ColorSectionForTheme(Theme theme)
@@ -287,13 +287,45 @@ void ColorsSave(void)
 	WriteConfigInt(section, INIColorVersion, THEME_COLOR_VERSION, ini_file);
 }
 /************************************************************************/
+/*
+ * ThemeCurrent:  Returns the active theme.
+ */
+Theme ThemeCurrent(void)
+{
+	return config.theme;
+}
+/************************************************************************/
+/*
+ * MainThemeResourceId:  Returns the variant of a main-client bitmap
+ *   resource ID for the active theme.  Returns the input ID unchanged
+ *   when no variant exists for the active theme.
+ *
+ *   See docs/themes.md
+ *
+ *   TODO: extend as more bitmap variants or themes are added.
+ */
+int MainThemeResourceId(int id)
+{
+	switch (ThemeCurrent())
+	{
+	case Theme::Dark:
+		switch (id)
+		{
+		case IDB_BACKGROUND: return IDB_BACKGROUND_DARK;
+		default:             return id;
+		}
+	default:
+		return id;
+	}
+}
+/************************************************************************/
 void ColorsRestoreDefaults(void)
 {
 	ColorsDestroy();
 	ColorsCreate(true);
 	MainChangeColor();
 
-	ModuleEvent(EVENT_COLORCHANGED, -1, 0);
+	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);
 }
 
 

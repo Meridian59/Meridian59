@@ -3045,6 +3045,7 @@ IDI_KEYBIND				ICON					"bitmap\\m59bind.ico"
 //
 
 IDB_BACKGROUND          BITMAP                  "bitmap\\bkgnd.bmp"
+IDB_BACKGROUND_DARK     BITMAP                  "bitmap\\bkgnd_dark.bmp"
 
 IDB_ANNOTATE            BITMAP                  "bitmap\\annotate.bmp"
 

@@ -3307,7 +3307,7 @@ messages:
       return;
    }
 
-   WaveSendUser(wave_rsc = $, source_obj = 0, flags = 0, row = 0, col = 0,
+   WaveSendUser(wave_rsc = $, source_obj = $, flags = 0, row = 0, col = 0,
                 cutoff_radius = 0, max_volume = 0)
    %  If source_obj defined, use its location for source of sound
    %  if not, check row & col, and use that location if either or both are
@@ -3320,6 +3320,11 @@ messages:
    {
       if (wave_rsc <> $) and (pbLogged_on)
       {
+         % Convert since AddPacket expects a number.
+         if source_obj = $
+         {
+            source_obj = 0;
+         }
          AddPacket(1,BP_PLAY_WAVE, 4,wave_rsc, 4,source_obj, 1,flags,
                    4,row, 4,col, 4,cutoff_radius, 4,max_volume);
          SendPacket(poSession);

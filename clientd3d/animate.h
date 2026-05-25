@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -14,11 +14,12 @@
 
 void AnimationTimerAbort(void);
 void AnimationTimerStart(void);
-bool AnimateObject(object_node *obj, int dt);
+M59EXPORT bool AnimateObject(object_node *obj, int dt);
 void AnimationTimerProc(HWND hwnd, UINT timer);
 void AnimateStop(Animate *a);
 bool AnimateSingle(Animate *a, int num_groups, int dt);
 
+DWORD GetFrameTime(void);
 float GetFlickerLevel(void);
 
 #endif /* #ifndef _ANIMATE_H */

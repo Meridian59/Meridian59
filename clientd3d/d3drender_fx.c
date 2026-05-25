@@ -117,7 +117,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	{
 		custom_bgra	bgra;
 
-		effects.duration -= GetCappedDeltaTime_Ms();
+		effects.duration -= GetDeltaTime_Ms();
 		switch (effects.flashxlat)
 		{
 			case XLAT_BLEND10RED:

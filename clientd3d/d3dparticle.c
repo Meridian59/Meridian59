@@ -54,7 +54,7 @@ static void D3DParticleUpdate(emitter *pEmitter, particle *pParticle, d3d_render
 	if (pParticle->isActive == false)
 		return;
 
-	float deltaTime_s = GetCappedDeltaTime();
+	float deltaTime_s = GetDeltaTime();
 
 	pParticle->timeLeft_s -= deltaTime_s;
 	if (pParticle->timeLeft_s <= 0.0f)
@@ -168,7 +168,7 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 		}
 
 		// Initializing new particles.
-		pEmitter->timer_s -= GetCappedDeltaTime();
+		pEmitter->timer_s -= GetDeltaTime();
 		if (pEmitter->timer_s <= 0.0f)
 		{
 			D3DParticleInitialize(pEmitter, &pEmitter->particles[pEmitter->nextSlot]);

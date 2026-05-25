@@ -47,7 +47,7 @@ static std::vector<double> fps_store;
 static const int fps_window_size = 60;  // Number of fps values to consider in the rolling window.
 static int average_fps = 0;
 typedef std::chrono::time_point<std::chrono::steady_clock> steady_clock_time_point;
-
+static steady_clock_time_point lastEndFrame;
 // The clock to use for fps calculations - updating here will update throughout.
 static auto& chrono_time_now = std::chrono::steady_clock::now;
 
@@ -324,7 +324,6 @@ void RedrawForce(void)
       return;
    }
 
-   // Benchmark the time it took to finish rendering a room.
    steady_clock_time_point startFrame = chrono_time_now();
 
    /* REVIEW: Clearing flag before draw phase allows draw phase to set flag.
@@ -335,41 +334,32 @@ void RedrawForce(void)
    HDC hdc = GetDC(hMain);
    DrawRoom(hdc, view.x, view.y, &current_room, map);
 
-   // Calculate raw room drawing performance.
    steady_clock_time_point endFrame = chrono_time_now();
    std::chrono::duration<double> elapsedTime = endFrame - startFrame;
    auto elapsedMicroseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTime).count();
    auto elapsedMilliseconds = elapsedMicroseconds / 1000;
    msDrawFrame = elapsedMilliseconds;
 
-   // Then track the time of a full game loop using uncapped float seconds for more precision than milliseconds.
-   float deltaTime_s = GetDeltaTime();
-
-   // Calculate high-precision FPS, based on total elapsed frame time.
-   // Both the FPS limiter and FPS counter need the full, un-truncated delta time to work properly.
-   fps = static_cast<int>(1.0f / std::max(0.0001f, deltaTime_s));
-   
    auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
+   fps = 1000 / std::max(1LL, elapsedMilliseconds);
 
-   if (maxFPS && (fps > maxFPS))
+   if (maxFPS)
    {
-        // Calculate max allowed time budget for a single frame in float seconds.
-        float frameBudget_s = 1.0f / static_cast<float>(maxFPS);
+      if (fps > maxFPS)
+      {
+          // Clamp the fps to the maximum.
+          int msSleep = (1000 / maxFPS) - elapsedMilliseconds;
+          Sleep(msSleep);
 
-		// Calculate sleep duration using leftover frame budget.
-        int msSleep = static_cast<int>((frameBudget_s - deltaTime_s) * 1000.0f);
-        // Subtract 1 ms to compensate for the thread scheduler oversleeping.
-		if (msSleep > 1)
-        {
-           Sleep(msSleep - 1);  
-        }
-
-        // Recalculate the fps following the sleep.
-        endFrame = chrono_time_now();
-        elapsedTime = (endFrame - startFrame);
-        elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
-        fps = 1000 / std::max(1LL, elapsedMilliseconds);
+          // Reclaulate the fps following the sleep.
+          endFrame = chrono_time_now();
+          elapsedTime = (endFrame - lastEndFrame);
+          elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
+          fps = 1000 / std::max(1LL, elapsedMilliseconds);
+      }
    }
+
+   lastEndFrame = endFrame;
 
    if (config.showFPS)
    {

@@ -11,9 +11,9 @@
 */
 
 #include <assert.h>
-#include <dwmapi.h>
 
 #include "client.h"
+#include <dwmapi.h>
 
 #ifdef M59_RETAIL
   // Minidump reporting

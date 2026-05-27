@@ -20,6 +20,7 @@ static bool   menuBarUsesThemeColors = false;
 // flush against the top and bottom edges.  Half goes above the text,
 // half below.
 static const int MENU_BAR_ITEM_VERTICAL_PADDING_TOTAL = 8;
+static const int MENU_BAR_ITEM_HORIZONTAL_TRIM = 4;
 
 extern int connection;
 
@@ -341,7 +342,7 @@ bool MenuBarMeasureItem(MEASUREITEMSTRUCT *mis)
    SIZE size;
    GetTextExtentPoint32(hdc, text, (int)strlen(text), &size);
 
-   mis->itemWidth = size.cx;
+   mis->itemWidth = size.cx - MENU_BAR_ITEM_HORIZONTAL_TRIM;
    mis->itemHeight = size.cy + MENU_BAR_ITEM_VERTICAL_PADDING_TOTAL;
 
    SelectObject(hdc, hOldFont);

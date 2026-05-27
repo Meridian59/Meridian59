@@ -59,7 +59,7 @@ void ActionsInit(void)
 
    InsertMenu(cinfo->main_menu, MENU_POSITION_ACTIONS, MF_STRING | MF_POPUP | MF_BYPOSITION, 
               (UINT_PTR) actions_menu, GetString(hInst, IDS_ACTIONS));
-   ThemedMenuBarApply(cinfo->main_menu);
+   MenuBarApply(cinfo->main_menu);
    DrawMenuBar(cinfo->hMain);
 
    // Add subitems

@@ -167,12 +167,12 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_INITMENUPOPUP, InitMenuPopupHandler);
 
 	case WM_MEASUREITEM:
-		if (ThemedMenuBarMeasureItem((MEASUREITEMSTRUCT *)lParam))
+		if (MenuBarMeasureItem((MEASUREITEMSTRUCT *)lParam))
 			return TRUE;
 		ItemListMeasureItem(hwnd, (MEASUREITEMSTRUCT *) lParam);
 		return 0;
 	case WM_DRAWITEM:     // windowsx.h macro always returns FALSE
-		if (ThemedMenuBarDrawItem((DRAWITEMSTRUCT *)lParam))
+		if (MenuBarDrawItem((DRAWITEMSTRUCT *)lParam))
 			return TRUE;
 		return MainDrawItem(hwnd, (const DRAWITEMSTRUCT *)(lParam));
 
@@ -305,7 +305,7 @@ void ThemeApply(void)
 	CreateWindowBackground();
 
 	ThemeApplyTitleBar();
-	ThemedMenuBarApply(GetMenu(hMain));
+	MenuBarApply(GetMenu(hMain));
 	DrawMenuBar(hMain);
 
 	MainChangeColor();
@@ -370,7 +370,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	}
 
 	ThemeApplyTitleBar();
-	ThemedMenuBarApply(GetMenu(hMain));
+	MenuBarApply(GetMenu(hMain));
 
 	if (config.debug)
 		CreateDebugWindow();

@@ -20,8 +20,8 @@ void MenuConnect(void);
 void MenuDisconnect(void);
 void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 
-M59EXPORT void ThemedMenuBarApply(HMENU hMenu);
-bool ThemedMenuBarMeasureItem(MEASUREITEMSTRUCT *mis);
-bool ThemedMenuBarDrawItem(DRAWITEMSTRUCT *dis);
+M59EXPORT void MenuBarApply(HMENU hMenu);
+bool MenuBarMeasureItem(MEASUREITEMSTRUCT *mis);
+bool MenuBarDrawItem(DRAWITEMSTRUCT *dis);
 
 #endif /* #ifndef _WINMENU_H */

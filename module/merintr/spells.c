@@ -56,7 +56,7 @@ void SpellsInit(void)
    {
       InsertMenu(cinfo->main_menu, MENU_POSITION_SPELLS, MF_STRING | MF_POPUP | MF_BYPOSITION, 
                  (UINT_PTR) spell_menu, GetString(hInst, IDS_SPELLS));
-      ThemedMenuBarApply(cinfo->main_menu);
+      MenuBarApply(cinfo->main_menu);
       DrawMenuBar(cinfo->hMain);
 
    }

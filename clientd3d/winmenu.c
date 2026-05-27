@@ -263,11 +263,11 @@ static HFONT GetMenuFont(void)
 }
 /************************************************************************/
 /*
- * ThemedMenuBarApply:  Marks each top-level item owner-drawn and
+ * MenuBarApply:  Marks each top-level item owner-drawn and
  *   builds the brushes for the current theme.  Items already
  *   owner-drawn and separators are skipped.
  */
-void ThemedMenuBarApply(HMENU hMenu)
+void MenuBarApply(HMENU hMenu)
 {
    if (!hMenu)
       return;
@@ -322,11 +322,11 @@ void ThemedMenuBarApply(HMENU hMenu)
 }
 /************************************************************************/
 /*
- * ThemedMenuBarMeasureItem:  Measures an owner-drawn menu bar item
+ * MenuBarMeasureItem:  Measures an owner-drawn menu bar item
  *   and writes its size into the given MEASUREITEMSTRUCT.  Returns
  *   true when handled, false otherwise.
  */
-bool ThemedMenuBarMeasureItem(MEASUREITEMSTRUCT *mis)
+bool MenuBarMeasureItem(MEASUREITEMSTRUCT *mis)
 {
    if (mis->CtlType != ODT_MENU)
       return false;
@@ -351,10 +351,10 @@ bool ThemedMenuBarMeasureItem(MEASUREITEMSTRUCT *mis)
 }
 /************************************************************************/
 /*
- * ThemedMenuBarDrawItem:  Paints an owner-drawn menu bar item.
+ * MenuBarDrawItem:  Paints an owner-drawn menu bar item.
  *   Returns true when painted, false otherwise.
  */
-bool ThemedMenuBarDrawItem(DRAWITEMSTRUCT *dis)
+bool MenuBarDrawItem(DRAWITEMSTRUCT *dis)
 {
    if (dis->CtlType != ODT_MENU)
       return false;

@@ -16,15 +16,6 @@ static HBRUSH hMenuBarSelectedBrush = NULL;
 static HFONT  hMenuBarFont  = NULL;
 static bool   menuBarUsesThemeColors = false;
 
-// Extra height added to each menu bar item so the text does not touch
-// the top and bottom edges.  Half goes above the text, half below.
-static const int MENU_BAR_ITEM_VERTICAL_PADDING = 8;
-
-// Pixels removed from each item's measured width.  Owner-drawn items
-// have wider default gaps than system-drawn items, so this brings the
-// spacing closer to the original look.
-static const int MENU_BAR_ITEM_HORIZONTAL_TRIM = 4;
-
 extern int connection;
 
 /* local function prototypes */
@@ -389,8 +380,8 @@ bool MenuBarMeasureItem(MEASUREITEMSTRUCT *mis)
    SIZE size;
    GetTextExtentPoint32(hdc, text, (int)strlen(text), &size);
 
-   mis->itemWidth = size.cx - MENU_BAR_ITEM_HORIZONTAL_TRIM;
-   mis->itemHeight = size.cy + MENU_BAR_ITEM_VERTICAL_PADDING;
+   mis->itemWidth = size.cx;
+   mis->itemHeight = GetSystemMetrics(SM_CYMENU);
 
    SelectObject(hdc, hOldFont);
    ReleaseDC(hMain, hdc);

@@ -343,6 +343,7 @@ void ClearMessageQueue(void)
  */
 static void ThemeApplyTitleAndMenu(void)
 {
+	// DWM needs a 4-byte BOOL, not a 1-byte bool.
 	BOOL dwmDark = ThemeUsesDarkTitleBar();
 	DwmSetWindowAttribute(hMain, DWMWA_USE_IMMERSIVE_DARK_MODE,
 		&dwmDark, sizeof(dwmDark));

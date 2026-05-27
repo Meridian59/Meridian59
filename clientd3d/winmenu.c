@@ -383,7 +383,7 @@ static void RebuildMenuItems(HMENU hMenu)
       UINT state;
    };
 
-   SavedMenuItem *items = (SavedMenuItem *)SafeMalloc(count * sizeof(SavedMenuItem));
+   SavedMenuItem *items = new SavedMenuItem[count];
 
    for (int i = 0; i < count; i++)
    {
@@ -420,7 +420,7 @@ static void RebuildMenuItems(HMENU hMenu)
       InsertMenuItem(hMenu, i, TRUE, &mii);
    }
 
-   SafeFree(items);
+   delete[] items;
 }
 /************************************************************************/
 /*

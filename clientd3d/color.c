@@ -334,7 +334,7 @@ COLORREF ThemeMenuBarColor(void)
 }
 /************************************************************************/
 /*
- * ThemeUsesDarkTitleBar:  Returns true when the active theme wants the
+ * ThemeUsesDarkTitleBar:  Returns true when the active theme uses the
  *   DWM dark title bar style (light text on a dark background).  False
  *   for the light style (dark text on a light background).
  */

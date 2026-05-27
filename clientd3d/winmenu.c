@@ -276,7 +276,7 @@ void MenuBarApply(HMENU hMenu)
    COLORREF themeBg = ThemeMenuBarColor();
    menuBarUsesThemeColors = (themeBg != CLR_INVALID);
 
-   COLORREF bgColor    = menuBarUsesThemeColors ? themeBg               : GetSysColor(COLOR_MENU);
+   COLORREF bgColor    = menuBarUsesThemeColors ? themeBg               : GetSysColor(COLOR_WINDOW);
    COLORREF selBgColor = menuBarUsesThemeColors ? GetColor(COLOR_EDITBGD) : GetSysColor(COLOR_HIGHLIGHT);
 
    if (hMenuBarBrush)

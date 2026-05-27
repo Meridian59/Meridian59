@@ -20,6 +20,10 @@ static bool   menuBarUsesThemeColors = false;
 // flush against the top and bottom edges.  Half goes above the text,
 // half below.
 static const int MENU_BAR_ITEM_VERTICAL_PADDING_TOTAL = 8;
+
+// Pixels removed from each item's measured width.  Owner-drawn items
+// sit with wider gaps than the system default, so this brings the
+// spacing closer to the original look.
 static const int MENU_BAR_ITEM_HORIZONTAL_TRIM = 4;
 
 extern int connection;
@@ -264,9 +268,8 @@ static HFONT GetMenuFont(void)
 }
 /************************************************************************/
 /*
- * MenuBarApply:  Marks each top-level item owner-drawn and
- *   builds the brushes for the current theme.  Items already
- *   owner-drawn and separators are skipped.
+ * MenuBarApply:  Builds the brushes for the current theme.  Marks
+ *   any top-level items not yet owner-drawn.  Separators are skipped.
  */
 void MenuBarApply(HMENU hMenu)
 {

@@ -131,7 +131,7 @@ bool PerformEffect(WORD effect, char *ptr, int len)
 	  if (xlat < 0 || xlat > 0xFF)
 		xlat = XLAT_IDENTITY;
 	  effects.flashxlat = xlat;
-	  effects.duration = duration;
+	  effects.flashxlatDuration = static_cast<float>(duration) * 0.001f;
 	  RedrawAll();
 	  break;
 

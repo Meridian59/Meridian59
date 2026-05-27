@@ -18,14 +18,15 @@
 #define EFFECT_BLUR_RATE    150
 
 // Hold status of current effects
-typedef struct {
+struct Effects
+{
    int  invert;    // # of milliseconds remaining in invert effect (0 if off)
    int  shake;     // # of milliseconds remaining in shake effect (0 if off)
    int  pain;      // # of milliseconds remaining in pain effect (0 if off)
    int  blur;      // # of milliseconds remaining in blur effect (0 if off)
    int  waver;     // # of milliseconds remaining in wavering effect (0 if off)
    int  whiteout;     // # of milliseconds remaining in whiteout effect (0 if off)
-      
+
    int  view_dx, view_dy, view_dz;  // Draw player offset by this amount (to shake screen)
    bool paralyzed; // true when user shouldn't be allowed to move
    bool blind;     // true when user can't see anything
@@ -37,10 +38,10 @@ typedef struct {
    ID   wadingsound;  // ID of wav resource for wading in current room
    ID   ambientsound; // ID of wav resource played constantly in current room
 
-   int  flashxlat;
-   int	duration;
-   int  xlatOverride;
-} Effects;
+   int  	flashxlat;
+   float	flashxlatDuration;
+   int  	xlatOverride;
+};
 
 void EffectsInit(void);
 void EffectsExit(void);

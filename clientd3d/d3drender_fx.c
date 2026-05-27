@@ -117,7 +117,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	{
 		custom_bgra	bgra;
 
-		effects.duration -= static_cast<int>(GetDeltaTime() * 1000.0f);
+		effects.flashxlatDuration -= GetDeltaTime();
 		switch (effects.flashxlat)
 		{
 			case XLAT_BLEND10RED:
@@ -230,10 +230,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			break;
 		}
 
-		if (effects.duration <= 0)
+		if (effects.flashxlatDuration <= 0.0f)
 		{
 			effects.flashxlat = XLAT_IDENTITY;
-			effects.duration = 0;
+			effects.flashxlatDuration = 0.0f;
 		}
 
 		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);

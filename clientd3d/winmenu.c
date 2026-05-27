@@ -262,15 +262,6 @@ static HFONT GetMenuFont(void)
 }
 /************************************************************************/
 /*
- * ThemedMenuBarBackgroundBrush:  Returns the cached menu bar brush,
- *   or NULL when none exists.
- */
-HBRUSH ThemedMenuBarBackgroundBrush(void)
-{
-   return hMenuBarBrush;
-}
-/************************************************************************/
-/*
  * ThemedMenuBarApply:  Configures each top-level item of the given
  *   menu for owner-drawn painting in the theme's menu bar color and
  *   creates the cached brushes if they do not yet exist.  Items

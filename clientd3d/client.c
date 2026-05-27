@@ -202,63 +202,6 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		ModuleUnloadById(lParam);
 		break;
 
-	case WM_NCPAINT:
-	{
-		// Let Windows paint the non-client area first.
-		LRESULT res = DefWindowProc(hwnd, message, wParam, lParam);
-
-		// Windows draws bright 1px separator lines above and below the
-		// menu bar.  Paint over them with the theme's menu bar brush.
-		HBRUSH br = ThemedMenuBarBackgroundBrush();
-		if (br && GetMenu(hwnd))
-		{
-			MENUBARINFO mbi;
-			memset(&mbi, 0, sizeof(mbi));
-			mbi.cbSize = sizeof(mbi);
-			if (GetMenuBarInfo(hwnd, OBJID_MENU, 0, &mbi))
-			{
-				RECT rcWindow;
-				GetWindowRect(hwnd, &rcWindow);
-
-				POINT ptClient = { 0, 0 };
-				ClientToScreen(hwnd, &ptClient);
-
-				HDC hdc = GetWindowDC(hwnd);
-
-				// 1px line above the menu bar.
-				RECT rcTop;
-				rcTop.left   = mbi.rcBar.left   - rcWindow.left;
-				rcTop.right  = mbi.rcBar.right  - rcWindow.left;
-				rcTop.top    = mbi.rcBar.top    - rcWindow.top - 1;
-				rcTop.bottom = rcTop.top + 1;
-				FillRect(hdc, &rcTop, br);
-
-				// 1px line below the menu bar, above the client area.
-				RECT rcBottom;
-				rcBottom.left   = rcTop.left;
-				rcBottom.right  = rcTop.right;
-				rcBottom.bottom = ptClient.y - rcWindow.top;
-				rcBottom.top    = rcBottom.bottom - 1;
-				FillRect(hdc, &rcBottom, br);
-
-				ReleaseDC(hwnd, hdc);
-			}
-		}
-		return res;
-	}
-
-	case WM_NCACTIVATE:
-	{
-		// DefWindowProc paints the title bar.  Send WM_NCPAINT after so
-		// the separator paint-over is redone for the new focus state.
-		LRESULT res = DefWindowProc(hwnd, message, wParam, lParam);
-		if (ThemeMenuBarColor() != CLR_INVALID)
-		{
-			// wParam = 1 redraws the whole non-client area.
-			SendMessage(hwnd, WM_NCPAINT, (WPARAM)1, 0);
-		}
-		return res;
-	}
 	}
 
 	return DefWindowProc (hwnd, message, wParam, lParam);

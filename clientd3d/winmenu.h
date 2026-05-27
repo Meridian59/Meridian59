@@ -24,6 +24,5 @@ M59EXPORT void ThemedMenuBarApply(HMENU hMenu);
 void ThemedMenuBarDestroy(void);
 bool ThemedMenuBarMeasureItem(MEASUREITEMSTRUCT *mis);
 bool ThemedMenuBarDrawItem(DRAWITEMSTRUCT *dis);
-HBRUSH ThemedMenuBarBackgroundBrush(void);
 
 #endif /* #ifndef _WINMENU_H */

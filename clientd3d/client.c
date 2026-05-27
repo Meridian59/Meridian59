@@ -201,7 +201,6 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case BK_MODULEUNLOAD:
 		ModuleUnloadById(lParam);
 		break;
-
 	}
 
 	return DefWindowProc (hwnd, message, wParam, lParam);
@@ -281,17 +280,14 @@ void ClearMessageQueue(void)
 }
 /************************************************************************/
 /*
- * ThemeApplyTitleAndMenu:  Apply the active theme's title bar style
- *   and menu bar.
+ * ThemeApplyTitleBar:  Apply the active theme's title bar style.
  */
-static void ThemeApplyTitleAndMenu(void)
+static void ThemeApplyTitleBar(void)
 {
 	// DWM needs a 4-byte BOOL, not a 1-byte bool.
 	BOOL dwmDark = ThemeUsesDarkTitleBar();
 	DwmSetWindowAttribute(hMain, DWMWA_USE_IMMERSIVE_DARK_MODE,
 		&dwmDark, sizeof(dwmDark));
-
-	ThemedMenuBarApply(GetMenu(hMain));
 }
 /************************************************************************/
 /*
@@ -302,16 +298,13 @@ static void ThemeApplyTitleAndMenu(void)
  */
 void ThemeApply(void)
 {
-	ThemedMenuBarDestroy();
-
 	ColorsDestroy();
 	ColorsCreate(false);
 
 	// Reload main background so the theme's tiles take effect immediately.
 	CreateWindowBackground();
 
-	ThemeApplyTitleAndMenu();
-	DrawMenuBar(hMain);
+	ThemeApplyTitleBar();
 
 	MainChangeColor();
 	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);
@@ -374,7 +367,8 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		exit(1);
 	}
 
-	ThemeApplyTitleAndMenu();
+	ThemeApplyTitleBar();
+	ThemedMenuBarApply(GetMenu(hMain));
 
 	if (config.debug)
 		CreateDebugWindow();

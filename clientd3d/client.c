@@ -305,6 +305,8 @@ void ThemeApply(void)
 	CreateWindowBackground();
 
 	ThemeApplyTitleBar();
+	ThemedMenuBarApply(GetMenu(hMain));
+	DrawMenuBar(hMain);
 
 	MainChangeColor();
 	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);

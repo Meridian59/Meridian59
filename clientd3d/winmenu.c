@@ -14,6 +14,7 @@ static HMENU menu;          // Main menu
 static HBRUSH hMenuBarBrush = NULL;
 static HBRUSH hMenuBarSelectedBrush = NULL;
 static HFONT  hMenuBarFont  = NULL;
+static bool   menuBarUsesThemeColors = false;
 
 // Extra height added to each menu bar item so the text does not sit
 // flush against the top and bottom edges.  Half goes above the text,
@@ -262,22 +263,28 @@ static HFONT GetMenuFont(void)
 }
 /************************************************************************/
 /*
- * ThemedMenuBarApply:  Configures each top-level item of the given
- *   menu for owner-drawn painting in the theme's menu bar color and
- *   creates the cached brushes if they do not yet exist.  Items
- *   already configured and separators are skipped.  Returns
- *   immediately if the active theme has no menu bar color.
+ * ThemedMenuBarApply:  Marks each top-level item owner-drawn and
+ *   builds the brushes for the current theme.  Items already
+ *   owner-drawn and separators are skipped.
  */
 void ThemedMenuBarApply(HMENU hMenu)
 {
-   COLORREF color = ThemeMenuBarColor();
-   if (!hMenu || color == CLR_INVALID)
+   if (!hMenu)
       return;
 
-   if (!hMenuBarBrush)
-      hMenuBarBrush = CreateSolidBrush(color);
-   if (!hMenuBarSelectedBrush)
-      hMenuBarSelectedBrush = CreateSolidBrush(GetColor(COLOR_EDITBGD));
+   COLORREF themeBg = ThemeMenuBarColor();
+   menuBarUsesThemeColors = (themeBg != CLR_INVALID);
+
+   COLORREF bgColor    = menuBarUsesThemeColors ? themeBg               : GetSysColor(COLOR_MENU);
+   COLORREF selBgColor = menuBarUsesThemeColors ? GetColor(COLOR_EDITBGD) : GetSysColor(COLOR_HIGHLIGHT);
+
+   if (hMenuBarBrush)
+      DeleteObject(hMenuBarBrush);
+   hMenuBarBrush = CreateSolidBrush(bgColor);
+
+   if (hMenuBarSelectedBrush)
+      DeleteObject(hMenuBarSelectedBrush);
+   hMenuBarSelectedBrush = CreateSolidBrush(selBgColor);
 
    MENUINFO mi;
    memset(&mi, 0, sizeof(mi));
@@ -323,8 +330,6 @@ bool ThemedMenuBarMeasureItem(MEASUREITEMSTRUCT *mis)
 {
    if (mis->CtlType != ODT_MENU)
       return false;
-   if (ThemeMenuBarColor() == CLR_INVALID)
-      return false;
 
    const char *text = (const char *)mis->itemData;
    if (!text)
@@ -353,8 +358,6 @@ bool ThemedMenuBarDrawItem(DRAWITEMSTRUCT *dis)
 {
    if (dis->CtlType != ODT_MENU)
       return false;
-   if (ThemeMenuBarColor() == CLR_INVALID)
-      return false;
 
    const char *text = (const char *)dis->itemData;
    if (!text)
@@ -363,11 +366,17 @@ bool ThemedMenuBarDrawItem(DRAWITEMSTRUCT *dis)
    HDC hdc = dis->hDC;
    RECT rc = dis->rcItem;
 
-   HBRUSH bgBrush = (dis->itemState & ODS_SELECTED) ? hMenuBarSelectedBrush
-                                                    : hMenuBarBrush;
+   bool selected = (dis->itemState & ODS_SELECTED) != 0;
+
+   HBRUSH bgBrush = selected ? hMenuBarSelectedBrush : hMenuBarBrush;
    FillRect(hdc, &rc, bgBrush);
 
-   SetTextColor(hdc, GetColor(COLOR_FGD));
+   COLORREF textColor;
+   if (menuBarUsesThemeColors)
+      textColor = GetColor(COLOR_FGD);
+   else
+      textColor = GetSysColor(selected ? COLOR_HIGHLIGHTTEXT : COLOR_MENUTEXT);
+   SetTextColor(hdc, textColor);
    SetBkMode(hdc, TRANSPARENT);
 
    HFONT hOldFont = (HFONT)SelectObject(hdc, GetMenuFont());

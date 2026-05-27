@@ -14,7 +14,6 @@ static HMENU menu;          // Main menu
 static HBRUSH hMenuBarBrush = NULL;
 static HBRUSH hMenuBarSelectedBrush = NULL;
 static HFONT  hMenuBarFont  = NULL;
-static bool   menuBarUsesThemeColors = false;
 
 extern int connection;
 
@@ -267,12 +266,12 @@ void MenuBarApply(HMENU hMenu)
       return;
 
    COLORREF themeBg = ThemeMenuBarColor();
-   menuBarUsesThemeColors = (themeBg != CLR_INVALID);
+   bool useThemeColors = (themeBg != CLR_INVALID);
 
    // For unthemed menu bars, COLOR_WINDOW keeps the look they had before
    // they were owner-drawn.
-   COLORREF bgColor    = menuBarUsesThemeColors ? themeBg               : GetSysColor(COLOR_WINDOW);
-   COLORREF selBgColor = menuBarUsesThemeColors ? GetColor(COLOR_EDITBGD) : GetSysColor(COLOR_HIGHLIGHT);
+   COLORREF bgColor    = useThemeColors ? themeBg               : GetSysColor(COLOR_WINDOW);
+   COLORREF selBgColor = useThemeColors ? GetColor(COLOR_EDITBGD) : GetSysColor(COLOR_HIGHLIGHT);
 
    if (hMenuBarBrush)
       DeleteObject(hMenuBarBrush);
@@ -411,7 +410,7 @@ bool MenuBarDrawItem(DRAWITEMSTRUCT *dis)
    FillRect(hdc, &rc, bgBrush);
 
    COLORREF textColor;
-   if (menuBarUsesThemeColors)
+   if (ThemeMenuBarColor() != CLR_INVALID)
       textColor = GetColor(COLOR_FGD);
    else
       textColor = GetSysColor(selected ? COLOR_HIGHLIGHTTEXT : COLOR_MENUTEXT);

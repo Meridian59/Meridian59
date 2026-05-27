@@ -262,7 +262,7 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
    if (effects.flashxlat != XLAT_IDENTITY)
    {
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(effects.flashxlat));
-      effects.duration -= GetDeltaTime_Ms();
+      effects.duration -= static_cast<int>(GetDeltaTime() * 1000.0f);
       if (effects.duration <= 0)
       {
 	 effects.flashxlat = XLAT_IDENTITY;

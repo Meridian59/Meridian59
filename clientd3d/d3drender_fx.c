@@ -25,7 +25,7 @@ static void SandstormInit(void)
 	static constexpr int SAND_EMITTER_COUNT = 8;
 	static constexpr float SAND_EMITTER_TIMER_S = 0.015f;
 
-	// Sand particle fly really fast, so their duration are short to use up less resources.
+	// Sand particles fly really fast, so short durations are enough since they are only seen briefly on-screen.
 	static constexpr float SAND_LIFETIME_S = 0.2f;
 	static constexpr float SAND_VELOCITY = 1200.0f;
 
@@ -117,7 +117,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	{
 		custom_bgra	bgra;
 
-		effects.duration -= GetDeltaTime_Ms();
+		effects.duration -= static_cast<int>(GetDeltaTime() * 1000.0f);
 		switch (effects.flashxlat)
 		{
 			case XLAT_BLEND10RED:

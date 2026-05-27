@@ -11,8 +11,6 @@
 
 // Returns delta time in seconds.
 float GetDeltaTime();
-// Returns delta time in milliseconds for legacy systems that still use milliseconds.
-int GetDeltaTime_Ms();
 
 void InitializeTime();
 void UpdateTime();

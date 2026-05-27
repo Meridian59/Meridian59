@@ -292,8 +292,8 @@ static void ThemeApplyTitleBar(void)
 /************************************************************************/
 /*
  * ThemeApply:  Reload the color palette and main window background
- *   bitmap for the active theme, apply the title bar style, rebuild
- *   the menu bar, fire EVENT_COLORCHANGED so modules refresh their
+ *   bitmap for the active theme, apply the title bar style, apply the
+ *   menu bar style, fire EVENT_COLORCHANGED so modules refresh their
  *   themed resources, and force a repaint of the main window.
  */
 void ThemeApply(void)

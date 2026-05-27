@@ -257,8 +257,10 @@ static HFONT GetMenuFont(void)
 }
 /************************************************************************/
 /*
- * MenuBarApply:  Builds the brushes for the current theme.  Marks
- *   any top-level items not yet owner-drawn.  Separators are skipped.
+ * MenuBarApply:  Builds the brushes for the current theme and sets the
+ *   menu's background.  Marks any top-level items not yet owner-drawn,
+ *   allocating a text buffer per item that MenuBarShutdown frees at
+ *   exit.  Separators are skipped.
  */
 void MenuBarApply(HMENU hMenu)
 {
@@ -410,6 +412,9 @@ void MenuBarShutdown(void)
          {
             char *text = (char *)mii.dwItemData;
             delete[] text;
+            mii.fMask = MIIM_DATA;
+            mii.dwItemData = 0;
+            SetMenuItemInfo(hMenu, i, TRUE, &mii);
          }
       }
    }

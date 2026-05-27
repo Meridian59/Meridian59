@@ -18,7 +18,7 @@ static bool   menuBarUsesThemeColors = false;
 
 // Extra height added to each menu bar item so the text does not touch
 // the top and bottom edges.  Half goes above the text, half below.
-static const int MENU_BAR_ITEM_VERTICAL_PADDING_TOTAL = 8;
+static const int MENU_BAR_ITEM_VERTICAL_PADDING = 8;
 
 // Pixels removed from each item's measured width.  Owner-drawn items
 // have wider default gaps than system-drawn items, so this brings the
@@ -278,6 +278,8 @@ void MenuBarApply(HMENU hMenu)
    COLORREF themeBg = ThemeMenuBarColor();
    menuBarUsesThemeColors = (themeBg != CLR_INVALID);
 
+   // For unthemed menu bars, COLOR_WINDOW keeps the look they had before
+   // they were owner-drawn.
    COLORREF bgColor    = menuBarUsesThemeColors ? themeBg               : GetSysColor(COLOR_WINDOW);
    COLORREF selBgColor = menuBarUsesThemeColors ? GetColor(COLOR_EDITBGD) : GetSysColor(COLOR_HIGHLIGHT);
 
@@ -388,7 +390,7 @@ bool MenuBarMeasureItem(MEASUREITEMSTRUCT *mis)
    GetTextExtentPoint32(hdc, text, (int)strlen(text), &size);
 
    mis->itemWidth = size.cx - MENU_BAR_ITEM_HORIZONTAL_TRIM;
-   mis->itemHeight = size.cy + MENU_BAR_ITEM_VERTICAL_PADDING_TOTAL;
+   mis->itemHeight = size.cy + MENU_BAR_ITEM_VERTICAL_PADDING;
 
    SelectObject(hdc, hOldFont);
    ReleaseDC(hMain, hdc);

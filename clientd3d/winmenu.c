@@ -311,7 +311,7 @@ void ThemedMenuBarApply(HMENU hMenu)
          continue;
 
       UINT textLen = mii.cch + 1;
-      char *text = (char *)SafeMalloc(textLen);
+      char *text = new char[textLen];
       mii.dwTypeData = text;
       mii.cch = textLen;
       GetMenuItemInfo(hMenu, i, TRUE, &mii);
@@ -352,7 +352,7 @@ static void ThemedMenuBarRemove(HMENU hMenu)
       mii.dwItemData = 0;
       SetMenuItemInfo(hMenu, i, TRUE, &mii);
 
-      SafeFree(text);
+      delete[] text;
    }
 
    MENUINFO mi;

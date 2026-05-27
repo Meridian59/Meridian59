@@ -270,7 +270,7 @@ void MenuBarApply(HMENU hMenu)
 
    // For unthemed menu bars, COLOR_WINDOW keeps the look they had before
    // they were owner-drawn.
-   COLORREF bgColor    = useThemeColors ? themeBg               : GetSysColor(COLOR_WINDOW);
+   COLORREF bgColor    = useThemeColors ? themeBg                 : GetSysColor(COLOR_WINDOW);
    COLORREF selBgColor = useThemeColors ? GetColor(COLOR_EDITBGD) : GetSysColor(COLOR_HIGHLIGHT);
 
    if (hMenuBarBrush)
@@ -313,49 +313,6 @@ void MenuBarApply(HMENU hMenu)
       mii.fType |= MFT_OWNERDRAW;
       mii.dwItemData = (ULONG_PTR)text;
       SetMenuItemInfo(hMenu, i, TRUE, &mii);
-   }
-}
-/************************************************************************/
-/*
- * MenuBarShutdown:  Frees the cached brushes, font, and per-item text
- *   buffers attached to the main menu's top-level items.
- */
-void MenuBarShutdown(void)
-{
-   HMENU hMenu = GetMenu(hMain);
-   if (hMenu)
-   {
-      int count = GetMenuItemCount(hMenu);
-      for (int i = 0; i < count; i++)
-      {
-         MENUITEMINFO mii;
-         memset(&mii, 0, sizeof(mii));
-         mii.cbSize = sizeof(mii);
-         mii.fMask = MIIM_FTYPE | MIIM_DATA;
-         GetMenuItemInfo(hMenu, i, TRUE, &mii);
-
-         if (mii.fType & MFT_OWNERDRAW)
-         {
-            char *text = (char *)mii.dwItemData;
-            delete[] text;
-         }
-      }
-   }
-
-   if (hMenuBarBrush)
-   {
-      DeleteObject(hMenuBarBrush);
-      hMenuBarBrush = NULL;
-   }
-   if (hMenuBarSelectedBrush)
-   {
-      DeleteObject(hMenuBarSelectedBrush);
-      hMenuBarSelectedBrush = NULL;
-   }
-   if (hMenuBarFont)
-   {
-      DeleteObject(hMenuBarFont);
-      hMenuBarFont = NULL;
    }
 }
 /************************************************************************/
@@ -429,4 +386,47 @@ bool MenuBarDrawItem(DRAWITEMSTRUCT *dis)
    SelectObject(hdc, hOldFont);
 
    return true;
+}
+/************************************************************************/
+/*
+ * MenuBarShutdown:  Frees the cached brushes, font, and per-item text
+ *   buffers attached to the main menu's top-level items.
+ */
+void MenuBarShutdown(void)
+{
+   HMENU hMenu = GetMenu(hMain);
+   if (hMenu)
+   {
+      int count = GetMenuItemCount(hMenu);
+      for (int i = 0; i < count; i++)
+      {
+         MENUITEMINFO mii;
+         memset(&mii, 0, sizeof(mii));
+         mii.cbSize = sizeof(mii);
+         mii.fMask = MIIM_FTYPE | MIIM_DATA;
+         GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+         if (mii.fType & MFT_OWNERDRAW)
+         {
+            char *text = (char *)mii.dwItemData;
+            delete[] text;
+         }
+      }
+   }
+
+   if (hMenuBarBrush)
+   {
+      DeleteObject(hMenuBarBrush);
+      hMenuBarBrush = NULL;
+   }
+   if (hMenuBarSelectedBrush)
+   {
+      DeleteObject(hMenuBarSelectedBrush);
+      hMenuBarSelectedBrush = NULL;
+   }
+   if (hMenuBarFont)
+   {
+      DeleteObject(hMenuBarFont);
+      hMenuBarFont = NULL;
+   }
 }

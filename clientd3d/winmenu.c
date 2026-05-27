@@ -325,6 +325,49 @@ void MenuBarApply(HMENU hMenu)
 }
 /************************************************************************/
 /*
+ * MenuBarShutdown:  Frees the cached brushes, font, and per-item text
+ *   buffers attached to the main menu's top-level items.
+ */
+void MenuBarShutdown(void)
+{
+   HMENU hMenu = GetMenu(hMain);
+   if (hMenu)
+   {
+      int count = GetMenuItemCount(hMenu);
+      for (int i = 0; i < count; i++)
+      {
+         MENUITEMINFO mii;
+         memset(&mii, 0, sizeof(mii));
+         mii.cbSize = sizeof(mii);
+         mii.fMask = MIIM_FTYPE | MIIM_DATA;
+         GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+         if (mii.fType & MFT_OWNERDRAW)
+         {
+            char *text = (char *)mii.dwItemData;
+            delete[] text;
+         }
+      }
+   }
+
+   if (hMenuBarBrush)
+   {
+      DeleteObject(hMenuBarBrush);
+      hMenuBarBrush = NULL;
+   }
+   if (hMenuBarSelectedBrush)
+   {
+      DeleteObject(hMenuBarSelectedBrush);
+      hMenuBarSelectedBrush = NULL;
+   }
+   if (hMenuBarFont)
+   {
+      DeleteObject(hMenuBarFont);
+      hMenuBarFont = NULL;
+   }
+}
+/************************************************************************/
+/*
  * MenuBarMeasureItem:  Measures an owner-drawn menu bar item
  *   and writes its size into the given MEASUREITEMSTRUCT.  Returns
  *   true when handled, false otherwise.

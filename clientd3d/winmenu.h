@@ -21,6 +21,7 @@ void MenuDisconnect(void);
 void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify);
 
 M59EXPORT void MenuBarApply(HMENU hMenu);
+void MenuBarShutdown(void);
 bool MenuBarMeasureItem(MEASUREITEMSTRUCT *mis);
 bool MenuBarDrawItem(DRAWITEMSTRUCT *dis);
 

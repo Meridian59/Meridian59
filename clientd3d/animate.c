@@ -34,7 +34,6 @@ static const float FLICKER_LEVEL = LIGHT_LEVELS / 2.0f;  // Light adjustment ran
 static const float FLASH_LEVEL = LIGHT_LEVELS / 2.0f;    // Light adjustment range for flashing objects
 
 static int animation_timer = 0;   // id of animation timer, or 0 if none
-static DWORD timeLastFrame;
 static const int flickerTimer = FLICKER_PERIOD;  // Global timer for OF_FLICKERING objects (milliseconds)
 
 #define TIME_FULL_OBJECT_PHASE 1800
@@ -75,11 +74,6 @@ void AnimationTimerAbort(void)
    }
 }
 
-DWORD GetFrameTime(void)
-{
-   return timeLastFrame;
-}
-
 float GetFlickerLevel(void)
 {
    return FLICKER_LEVEL;
@@ -106,7 +100,6 @@ void AnimationTimerProc(HWND hwnd, UINT timer)
    now = timeGetTime();
    dt = now - last_animate_time;
    last_animate_time = now;
-   timeLastFrame = dt;
 
    /* Send event to modules */
    ModuleEvent(EVENT_ANIMATE, dt);

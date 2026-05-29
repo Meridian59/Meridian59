@@ -117,7 +117,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	{
 		custom_bgra	bgra;
 
-		effects.flashxlatDuration -= GetDeltaTime();
+		effects.flashxlatDuration_s -= GetDeltaTime();
 		switch (effects.flashxlat)
 		{
 			case XLAT_BLEND10RED:
@@ -230,10 +230,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			break;
 		}
 
-		if (effects.flashxlatDuration <= 0.0f)
+		if (effects.flashxlatDuration_s <= 0.0f)
 		{
 			effects.flashxlat = XLAT_IDENTITY;
-			effects.flashxlatDuration = 0.0f;
+			effects.flashxlatDuration_s = 0.0f;
 		}
 
 		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
@@ -419,12 +419,14 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	// May be drawn over room or map.
 
 	// whiteout
-	if (effects.whiteout)
+	if (effects.whiteoutDuration_s > 0.0f)
 	{
-		int whiteout = std::min(effects.whiteout, 500);
+		// Whiteout starts to fade out towards the last half second.
+		float scaledWhiteout = std::min(effects.whiteoutDuration_s, 0.5f);
+		scaledWhiteout = (scaledWhiteout * static_cast<float>(COLOR_MAX)) / 0.5f;
+		scaledWhiteout = std::max(scaledWhiteout, 200.0f);
 
-		whiteout = whiteout * COLOR_MAX / 500;
-		whiteout = std::max(whiteout, 200);
+		int whiteoutAlpha = static_cast<int>(scaledWhiteout);
 
 		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)
@@ -440,7 +442,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 		for (i = 0; i < 4; i++)
 		{
-			CHUNK_BGRA_SET(pChunk, i, COLOR_MAX, COLOR_MAX, COLOR_MAX, whiteout);
+			CHUNK_BGRA_SET(pChunk, i, COLOR_MAX, COLOR_MAX, COLOR_MAX, whiteoutAlpha);
 		}
 
 		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
@@ -461,11 +463,14 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	// Pain (always drawn last).
 	if (config.pain)
 	{
-		if (effects.pain)
+		if (effects.painDuration_s > 0.0f)
 		{
-			int	pain = std::min(effects.pain, 2000);
-
-			pain = pain * 204 / 2000;
+			// Adjusts opacity for flashes of pain based on time left.
+			// With durations lasting 2+ seconds, it maxes at 80% opacity.
+			float scaledPain = std::min(effects.painDuration_s, 2.0f);
+			scaledPain = (scaledPain * 204.0f) / 2.0f;
+			
+			int painAlpha = static_cast<int>(scaledPain);
 
 			pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 			if (NULL == pPacket)
@@ -481,7 +486,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 			for (i = 0; i < 4; i++)
 			{
-				CHUNK_BGRA_SET(pChunk, i, 0, 0, COLOR_MAX, pain);
+				CHUNK_BGRA_SET(pChunk, i, 0, 0, COLOR_MAX, painAlpha);
 			}
 
 			CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,

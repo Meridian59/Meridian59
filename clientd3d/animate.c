@@ -101,6 +101,9 @@ void AnimationTimerProc(HWND hwnd, UINT timer)
    dt = now - last_animate_time;
    last_animate_time = now;
 
+   // Delta time (in seconds).
+   float deltaTime_s = GetDeltaTime();
+
    /* Send event to modules */
    ModuleEvent(EVENT_ANIMATE, dt);
 
@@ -121,7 +124,7 @@ void AnimationTimerProc(HWND hwnd, UINT timer)
 
       AnimateDescription(dt);
 
-      need_redraw = AnimateEffects(dt) || need_redraw;
+      need_redraw = AnimateEffects(deltaTime_s) || need_redraw;
       if (need_redraw)
 	 RedrawAll();
    }

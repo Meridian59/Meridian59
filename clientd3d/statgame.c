@@ -384,9 +384,9 @@ void BackgroundSleep()
 /****************************************************************************/
 void GameIdle(void)
 {
-   MoveUpdateServer();       // Update our position on server, if necessary
-
    UpdateTime();
+   
+   MoveUpdateServer();       // Update our position on server, if necessary
    AnimationTimerProc(hMain, 0);
    HandleKeys();
 

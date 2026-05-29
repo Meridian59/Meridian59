@@ -12,7 +12,12 @@
 // Returns delta time in seconds.
 float GetDeltaTime();
 
+// Sets up baseline clock snapshot.
+// Called within WinMain() in client.c right before entering primary game update loop.
 void InitializeTime();
+
+// Refreshes clock snapshot for the current frame.
+// Called every game loop at the very start of GameIdle() in statgame.c.
 void UpdateTime();
 
 #endif	/* #ifndef _CLOCK_H */

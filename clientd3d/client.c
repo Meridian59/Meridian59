@@ -13,6 +13,7 @@
 #include <assert.h>
 
 #include "client.h"
+#include <dwmapi.h>
 
 #ifdef M59_RETAIL
   // Minidump reporting
@@ -166,9 +167,13 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_INITMENUPOPUP, InitMenuPopupHandler);
 
 	case WM_MEASUREITEM:
+		if (MenuBarMeasureItem((MEASUREITEMSTRUCT *)lParam))
+			return TRUE;
 		ItemListMeasureItem(hwnd, (MEASUREITEMSTRUCT *) lParam);
 		return 0;
 	case WM_DRAWITEM:     // windowsx.h macro always returns FALSE
+		if (MenuBarDrawItem((DRAWITEMSTRUCT *)lParam))
+			return TRUE;
 		return MainDrawItem(hwnd, (const DRAWITEMSTRUCT *)(lParam));
 
 	case WM_SETCURSOR:
@@ -275,10 +280,21 @@ void ClearMessageQueue(void)
 }
 /************************************************************************/
 /*
+ * ThemeApplyTitleBar:  Apply the active theme's title bar style.
+ */
+static void ThemeApplyTitleBar(void)
+{
+	// DWM needs a 4-byte BOOL, not a 1-byte bool.
+	BOOL dwmDark = static_cast<BOOL>(ThemeUsesDarkTitleBar());
+	DwmSetWindowAttribute(hMain, DWMWA_USE_IMMERSIVE_DARK_MODE,
+		&dwmDark, sizeof(dwmDark));
+}
+/************************************************************************/
+/*
  * ThemeApply:  Reload the color palette and main window background
- *   bitmap for the active theme, fire EVENT_COLORCHANGED so modules
- *   refresh their themed resources, and force a repaint of the main
- *   window.
+ *   bitmap for the active theme, apply the title bar style, apply the
+ *   menu bar style, fire EVENT_COLORCHANGED so modules refresh their
+ *   themed resources, and force a repaint of the main window.
  */
 void ThemeApply(void)
 {
@@ -287,6 +303,10 @@ void ThemeApply(void)
 
 	// Reload main background so the theme's tiles take effect immediately.
 	CreateWindowBackground();
+
+	ThemeApplyTitleBar();
+	MenuBarApply(GetMenu(hMain));
+	DrawMenuBar(hMain);
 
 	MainChangeColor();
 	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);
@@ -348,6 +368,9 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		MainQuit(hMain);
 		exit(1);
 	}
+
+	ThemeApplyTitleBar();
+	MenuBarApply(GetMenu(hMain));
 
 	if (config.debug)
 		CreateDebugWindow();

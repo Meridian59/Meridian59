@@ -90,7 +90,9 @@ The major components to touch:
 
 1. The `Theme` enum in `clientd3d/config.h`.
 2. The color tables and INI machinery in `clientd3d/color.c`.
-3. Server message colors in `clientd3d/srvrstr.c` (optional).
-4. The Settings UI: localized string in `clientd3d/client.rc` and combo entry in `clientd3d/preferences.c`.
-5. Bitmap variants (optional): author `_<NAME>` BMP files and extend the per-module bitmap resolvers in `clientd3d/color.c` and `module/merintr/theme.c`.
-6. Theme capability switches in `module/merintr/theme.c`.
+3. The per-theme menu bar color in `ThemeMenuBarColor` in `clientd3d/color.c` (optional).  Skip to keep the system default.
+4. The per-theme title bar style in `ThemeUsesDarkTitleBar` in `clientd3d/color.c` (optional).  Return `true` for light text on a dark title bar, `false` for dark text on a light title bar.  Match this to the menu bar color for the most consistent look.
+5. Server message colors in `clientd3d/srvrstr.c` (optional).
+6. The Settings UI: localized string in `clientd3d/client.rc` and combo entry in `clientd3d/preferences.c`.
+7. Bitmap variants (optional): author `_<NAME>` BMP files and extend the per-module bitmap resolvers in `clientd3d/color.c` and `module/merintr/theme.c`.
+8. Theme capability switches in `module/merintr/theme.c`.

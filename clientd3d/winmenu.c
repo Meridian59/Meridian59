@@ -11,6 +11,9 @@
 #include "client.h"
 
 static HMENU menu;          // Main menu
+static HBRUSH hMenuBarBrush = NULL;
+static HBRUSH hMenuBarSelectedBrush = NULL;
+static HFONT  hMenuBarFont  = NULL;
 
 extern int connection;
 
@@ -234,5 +237,201 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUT), hMain, AboutDialogProc);
       break;
 
+   }
+}
+/************************************************************************/
+/*
+ * GetMenuFont:  Returns a cached HFONT for the system menu font.
+ */
+static HFONT GetMenuFont(void)
+{
+   if (!hMenuBarFont)
+   {
+      NONCLIENTMETRICS ncm;
+      memset(&ncm, 0, sizeof(ncm));
+      ncm.cbSize = sizeof(ncm);
+      SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0);
+      hMenuBarFont = CreateFontIndirect(&ncm.lfMenuFont);
+   }
+   return hMenuBarFont;
+}
+/************************************************************************/
+/*
+ * MenuBarApply:  Builds the brushes for the current theme and sets the
+ *   menu's background.  Marks any top-level items not yet owner-drawn,
+ *   allocating a text buffer per item that MenuBarShutdown frees at
+ *   exit.  Separators are skipped.
+ */
+void MenuBarApply(HMENU hMenu)
+{
+   if (!hMenu)
+      return;
+
+   COLORREF themeBg = ThemeMenuBarColor();
+   bool useThemeColors = (themeBg != CLR_INVALID);
+
+   // For unthemed menu bars, COLOR_WINDOW keeps the look they had before
+   // they were owner-drawn.
+   COLORREF bgColor    = useThemeColors ? themeBg                 : GetSysColor(COLOR_WINDOW);
+   COLORREF selBgColor = useThemeColors ? GetColor(COLOR_EDITBGD) : GetSysColor(COLOR_HIGHLIGHT);
+
+   if (hMenuBarBrush)
+      DeleteObject(hMenuBarBrush);
+   hMenuBarBrush = CreateSolidBrush(bgColor);
+
+   if (hMenuBarSelectedBrush)
+      DeleteObject(hMenuBarSelectedBrush);
+   hMenuBarSelectedBrush = CreateSolidBrush(selBgColor);
+
+   MENUINFO mi;
+   memset(&mi, 0, sizeof(mi));
+   mi.cbSize = sizeof(mi);
+   mi.fMask = MIM_BACKGROUND;
+   mi.hbrBack = hMenuBarBrush;
+   SetMenuInfo(hMenu, &mi);
+
+   int count = GetMenuItemCount(hMenu);
+   for (int i = 0; i < count; i++)
+   {
+      MENUITEMINFO mii;
+      memset(&mii, 0, sizeof(mii));
+      mii.cbSize = sizeof(mii);
+      mii.fMask = MIIM_FTYPE | MIIM_STRING | MIIM_DATA;
+
+      mii.dwTypeData = NULL;
+      mii.cch = 0;
+      GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      if (mii.fType & (MFT_OWNERDRAW | MFT_SEPARATOR))
+         continue;
+
+      UINT textLen = mii.cch + 1;
+      char *text = new char[textLen];
+      mii.dwTypeData = text;
+      mii.cch = textLen;
+      GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+      mii.fMask = MIIM_FTYPE | MIIM_DATA;
+      mii.fType |= MFT_OWNERDRAW;
+      mii.dwItemData = (ULONG_PTR)text;
+      SetMenuItemInfo(hMenu, i, TRUE, &mii);
+   }
+}
+/************************************************************************/
+/*
+ * MenuBarMeasureItem:  Measures an owner-drawn menu bar item
+ *   and writes its size into the given MEASUREITEMSTRUCT.  Returns
+ *   true when handled, false otherwise.
+ */
+bool MenuBarMeasureItem(MEASUREITEMSTRUCT *mis)
+{
+   if (mis->CtlType != ODT_MENU)
+      return false;
+
+   const char *text = (const char *)mis->itemData;
+   if (!text)
+      return false;
+
+   HDC hdc = GetDC(hMain);
+   HFONT hOldFont = (HFONT)SelectObject(hdc, GetMenuFont());
+
+   SIZE size;
+   GetTextExtentPoint32(hdc, text, (int)strlen(text), &size);
+
+   mis->itemWidth = size.cx;
+   mis->itemHeight = GetSystemMetrics(SM_CYMENU);
+
+   SelectObject(hdc, hOldFont);
+   ReleaseDC(hMain, hdc);
+
+   return true;
+}
+/************************************************************************/
+/*
+ * MenuBarDrawItem:  Paints an owner-drawn menu bar item.
+ *   Returns true when painted, false otherwise.
+ */
+bool MenuBarDrawItem(DRAWITEMSTRUCT *dis)
+{
+   if (dis->CtlType != ODT_MENU)
+      return false;
+
+   const char *text = (const char *)dis->itemData;
+   if (!text)
+      return false;
+
+   HDC hdc = dis->hDC;
+   RECT rc = dis->rcItem;
+
+   bool selected = (dis->itemState & ODS_SELECTED) != 0;
+
+   HBRUSH bgBrush = selected ? hMenuBarSelectedBrush : hMenuBarBrush;
+   FillRect(hdc, &rc, bgBrush);
+
+   COLORREF textColor;
+   if (ThemeMenuBarColor() != CLR_INVALID)
+      textColor = GetColor(COLOR_FGD);
+   else
+      textColor = GetSysColor(selected ? COLOR_HIGHLIGHTTEXT : COLOR_MENUTEXT);
+   SetTextColor(hdc, textColor);
+   SetBkMode(hdc, TRANSPARENT);
+
+   HFONT hOldFont = (HFONT)SelectObject(hdc, GetMenuFont());
+
+   // Hide the accelerator underlines when the ODS_NOACCEL flag is set,
+   // matching the system default menu bar behavior.
+   UINT drawFlags = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
+   if (dis->itemState & ODS_NOACCEL)
+      drawFlags |= DT_HIDEPREFIX;
+   DrawText(hdc, text, -1, &rc, drawFlags);
+
+   SelectObject(hdc, hOldFont);
+
+   return true;
+}
+/************************************************************************/
+/*
+ * MenuBarShutdown:  Frees the cached brushes, font, and per-item text
+ *   buffers attached to the main menu's top-level items.
+ */
+void MenuBarShutdown(void)
+{
+   HMENU hMenu = GetMenu(hMain);
+   if (hMenu)
+   {
+      int count = GetMenuItemCount(hMenu);
+      for (int i = 0; i < count; i++)
+      {
+         MENUITEMINFO mii;
+         memset(&mii, 0, sizeof(mii));
+         mii.cbSize = sizeof(mii);
+         mii.fMask = MIIM_FTYPE | MIIM_DATA;
+         GetMenuItemInfo(hMenu, i, TRUE, &mii);
+
+         if (mii.fType & MFT_OWNERDRAW)
+         {
+            char *text = (char *)mii.dwItemData;
+            delete[] text;
+            mii.fMask = MIIM_DATA;
+            mii.dwItemData = 0;
+            SetMenuItemInfo(hMenu, i, TRUE, &mii);
+         }
+      }
+   }
+
+   if (hMenuBarBrush)
+   {
+      DeleteObject(hMenuBarBrush);
+      hMenuBarBrush = NULL;
+   }
+   if (hMenuBarSelectedBrush)
+   {
+      DeleteObject(hMenuBarSelectedBrush);
+      hMenuBarSelectedBrush = NULL;
+   }
+   if (hMenuBarFont)
+   {
+      DeleteObject(hMenuBarFont);
+      hMenuBarFont = NULL;
    }
 }

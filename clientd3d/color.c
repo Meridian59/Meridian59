@@ -332,6 +332,34 @@ COLORREF ThemeBorderColor(void)
 	}
 }
 /************************************************************************/
+/*
+ * ThemeMenuBarColor:  Returns the color the active theme uses for the
+ *   menu bar background.  Returns CLR_INVALID for themes that use the
+ *   system default.
+ */
+COLORREF ThemeMenuBarColor(void)
+{
+	switch (ThemeCurrent())
+	{
+	case Theme::Dark: return RGB(50, 50, 53);
+	default:          return CLR_INVALID;
+	}
+}
+/************************************************************************/
+/*
+ * ThemeUsesDarkTitleBar:  Returns true when the active theme uses the
+ *   DWM dark title bar style (light text on a dark background).  False
+ *   for the light style (dark text on a light background).
+ */
+bool ThemeUsesDarkTitleBar(void)
+{
+	switch (ThemeCurrent())
+	{
+	case Theme::Dark: return true;
+	default:          return false;
+	}
+}
+/************************************************************************/
 void ColorsRestoreDefaults(void)
 {
 	ColorsDestroy();

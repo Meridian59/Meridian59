@@ -809,13 +809,13 @@ void InterfaceDrawElements(HDC hdc)
 
   for (i=0; i < NUM_AUTO_ELEMENTS; i++)
   {
-	  /* Skip inventory corner bitmaps.  The inventory edge repeaters
-	     (ELEMENT_ITOP through ELEMENT_IRIGHT) are already skipped in
-	     the repeater loop below, so these corners have no connecting
-	     edges and draw as floating fragments.  Stats area corners are
-	     skipped when ThemeSkipStatsAreaFrame returns true.  Chat box
-	     corners are skipped independently when ThemeSkipChatBoxFrame
-	     returns true. */
+	  // Skip inventory corner bitmaps.  The inventory edge repeaters (ELEMENT_ITOP
+	  // through ELEMENT_IRIGHT) are already skipped in the repeater loop below, so
+	  // these corners have no connecting edges and draw as floating fragments.
+	  //
+	  // Stats area corners are skipped when ThemeSkipStatsAreaFrame returns true.
+	  // Chat box corners are skipped independently when ThemeSkipChatBoxFrame
+	  // returns true.
 	  if ((i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT) ||
 	      (ThemeSkipStatsAreaFrame() && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT) ||
 	      (ThemeSkipChatBoxFrame()   && i >= ELEMENT_BULTOP && i <= ELEMENT_BLRRIGHT))

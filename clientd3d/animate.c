@@ -83,30 +83,21 @@ float GetFlickerLevel(void)
 void AnimationTimerProc(HWND hwnd, UINT timer)
 {
    bool need_redraw = false;
-   static DWORD last_animate_time = 0;
-   DWORD dt, now;
 
    PingTimerProc(hwnd, 0, 0, 0);
 
    if (!(GameGetState() == GAME_PLAY || GameGetState() == GAME_SELECT))
       return;
 
-   if (last_animate_time == 0)
-   {
-	   last_animate_time = timeGetTime();
-	   return;
-   }
-
    config.quickstart = false;
-   now = timeGetTime();
-   dt = now - last_animate_time;
-   last_animate_time = now;
 
    // Delta time (in seconds).
    float deltaTime_s = GetDeltaTime();
 
    /* Send event to modules */
-   ModuleEvent(EVENT_ANIMATE, dt);
+   // Casting to double is required here due to C++ variadic argument promotion rules.
+   // Passing a raw float into a va_list causes data corruption at runtime.
+   ModuleEvent(EVENT_ANIMATE, static_cast<double>(deltaTime_s));
 
    /* Send event to non-module child windows */
    Lagbox_Animate(deltaTime_s);

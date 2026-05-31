@@ -1381,9 +1381,9 @@ bool InventoryMouseCaptured(void)
 /************************************************************************/
 /*
  * AnimateInventory: Animate inventory items.
- *   dt is number of milliseconds since last time animation timer went off.
+ *   dt is number of seconds since last time animation timer went off.
  */
-void AnimateInventory(int dt)
+void AnimateInventory(float dt)
 {
    bool need_redraw;
    int index;

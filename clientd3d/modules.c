@@ -346,7 +346,7 @@ typedef bool (WINAPI *EventHandlerColorChangedProc)(WORD, COLORREF);
 typedef bool (WINAPI *EventHandlerMenuItemProc)(int);
 typedef bool (WINAPI *EventHandlerStateChangedProc)(int, int);
 typedef bool (WINAPI *EventHandlerWindowMsgProc)(HWND, UINT, WPARAM, LPARAM);
-typedef bool (WINAPI *EventHandlerAnimateProc)(int);
+typedef bool (WINAPI *EventHandlerAnimateProc)(float);
 typedef bool (WINAPI *EventHandlerToolbarButtonProc)(Button *);
 typedef bool (WINAPI *EventHandlerTextCommandProc)(char *);
 typedef bool (WINAPI *EventHandlerResizeProc)(int, int, AREA *);
@@ -557,8 +557,11 @@ bool ModuleEventWindowMsg(ModuleInfo *info, EventHandlerProc module_proc, va_lis
 /******************************************************************************/
 bool ModuleEventAnimate(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
-   int dt  = va_arg(v_list, int);
-   return (*((EventHandlerAnimateProc) module_proc))(dt);
+   // Extract as a double to match variadic argument promotion rules.
+   double dt_double = va_arg(v_list, double);
+   // Then safely downcast to a float.
+   float dt_seconds = static_cast<float>(dt_double);
+   return (*((EventHandlerAnimateProc) module_proc))(dt_seconds);
 }
 /******************************************************************************/
 bool ModuleEventToolbarButton(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)

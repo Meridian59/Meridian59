@@ -40,7 +40,7 @@ void DisplayInventory(list_type inventory);
 void DisplaySetUsing(ID obj_id, bool is_using);
 void DisplayUsing(list_type using_list);
 
-void AnimateInventory(int dt);
+void AnimateInventory(float dt);
 
 void ShowInventory(bool bShow);
 HWND GetHwndInv();

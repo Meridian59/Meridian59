@@ -46,9 +46,9 @@ def do_failure():
 
 def do_success():
     return {
-        'statusCode': 302, 
+        'statusCode': 302,
         'headers': {
-            'Location': f"{domain_name}/password-reset"
+            'Location': f"{domain_name}/password-reset-success"
         },
         'body': json.dumps({'message': 'Redirecting...'})
     }

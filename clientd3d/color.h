@@ -45,6 +45,12 @@ enum {
    COLOR_ITEM_TEXT_LEGENDARY,
    COLOR_ITEM_TEXT_UNIDENTIFIED,
    COLOR_ITEM_TEXT_CURSED,
+   COLOR_HEALTHBAR,
+   COLOR_HEALTHLIMIT,
+   COLOR_MANABAR,
+   COLOR_MANALIMIT,
+   COLOR_VIGORBAR,
+   COLOR_VIGORLIMIT,
    MAXCOLORS,
 };
 
@@ -66,6 +72,7 @@ M59EXPORT Theme ThemeCurrent(void);
 int MainThemeResourceId(int id);
 COLORREF ThemeMenuBarColor(void);
 bool ThemeUsesDarkTitleBar(void);
+M59EXPORT bool ThemeUsesStyledStatBars(void);
 COLORREF GetPlayerNameColor(int flags,const char*name);
 
 void UserSelectColor(WORD color);

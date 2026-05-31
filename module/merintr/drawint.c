@@ -812,10 +812,13 @@ void InterfaceDrawElements(HDC hdc)
 	  /* Skip inventory corner bitmaps.  The inventory edge repeaters
 	     (ELEMENT_ITOP through ELEMENT_IRIGHT) are already skipped in
 	     the repeater loop below, so these corners have no connecting
-	     edges and draw as floating fragments.  Stats-area corners are
-	     also skipped, depending on the active theme. */
+	     edges and draw as floating fragments.  Stats area corners are
+	     skipped when ThemeSkipStatsAreaFrame returns true.  Chat box
+	     corners are skipped independently when ThemeSkipChatBoxFrame
+	     returns true. */
 	  if ((i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT) ||
-	      (ThemeSkipStatsAreaFrame() && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT))
+	      (ThemeSkipStatsAreaFrame() && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT) ||
+	      (ThemeSkipChatBoxFrame()   && i >= ELEMENT_BULTOP && i <= ELEMENT_BLRRIGHT))
 		  continue;
 
     OffscreenWindowBackground(NULL, elements[i].x, elements[i].y, elements[i].width, elements[i].height);
@@ -834,10 +837,13 @@ void InterfaceDrawElements(HDC hdc)
 	  //	disable xxx
 	if( i >= ELEMENT_TOP && i <= ELEMENT_RIGHT )
 		continue;
-	// Skip the edit-box bottom repeater.  Stats-area edge repeaters
-	// are also skipped, depending on the active theme.
+	// Skip the edit box bottom repeater.  Stats area edge repeaters
+	// are skipped independently when ThemeSkipStatsAreaFrame returns
+	// true.  Chat box edge repeaters are skipped independently when
+	// ThemeSkipChatBoxFrame returns true.
 	if ((i == ELEMENT_BBOTTOM) ||
-	    (ThemeSkipStatsAreaFrame() && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT))
+	    (ThemeSkipStatsAreaFrame() && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT) ||
+	    (ThemeSkipChatBoxFrame()   && i >= ELEMENT_BTOP && i <= ELEMENT_BRIGHT))
 		continue;
 
 	e = &repeaters[i].element;
@@ -859,6 +865,15 @@ void InterfaceDrawElements(HDC hdc)
 
       GdiFlush();
     }
+  }
+
+  // Draw a stats area border if the active theme has a border color.
+  COLORREF borderColor = ThemeBorderColor();
+  if (borderColor != CLR_INVALID)
+  {
+    AREA stat;
+    StatsGetArea(&stat);
+    DrawBorder(&stat, GetClosestPaletteIndex(borderColor), NULL);
   }
 }
 /****************************************************************************/

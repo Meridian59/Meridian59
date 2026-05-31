@@ -320,8 +320,8 @@ int MainThemeResourceId(int id)
 }
 /************************************************************************/
 /*
- * ThemeBorderColor:  Returns the color the active theme draws around a
- *   panel, or CLR_INVALID to keep the default border.
+ * ThemeBorderColor:  Returns the active theme's border color, or
+ *   CLR_INVALID when the theme sets none.
  */
 COLORREF ThemeBorderColor(void)
 {

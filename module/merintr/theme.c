@@ -76,8 +76,8 @@ bool ThemeSidebarUsesInventoryFill(void)
 }
 /****************************************************************************/
 /*
- * ThemeSkipStatsAreaFrame:  Returns true when the active theme does not want
- *   an ornamental frame around the stats area.
+ * ThemeSkipStatsAreaFrame:  Returns true when the active theme skips the
+ *   ornamental frame around the stats area.
  */
 bool ThemeSkipStatsAreaFrame(void)
 {
@@ -89,8 +89,8 @@ bool ThemeSkipStatsAreaFrame(void)
 }
 /****************************************************************************/
 /*
- * ThemeSkipChatBoxFrame:  Returns true when the active theme does not want
- *   an ornamental frame around the chat box.
+ * ThemeSkipChatBoxFrame:  Returns true when the active theme skips the
+ *   ornamental frame around the chat box.
  */
 bool ThemeSkipChatBoxFrame(void)
 {

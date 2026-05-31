@@ -12,10 +12,8 @@
 #ifndef _MOVEOBJ_H
 #define _MOVEOBJ_H
 
-#define GRAVITY_ACCELERATION (- 5 * FINENESS)   // In FINENESS units / second / second
-
 void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace);
-bool ObjectsMove(int dt);
-bool MoveSingle(Motion *m, int dt);
+bool ObjectsMove(float dt);
+bool MoveSingle(Motion *m, float dt);
 
 #endif /* #ifndef _MOVEOBJ_H */

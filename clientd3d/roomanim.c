@@ -10,6 +10,7 @@
  */
 
 #include "client.h"
+#include <cmath>
 
 // Max amount that flickering can affect light level
 #define FLICKER_INTENSITY 40
@@ -29,18 +30,18 @@ extern int gD3DEnabled;
 // to flicker identically
 static int flicker_amount;
 
-static bool AnimateSectors(room_type *room, int dt);
-static bool AnimateSidedefs(room_type *room, int dt);
-static int RoomAnimateSingle(RoomAnimate *ra, int dt);
+static bool AnimateSectors(room_type *room, float dt);
+static bool AnimateSidedefs(room_type *room, float dt);
+static int RoomAnimateSingle(RoomAnimate *ra, float dt);
 static void SectorAdjustHeight(room_type *room, Sector *s, BYTE type, int height);
 static void SidedefDoAnimation(room_type *room, Sidedef *s, int return_code);
 static void SectorDoAnimation(room_type *room, Sector *s, int return_code);
 /************************************************************************/
 /*
  * AnimateRoom:  Animate wall and floor textures; return true iff any was animated.
- *   dt is number of milliseconds since last time animation timer went off.
+ *   dt is number of seconds since last time animation timer went off.
  */
-bool AnimateRoom(room_type *room, int dt)
+bool AnimateRoom(room_type *room, float dt)
 {
    bool retval, need_redraw = false;
 
@@ -55,24 +56,23 @@ bool AnimateRoom(room_type *room, int dt)
 /************************************************************************/
 /*
  * AnimateSectors:  Animate floor textures; return true iff any was animated.
- *   dt is number of milliseconds since last time animation timer went off.
+ *   dt is number of seconds since last time animation timer went off.
  */
-bool AnimateSectors(room_type *room, int dt)
+bool AnimateSectors(room_type *room, float dt)
 {
-   int i, ras_retval;
    bool need_redraw = false;
 
    // Setup flickering for this frame
    flicker_amount = rand();
 
-   for (i = 0; i < room->num_sectors; i++)
+   for (int i = 0; i < room->num_sectors; i++)
    {
       Sector *s = &room->sectors[i];
 
       if (s->animate == NULL)
          continue;
 
-      ras_retval = RoomAnimateSingle(s->animate, dt);
+      int ras_retval = RoomAnimateSingle(s->animate, dt);
       s->flags |= SF_HAS_ANIMATED;
       if (ras_retval == RAS_NONE)
          continue;
@@ -90,9 +90,9 @@ bool AnimateSectors(room_type *room, int dt)
 /************************************************************************/
 /*
  * AnimateSidedefs:  Animate wall textures; return true iff any was animated.
- *   dt is number of milliseconds since last time animation timer went off.
+ *   dt is number of seconds since last time animation timer went off.
  */
-bool AnimateSidedefs(room_type *room, int dt)
+bool AnimateSidedefs(room_type *room, float dt)
 {
    int i, ras_retval;
    bool need_redraw = false;
@@ -490,18 +490,21 @@ void MoveSector(BYTE type, WORD sector_num, WORD height, BYTE speed)
 /************************************************************************/
 /*
  * RoomAnimateSingle:  Animate the given room animation structure.
- *   dt is number of milliseconds since last time animation timer went off.
+ *   dt is number of seconds since last time animation timer went off.
  *   Returns:
  *   RAS_NONE    if no bitmap change took place.
  *   RAS_ANIMATE if the bitmap group changed, and the animation is continuing.
  *   RAS_DONE    if the bitmap group changed, and the animation is done.
  */
-int RoomAnimateSingle(RoomAnimate *ra, int dt)
+int RoomAnimateSingle(RoomAnimate *ra, float dt)
 {
    RoomLift *lift;
    RoomScroll *scroll;
    RoomFlicker *flicker;
    int dx, dy, step;
+
+   // Milliseconds is still used in some parts.
+   int dt_ms = static_cast<int>(std::ceil(dt * 1000.0f));
 
    switch (ra->animation)
    {
@@ -516,7 +519,7 @@ int RoomAnimateSingle(RoomAnimate *ra, int dt)
    case ANIMATE_FLOOR_LIFT:
    case ANIMATE_CEILING_LIFT:
       lift = &ra->u.lift;
-      lift->progress += (lift->increment * dt);
+      lift->progress += (lift->increment * dt_ms);
       if (lift->progress >= 1.0)
          lift->z = lift->dest_z;
       else
@@ -530,7 +533,7 @@ int RoomAnimateSingle(RoomAnimate *ra, int dt)
       dx = 0;
       dy = 0;
       scroll = &ra->u.scroll;
-      scroll->tick = scroll->tick - dt;
+      scroll->tick = scroll->tick - dt_ms;
 
       if (scroll->tick > 0)
          return RAS_NONE;
@@ -587,7 +590,7 @@ int RoomAnimateSingle(RoomAnimate *ra, int dt)
 
    case ANIMATE_FLICKER:
       flicker = &ra->u.flicker;
-      flicker->tick = flicker->tick - dt;
+      flicker->tick = flicker->tick - dt_ms;
 
       if (flicker->tick > 0)
          return RAS_NONE;
@@ -619,7 +622,6 @@ int RoomAnimateSingle(RoomAnimate *ra, int dt)
       debug(("Unknown animation type %d in RoomAnimateSingle\n", ra->animation));
       return RAS_NONE;
    }
-   // Can't get here
 }
 /************************************************************************/
 /*

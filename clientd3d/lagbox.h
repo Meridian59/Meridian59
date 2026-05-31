@@ -24,7 +24,7 @@ void Lagbox_Reposition();
 void Lagbox_Update(DWORD dwLatency);
 BOOL Lagbox_OnDrawItem(HWND hWnd, const DRAWITEMSTRUCT* lpdis);
 void Lagbox_Command(HWND hWnd, int id, HWND hwndCtrl, UINT uNotify);
-void Lagbox_Animate(int dt);
+void Lagbox_Animate(float dt);
 M59EXPORT void Lagbox_GetRect(LPRECT lpRect);
 
 /***************************************************************************/

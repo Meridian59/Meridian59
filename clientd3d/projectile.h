@@ -28,6 +28,6 @@ typedef struct {
 } Projectile;
 
 void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD flags, WORD reserved);
-bool ProjectilesMove(int dt);
+bool ProjectilesMove(float dt);
 
 #endif /* #ifndef _PROJECTILE_H */

@@ -129,7 +129,7 @@ void ResetPlayerPosition(void)
 
 bool gbMouselook = false;
 
-extern double gravityAdjust;
+extern float gravityAdjust;
 
 /************************************************************************/
 void UserMovePlayer(int action)

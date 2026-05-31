@@ -239,7 +239,7 @@ void Lagbox_Update(DWORD dwLatency)
 	nLastLagboxMetric = iMetric;
 }
 
-void Lagbox_Animate(int dt)
+void Lagbox_Animate(float dt)
 {
 	if (config.spinning_cube)
 	{

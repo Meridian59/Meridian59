@@ -506,9 +506,9 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 /************************************************************************/
 /* 
 * AnimateDescription:  Animate bitmap in description dialog.
-*   dt is number of milliseconds since last time animation timer went off.
+*   dt is number of seconds since last time animation timer went off.
 */
-void AnimateDescription(int dt)
+void AnimateDescription(float dt)
 {
 	int old_group;
 	DescDialogStruct *info;

@@ -46,6 +46,6 @@ typedef struct
    DWORD overrideDepth[4];
 } room_type;
 
-bool AnimateRoom(room_type *room, int dt);
+bool AnimateRoom(room_type *room, float dt);
 
 #endif /* #ifndef _ROOM_H */

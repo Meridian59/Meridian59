@@ -30,15 +30,14 @@ typedef DWORD ID;  /* Server id #s */
 #define MAX_DESCRIPTION 1000  /* Maximum length of character description */
 
 // Hold state of an object's animation
-struct Animate
-{
+typedef struct {
    BYTE animation;   /* How to animate object's bitmap; constants in animate.h */
-   float  period;    /* Seconds between change of bitmaps */
-   float  tick;      /* Seconds remaining to next bitmap change for this object */
+   int  period;      /* Milliseconds between change of bitmaps */
+   int  tick;        /* Milliseconds remaining to next bitmap change for this object */
    WORD group;       /* Current bitmap group being used to display object */
    WORD group_low, group_high; /* Interval used to animate object */
    WORD group_final; /* Group to go to after single-shot animation is done */
-};
+} Animate;
 
 // Hold state of object's motion
 typedef struct {
@@ -72,8 +71,7 @@ typedef struct
 	u_char	intensity;
 } d_lighting;
 
-struct object_node
-{
+typedef struct {
    ID        id;
    ID        icon_res;
    ID        name_res;
@@ -89,15 +87,16 @@ struct object_node
    list_type normal_overlays;     /* Bitmaps to be overlaid on this object when drawn */
    BYTE      normal_translation;  // Palette translation when not moving
    BYTE      secondtranslation;   // Overriding, additional second translation.
-   float	 bounceTime;
-   float	 phaseTime;
+   WORD	     bounceTime;
+   WORD	     phaseTime;
    int	     boundingHeight;
    int	     boundingWidth;
    int	     lightAdjust;	  // For flicker and flash
    BYTE	     effect;		  // Display effect
    d_lighting	dLighting;			// new lighting flags for d3d client
-   float       flickerTime;         // Time accumulator for OF_FLICKERING animation (seconds)
-};
+   int       flickerTime;         // Time accumulator for OF_FLICKERING animation (milliseconds)
+
+} object_node;
 
 typedef struct {
    object_node obj;

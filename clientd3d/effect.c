@@ -69,7 +69,7 @@ bool PerformEffect(WORD effect, char *ptr, int len)
 
    case EFFECT_SHAKE:
       Extract(&ptr, &duration, 4);
-	  effects.shakeDuration_s = static_cast<float>(duration) * 0.001f;
+	   effects.shake = duration;
       break;
 
    case EFFECT_PARALYZE:
@@ -110,7 +110,7 @@ bool PerformEffect(WORD effect, char *ptr, int len)
 	  Extract(&ptr, &duration, 4);
 	  if (duration > 10000 || duration < 0)
 		duration = 10000;
-	  effects.painDuration_s = static_cast<float>(duration) * 0.001f;
+	  effects.pain = duration;
 	  RedrawAll();
 	  break;
 
@@ -118,7 +118,7 @@ bool PerformEffect(WORD effect, char *ptr, int len)
 	  Extract(&ptr, &duration, 4);
 	  if (duration > 10000 || duration < 0)
 	    duration = 10000;
-	  effects.whiteoutDuration_s = static_cast<float>(duration) * 0.001f;
+	  effects.whiteout = duration;
 	  RedrawAll();
 	  break;
 
@@ -131,7 +131,7 @@ bool PerformEffect(WORD effect, char *ptr, int len)
 	  if (xlat < 0 || xlat > 0xFF)
 		xlat = XLAT_IDENTITY;
 	  effects.flashxlat = xlat;
-	  effects.flashxlatDuration_s = static_cast<float>(duration) * 0.001f;
+	  effects.duration = duration;
 	  RedrawAll();
 	  break;
 
@@ -139,8 +139,9 @@ bool PerformEffect(WORD effect, char *ptr, int len)
 	  Extract(&ptr, &duration, 4);
 	  if (duration < 0)
 		duration = 10000;
-	  effects.blurDuration_s += static_cast<float>(duration) * 0.001f;
-	  effects.blurDuration_s = std::min(effects.blurDuration_s, 200.0f);
+	  effects.blur += duration;
+	  if (effects.blur > 200000)
+		effects.blur = 200000;
 	  RedrawAll();
 	  break;
 
@@ -148,8 +149,9 @@ bool PerformEffect(WORD effect, char *ptr, int len)
 	  Extract(&ptr, &duration, 4);
 	  if (duration < 0)
 		duration = 10000;
-	  effects.waverDuration_s += static_cast<float>(duration) * 0.001f;
-	  effects.waverDuration_s = std::min(effects.waverDuration_s, 200.0f);
+	  effects.waver += duration;
+	  if (effects.waver > 200000)
+		effects.waver = 200000;
 	  RedrawAll();
 	  break;
 
@@ -181,7 +183,7 @@ bool PerformEffect(WORD effect, char *ptr, int len)
  */
 void EffectFlash(int duration)
 {
-   effects.invertDuration_s = static_cast<float>(duration) * 0.001f;
+   effects.invert = duration;
 }
 /****************************************************************************/
 /*
@@ -189,7 +191,7 @@ void EffectFlash(int duration)
  */
 void EffectShake(void)
 {
-   if (effects.shakeDuration_s <= 0.0f)
+   if (effects.shake <= 0)
    {
       if (effects.view_dx || effects.view_dy || effects.view_dz)
          RedrawAll();
@@ -199,8 +201,7 @@ void EffectShake(void)
    }
    else
    {
-      long shakeDuration_ms = static_cast<long>(effects.shakeDuration_s * 1000.0f);
-	  int amplitude = static_cast<int>(std::min(SHAKE_AMPLITUDE, shakeDuration_ms / 3)) + 1;
+      int amplitude = (int)std::min(SHAKE_AMPLITUDE, (long)(effects.shake/3)) + 1;
       effects.view_dx = (rand() % amplitude) - (amplitude / 2);
       effects.view_dy = (rand() % amplitude) - (amplitude / 2);
       effects.view_dz = (rand() % amplitude) - (amplitude / 2);
@@ -213,43 +214,43 @@ void EffectShake(void)
  * AnimateEffects: Animate special effects
  *   dt is number of milliseconds since last time animation timer went off.
  */
-bool AnimateEffects(float dt)
+bool AnimateEffects(int dt)
 {
    bool bRedraw = false;
 
-   if (effects.blurDuration_s > 0.0f)
+   if (effects.blur > 0)
    {
-      effects.blurDuration_s = std::max(0.0f, effects.blurDuration_s - dt);
+      effects.blur = std::max(0, effects.blur - dt);
       bRedraw = true;
    }
 
-   if (effects.waverDuration_s > 0.0f)
+   if (effects.waver > 0)
    {
-      effects.waverDuration_s = std::max(0.0f, effects.waverDuration_s - dt);
+      effects.waver = std::max(0, effects.waver - dt);
       bRedraw = true;
    }
 
-   if (effects.painDuration_s > 0.0f)
+   if (effects.pain > 0)
    {
-      effects.painDuration_s = std::max(0.0f, effects.painDuration_s - dt);
+      effects.pain = std::max(0, effects.pain - dt);
       bRedraw = true;
    }
 
-   if (effects.whiteoutDuration_s > 0.0f)
+   if (effects.whiteout > 0)
    {
-      effects.whiteoutDuration_s = std::max(0.0f, effects.whiteoutDuration_s - dt);
+      effects.whiteout = std::max(0, effects.whiteout - dt);
       bRedraw = true;
    }
 
-   if (effects.invertDuration_s > 0.0f)
+   if (effects.invert > 0)
    {
-      effects.invertDuration_s = std::max(0.0f, effects.invertDuration_s - dt);
+      effects.invert = std::max(0, effects.invert - dt);
       bRedraw = true;
    }
 
-   if (effects.shakeDuration_s > 0.0f)
+   if (effects.shake > 0)
    {
-      effects.shakeDuration_s = std::max(0.0f, effects.shakeDuration_s - dt);
+      effects.shake = std::max(0, effects.shake - dt);
       EffectShake();
       bRedraw = true;
    }

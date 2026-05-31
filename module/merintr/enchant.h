@@ -25,7 +25,7 @@ bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void EnchantmentsResize(int xsize, int ysize, AREA *view);
 void EnchantmentsRedraw(void);
 void EnchantmentsNewRoom(void);
-void AnimateEnchantments(float dt);
+void AnimateEnchantments(int dt);
 
 #endif /* #ifndef _ENCHANT_H */
 

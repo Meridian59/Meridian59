@@ -728,7 +728,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// GetLightPaletteIndex returns PALETTE_INVERT during the flash effect, which would
 	// cause incorrect lighting values to be baked into the static geometry cache.
 	// Keep gD3DRedrawAll set so rebuild happens after the invert effect ends.
-	if ((gD3DRedrawAll & D3DRENDER_REDRAW_ALL) && (effects.invertDuration_s <= 0.0f))
+	if ((gD3DRedrawAll & D3DRENDER_REDRAW_ALL) && (effects.invert <= 0))
 	{
 		D3DCacheSystemReset(&gWorldCacheSystemStatic);
 		D3DCacheSystemReset(&gWallMaskCacheSystem);
@@ -848,7 +848,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	}
 
 	// apply blur and wave distortion effects
-	if (effects.blurDuration_s > 0.0f || effects.waverDuration_s > 0.0f)
+	if (effects.blur || effects.waver)
 	{
 		MatrixIdentity(&mat);
 		D3DFxBlurWaver(fxRenderSystemStructure);

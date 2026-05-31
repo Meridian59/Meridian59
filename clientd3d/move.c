@@ -47,6 +47,7 @@
 #define MAX_CLOSE_WALLS 32
 
 #define MOVE_DELAY    100   // Minimum # of milliseconds between moving MOVEUNITS
+#define TURN_DELAY    100   // Minimum number of milliseconds between a full turn action
 
 #define NUM_STEPS_PER_SECOND 200  // # of small "steps" within movement per second
 #define STEPS_PER_MOVE 20         // Maximum number of small "steps" within a single move
@@ -74,11 +75,6 @@ static DWORD next_move_time = 0;
 
 /* Amplitude of player's bouncing motion */
 #define BOUNCE_HEIGHT (FINENESS >> 5)
-
-static constexpr float HEIGHT_INCREMENT = static_cast<float>(CLASSIC_HEIGHT / 4); 
-static constexpr float HEIGHT_DELAY_S = 0.1f;
-// Farthest you can look up or down.
-static constexpr long HEIGHT_MAX_OFFSET = static_cast<long>(3 * CLASSIC_HEIGHT / 2);
 
 /* Offset from player's average height to give appearance of bouncing */
 static long bounce_height;
@@ -129,7 +125,7 @@ void ResetPlayerPosition(void)
 
 bool gbMouselook = false;
 
-extern float gravityAdjust;
+extern double gravityAdjust;
 
 /************************************************************************/
 void UserMovePlayer(int action)
@@ -754,7 +750,7 @@ void MoveUpdateServer(void)
    angle = ANGLE_CTOS(player.angle);
    if (server_angle != angle)
    {
-	  RequestTurn(player.id, angle);
+      RequestTurn(player.id, angle);
       server_angle = angle;
       server_time = now;
    }
@@ -819,44 +815,47 @@ void MoveSetValidity(bool valid)
 /************************************************************************/
 void UserTurnPlayer(int action)
 {
-   // Minimum number of seconds between a full turn action.
-   static constexpr float TURN_DELAY = 0.1f; 
+   int dt, delta;  /* # of degrees to turn */
+   DWORD now;
+   static DWORD last_turn_time = 0;
 
    if (effects.paralyzed)
       return;
 
-   float delta;  /* # of degrees to turn */
-
    switch(action)
    {
    case A_TURNLEFT:
-      delta = static_cast<float>(-TURNDEGREES);
+      delta = - TURNDEGREES;
       break;
    case A_TURNRIGHT:
-      delta = static_cast<float>(TURNDEGREES);
+      delta = TURNDEGREES;
       break;
    case A_TURNFASTLEFT:
-      delta = static_cast<float>(-3 * TURNDEGREES);
+      delta = - 3 * TURNDEGREES;
       break;
    case A_TURNFASTRIGHT:
-      delta = static_cast<float>(3 * TURNDEGREES);
+      delta = 3 * TURNDEGREES;
       break;
    default:
       debug(("Bad action type in UserTurnPlayer\n"));
       return;
    }
 
-   float deltaTime_s = GetDeltaTime();
-
-   // If dt is longer than 400ms, then dampen how much the player can turn all at once.
-   if (deltaTime_s > (4.0f * TURN_DELAY))
+   // Find out how far to turn based on time elapsed:  always turn at a rate of
+   // TURNDEGREES per TURN_DELAY milliseconds.
+   now = timeGetTime();
+   dt = now - last_turn_time;
+   if (last_turn_time == 0 || dt <= 0)
+      dt = 1;
+   if (dt < TURN_DELAY)
    {
-      delta = (delta * deltaTime_s / TURN_DELAY) / 2.0f;
+      delta = delta * dt / TURN_DELAY;
    }
-   else
+   else if (dt > (4*TURN_DELAY))
    {
-	  delta = delta * deltaTime_s / TURN_DELAY;
+      delta = (delta * (int)(GetFrameTime()) / TURN_DELAY) / 2;
    }
+   last_turn_time = now;
 
    if (player.viewID)
    {
@@ -867,7 +866,7 @@ void UserTurnPlayer(int action)
 	 room_contents_node *viewObject = GetRoomObjectById(player.viewID);
 	 if (viewObject)
 	 {
-	    viewObject->angle += static_cast<int>(delta);
+	    viewObject->angle += delta;
 	    if (viewObject->angle < 0)
 	       viewObject->angle += NUMDEGREES;
 	    viewObject->angle = viewObject->angle % NUMDEGREES;
@@ -877,7 +876,7 @@ void UserTurnPlayer(int action)
       }
    }
 
-   player.angle += static_cast<int>(delta);
+   player.angle += delta;
    if (player.angle < 0)
       player.angle += NUMDEGREES;
    player.angle = player.angle % NUMDEGREES;
@@ -954,6 +953,11 @@ void UserFlipPlayer(void)
    RedrawAll();
 }
 
+
+// Move at most HEIGHT_INCREMENT per HEIGHT_DELAY milliseconds
+#define HEIGHT_INCREMENT (CLASSIC_HEIGHT / 4)    
+#define HEIGHT_DELAY     100
+#define HEIGHT_MAX_OFFSET (3 * CLASSIC_HEIGHT / 2)    // Farthest you can look up or down
 /************************************************************************/
 /* 
  * BounceUser:  Modify user's height a little to give appearance that 
@@ -981,30 +985,37 @@ void BounceUser(int dt)
  */
 void PlayerChangeHeight(int dz)
 {
-   float dynamic_dz = static_cast<float>(SGN(dz)) * HEIGHT_INCREMENT;
-   float deltaTime_s = GetDeltaTime();
+   DWORD now;
+   int dt;
+   static DWORD last_time = 0;
 
-   // If delta time is unusually large, dampen how much the player looks vertically.
-   if (deltaTime_s > (4.0f * HEIGHT_DELAY_S))
-   {
-      dynamic_dz = ((dynamic_dz * deltaTime_s) / HEIGHT_DELAY_S) / 2.0f;
-   }
-   else
-   {
-      dynamic_dz = (dynamic_dz * deltaTime_s) / HEIGHT_DELAY_S;
-   }
+   dz = SGN(dz) * HEIGHT_INCREMENT;
 
-   height_offset += static_cast<long>(dynamic_dz);
-   height_offset = std::min(height_offset, HEIGHT_MAX_OFFSET);
-   height_offset = std::max(height_offset, -HEIGHT_MAX_OFFSET);
+   now = timeGetTime();
+   dt = now - last_time;
+   if (last_time == 0 || dt <= 0)
+      dt = 1;
+   if (dt < HEIGHT_DELAY)
+   {
+      dz = dz * dt / HEIGHT_DELAY;
+   }
+   else if (dt > (4*HEIGHT_DELAY))
+   {
+      dz = (dz * (int)(GetFrameTime()) / HEIGHT_DELAY) / 2;
+   }
+   last_time = now;
+
+   height_offset += dz;
+   height_offset = std::min(height_offset, (long)HEIGHT_MAX_OFFSET);
+   height_offset = std::max(height_offset, (long)- HEIGHT_MAX_OFFSET);
    RedrawAll();
 }
 
 void PlayerChangeHeightMouse(int dz)
 {
    height_offset += dz;
-   height_offset = std::min(height_offset, HEIGHT_MAX_OFFSET);
-   height_offset = std::max(height_offset, -HEIGHT_MAX_OFFSET);
+   height_offset = std::min(height_offset, (long)HEIGHT_MAX_OFFSET);
+   height_offset = std::max(height_offset, (long)- HEIGHT_MAX_OFFSET);
 }
 /************************************************************************/
 /*

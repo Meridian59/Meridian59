@@ -97,7 +97,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 INT_PTR CALLBACK AmountDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void AbortGameDialogs(void);
 void FilterChangedDescription(char *desc);
-void AnimateDescription(float dt);
+void AnimateDescription(int dt);
 
 /* lookdlg.c */
 

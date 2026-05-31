@@ -418,9 +418,9 @@ LRESULT CALLBACK EnchantmentProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 /************************************************************************/
 /*
  * AnimateEnchantments: Animate and redraw enchantment icons.
- *   dt is number of seconds since last time animation timer went off.
+ *   dt is number of milliseconds since last time animation timer went off.
  */
-void AnimateEnchantments(float dt)
+void AnimateEnchantments(int dt)
 {
    bool need_redraw;
    Enchantment *e;

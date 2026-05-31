@@ -223,10 +223,6 @@ void ExtractAnimation(char **ptr, Animate *a)
 {
    Extract(ptr, &a->animation, SIZE_ANIMATE);
 
-   // Peroid is passed in as milliseconds, so this variable can safely hold
-   // the bytes so they can be converted to floating point seconds.
-   int period_ms;
-
    // Read animation-type dependent stuff
    switch(a->animation)
    {
@@ -236,8 +232,7 @@ void ExtractAnimation(char **ptr, Animate *a)
       break;
 
    case ANIMATE_CYCLE:
-      Extract(ptr, &period_ms, 4);
-	  a->period = static_cast<float>(period_ms) * 0.001f;
+      Extract(ptr, &a->period, 4);
       Extract(ptr, &a->group_low, SIZE_ANIMATE_GROUP);
       Extract(ptr, &a->group_high, SIZE_ANIMATE_GROUP);
       a->group_low  = BitmapGroupSToC(a->group_low);
@@ -247,8 +242,7 @@ void ExtractAnimation(char **ptr, Animate *a)
       break;
 
    case ANIMATE_ONCE:
-      Extract(ptr, &period_ms, 4);
-	  a->period = static_cast<float>(period_ms) * 0.001f;
+      Extract(ptr, &a->period, 4);
       Extract(ptr, &a->group_low, SIZE_ANIMATE_GROUP);
       Extract(ptr, &a->group_high, SIZE_ANIMATE_GROUP);
       Extract(ptr, &a->group_final, SIZE_ANIMATE_GROUP);

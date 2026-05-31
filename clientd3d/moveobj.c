@@ -22,7 +22,7 @@
 extern player_info player;
 extern room_type current_room;
 
-static void MoveSingleVertically(Motion *m, float dt);
+static void MoveSingleVertically(Motion *m, int dt);
 /************************************************************************/
 /*  
 * MoveObject2:  Server has told us to move given object to given coordinates.
@@ -192,7 +192,7 @@ void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace)
 *   dt is number of milliseconds since last time animation timer went off.
 *   Return true iff at least one object was moved.
 */
-bool ObjectsMove(float dt)
+bool ObjectsMove(int dt)
 {
 	list_type l;
 	bool retval = false;
@@ -235,7 +235,7 @@ bool ObjectsMove(float dt)
 			if (!(OF_PLAYER & r->obj.flags))
 			{
 				int floor,ceiling,angleBounce,bounceHeight;
-				r->obj.bounceTime += std::min(dt,0.04f);
+				r->obj.bounceTime += std::min(dt,40);
 				if (r->obj.bounceTime > TIME_FULL_OBJECT_BOUNCE)
 					r->obj.bounceTime -= TIME_FULL_OBJECT_BOUNCE;
 				angleBounce = NUMDEGREES * r->obj.bounceTime / TIME_FULL_OBJECT_BOUNCE;
@@ -260,13 +260,11 @@ bool ObjectsMove(float dt)
 /*
 * MoveSingle:  Move object described by given motion structure along its
 *   path.  Return true if object has reached the end of its motion.
-*   dt is number of seconds since last time animation timer went off.
+*   dt is number of milliseconds since last time animation timer went off.
 */
-bool MoveSingle(Motion *m, float dt)
+bool MoveSingle(Motion *m, int dt)
 {
-	// Convert float second to int milliseconds for legacy increment scale.
-	m->progress += (m->increment * (dt * 1000.0f));
-
+	m->progress += (m->increment * dt);
 	if (m->progress >= 1.0)
 	{
 		m->x = m->dest_x;
@@ -274,10 +272,10 @@ bool MoveSingle(Motion *m, float dt)
 		m->z = m->dest_z;
 		return true;
 	}
-
-	m->x = static_cast<int>(m->source_x + m->progress * (m->dest_x - m->source_x));
-	m->y = static_cast<int>(m->source_y + m->progress * (m->dest_y - m->source_y));
-	m->z = static_cast<int>(m->source_z + m->progress * (m->dest_z - m->source_z));
+	
+	m->x = (int) (m->source_x + m->progress * (m->dest_x - m->source_x));
+	m->y = (int) (m->source_y + m->progress * (m->dest_y - m->source_y));
+	m->z = (int) (m->source_z + m->progress * (m->dest_z - m->source_z));
 
 	return false;
 }
@@ -285,22 +283,17 @@ bool MoveSingle(Motion *m, float dt)
 /*
 * MoveSingleVertically:  Move object described by given motion structure 
 *   vertically up or down.  Simulates gravity on falling objects.
-*   dt is number of seconds since last time animation timer went off.
+*   dt is number of milliseconds since last time animation timer went off.
 */
 
-// In FINENESS units / second / second
-static constexpr float GRAVITY_ACCELERATION = static_cast<float>(-5 * FINENESS);
+double gravityAdjust = 1.0;
 
-float gravityAdjust = 1.0f;
-
-void MoveSingleVertically(Motion *m, float dt)
+void MoveSingleVertically(Motion *m, int dt)
 {
-	float dz = dt * static_cast<float>(m->v_z);
+	int dz = dt * m->v_z / 1000;
 	
-	m->z += static_cast<int>(dz * gravityAdjust);
-	
-	// Rising
-	if (dz > 0)
+	m->z += (int) ((double)dz * gravityAdjust);
+	if (dz > 0)   // Rising
 	{
 		if (m->z >= m->dest_z)
 		{
@@ -309,10 +302,9 @@ void MoveSingleVertically(Motion *m, float dt)
 			m->v_z = 0;
 		}
 	}
-	// Falling
-	else 
+	else          // Falling
 	{
-		if (m->z <= m->dest_z)  
+		if (m->z <= m->dest_z)
 		{
 			// Reached destination height; stop falling
 			m->z = m->dest_z;
@@ -321,7 +313,8 @@ void MoveSingleVertically(Motion *m, float dt)
 		else
 		{
 			// Constant acceleration of gravity
-			m->v_z += static_cast<int>((gravityAdjust * GRAVITY_ACCELERATION) * dt);
+			m->v_z += (int) (gravityAdjust * (double)(GRAVITY_ACCELERATION * dt / 1000));
 		}
 	}
 }
+

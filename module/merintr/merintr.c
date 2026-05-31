@@ -1726,7 +1726,7 @@ bool WINAPI EventInventory(int command, void *data)
  * EVENT_ANIMATE
  */
 /****************************************************************************/
-bool WINAPI EventAnimate(float dt)
+bool WINAPI EventAnimate(int dt)
 {
    room_contents_node *r;
 

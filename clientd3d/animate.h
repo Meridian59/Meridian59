@@ -14,11 +14,12 @@
 
 void AnimationTimerAbort(void);
 void AnimationTimerStart(void);
-bool AnimateObject(object_node *obj, float dt);
+M59EXPORT bool AnimateObject(object_node *obj, int dt);
 void AnimationTimerProc(HWND hwnd, UINT timer);
 void AnimateStop(Animate *a);
-bool AnimateSingle(Animate *a, int num_groups, float dt);
+bool AnimateSingle(Animate *a, int num_groups, int dt);
 
+DWORD GetFrameTime(void);
 float GetFlickerLevel(void);
 
 #endif /* #ifndef _ANIMATE_H */

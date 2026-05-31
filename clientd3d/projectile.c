@@ -24,7 +24,7 @@ extern player_info player;
 // This ensures long-range projectiles arrive quickly enough to match attack sounds.
 // Note: Since motion updates happen at variable frame rates (dt in milliseconds),
 // this value is used to calculate a speed multiplier to cap total travel time.
-static constexpr float MAX_PROJECTILE_TRAVEL_TIME = 2.0f;
+static const float MAX_PROJECTILE_TRAVEL_TIME = 2.0;
 
 /********************************************************************/
 /*
@@ -125,10 +125,10 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
 /********************************************************************/
 /*
  * ProjectilesMove; called for every frame.  
- *   dt is number of seconds since last time animation timer went off.
+ *   dt is number of milliseconds since last time animation timer went off.
  * Return True iff some projectile moved.
  */
-bool ProjectilesMove(float dt)
+bool ProjectilesMove(int dt)
 {
    list_type l, next;
 

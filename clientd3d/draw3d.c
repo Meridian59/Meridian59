@@ -232,15 +232,15 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 /************************************************************************/
 void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
 {
+   int amount;
+
    // May be drawn over room or map.
 
    // Blurred Vision.
-   if (effects.blurDuration_s > 0.0f)
+   if (effects.blur)
    {
-      int blurDuration_ms = static_cast<int>(effects.blurDuration_s * 1000.0f);
-	  
-	  // Blur by 1-EFFECT_BLUR_AMPLITUDE pixels
-      int amount = (blurDuration_ms / EFFECT_BLUR_RATE) % (2 * EFFECT_BLUR_AMPLITUDE);
+      // Blur by 1-EFFECT_BLUR_AMPLITUDE pixels
+      amount = (effects.blur / EFFECT_BLUR_RATE) % (2 * EFFECT_BLUR_AMPLITUDE);
       if (amount > EFFECT_BLUR_AMPLITUDE)
 	 amount = 2 * EFFECT_BLUR_AMPLITUDE - amount;
       amount++;
@@ -250,7 +250,7 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
    }
 
    // Wavering Vision.
-   if (effects.waverDuration_s > 0.0f)
+   if (effects.waver)
    {
       static int offset = 0;
       offset++;
@@ -262,11 +262,11 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
    if (effects.flashxlat != XLAT_IDENTITY)
    {
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(effects.flashxlat));
-      effects.flashxlatDuration_s -= GetDeltaTime();
-      if (effects.flashxlatDuration_s <= 0.0f)
+      effects.duration -= static_cast<int>(GetDeltaTime() * 1000.0f);
+      if (effects.duration <= 0)
       {
 	 effects.flashxlat = XLAT_IDENTITY;
-	 effects.flashxlatDuration_s = 0.0f;
+	 effects.duration = 0;
       }
    }
 
@@ -278,31 +278,31 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
    }
 
    // Whiteout
-   if (effects.whiteoutDuration_s > 0.5f)
+   if (effects.whiteout > 500)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND100WHITE));
-   else if (effects.whiteoutDuration_s > 0.25f)
+   else if (effects.whiteout > 250)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND90WHITE));
-   else if (effects.whiteoutDuration_s > 0.0f)
+   else if (effects.whiteout > 0)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND80WHITE));
    
    // Pain (always drawn last).
    if (!config.pain)
       return;
-   if (effects.painDuration_s > 2.0f)
+   if (effects.pain > 2000)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND80RED));
-   else if (effects.painDuration_s > 1.0f)
+   else if (effects.pain > 1000)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND70RED));
-   else if (effects.painDuration_s > 0.5f)
+   else if (effects.pain > 500)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND60RED));
-   else if (effects.painDuration_s > 0.4f)
+   else if (effects.pain > 400)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND50RED));
-   else if (effects.painDuration_s > 0.3f)
+   else if (effects.pain > 300)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND40RED));
-   else if (effects.painDuration_s > 0.2f)
+   else if (effects.pain > 200)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND30RED));
-   else if (effects.painDuration_s > 0.1f)
+   else if (effects.pain > 100)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND20RED));
-   else if (effects.painDuration_s > 0.0f)
+   else if (effects.pain)
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(XLAT_BLEND10RED));
 }
 
@@ -682,7 +682,7 @@ BYTE *GetLightPalette(int distance, BYTE sector_light, long scale, int lightOffs
    int index, row;
 
    // Check for special palette effects
-   if (effects.invertDuration_s > 0.0f)
+   if (effects.invert > 0)
       return light_palettes[PALETTE_INVERT];
 
    if (IsBlind())
@@ -719,7 +719,7 @@ int GetLightPaletteIndex(int distance, BYTE sector_light, long scale, int lightO
    int index, row;
 
    // Check for special palette effects
-   if (effects.invertDuration_s > 0.0f)
+   if (effects.invert > 0)
       return PALETTE_INVERT;
 
    if (IsBlind())

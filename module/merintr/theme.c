@@ -76,11 +76,23 @@ bool ThemeSidebarUsesInventoryFill(void)
 }
 /****************************************************************************/
 /*
- * ThemeSkipStatsAreaFrame:  Returns true when the active theme does
- *   not draw the ornamental frame (corners and edge repeaters) around
- *   stats_area (the right-side tabbed panel).
+ * ThemeSkipStatsAreaFrame:  Returns true when the active theme does not want
+ *   an ornamental frame around the stats area.
  */
 bool ThemeSkipStatsAreaFrame(void)
+{
+   switch (ThemeCurrent())
+   {
+   case Theme::Dark: return true;
+   default:          return false;
+   }
+}
+/****************************************************************************/
+/*
+ * ThemeSkipChatBoxFrame:  Returns true when the active theme does not want
+ *   an ornamental frame around the chat box.
+ */
+bool ThemeSkipChatBoxFrame(void)
 {
    switch (ThemeCurrent())
    {

@@ -319,6 +319,19 @@ int MainThemeResourceId(int id)
 	}
 }
 /************************************************************************/
+/*
+ * ThemeBorderColor:  Returns the color the active theme draws around a
+ *   panel, or CLR_INVALID to keep the default border.
+ */
+COLORREF ThemeBorderColor(void)
+{
+	switch (ThemeCurrent())
+	{
+	case Theme::Dark: return RGB(80, 80, 80);
+	default:          return CLR_INVALID;
+	}
+}
+/************************************************************************/
 void ColorsRestoreDefaults(void)
 {
 	ColorsDestroy();

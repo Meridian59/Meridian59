@@ -114,7 +114,7 @@ def lambda_handler(event, context):
 
     security = util_get_random_string(28)
 
-    details = lookup_username[username_check].split("_")
+    details = lookup_username[username_check].rsplit("_", 1)
 
     email = details[0]
     account = details[1]

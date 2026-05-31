@@ -46,9 +46,9 @@ def do_failure():
 
 def do_success():
     return {
-        'statusCode': 302, 
+        'statusCode': 302,
         'headers': {
-            'Location': f"{domain_name}/password-reset"
+            'Location': f"{domain_name}/password-reset-success"
         },
         'body': json.dumps({'message': 'Redirecting...'})
     }
@@ -114,7 +114,7 @@ def lambda_handler(event, context):
 
     security = util_get_random_string(28)
 
-    details = lookup_username[username_check].split("_")
+    details = lookup_username[username_check].split("|")
 
     email = details[0]
     account = details[1]

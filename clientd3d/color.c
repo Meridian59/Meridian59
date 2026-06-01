@@ -67,13 +67,15 @@ static char colorinfo_default[][COLOR_STR_LEN] = {
 	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED       - red    */
 	// The values below are not used and are placeholders.  Themes may opt to style
 	// their stat bars.  Default theme does not, but the count needs to be the same.
-	// The placeholder values are green and dark red to match the other default bars.
-	{ "0,128,0"},       /* COLOR_HEALTHBAR   */
-	{ "128,0,0"},       /* COLOR_HEALTHLIMIT */
-	{ "0,128,0"},       /* COLOR_MANABAR     */
-	{ "128,0,0"},       /* COLOR_MANALIMIT   */
-	{ "0,128,0"},       /* COLOR_VIGORBAR    */
-	{ "128,0,0"},       /* COLOR_VIGORLIMIT  */
+	// The fill and limit placeholders are green and dark red to match the other
+	// default bars.  The frame placeholder is black.
+	{ "0,128,0"},       /* COLOR_HEALTHBAR    */
+	{ "128,0,0"},       /* COLOR_HEALTHLIMIT  */
+	{ "0,128,0"},       /* COLOR_MANABAR      */
+	{ "128,0,0"},       /* COLOR_MANALIMIT    */
+	{ "0,128,0"},       /* COLOR_VIGORBAR     */
+	{ "128,0,0"},       /* COLOR_VIGORLIMIT   */
+	{ "0,0,0"},         /* COLOR_STATBARFRAME */
 };
 
 // Dark theme.
@@ -111,8 +113,9 @@ static char colorinfo_dark[][COLOR_STR_LEN] = {
 	{ "110,38,36"},     /* COLOR_HEALTHLIMIT - dim red    */
 	{ "72,120,200"},    /* COLOR_MANABAR     - blue   */
 	{ "40,66,110"},     /* COLOR_MANALIMIT   - dim blue   */
-	{ "208,168,52"},    /* COLOR_VIGORBAR    - gold   */
-	{ "116,92,30"},     /* COLOR_VIGORLIMIT  - dim gold   */
+	{ "208,168,52"},    /* COLOR_VIGORBAR     - gold   */
+	{ "116,92,30"},     /* COLOR_VIGORLIMIT   - dim gold   */
+	{ "0,0,0"},         /* COLOR_STATBARFRAME - black outline */
 };
 
 // INI section names; one section per theme.

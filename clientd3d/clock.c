@@ -41,10 +41,14 @@ void InitializeTime()
 void UpdateTime()
 {
 	auto currentTime = steady_clock::now();
-
 	auto frameTime = currentTime - lastEndFrame;
+
 	lastEndFrame = currentTime;
 
 	// Update delta time in seconds.
 	deltaTime_s = duration<float>(frameTime).count();
+
+	// If delta time gets absurdly long (e.g. the window is paused), clamp it down to the cap.
+	static constexpr float DELTA_TIME_CAP = 0.1f;
+	deltaTime_s = std::min(deltaTime_s, DELTA_TIME_CAP);
 }

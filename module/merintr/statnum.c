@@ -49,7 +49,7 @@ void StatsNumCreate(list_type stats)
          continue;
 
       s->hControl = CreateWindow(GraphCtlGetClassName(), NULL,
-                                 WS_CHILD | GCS_LIMITBAR | GCS_NUMBER,
+                                 WS_CHILD | GCS_LIMITBAR | GCS_NUMBER | GCS_STYLED,
                                  0, 0, 0, 0, hStats,
                                  NULL, hInst, NULL);
 

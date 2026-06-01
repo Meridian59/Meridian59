@@ -186,6 +186,14 @@ void StatsResetFont(void)
 }
 /************************************************************************/
 /*
+ * StatsBarHeight:  Returns the stat bar height for the active theme.
+ */
+int StatsBarHeight(void)
+{
+   return ThemeUsesStyledStatBars() ? STATS_BAR_HEIGHT_STYLED : STATS_BAR_HEIGHT;
+}
+/************************************************************************/
+/*
  * StatsChangeColor:  Called when user changes a color.
  */
 void StatsChangeColor(void)
@@ -203,6 +211,12 @@ void StatsChangeColor(void)
       SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
       SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, GetColor(COLOR_BAR2));
       SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));
+
+      // A styled theme draws its own bar outline, so give it a frame color.
+      // Other themes reset to -1, the graph control's default. The reset matters
+      // because a theme switch reuses these controls rather than recreating them.
+      SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_FRAME,
+                  ThemeUsesStyledStatBars() ? GetColor(COLOR_STATBARFRAME) : (COLORREF) -1);
    }
 }
 

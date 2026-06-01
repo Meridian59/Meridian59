@@ -19,7 +19,8 @@
 #define STATUS_SPACING      3
 #define STATUS_BUTTON_SPACING      1 // was 5
 
-#define STATS_BAR_HEIGHT    12
+#define STATS_BAR_HEIGHT        12
+#define STATS_BAR_HEIGHT_STYLED 15
 
 // Numbers for groups of statistics Equate with value returned from StatsGetCurrentGroup()
 // NOTE: These values are matched to server-side values - seen in user.kod for example
@@ -69,6 +70,7 @@ void StatsDestroy(void);
 void StatsResize(int xsize, int ysize, AREA *view);
 void StatsResetFont(void);
 void StatsChangeColor(void);
+int  StatsBarHeight(void);
 bool StatsDrawNumItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void StatsSetFocus(bool forward);
 void StatsDrawBorder(void);

@@ -151,6 +151,11 @@ properties:
    % If disabled, only the player opening the door hears the sound.
    pbDoorSoundShared = TRUE
 
+   % Global switch for the flickering-light effect, so an admin can disable it
+   % while reviewing the world and finish configuring lights before players see
+   % it. When disabled, lights report as steady.
+   pbFlickeringLightsEnabled = TRUE
+
 messages:
 
    Constructor(server_num = $)
@@ -361,6 +366,11 @@ messages:
    DoorSoundSharedEnabled()
    {
       return pbDoorSoundShared;
+   }
+
+   FlickeringLightsEnabled()
+   {
+      return pbFlickeringLightsEnabled;
    }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

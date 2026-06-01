@@ -97,8 +97,12 @@ messages:
       local iFlags;
 
       iFlags = viObject_flags;
-      
+
+      % Only advertise the flickering light effect to clients when this object
+      % is set to flicker AND the global admin setting allows it.  When the
+      % setting is off the object reports as a steady light instead.
       if pbIsFlickering
+         AND Send(Send(SYS,@GetSettings),@FlickeringLightsEnabled)
       {
          iFlags = iFlags | FLICKERING_YES;
       }

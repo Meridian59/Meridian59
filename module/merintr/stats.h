@@ -71,6 +71,7 @@ void StatsResize(int xsize, int ysize, AREA *view);
 void StatsResetFont(void);
 void StatsChangeColor(void);
 int  StatsBarHeight(void);
+void StatsBarSetColors(HWND hControl, COLORREF bar, COLORREF limit);
 bool StatsDrawNumItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void StatsSetFocus(bool forward);
 void StatsDrawBorder(void);

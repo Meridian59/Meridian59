@@ -367,5 +367,10 @@ messages:
    {
       return pbDoorSoundShared;
    }
+
+   FlickeringLightsEnabled()
+   {
+      return pbFlickeringLightsEnabled;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

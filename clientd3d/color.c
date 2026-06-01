@@ -124,7 +124,7 @@ static char color_section_dark[]    = "ColorsDark";
 static char INIColorVersion[]       = "ColorVersion";
 
 // Bump when default values for any color change.
-static const int THEME_COLOR_VERSION = 8;
+static const int THEME_COLOR_VERSION = 9;
 
 // Returns the INI section name for the active theme.
 static char *ColorSectionForTheme(Theme theme)

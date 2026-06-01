@@ -149,8 +149,11 @@ void StatsNumResize(list_type stats)
       s->y = y;
       y += s->cy;
 
-      MoveWindow(s->hControl, x, s->y + (s->cy - STATS_BAR_HEIGHT) / 2,
-         stats_bar_width, STATS_BAR_HEIGHT, TRUE);
+      // A tall styled stat bar can exceed a row sized to a small font so clamp it
+      // to the row height.
+      int bar_height = std::min(StatsBarHeight(), (int) s->cy);
+      MoveWindow(s->hControl, x, s->y + (s->cy - bar_height) / 2,
+         stats_bar_width, bar_height, TRUE);
 
       // Only show graph bar if it's completely visible
       //	And Inventory is not selected.	ajw

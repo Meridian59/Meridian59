@@ -366,10 +366,10 @@ bool ThemeUsesDarkTitleBar(void)
 }
 /************************************************************************/
 /*
- * ThemeUsesStyledStatBars:  Returns true when the active theme draws its
- *   own styled stat bars in place of the default bars.
+ * ThemeUsesCustomStatBars:  Returns true when the active theme draws its
+ *   own custom stat bars in place of the default bars.
  */
-bool ThemeUsesStyledStatBars(void)
+bool ThemeUsesCustomStatBars(void)
 {
 	switch (ThemeCurrent())
 	{

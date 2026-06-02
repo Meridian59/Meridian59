@@ -73,7 +73,7 @@ M59EXPORT Theme ThemeCurrent(void);
 int MainThemeResourceId(int id);
 COLORREF ThemeMenuBarColor(void);
 bool ThemeUsesDarkTitleBar(void);
-M59EXPORT bool ThemeUsesStyledStatBars(void);
+M59EXPORT bool ThemeUsesCustomStatBars(void);
 COLORREF GetPlayerNameColor(int flags,const char*name);
 
 void UserSelectColor(WORD color);

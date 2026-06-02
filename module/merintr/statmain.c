@@ -78,7 +78,7 @@ void StatsMainReceive(list_type stats)
 	 continue;
       
       s->hControl = CreateWindow(GraphCtlGetClassName(), NULL,
-				 WS_CHILD | WS_VISIBLE | GCS_LIMITBAR | GCS_NUMBER | GCS_STYLED,
+				 WS_CHILD | WS_VISIBLE | GCS_LIMITBAR | GCS_NUMBER | GCS_CUSTOM,
 				 0, 0, 0, 0, cinfo->hMain,
 				 NULL, hInst, NULL);
 
@@ -281,7 +281,7 @@ void StatsMainSetColor(Statistic *s)
 /*
  * StatBarFillColor:  Return the bar fill color for a single stat.  Critically
  *   low vigor returns the emergency color in any theme.  Under a theme that
- *   styles its stat bars, health, mana, and vigor return their own colors.
+ *   draws custom stat bars, health, mana, and vigor return their own colors.
  *   Every other case returns the default color.
  */
 COLORREF StatBarFillColor(Statistic *s)
@@ -289,7 +289,7 @@ COLORREF StatBarFillColor(Statistic *s)
    if (s->num == STAT_VIGOR && pinfo.vigor < MIN_VIGOR)
       return STAT_EMERGENCY_COLOR;
 
-   if (!ThemeUsesStyledStatBars())
+   if (!ThemeUsesCustomStatBars())
       return GetColor(COLOR_BAR1);
 
    switch (s->num)
@@ -303,14 +303,14 @@ COLORREF StatBarFillColor(Statistic *s)
 /************************************************************************/
 /*
  * StatBarLimitColor:  Return the limit (headroom) color for a single stat.
- *   Under a theme that styles its stat bars, each stat returns a dimmer
+ *   Under a theme that draws custom stat bars, each stat returns a dimmer
  *   companion to its fill.  Otherwise it returns the default limit color.
  */
 COLORREF StatBarLimitColor(Statistic *s)
 {
-   if (!ThemeUsesStyledStatBars())
+   if (!ThemeUsesCustomStatBars())
       return GetColor(COLOR_BAR2);
-
+   
    switch (s->num)
    {
    case STAT_HEALTH: return GetColor(COLOR_HEALTHLIMIT);

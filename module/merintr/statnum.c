@@ -49,7 +49,7 @@ void StatsNumCreate(list_type stats)
          continue;
 
       s->hControl = CreateWindow(GraphCtlGetClassName(), NULL,
-                                 WS_CHILD | GCS_LIMITBAR | GCS_NUMBER | GCS_STYLED,
+                                 WS_CHILD | GCS_LIMITBAR | GCS_NUMBER | GCS_CUSTOM,
                                  0, 0, 0, 0, hStats,
                                  NULL, hInst, NULL);
 
@@ -149,7 +149,7 @@ void StatsNumResize(list_type stats)
       s->y = y;
       y += s->cy;
 
-      // A tall styled stat bar can exceed a row sized to a small font so clamp it
+      // A tall custom stat bar can exceed a row sized to a small font so clamp it
       // to the row height.
       int bar_height = std::min(StatsBarHeight(), (int) s->cy);
       MoveWindow(s->hControl, x, s->y + (s->cy - bar_height) / 2,

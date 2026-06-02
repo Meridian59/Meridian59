@@ -190,7 +190,7 @@ void StatsResetFont(void)
  */
 int StatsBarHeight(void)
 {
-   return ThemeUsesStyledStatBars() ? STATS_BAR_HEIGHT_STYLED : STATS_BAR_HEIGHT;
+   return ThemeUsesCustomStatBars() ? STATS_BAR_HEIGHT_CUSTOM : STATS_BAR_HEIGHT;
 }
 /************************************************************************/
 /*
@@ -203,12 +203,12 @@ void StatsBarSetColors(HWND hControl, COLORREF bar, COLORREF limit)
    SendMessage(hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, limit);
    SendMessage(hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));
 
-   // A styled theme draws its own bar outline, so give it a frame color.  Other
-   // themes reset to -1, the graph control's default.  A theme switch reuses these
-   // controls instead of recreating them.  Without the reset, an unstyled bar would
-   // draw its outline in the leftover styled color instead of its default.
+   // A theme with custom bars draws its own bar outline, so give it a frame color.
+   // Other themes reset to -1, the graph control's default.  A theme switch reuses
+   // these controls instead of recreating them.  Without the reset, a default bar
+   // would draw its outline in the leftover custom color instead of its default.
    SendMessage(hControl, GRPH_COLORSET, GRAPHCOLOR_FRAME,
-               ThemeUsesStyledStatBars() ? GetColor(COLOR_STATBARFRAME) : (COLORREF) -1);
+               ThemeUsesCustomStatBars() ? GetColor(COLOR_STATBARFRAME) : (COLORREF) -1);
 }
 /************************************************************************/
 /*

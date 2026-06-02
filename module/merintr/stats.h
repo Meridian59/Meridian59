@@ -20,7 +20,7 @@
 #define STATUS_BUTTON_SPACING      1 // was 5
 
 const int STATS_BAR_HEIGHT        = 12;
-const int STATS_BAR_HEIGHT_STYLED = 15;
+const int STATS_BAR_HEIGHT_CUSTOM = 15;
 
 // Numbers for groups of statistics Equate with value returned from StatsGetCurrentGroup()
 // NOTE: These values are matched to server-side values - seen in user.kod for example

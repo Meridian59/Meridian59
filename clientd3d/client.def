@@ -60,7 +60,7 @@ EXPORTS
 	GetColor
 	GetBrush
 	ThemeCurrent
-	ThemeUsesStyledStatBars
+	ThemeUsesCustomStatBars
 	CenterWindow
 	GetFontHeight	
 	EditBoxScroll

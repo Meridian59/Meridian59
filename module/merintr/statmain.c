@@ -18,7 +18,12 @@
 #include "client.h"
 #include "merintr.h"
 
-#define STAT_VIGOR 3         // Position in main stat group of vigor stat
+// Position of each stat within the main stat group
+enum {
+   STAT_HEALTH = 1,
+   STAT_MANA   = 2,
+   STAT_VIGOR  = 3,
+};
 
 #define STAT_EMERGENCY_COLOR   RGB(255, 0, 0)   // Draw critical stats in this color when low
 
@@ -32,6 +37,8 @@ int stat_width;       // Width of graph bars
 
 static void StatsMainMove(void);
 static void StatsMainSetColor(Statistic *s);
+static COLORREF StatBarFillColor(Statistic *s);
+static COLORREF StatBarLimitColor(Statistic *s);
 /************************************************************************/
 /*
  * StatsMainReceive:  We received main group of stats from server.
@@ -71,7 +78,7 @@ void StatsMainReceive(list_type stats)
 	 continue;
       
       s->hControl = CreateWindow(GraphCtlGetClassName(), NULL,
-				 WS_CHILD | WS_VISIBLE | GCS_LIMITBAR | GCS_NUMBER,
+				 WS_CHILD | WS_VISIBLE | GCS_LIMITBAR | GCS_NUMBER | GCS_STYLED,
 				 0, 0, 0, 0, cinfo->hMain,
 				 NULL, hInst, NULL);
 
@@ -134,12 +141,9 @@ void StatsMainChange(Statistic *s)
       old_vigor = pinfo.vigor;
       pinfo.vigor = s->numeric.value;
 
-      // Set color of graph if vigor is very low
-      if (pinfo.vigor < MIN_VIGOR && old_vigor >= MIN_VIGOR)
-         SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, STAT_EMERGENCY_COLOR);
-
-      if (pinfo.vigor >= MIN_VIGOR && old_vigor < MIN_VIGOR)
-         SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
+      // Recolor when vigor crosses the low vigor threshold, in either direction
+      if ((pinfo.vigor < MIN_VIGOR) != (old_vigor < MIN_VIGOR))
+         SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, StatBarFillColor(s));
    }
 }
 
@@ -219,7 +223,7 @@ void StatsMainMove(void)
 	 continue;
 
       MoveWindow(s->hControl, stat_bar_x, s->y + STATS_MAIN_SPACING, 
-		 stat_width, STATS_BAR_HEIGHT, TRUE);
+		 stat_width, StatsBarHeight(), TRUE);
 
       // Move tooltip
       ti.uId    = STAT_TOOLTIP_BASE + count;
@@ -262,14 +266,56 @@ void StatsMainChangeColor(void)
 }
 /************************************************************************/
 /*
- * StatsMainSetColor:  Set colors for a single graph control in a stat.
+ * StatsMainSetColor:  Set a single main stat bar's colors.  The per-stat fill
+ *   and limit come from StatBarFillColor and StatBarLimitColor, and
+ *   StatsBarSetColors applies them.
  */
 void StatsMainSetColor(Statistic *s)
 {
    if (s->numeric.tag != STAT_INT)
       return;
-   
-   SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
-   SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, GetColor(COLOR_BAR2));
-   SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));   
+
+   StatsBarSetColors(s->hControl, StatBarFillColor(s), StatBarLimitColor(s));
+}
+/************************************************************************/
+/*
+ * StatBarFillColor:  Return the bar fill color for a single stat.  Critically
+ *   low vigor returns the emergency color in any theme.  Under a theme that
+ *   styles its stat bars, health, mana, and vigor return their own colors.
+ *   Every other case returns the default color.
+ */
+COLORREF StatBarFillColor(Statistic *s)
+{
+   if (s->num == STAT_VIGOR && pinfo.vigor < MIN_VIGOR)
+      return STAT_EMERGENCY_COLOR;
+
+   if (!ThemeUsesStyledStatBars())
+      return GetColor(COLOR_BAR1);
+
+   switch (s->num)
+   {
+   case STAT_HEALTH: return GetColor(COLOR_HEALTHBAR);
+   case STAT_MANA:   return GetColor(COLOR_MANABAR);
+   case STAT_VIGOR:  return GetColor(COLOR_VIGORBAR);
+   default:          return GetColor(COLOR_BAR1);
+   }
+}
+/************************************************************************/
+/*
+ * StatBarLimitColor:  Return the limit (headroom) color for a single stat.
+ *   Under a theme that styles its stat bars, each stat returns a dimmer
+ *   companion to its fill.  Otherwise it returns the default limit color.
+ */
+COLORREF StatBarLimitColor(Statistic *s)
+{
+   if (!ThemeUsesStyledStatBars())
+      return GetColor(COLOR_BAR2);
+
+   switch (s->num)
+   {
+   case STAT_HEALTH: return GetColor(COLOR_HEALTHLIMIT);
+   case STAT_MANA:   return GetColor(COLOR_MANALIMIT);
+   case STAT_VIGOR:  return GetColor(COLOR_VIGORLIMIT);
+   default:          return GetColor(COLOR_BAR2);
+   }
 }

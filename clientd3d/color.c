@@ -65,8 +65,8 @@ static char colorinfo_default[][COLOR_STR_LEN] = {
 	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY    - purple */
 	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_UNIDENTIFIED - orange */
 	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED       - red    */
-	// The values below are not used and are placeholders.  Themes may opt to style
-	// their stat bars.  Default theme does not, but the count needs to be the same.
+	// The values below are not used and are placeholders.  A theme may draw custom
+	// stat bars.  The default theme does not, but the count needs to be the same.
 	// The fill and limit placeholders are green and dark red to match the other
 	// default bars.  The frame placeholder is black.
 	{ "0,128,0"},       /* COLOR_HEALTHBAR    */

@@ -53,6 +53,12 @@ flowchart LR
     style D fill:#333,color:#fff
 ```
 
+## Stat bars
+
+The health, mana, and vigor bars above the map and the character stat bars in the stats tab draw through the graph control in `clientd3d/graphctl.c`, pulling their colors from the active theme's color table.
+
+A theme opts into custom stat bars through `ThemeUsesCustomStatBars` in `clientd3d/color.c`.  When it does, the bars draw as flat rounded bars with a gradient fill, per-stat colors (red health, blue mana, gold vigor), and no ornament frame.  Other themes keep the original rectangular bars.
+
 ## Per-module bitmap resolvers
 
 Each module owns its own bitmap IDs in its own `resource.h`.  The ID values are not shared across modules, so each module ships its own resolver:
@@ -95,4 +101,4 @@ The major components to touch:
 5. Server message colors in `clientd3d/srvrstr.c` (optional).
 6. The Settings UI: localized string in `clientd3d/client.rc` and combo entry in `clientd3d/preferences.c`.
 7. Bitmap variants (optional): author `_<NAME>` BMP files and extend the per-module bitmap resolvers in `clientd3d/color.c` and `module/merintr/theme.c`.
-8. Theme capability switches in `module/merintr/theme.c`.
+8. Theme capability switches (optional): `module/merintr/theme.c` and `clientd3d/color.c`.

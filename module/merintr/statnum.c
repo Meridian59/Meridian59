@@ -151,7 +151,7 @@ void StatsNumResize(list_type stats)
 
       // A tall custom stat bar can exceed a row sized to a small font so clamp it
       // to the row height.
-      int bar_height = std::min(StatsBarHeight(), (int) s->cy);
+      int bar_height = std::min(StatsBarHeight(), s->cy);
       MoveWindow(s->hControl, x, s->y + (s->cy - bar_height) / 2,
          stats_bar_width, bar_height, TRUE);
 

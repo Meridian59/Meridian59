@@ -807,6 +807,10 @@ void InterfaceDrawElements(HDC hdc)
   InterfaceElement *e;
   bool vertical;
 
+  // The theme does not change mid-draw, so read these once instead of per element.
+  bool skipStats = ThemeSkipStatsAreaFrame();
+  bool skipChat  = ThemeSkipChatBoxFrame();
+
   for (i=0; i < NUM_AUTO_ELEMENTS; i++)
   {
 	  // Skip inventory corner bitmaps.  The inventory edge repeaters (ELEMENT_ITOP
@@ -817,8 +821,8 @@ void InterfaceDrawElements(HDC hdc)
 	  // Chat box corners are skipped independently when ThemeSkipChatBoxFrame
 	  // returns true.
 	  if ((i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT) ||
-	      (ThemeSkipStatsAreaFrame() && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT) ||
-	      (ThemeSkipChatBoxFrame()   && i >= ELEMENT_BULTOP && i <= ELEMENT_BLRRIGHT))
+	      (skipStats && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT) ||
+	      (skipChat  && i >= ELEMENT_BULTOP && i <= ELEMENT_BLRRIGHT))
 		  continue;
 
     OffscreenWindowBackground(NULL, elements[i].x, elements[i].y, elements[i].width, elements[i].height);
@@ -842,8 +846,8 @@ void InterfaceDrawElements(HDC hdc)
 	// true.  Chat box edge repeaters are skipped independently when
 	// ThemeSkipChatBoxFrame returns true.
 	if ((i == ELEMENT_BBOTTOM) ||
-	    (ThemeSkipStatsAreaFrame() && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT) ||
-	    (ThemeSkipChatBoxFrame()   && i >= ELEMENT_BTOP && i <= ELEMENT_BRIGHT))
+	    (skipStats && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT) ||
+	    (skipChat  && i >= ELEMENT_BTOP && i <= ELEMENT_BRIGHT))
 		continue;
 
 	e = &repeaters[i].element;

@@ -25,9 +25,9 @@ enum {
    STAT_VIGOR  = 3,
 };
 
-#define STAT_EMERGENCY_COLOR   RGB(255, 0, 0)   // Draw critical stats in this color when low
+const COLORREF STAT_EMERGENCY_COLOR = RGB(255, 0, 0);   // Draw critical stats in this color when low
 
-#define STAT_TOOLTIP_BASE 100  // Base for tooltip IDs
+const int STAT_TOOLTIP_BASE = 100;  // Base for tooltip IDs
 
 static list_type main_stats; // List of main stats (also kept in stat cache)
 

@@ -336,9 +336,10 @@ static void GraphCtlDrawNumber(HDC hdc, int value, long value_pos, const RECT *r
    int x, y, pad = custom ? BAR_NUMBER_PAD : 1;  // Default bars keep the original 1px gap
 
    snprintf(temp, sizeof(temp), "%d", value);
+   int len = (int) strlen(temp);
    SetBkMode(hdc, TRANSPARENT);
    SelectObject(hdc, GetFont(FONT_STATNUM));
-   GetTextExtentPoint32(hdc, temp, (int) strlen(temp), &size);
+   GetTextExtentPoint32(hdc, temp, len, &size);
 
    // Put the number past the bar if it fits, otherwise inside the bar
    if (rect->right - value_pos > size.cx + (custom ? BAR_NUMBER_GAP : 0))
@@ -353,13 +354,13 @@ static void GraphCtlDrawNumber(HDC hdc, int value, long value_pos, const RECT *r
    if (custom)
    {
       SetTextColor(hdc, BAR_NUMBER_OUTLINE);
-      TextOut(hdc, x - 1, y, temp, (int) strlen(temp));
-      TextOut(hdc, x + 1, y, temp, (int) strlen(temp));
-      TextOut(hdc, x, y - 1, temp, (int) strlen(temp));
-      TextOut(hdc, x, y + 1, temp, (int) strlen(temp));
+      TextOut(hdc, x - 1, y, temp, len);
+      TextOut(hdc, x + 1, y, temp, len);
+      TextOut(hdc, x, y - 1, temp, len);
+      TextOut(hdc, x, y + 1, temp, len);
    }
    SetTextColor(hdc, GetColor(COLOR_BAR4));
-   TextOut(hdc, x, y, temp, (int) strlen(temp));
+   TextOut(hdc, x, y, temp, len);
 }
 /*****************************************************************************/
 /*

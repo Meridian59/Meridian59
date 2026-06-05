@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -268,7 +268,7 @@ void DrawPostOverlayEffects(room_type* room, Draw3DParams* params)
    if (effects.flashxlat != XLAT_IDENTITY)
    {
       XlatDib(gBits, MAXX, MAXY, FindStandardXlat(effects.flashxlat));
-      effects.duration -= static_cast<int>(timeDelta);
+      effects.duration -= (int)timeDelta;
       if (effects.duration <= 0)
       {
 	 effects.flashxlat = XLAT_IDENTITY;

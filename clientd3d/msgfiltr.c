@@ -19,6 +19,7 @@ static HWND hWhoDialog = NULL;        /* Non-null if Who dialog is up */
 extern player_info player;
 
 #define WHOM_UPDATE (WM_APP+5)
+#define WHOM_RESET  (WM_APP+6)
 
 bool AddUserToIgnoreList(ID name)
 {
@@ -68,6 +69,12 @@ void UpdateWho(object_node* pUser, BOOL bAdded)
    debug(("UpdateWho\n"));
    if (hWhoDialog)
       SendMessage(hWhoDialog, WHOM_UPDATE, (WPARAM)bAdded, (LPARAM)pUser);
+}
+
+void ResetWhoList(list_type users)
+{
+   if (hWhoDialog)
+      SendMessage(hWhoDialog, WHOM_RESET, 0, (LPARAM)users);
 }
 
 /*****************************************************************************/
@@ -140,6 +147,22 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
      }
      
      num = ListBox_GetCount(hList);
+     SetDlgItemInt(hDlg, IDC_NUMPLAYERS, num, FALSE);
+   }
+   return TRUE;
+
+   case WHOM_RESET:
+   {
+     list_type users = (list_type)lParam;
+     hList = GetDlgItem(hDlg, IDC_USERLIST);
+     ItemListSetContents(hList, users, false);
+     num = ListBox_GetCount(hList);
+     for (i = 0; i < num; i++)
+     {
+       object_node *obj = (object_node *) ListBox_GetItemData(hList, i);
+       if (obj != NULL && !IsUserInIgnoreList(obj->name_res))
+         ListBox_SetSel(hList, TRUE, i);
+     }
      SetDlgItemInt(hDlg, IDC_NUMPLAYERS, num, FALSE);
    }
    return TRUE;

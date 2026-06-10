@@ -49,12 +49,10 @@ Table *table_create(DWORD size)
  */
 int table_insert(Table *t, void *data, HashProc hasher, CompareProc compare)
 {
-   int hashval;
-
    if (t == NULL)
       return 1;
 
-   hashval = (*hasher)(data, t->size);
+   int hashval = (*hasher)(data, t->size);
    Entry p = t->entries[hashval];
    
    /* Look for duplicate entry */
@@ -76,14 +74,11 @@ int table_insert(Table *t, void *data, HashProc hasher, CompareProc compare)
  */
 void *table_lookup(Table *t, void *data, HashProc hasher, CompareProc compare)
 {
-   DWORD hashval;
-   Entry p;
-
    if (t == NULL)
       return NULL;
 
-   hashval = (*hasher)(data, t->size);
-   p = t->entries[hashval];
+   DWORD hashval = (*hasher)(data, t->size);
+   Entry p = t->entries[hashval];
 
    return list_find_item(p, data, compare);
 }
@@ -135,12 +130,10 @@ void table_delete(Table *t)
  */
 void table_delete_item(Table *t, void *data, HashProc hasher, CompareProc compare)
 {
-   DWORD hashval;
-
    if (t == NULL)
       return;
 
-   hashval = (*hasher)(data, t->size);
+   DWORD hashval = (*hasher)(data, t->size);
    t->entries[hashval] = list_delete_item(t->entries[hashval], data, compare);
 }
 /***********************************************************************/ 

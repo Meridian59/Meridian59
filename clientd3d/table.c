@@ -88,6 +88,9 @@ void table_destroy(Table *t, TableDestroyProc destructor)
    DWORD i;
    list_type l;
 
+   if (t == NULL)
+      return;
+
    for (i=0; i < t->size; i++)
    {
       for (l = t->entries[i]; l != NULL; l = l->next)

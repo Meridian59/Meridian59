@@ -1804,6 +1804,7 @@ messages:
 
          if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
                AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+			   AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          {
             for i in plActive
             {

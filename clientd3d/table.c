@@ -49,8 +49,6 @@ Table *table_create(DWORD size)
  */
 int table_insert(Table *t, void *data, HashProc hasher, CompareProc compare)
 {
-   if (t == NULL)
-      return 1;
 
    int hashval = (*hasher)(data, t->size);
    Entry p = t->entries[hashval];
@@ -74,8 +72,6 @@ int table_insert(Table *t, void *data, HashProc hasher, CompareProc compare)
  */
 void *table_lookup(Table *t, void *data, HashProc hasher, CompareProc compare)
 {
-   if (t == NULL)
-      return NULL;
 
    DWORD hashval = (*hasher)(data, t->size);
    Entry p = t->entries[hashval];
@@ -94,7 +90,7 @@ void table_destroy(Table *t, TableDestroyProc destructor)
    DWORD i;
    list_type l;
 
-   if (t == NULL)
+   if (t == nullptr)
       return;
 
    for (i=0; i < t->size; i++)
@@ -117,7 +113,7 @@ void table_delete(Table *t)
 {
    DWORD i;
 
-   if (t == NULL)
+   if (t == nullptr)
       return;
 
    for (i=0; i < t->size; i++)
@@ -130,9 +126,6 @@ void table_delete(Table *t)
  */
 void table_delete_item(Table *t, void *data, HashProc hasher, CompareProc compare)
 {
-   if (t == NULL)
-      return;
-
    DWORD hashval = (*hasher)(data, t->size);
    t->entries[hashval] = list_delete_item(t->entries[hashval], data, compare);
 }

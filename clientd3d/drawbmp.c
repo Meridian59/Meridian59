@@ -125,8 +125,8 @@ void DrawStretchedObjectGroup(HDC hdc, object_node *obj, int group, AREA *area, 
 *   is drawn in true color (rather than filled into the 8-bit palettised
 *   offscreen buffer and then copied), it matches the surrounding window/dialog
 *   color exactly instead of snapping to the nearest game-palette entry.  Used
-*   for the avatar in the description dialogs so the bitmap's backdrop blends
-*   seamlessly into the dialog face.
+*   for the object/avatar bitmap in the description dialogs so the backdrop
+*   blends seamlessly into the dialog face.
 */
 void DrawStretchedObjectGroupTransparent(HDC hdc, object_node *obj, int group, AREA *area, HBRUSH brush)
 {

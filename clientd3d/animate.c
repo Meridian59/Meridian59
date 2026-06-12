@@ -33,6 +33,13 @@
 static const float FLICKER_LEVEL = LIGHT_LEVELS / 2.0f;  // Light adjustment range for flickering objects
 static const float FLASH_LEVEL = LIGHT_LEVELS / 2.0f;    // Light adjustment range for flashing objects
 
+// Minimum brightness floor for flickering lights, as a fraction of full intensity.
+// Flicker oscillates between this floor and 1.0 (100%) instead of 0.0 to 1.0, so
+// torches dim and brighten rather than blinking down to full darkness (which looks
+// unrealistic and is visually jarring). Range 0.0-1.0; values >= 0.5 are recommended.
+// Tune this to taste: 0.75 = flicker between 75% and 100% intensity.
+static const float FLICKER_MIN_BRIGHTNESS = 0.70f;
+
 static int animation_timer = 0;   // id of animation timer, or 0 if none
 static DWORD timeLastFrame;
 static const int flickerTimer = FLICKER_PERIOD;  // Global timer for OF_FLICKERING objects (milliseconds)
@@ -217,7 +224,12 @@ bool AnimateObject(object_node *obj, int dt)
         // Normalize to 0.0-1.0 range
         flicker = flicker / amplitudeSum + 0.5f;
         flicker = std::clamp(flicker, 0.0f, 1.0f);
-         
+
+        // Compress the range so flicker oscillates between FLICKER_MIN_BRIGHTNESS and
+        // 1.0 rather than 0.0 and 1.0. This keeps a torch from dipping to full darkness
+        // while preserving the same organic wave shape.
+        flicker = FLICKER_MIN_BRIGHTNESS + (1.0f - FLICKER_MIN_BRIGHTNESS) * flicker;
+
         obj->lightAdjust = (int)(flicker * GetFlickerLevel());
         need_redraw = true;
    }

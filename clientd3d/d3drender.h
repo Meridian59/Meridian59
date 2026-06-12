@@ -27,6 +27,12 @@ static constexpr float PLAYER_OVERLAY_Z = 0.02f;
 static constexpr int ZBIAS_WORLD = 2;
 static constexpr int ZBIAS_MASK = 1;
 
+// Each object's layers (underlays 1..6, body 10, overlays 11..15) occupy a z-bias band ~[1..15+].
+// Co-located objects (same tile) are separated by shifting their whole band by depthBin * this stride
+// so the bands don't overlap. Must exceed the widest single-object band. zBias is a BYTE, so this also
+// caps the number of cleanly-separable co-located objects at 255 / DEPTH_BIN_STRIDE (~12).
+static constexpr int DEPTH_BIN_STRIDE = 20;
+
 static constexpr int D3DRENDER_REDRAW_UPDATE = 0x00000001;
 static constexpr int D3DRENDER_REDRAW_ALL = 0x00000002;
 

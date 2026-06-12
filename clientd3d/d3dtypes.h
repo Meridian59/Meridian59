@@ -14,6 +14,15 @@
 #define COLOR_MAX			255
 #define TEMP_LIGHT_SCALE	(32 * 150)
 #define TEMP_ALPHA_REF		(1)
+// Alpha-test reference for opaque (cutout) object sprites. Object textures are
+// 1-bit-alpha (A1R5G5B5) and are sampled with a LINEAR/ANISOTROPIC filter, so at
+// every transparent/opaque boundary the filter produces fractional alpha. With a
+// reference of 1, those fractional edge texels survive the alpha test and reveal
+// the colour the texture loader bled into the neighbouring transparent texels,
+// showing up as a grey halo around features such as eyes. Discarding texels that
+// are less than half opaque (128) yields a clean cutout edge. This matches the
+// world (wall) renderer's alpha_test_threshold of 128.
+#define OBJECT_ALPHA_REF	(128)
 
 #define LIGHTMAP_B			(165)
 #define LIGHTMAP_G			(240)

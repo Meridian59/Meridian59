@@ -114,6 +114,37 @@ long D3DRenderObjects(
 	const auto room = objectsRenderParams.room;
 	const auto params = objectsRenderParams.params;
 
+	// Assign every visible object a per-tile "stack bin". Objects that share a tile (same motion x/y)
+	// would otherwise be drawn with identical z-bias bands, causing their bodies and overlays to
+	// interleave (one avatar's head appearing over another's body). The body and overlay passes each
+	// run as separate loops in different orders, so we compute the bins once here and stash the result
+	// on the node (depthBin) for both passes to read. We sort by object id first so the front/back
+	// assignment is stable frame-to-frame and doesn't flicker.
+	{
+		const auto* localPlayer = GetPlayerInfo();
+		std::vector<room_contents_node*> stackNodes;
+		std::unordered_set<int> seenIds;
+		for (long i = 0; i < gameObjectDataParams.numItems; i++)
+		{
+			if (gameObjectDataParams.drawData[i].type != DrawObjectType)
+				continue;
+			room_contents_node* node = gameObjectDataParams.drawData[i].u.object.object->draw.obj;
+			if (node == NULL || node->obj.id == localPlayer->id)
+				continue;
+			node->depthBin = 0;
+			if (seenIds.insert(node->obj.id).second)
+				stackNodes.push_back(node);
+		}
+		std::sort(stackNodes.begin(), stackNodes.end(),
+			[](const room_contents_node* a, const room_contents_node* b) { return a->obj.id < b->obj.id; });
+		std::unordered_map<int64, int> tileCount;
+		for (room_contents_node* node : stackNodes)
+		{
+			int64 key = ((int64)node->motion.x << 32) | (int)(node->motion.y & 0xFFFFFFFF);
+			node->depthBin = tileCount[key]++;
+		}
+	}
+
 	if (config.draw_names)
 	{
 		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
@@ -967,7 +998,9 @@ void D3DRenderOverlaysDraw(
 					pChunk->numPrimitives = pChunk->numVertices - 2;
 					pChunk->xLat0 = xLat0;
 					pChunk->xLat1 = xLat1;
-					pChunk->zBias = zBias;
+					// Apply the same per-object band shift used for the body (D3DRenderObjectsDraw) so this
+					// overlay stays grouped with its own avatar and doesn't interleave with a co-located one.
+					pChunk->zBias = zBias + (BYTE)(pRNode->depthBin * DEPTH_BIN_STRIDE);
 
 					zBias++;
 
@@ -1367,12 +1400,6 @@ void D3DRenderObjectsDraw(
 
 	auto drawdata = gameObjectDataParams.drawData;
 
-	// We track all objects that are in similar positions in the 3D world.
-	// This is to mitigate z-fighting by incrementing z-depths for each unique object in the same position.
-	// The key is composed of the x and y coordinates of the object and the value is the current
-	// count of objects found at that location.
-	std::unordered_map<int64, int> depth_adjustment_map;
-
 	// As we receive objects in different orders from the BSP walk this can cause inconsistent z-depth ordering.
 	// We now attempt to maintain a consistent view by sorting draw data by their ids.
 	// For translucent objects, the caller has already sorted by distance (back-to-front)
@@ -1564,16 +1591,20 @@ void D3DRenderObjectsDraw(
 
 		// For players and objects with a bounding height adjustment (such as Tos Fountain), we draw them at the base depth.
 		// This is because they have multiple layers positioned relative to base depth (e.g. behind, in front of and so on).
-		// For everything else we start with the deault z bias which positions them behind these more complex arrangements.
-		pChunk->zBias = (pRNode->obj.flags & OF_PLAYER) || (pRNode->boundingHeightAdjust != 0) ? ZBIAS_BASE : ZBIAS_DEFAULT;
+		// Any object that carries overlays (e.g. an NPC soldier with armor, shield and weapon) is the same kind of
+		// multi-layer arrangement: its overlays use the fixed under-/over-layer z biases (ZBIAS_UNDERUNDER..ZBIAS_OVEROVER)
+		// which straddle ZBIAS_BASE. If such a body were left at ZBIAS_DEFAULT it would equal ZBIAS_UNDERUNDER (z-fighting)
+		// and sit in front of its own underlays, so we draw it at the base depth too.
+		// For everything else we start with the default z bias which positions them behind these more complex arrangements.
+		const bool hasOverlays = pRNode->obj.overlays && (*pRNode->obj.overlays != NULL);
+		pChunk->zBias = (pRNode->obj.flags & OF_PLAYER) || (pRNode->boundingHeightAdjust != 0) || hasOverlays
+			? ZBIAS_BASE : ZBIAS_DEFAULT;
 
 
-		// All objects are drawn at the default depth offset by the number of items already drawn at this location.
-		// Combine objects x and y position into a single int64 for the map key.
-		int64 key = ((int64)pRNode->motion.x << 32) | (int)(pRNode->motion.y & 0xFFFFFFFF);
-
-		// Increment the counter at the appropriate bin and assign the appropriate zBias.
-		pChunk->zBias += (BYTE)depth_adjustment_map[key]++;
+		// Shift this object's whole z-bias band clear of any other object sharing its tile, so their
+		// bodies and overlays never interleave. depthBin was assigned once per frame in D3DRenderObjects;
+		// the overlay pass applies the identical shift so an object's layers stay grouped with its body.
+		pChunk->zBias += (BYTE)(pRNode->depthBin * DEPTH_BIN_STRIDE);
 
 		lastDistance = 0;
 
@@ -2009,7 +2040,7 @@ void D3DRenderPlayerOverlaysDraw(
 	screenH = (float)(playerViewParams.viewportHeight);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, OBJECT_ALPHA_REF);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 
 	MatrixIdentity(&mat);

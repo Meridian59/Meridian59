@@ -27,6 +27,7 @@ bin/rscprint.exe
 install/meridian59-installer.exe
 roomedit/windeu32.log
 resource/rooms/*~
+resource/graphics/*.bmp
 
 # Include runtime scripts
 !run/scripts

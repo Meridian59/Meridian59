@@ -36,7 +36,7 @@
 
 #define MAX_BITMAPS 150
 #define MAX_BBGS 3
-#define MAX_GROUPS 25
+#define MAX_GROUPS 64
 #define MAX_INDICES 12
 #define MAX_HOTSPOTS 15
 #define MAX_COMMENT 4096

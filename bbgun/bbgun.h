@@ -31,6 +31,8 @@
 #define NUM_COLORS 256       // # of colors in bitmaps
 #define LIGHT_LEVELS 256      // # of lighting levels (not used yet)
 
+#define TRANSPARENT_INDEX 254   // Index of transparent color
+#define BACKGROUND_INDEX 255    // Index of background color
 
 #define MAX_BITMAPS 150
 #define MAX_BBGS 3

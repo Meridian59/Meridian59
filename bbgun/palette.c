@@ -206,3 +206,50 @@ int GetClosestPaletteIndex(COLORREF c)
    }
    return min_index;
 }
+/************************************************************************/
+/*
+ * DibRemapToBasePalette:  Remap an 8-bit DIB's pixels from its own color
+ *   table to the indices of our standard (base) palette, so that the raw
+ *   indices line up with the offscreen buffer's color table when drawn.
+ *   The transparent (254) and background (255) indices are preserved, since
+ *   the drawing code relies on those specific index values.
+ *   Requires that InitializePalette has been called.
+ */
+void DibRemapToBasePalette(PDIB pdib)
+{
+   RGBQUAD FAR *src;
+   int numColors, i, x, y, width, height, rowbytes;
+   BYTE map[NUM_COLORS];
+   BYTE *bits, *row;
+
+   if (pdib == NULL || DibBitCount(pdib) != 8)
+      return;
+
+   src = DibColors(pdib);
+   numColors = DibNumColors(pdib);
+   if (numColors > NUM_COLORS)
+      numColors = NUM_COLORS;
+
+   for (i = 0; i < numColors; i++)
+      map[i] = (BYTE) GetClosestPaletteIndex(
+		  RGB(src[i].rgbRed, src[i].rgbGreen, src[i].rgbBlue));
+
+   // Preserve special indices used by the drawing code
+   if (numColors > TRANSPARENT_INDEX)
+      map[TRANSPARENT_INDEX] = TRANSPARENT_INDEX;
+   if (numColors > BACKGROUND_INDEX)
+      map[BACKGROUND_INDEX] = BACKGROUND_INDEX;
+
+   bits = (BYTE *) DibPtr(pdib);
+   width = DibWidth(pdib);
+   height = DibHeight(pdib);
+   rowbytes = WIDTHBYTES(width);
+
+   for (y = 0; y < height; y++)
+   {
+      row = bits + y * rowbytes;
+      for (x = 0; x < width; x++)
+	 if (row[x] < numColors)
+	    row[x] = map[row[x]];
+   }
+}

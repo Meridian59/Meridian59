@@ -2040,7 +2040,7 @@ void D3DRenderPlayerOverlaysDraw(
 	screenH = (float)(playerViewParams.viewportHeight);
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, OBJECT_ALPHA_REF);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 
 	MatrixIdentity(&mat);

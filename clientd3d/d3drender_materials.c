@@ -369,7 +369,7 @@ bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS50 - 1);
 	else
-		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, OBJECT_ALPHA_REF);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
 
 	if (pChunk->isTargeted)
 	{

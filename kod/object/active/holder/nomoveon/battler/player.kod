@@ -3438,20 +3438,31 @@ messages:
 
    FreeHandSlotsFor(what = $)
    "Unequips currently-held hand items until there is enough free hand space "
-   "to equip `what`, or until no more held hand items are willing to yield."
+   "to equip `what`, or until no more held hand items are willing to yield. "
+   "Prefers to yield items of the same kind (weapon vs. non-weapon) as `what`, "
+   "so e.g. swapping one weapon for another does not drop an equipped shield."
    {
-      local i, iHandUsed, iNeeded, lHandItems;
+      local i, iHandUsed, iNeeded, lSameKind, lOtherKind, bWantWeapon;
 
       iNeeded = Send(what,@GetItemUseAmount);
+      bWantWeapon = IsClass(what,&Weapon);
 
       iHandUsed = 0;
-      lHandItems = $;
+      lSameKind = $;
+      lOtherKind = $;
       for i in plUsing
       {
          if Send(i,@GetItemUseType) & ITEM_USE_HAND
          {
             iHandUsed = iHandUsed + Send(i,@GetItemUseAmount);
-            lHandItems = Cons(i,lHandItems);
+            if IsClass(i,&Weapon) = bWantWeapon
+            {
+               lSameKind = Cons(i,lSameKind);
+            }
+            else
+            {
+               lOtherKind = Cons(i,lOtherKind);
+            }
          }
       }
 
@@ -3460,7 +3471,21 @@ messages:
          return;
       }
 
-      for i in lHandItems
+      % Yield same-kind items first (e.g. swap weapon for weapon), only
+      % giving up the other kind (e.g. a shield) if still short on space.
+      for i in lSameKind
+      {
+         if Send(self,@TryUnuseItem,#what=i)
+         {
+            iHandUsed = iHandUsed - Send(i,@GetItemUseAmount);
+            if iHandUsed + iNeeded <= viHand_space
+            {
+               return;
+            }
+         }
+      }
+
+      for i in lOtherKind
       {
          if Send(self,@TryUnuseItem,#what=i)
          {

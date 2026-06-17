@@ -23,7 +23,7 @@ static int capture_type;
 // When a hotspot drag begins, remember the gap between the cursor and the
 // hotspot so the hotspot moves relative to its current position rather than
 // snapping to wherever the user first clicks.
-static BOOL hotspot_grab_init;
+static bool hotspot_grab_init;
 static int  grab_dx, grab_dy;
 
 static WNDPROC lpfnDefButtonProc;
@@ -209,7 +209,7 @@ LRESULT CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 
       SetCapture(hwnd);
       capture_type = CAPTURE_HOTSPOT;
-      hotspot_grab_init = TRUE;
+      hotspot_grab_init = true;
       HideCursor();
       SendMessage(hwnd, WM_MOUSEMOVE, wParam, lParam);
       break;
@@ -300,7 +300,7 @@ void HotspotDrag(HWND hwnd)
    {
       grab_dx = spot->X - mbx;
       grab_dy = spot->Y - mby;
-      hotspot_grab_init = FALSE;
+      hotspot_grab_init = false;
    }
 
    spot->X = mbx + grab_dx;

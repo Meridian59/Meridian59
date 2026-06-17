@@ -218,7 +218,6 @@ int GetClosestPaletteIndex(COLORREF c)
 void DibRemapToBasePalette(PDIB pdib)
 {
    RGBQUAD FAR *src;
-   int numColors, i, x, y, width, height, rowbytes;
    BYTE map[NUM_COLORS];
    BYTE *bits, *row;
 
@@ -226,11 +225,11 @@ void DibRemapToBasePalette(PDIB pdib)
       return;
 
    src = DibColors(pdib);
-   numColors = DibNumColors(pdib);
+   int numColors = DibNumColors(pdib);
    if (numColors > NUM_COLORS)
       numColors = NUM_COLORS;
 
-   for (i = 0; i < numColors; i++)
+   for (int i = 0; i < numColors; i++)
       map[i] = (BYTE) GetClosestPaletteIndex(
 		  RGB(src[i].rgbRed, src[i].rgbGreen, src[i].rgbBlue));
 
@@ -241,15 +240,15 @@ void DibRemapToBasePalette(PDIB pdib)
       map[BACKGROUND_INDEX] = BACKGROUND_INDEX;
 
    bits = (BYTE *) DibPtr(pdib);
-   width = DibWidth(pdib);
-   height = DibHeight(pdib);
-   rowbytes = WIDTHBYTES(width);
+   int width = DibWidth(pdib);
+   int height = DibHeight(pdib);
+   int rowbytes = WIDTHBYTES(width);
 
-   for (y = 0; y < height; y++)
+   for (int y = 0; y < height; y++)
    {
       row = bits + y * rowbytes;
-      for (x = 0; x < width; x++)
-	 if (row[x] < numColors)
-	    row[x] = map[row[x]];
+      for (int x = 0; x < width; x++)
+	   if (row[x] < numColors)
+	      row[x] = map[row[x]];
    }
 }

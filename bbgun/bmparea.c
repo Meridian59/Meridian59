@@ -20,6 +20,12 @@ enum {
 
 static int capture_type;
 
+// When a hotspot drag begins, remember the gap between the cursor and the
+// hotspot so the hotspot moves relative to its current position rather than
+// snapping to wherever the user first clicks.
+static bool hotspot_grab_init;
+static int  grab_dx, grab_dy;
+
 static WNDPROC lpfnDefButtonProc;
 static int bwidth, bheight;   // Size of bitmap area
 
@@ -66,7 +72,12 @@ void DoDraw(HDC hDC1, HWND hWnd)
    Bitmap *b, *anchor, *wanderer;
 
    ClearBitmap();
-      
+
+   // Confine all drawing (bitmaps and hotspot markers) to the bitmap view area.
+   // Otherwise a hotspot dragged near/past the edges draws its marker outside
+   // the view and over the surrounding window UI.
+   IntersectClipRect(hDC1, 0, 0, bwidth, bheight);
+
    if (!config.dual_mode && NumBBGs > 0 && BBGs[CurrentBBG].NumBitmaps > 0)
    {
       // Draw single bitmap
@@ -198,6 +209,7 @@ LRESULT CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 
       SetCapture(hwnd);
       capture_type = CAPTURE_HOTSPOT;
+      hotspot_grab_init = true;
       HideCursor();
       SendMessage(hwnd, WM_MOUSEMOVE, wParam, lParam);
       break;
@@ -247,41 +259,52 @@ LRESULT CALLBACK MainButtonProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
  */
 void HotspotDrag(HWND hwnd)
 {
-   Bitmap *anchor, *wanderer, *b;
+   Bitmap *anchor, *b;
+   Spot   *spot;
 
    int mouse_x, mouse_y;
+   int mbx, mby;   // Cursor position in bitmap coordinates
 
    if ((NumBBGs == 0) || (BBGs[CurrentBBG].NumBitmaps == 0)) 
       return;
       
    if (GetCursorWindowPos(hwnd, &mouse_x, &mouse_y) == FALSE)
       return;
-   
+
+   StaticX = (bwidth - DibWidth(pdib1) * Zoom) / 2;
+   StaticY = (bheight - DibHeight(pdib1) * Zoom) / 2;
+
+   mbx = (mouse_x - StaticX) / Zoom;
+   mby = (mouse_y - StaticY) / Zoom;
+
    if (config.dual_mode)
    {
       if (Anchor.BBG == -1)
 	 return;
       
-      anchor   = &BBGs[Anchor.BBG].Bitmaps[BBGs[Anchor.BBG].CurrentBitmap];
-      wanderer = &BBGs[WanderOne.BBG].Bitmaps[BBGs[WanderOne.BBG].CurrentBitmap];
-
-      StaticX = (bwidth - DibWidth(pdib1) * Zoom) / 2;
-      StaticY = (bheight - DibHeight(pdib1) * Zoom) / 2;
-      anchor->Hotspots[BBGs[Anchor.BBG].CurrentHotspot].X = (mouse_x - StaticX) / Zoom;
-      anchor->Hotspots[BBGs[Anchor.BBG].CurrentHotspot].Y = (mouse_y - StaticY) / Zoom;
+      anchor = &BBGs[Anchor.BBG].Bitmaps[BBGs[Anchor.BBG].CurrentBitmap];
+      spot   = &anchor->Hotspots[BBGs[Anchor.BBG].CurrentHotspot];
       BBGs[Anchor.BBG].changed = TRUE;
    }
    else
    {
-      b = &BBGs[CurrentBBG].Bitmaps[CurrentBitmap];
-      
-      StaticX = (bwidth - DibWidth(pdib1) * Zoom) / 2;
-      StaticY = (bheight - DibHeight(pdib1) * Zoom) / 2;
-      
-      b->Hotspots[CurrentHotspot].X = (mouse_x - StaticX) / Zoom;
-      b->Hotspots[CurrentHotspot].Y = (mouse_y - StaticY) / Zoom;
+      b    = &BBGs[CurrentBBG].Bitmaps[CurrentBitmap];
+      spot = &b->Hotspots[CurrentHotspot];
       BBGs[CurrentBBG].changed = TRUE;
    }
+
+   // On the first move after the click, capture the gap between the hotspot
+   // and the cursor.  Subsequent moves keep that gap, so the hotspot tracks
+   // the mouse from where it started instead of jumping under the cursor.
+   if (hotspot_grab_init)
+   {
+      grab_dx = spot->X - mbx;
+      grab_dy = spot->Y - mby;
+      hotspot_grab_init = false;
+   }
+
+   spot->X = mbx + grab_dx;
+   spot->Y = mby + grab_dy;
 
    UpdateHotspot();
    DrawIt();

@@ -13,9 +13,6 @@
 
 #include "bbgun.h"
 
-#define TRANSPARENT_INDEX 254   // Index of transparent color
-#define BACKGROUND_INDEX 255    // Index of background color
-
 #define OFFSCREEN_BITMAP_SIZE 512
 
 #define FIX_DECIMAL 16

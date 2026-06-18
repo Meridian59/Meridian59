@@ -217,7 +217,7 @@ int GetClosestPaletteIndex(COLORREF c)
  */
 void DibRemapToBasePalette(PDIB pdib)
 {
-   RGBQUAD FAR *src;
+   RGBQUAD *src;
    BYTE map[NUM_COLORS];
    BYTE *bits, *row;
 

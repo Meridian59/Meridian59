@@ -115,11 +115,11 @@ long D3DRenderObjects(
 	const auto params = objectsRenderParams.params;
 
 	// Assign every visible object a per-tile "stack bin". Objects that share a tile (same motion x/y)
-	// would otherwise be drawn with identical z-bias bands, causing their bodies and overlays to
-	// interleave (one avatar's head appearing over another's body). The body and overlay passes each
-	// run as separate loops in different orders, so we compute the bins once here and stash the result
-	// on the node (depthBin) for both passes to read. We sort by object id first so the front/back
-	// assignment is stable frame-to-frame and doesn't flicker.
+	// would otherwise be drawn with identical z-bias bands, causing their main sprites and overlays to
+	// interleave (one object's overlay appearing over a different object's sprite). The main-sprite and
+	// overlay passes each run as separate loops in different orders, so we compute the bins once here and
+	// stash the result on the node (depthBin) for both passes to read. We sort by object id first so the
+	// front/back assignment is stable frame-to-frame and doesn't flicker.
 	{
 		const auto* localPlayer = GetPlayerInfo();
 		std::vector<room_contents_node*> stackNodes;
@@ -137,6 +137,9 @@ long D3DRenderObjects(
 		}
 		std::sort(stackNodes.begin(), stackNodes.end(),
 			[](const room_contents_node* a, const room_contents_node* b) { return a->obj.id < b->obj.id; });
+		// Each object's bin is the number of objects already placed at its location, so co-located
+		// objects get successive bins (0, 1, 2, ...). Combine the object's x and y position into a
+		// single int64 to use as the per-location map key.
 		std::unordered_map<int64, int> tileCount;
 		for (room_contents_node* node : stackNodes)
 		{
@@ -998,8 +1001,8 @@ void D3DRenderOverlaysDraw(
 					pChunk->numPrimitives = pChunk->numVertices - 2;
 					pChunk->xLat0 = xLat0;
 					pChunk->xLat1 = xLat1;
-					// Apply the same per-object band shift used for the body (D3DRenderObjectsDraw) so this
-					// overlay stays grouped with its own avatar and doesn't interleave with a co-located one.
+					// Apply the same per-object band shift used for the main sprite so this overlay stays
+					// grouped with its own object and doesn't interleave with a co-located one.
 					pChunk->zBias = zBias + (BYTE)(pRNode->depthBin * DEPTH_BIN_STRIDE);
 
 					zBias++;
@@ -1589,12 +1592,12 @@ void D3DRenderObjectsDraw(
 		pChunk->xLat0 = xLat0;
 		pChunk->xLat1 = xLat1;
 
-		// For players and objects with a bounding height adjustment (such as Tos Fountain), we draw them at the base depth.
+		// For players and objects with a bounding height adjustment, we draw them at the base depth.
 		// This is because they have multiple layers positioned relative to base depth (e.g. behind, in front of and so on).
-		// Any object that carries overlays (e.g. an NPC soldier with armor, shield and weapon) is the same kind of
-		// multi-layer arrangement: its overlays use the fixed under-/over-layer z biases (ZBIAS_UNDERUNDER..ZBIAS_OVEROVER)
-		// which straddle ZBIAS_BASE. If such a body were left at ZBIAS_DEFAULT it would equal ZBIAS_UNDERUNDER (z-fighting)
-		// and sit in front of its own underlays, so we draw it at the base depth too.
+		// Any object that carries overlays is the same kind of multi-layer arrangement: its overlays use the fixed
+		// under-/over-layer z biases (ZBIAS_UNDERUNDER..ZBIAS_OVEROVER) which straddle ZBIAS_BASE. If its main sprite
+		// were left at ZBIAS_DEFAULT it would equal ZBIAS_UNDERUNDER (z-fighting) and sit in front of its own underlays,
+		// so we draw it at the base depth too.
 		// For everything else we start with the default z bias which positions them behind these more complex arrangements.
 		const bool hasOverlays = pRNode->obj.overlays && (*pRNode->obj.overlays != NULL);
 		pChunk->zBias = (pRNode->obj.flags & OF_PLAYER) || (pRNode->boundingHeightAdjust != 0) || hasOverlays
@@ -1602,8 +1605,8 @@ void D3DRenderObjectsDraw(
 
 
 		// Shift this object's whole z-bias band clear of any other object sharing its tile, so their
-		// bodies and overlays never interleave. depthBin was assigned once per frame in D3DRenderObjects;
-		// the overlay pass applies the identical shift so an object's layers stay grouped with its body.
+		// main sprites and overlays never interleave. depthBin is assigned once per frame; the overlay
+		// pass applies the identical shift so an object's layers stay grouped with its main sprite.
 		pChunk->zBias += (BYTE)(pRNode->depthBin * DEPTH_BIN_STRIDE);
 
 		lastDistance = 0;

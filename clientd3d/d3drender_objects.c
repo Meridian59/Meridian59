@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2024 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -73,6 +73,31 @@ static bool IsInvisibleEffect(int flags) {
 	// it is treated as grey scale and translucent (such as logoff ghosts). 
 	// Without using OF_DITHERINVIS below it would be incorrectly treated as invisible.
 	return (flags & (OF_INVISIBLE | OF_DITHERINVIS)) == OF_INVISIBLE;
+}
+
+// Calculate scaling factors for POV overlays based on current resolution.
+// Shared with D3DComputePlayerOverlayArea() and D3DRenderPlayerOverlayOverlaysDraw()
+// so a base overlay and any overlay attached to its hotspot are aligned.
+static void D3DGetPlayerOverlayScreenScale(const PlayerViewParams& playerViewParams, float& screenW, float& screenH)
+{
+	// Reference resolution and scaling factors for classic 800x600 resolution.
+	static constexpr float REFERENCE_WIDTH   = 800.0f;
+	static constexpr float REFERENCE_HEIGHT  = 600.0f;
+	static constexpr float REFERENCE_SCALE_W = 1.75f;
+	static constexpr float REFERENCE_SCALE_H = 2.25f;
+
+	// Calculate the scaling factors based on the current resolution.
+	float scaleFactorWidth  = playerViewParams.screenWidth  / REFERENCE_WIDTH;
+	float scaleFactorHeight = playerViewParams.screenHeight / REFERENCE_HEIGHT;
+
+	// Apply these scaling factors to the original reference scaling factors.
+	float scaleW = REFERENCE_SCALE_W * scaleFactorWidth;
+	float scaleH = REFERENCE_SCALE_H * scaleFactorHeight;
+
+	screenW = static_cast<float>(playerViewParams.d3dRect.right  - playerViewParams.d3dRect.left)
+				/ static_cast<float>(playerViewParams.viewportWidth  * scaleW);
+	screenH = static_cast<float>(playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top)
+				/ static_cast<float>(playerViewParams.viewportHeight * scaleH);
 }
 
 // Update the pChunks animation values as a function of time.
@@ -2190,8 +2215,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 	d3d_render_packet_new* pPacket;
 	d3d_render_chunk_new* pChunk;
 
-	screenW = (float)(playerViewParams.d3dRect.right - playerViewParams.d3dRect.left) / (float)playerViewParams.viewportWidth;
-	screenH = (float)(playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top) / (float)playerViewParams.viewportHeight;
+	D3DGetPlayerOverlayScreenScale(playerViewParams, screenW, screenH);
 
 	// Get player's object flags for special drawing effects
 	const auto* player = GetPlayerInfo();
@@ -2564,26 +2588,12 @@ int getKerningAmount(font_3d* pFont, char* str, char* ptr) {
 }
 
 /**
-* Calculate scaling factors for UI elements (Scimtar/shield etc).
+* Calculate screen position and scale for UI elements (scimitars, shields, etc.) anchored to a named hotspot.
 */
 bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA * obj_area, const PlayerViewParams& playerViewParams)
 {
-	// Reference resolution and scaling factors for classic 800x600 resolution.
-	const float REFERENCE_WIDTH = 800.0f;
-	const float REFERENCE_HEIGHT = 600.0f;
-	const float REFERENCE_SCALE_W = 1.75f;
-	const float REFERENCE_SCALE_H = 2.25f;
-
-	// Calculate the scaling factors based on the current resolution.
-	float scaleFactorWidth = playerViewParams.screenWidth / REFERENCE_WIDTH;
-	float scaleFactorHeight = playerViewParams.screenHeight / REFERENCE_HEIGHT;
-
-	// Apply these scaling factors to the original reference scaling factors.
-	float scaleW = REFERENCE_SCALE_W * scaleFactorWidth;
-	float scaleH = REFERENCE_SCALE_H * scaleFactorHeight;
-
-	float screenW = (float)(playerViewParams.d3dRect.right - playerViewParams.d3dRect.left) / (float)(playerViewParams.viewportWidth * scaleW);
-	float screenH = (float)(playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top) / (float)(playerViewParams.viewportHeight * scaleH);
+	float screenW, screenH;
+	D3DGetPlayerOverlayScreenScale(playerViewParams, screenW, screenH);
 
 	if (hotspot < 1 || hotspot > HOTSPOT_PLAYER_MAX)
 	{

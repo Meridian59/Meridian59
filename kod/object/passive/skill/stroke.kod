@@ -23,13 +23,6 @@ resources:
 
    stroke_need_weapon_rsc = "You need a weapon to perform this stroke!"
 
-   % Shown when a creature's level (hit points) is too low for the player to
-   % improve this skill/proficiency any further by fighting it.  %s is the
-   % skill or proficiency name (e.g. "hammer wielding").
-   stroke_creature_cap_hit = \
-      "~IYou feel you've learned all you can about %s from fighting this "
-      "creature. You should seek tougher opponents."
-
    stroke_miss_attacker = "%sYour %s misses %s%s."
    stroke_miss_defender = "%s%s misses you."
    stroke_miss_sound = swordmis.wav
@@ -115,11 +108,6 @@ messages:
              % checking for stroke advancement
              send(self,@ImproveAbility,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));
           }
-        else
-          {
-             % Stroke skill is capped by this creature's level (hit points).
-             send(self,@NotifyCreatureCap,#who=who,#target=target,#skill_num=viSkill_num);
-          }
      }
      else
      {
@@ -128,55 +116,13 @@ messages:
              % checking for weapon proficiency advancement
              send(use_weapon,@ImproveProficiency,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));
           }
-        else
-          {
-             % Weapon proficiency is capped by this creature's level (hit points).
-             send(self,@NotifyCreatureCap,#who=who,#target=target,#skill_num=prof);
-          }
      }
-
+     
      return;
    }
 
-   NotifyCreatureCap(who=$,target=$,skill_num=$)
-   "Tells the player they can't improve this skill/proficiency any further by"
-   "fighting this creature, because its level (hit points) is too low.  This"
-   "fires on an improve attempt that fails purely because of the creature's"
-   "level cap, and stops once the ability reaches its 99% maximum."
-   {
-      local oSkill, iAbility;
-
-      % Only players learn, and only on creatures they're allowed to advance on
-      % (skip revenants, illusions, etc).
-      if NOT IsClass(who,&Player)
-         OR (target <> $ AND NOT Send(target,@CanPlayerAdvanceOnMe))
-      {
-         return;
-      }
-
-      iAbility = Send(who,@GetSkillAbility,#skill_num=skill_num);
-
-      % At 99 the ability is effectively maxed, so the creature is no longer the
-      % limiting factor and there's nothing to gain from tougher foes.
-      if iAbility >= 99
-      {
-         return;
-      }
-
-      oSkill = Send(SYS,@FindSkillByNum,#num=skill_num);
-      if oSkill = $
-      {
-         return;
-      }
-
-      Send(who,@MsgSendUser,#message_rsc=stroke_creature_cap_hit,
-           #parm1=Send(oSkill,@GetName));
-
-      return;
-   }
-
    SuccessChance()
-   "Always returns TRUE for combat strokes.  COmbat strokes are figured"
+   "Always returns TRUE for combat strokes.  Combat strokes are figured"
    "differently than other skills - are figured in player.kod."
    {
       return TRUE;

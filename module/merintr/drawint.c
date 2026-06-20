@@ -808,21 +808,18 @@ void InterfaceDrawElements(HDC hdc)
   bool vertical;
 
   // The theme does not change mid-draw, so read these once instead of per element.
-  bool skipStats = ThemeSkipStatsAreaFrame();
-  bool skipChat  = ThemeSkipChatBoxFrame();
+  bool drawStatsOrnamentalFrame = ThemeDrawsStatsAreaOrnamentalFrame();
+  bool drawChatOrnamentalFrame  = ThemeDrawsChatBoxOrnamentalFrame();
 
   for (i=0; i < NUM_AUTO_ELEMENTS; i++)
   {
 	  // Skip inventory corner bitmaps.  The inventory edge repeaters (ELEMENT_ITOP
 	  // through ELEMENT_IRIGHT) are already skipped in the repeater loop below, so
 	  // these corners have no connecting edges and draw as floating fragments.
-	  //
-	  // Stats area corners are skipped when ThemeSkipStatsAreaFrame returns true.
-	  // Chat box corners are skipped independently when ThemeSkipChatBoxFrame
-	  // returns true.
+	  // Stats area and chat box corner bitmaps draw only when the theme draws its ornamental frame.
 	  if ((i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT) ||
-	      (skipStats && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT) ||
-	      (skipChat  && i >= ELEMENT_BULTOP && i <= ELEMENT_BLRRIGHT))
+	      (!drawStatsOrnamentalFrame && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT) ||
+	      (!drawChatOrnamentalFrame  && i >= ELEMENT_BULTOP && i <= ELEMENT_BLRRIGHT))
 		  continue;
 
     OffscreenWindowBackground(NULL, elements[i].x, elements[i].y, elements[i].width, elements[i].height);
@@ -841,13 +838,11 @@ void InterfaceDrawElements(HDC hdc)
 	  //	disable xxx
 	if( i >= ELEMENT_TOP && i <= ELEMENT_RIGHT )
 		continue;
-	// Skip the edit box bottom repeater.  Stats area edge repeaters
-	// are skipped independently when ThemeSkipStatsAreaFrame returns
-	// true.  Chat box edge repeaters are skipped independently when
-	// ThemeSkipChatBoxFrame returns true.
+	// Skip the edit box bottom repeater.  Stats area and chat box edge
+	// repeater bitmaps draw only when the theme draws its ornamental frame.
 	if ((i == ELEMENT_BBOTTOM) ||
-	    (skipStats && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT) ||
-	    (skipChat  && i >= ELEMENT_BTOP && i <= ELEMENT_BRIGHT))
+	    (!drawStatsOrnamentalFrame && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT) ||
+	    (!drawChatOrnamentalFrame  && i >= ELEMENT_BTOP && i <= ELEMENT_BRIGHT))
 		continue;
 
 	e = &repeaters[i].element;

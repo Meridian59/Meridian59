@@ -18,7 +18,7 @@
 
 int InterfaceThemeResourceId(int id);
 bool ThemeSidebarUsesInventoryFill(void);
-bool ThemeSkipStatsAreaFrame(void);
-bool ThemeSkipChatBoxFrame(void);
+bool ThemeDrawsStatsAreaOrnamentalFrame(void);
+bool ThemeDrawsChatBoxOrnamentalFrame(void);
 
 #endif /* #ifndef _MERINTR_THEME_H */

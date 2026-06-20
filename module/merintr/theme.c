@@ -76,27 +76,27 @@ bool ThemeSidebarUsesInventoryFill(void)
 }
 /****************************************************************************/
 /*
- * ThemeSkipStatsAreaFrame:  Returns true when the active theme skips the
- *   ornamental frame around the stats area.
+ * ThemeDrawsStatsAreaOrnamentalFrame:  Returns true when the active theme draws
+ *   its ornamental frame around the stats area.
  */
-bool ThemeSkipStatsAreaFrame(void)
+bool ThemeDrawsStatsAreaOrnamentalFrame(void)
 {
    switch (ThemeCurrent())
    {
-   case Theme::Dark: return true;
-   default:          return false;
+   case Theme::Dark: return false;
+   default:          return true;
    }
 }
 /****************************************************************************/
 /*
- * ThemeSkipChatBoxFrame:  Returns true when the active theme skips the
- *   ornamental frame around the chat box.
+ * ThemeDrawsChatBoxOrnamentalFrame:  Returns true when the active theme draws
+ *   its ornamental frame around the chat box.
  */
-bool ThemeSkipChatBoxFrame(void)
+bool ThemeDrawsChatBoxOrnamentalFrame(void)
 {
    switch (ThemeCurrent())
    {
-   case Theme::Dark: return true;
-   default:          return false;
+   case Theme::Dark: return false;
+   default:          return true;
    }
 }

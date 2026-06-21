@@ -117,6 +117,79 @@ void DrawStretchedObjectGroup(HDC hdc, object_node *obj, int group, AREA *area, 
 	else
 		DrawObject(hdc, obj, group, true, area, brush, 0, 0, 0, true);
 }
+/************************************************************************/
+/*
+* DrawStretchedObjectGroupTransparent:  Like DrawStretchedObjectGroup, but
+*   the background is painted directly on hdc with the given brush and only
+*   the object's opaque pixels are composited on top.  Because the background
+*   is drawn in true color (rather than filled into the 8-bit palettised
+*   offscreen buffer and then copied), it matches the surrounding window/dialog
+*   color exactly instead of snapping to the nearest game-palette entry.  Used
+*   for the object/avatar bitmap in the description dialogs so the backdrop
+*   blends seamlessly into the dialog face.
+*/
+void DrawStretchedObjectGroupTransparent(HDC hdc, object_node *obj, int group, AREA *area, HBRUSH brush)
+{
+	int angle = (obj->flags & OF_PLAYER) ? 7 * MAX_ANGLE / 8 : 0;
+	int draw_size = std::min(OFFSCREEN_BITMAP_SIZE, std::max(area->cx, area->cy));
+	RECT bgRect;
+	HDC memDC, maskDC;
+	HBITMAP memBmp, maskBmp, oldMemBmp, oldMaskBmp;
+	PALETTEENTRY pe;
+	COLORREF keyColor, oldDestBk, oldDestText;
+
+	// Paint the background straight onto the destination DC in true color, so
+	// it matches the dialog window exactly.
+	bgRect.left = area->x;
+	bgRect.top = area->y;
+	bgRect.right = area->x + area->cx;
+	bgRect.bottom = area->y + area->cy;
+	FillRect(hdc, &bgRect, brush);
+
+	// Render the object into the offscreen buffer over a transparent background.
+	// Filling with TRANSPARENT_INDEX makes every pixel the sprite doesn't cover
+	// the chroma key; the NULL brush stops DrawObject from overwriting it, and
+	// copy == false leaves the result in the offscreen buffer for us to mask.
+	memset(gOffscreenBits, TRANSPARENT_INDEX, OFFSCREEN_BITMAP_SIZE * OFFSCREEN_BITMAP_SIZE);
+	DrawObject(hdc, obj, group, true, area, NULL, 0, 0, angle, false);
+
+	// The chroma key is the RGB the offscreen's transparent index resolves to.
+	GetPaletteEntries(hPal, TRANSPARENT_INDEX, 1, &pe);
+	keyColor = RGB(pe.peRed, pe.peGreen, pe.peBlue);
+
+	// Make a true-color copy of the rendered square.
+	memDC = CreateCompatibleDC(hdc);
+	memBmp = CreateCompatibleBitmap(hdc, draw_size, draw_size);
+	oldMemBmp = (HBITMAP) SelectObject(memDC, memBmp);
+	BitBlt(memDC, 0, 0, draw_size, draw_size, gOffscreenDC, 0, 0, SRCCOPY);
+
+	// Build a 1-bpp mask: white where the chroma key shows, black on the object.
+	maskDC = CreateCompatibleDC(hdc);
+	maskBmp = CreateBitmap(draw_size, draw_size, 1, 1, NULL);
+	oldMaskBmp = (HBITMAP) SelectObject(maskDC, maskBmp);
+	SetBkColor(memDC, keyColor);
+	BitBlt(maskDC, 0, 0, draw_size, draw_size, memDC, 0, 0, SRCCOPY);
+
+	// Knock the background out of the color copy, leaving the object on black.
+	SetBkColor(memDC, RGB(0, 0, 0));
+	SetTextColor(memDC, RGB(255, 255, 255));
+	BitBlt(memDC, 0, 0, draw_size, draw_size, maskDC, 0, 0, SRCAND);
+
+	// Punch the object's silhouette out of the destination, then OR it in.
+	oldDestBk = SetBkColor(hdc, RGB(255, 255, 255));
+	oldDestText = SetTextColor(hdc, RGB(0, 0, 0));
+	BitBlt(hdc, area->x, area->y, draw_size, draw_size, maskDC, 0, 0, SRCAND);
+	BitBlt(hdc, area->x, area->y, draw_size, draw_size, memDC, 0, 0, SRCPAINT);
+	SetBkColor(hdc, oldDestBk);
+	SetTextColor(hdc, oldDestText);
+
+	SelectObject(memDC, oldMemBmp);
+	SelectObject(maskDC, oldMaskBmp);
+	DeleteObject(memBmp);
+	DeleteObject(maskBmp);
+	DeleteDC(memDC);
+	DeleteDC(maskDC);
+}
 /*
 */
 void DrawObjectIcon(HDC hdc, ID icon, int group, bool draw_obj, AREA *area, HBRUSH brush,

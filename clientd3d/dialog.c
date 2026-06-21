@@ -356,7 +356,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	   GetClientRect(hwndBitmap, &dlg_rect);
 	   
 	   RectToArea(&dlg_rect, &area);
-	   DrawStretchedObjectGroup(hdc, info->obj, info->obj->animate->group, &area, 
+	   DrawStretchedObjectGroupTransparent(hdc, info->obj, info->obj->animate->group, &area,
 		   GetSysColorBrush(COLOR_3DFACE));
 	   
 	   ReleaseDC(hwndBitmap, hdc);

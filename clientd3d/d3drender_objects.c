@@ -75,10 +75,9 @@ static bool IsInvisibleEffect(int flags) {
 	return (flags & (OF_INVISIBLE | OF_DITHERINVIS)) == OF_INVISIBLE;
 }
 
-// Calculate scaling factors for POV overlays based on current resolution.
-// Shared with D3DComputePlayerOverlayArea() and D3DRenderPlayerOverlayOverlaysDraw()
-// so a base overlay and any overlay attached to its hotspot are aligned.
-static void D3DGetPlayerOverlayScreenScale(const PlayerViewParams& playerViewParams, float& screenW, float& screenH)
+// Computes scaling factors for POV overlays based on current resolution.
+// Then writes the results to *screenW and *screenH.
+static void D3DComputePlayerOverlayScreenScale(const PlayerViewParams& playerViewParams, float* screenW, float* screenH)
 {
 	// Reference resolution and scaling factors for classic 800x600 resolution.
 	static constexpr float REFERENCE_WIDTH   = 800.0f;
@@ -94,9 +93,9 @@ static void D3DGetPlayerOverlayScreenScale(const PlayerViewParams& playerViewPar
 	float scaleW = REFERENCE_SCALE_W * scaleFactorWidth;
 	float scaleH = REFERENCE_SCALE_H * scaleFactorHeight;
 
-	screenW = static_cast<float>(playerViewParams.d3dRect.right  - playerViewParams.d3dRect.left)
-				/ static_cast<float>(playerViewParams.viewportWidth  * scaleW);
-	screenH = static_cast<float>(playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top)
+	*screenW = static_cast<float>(playerViewParams.d3dRect.right  - playerViewParams.d3dRect.left)
+				/ static_cast<float>(playerViewParams.viewportWidth * scaleW);
+	*screenH = static_cast<float>(playerViewParams.d3dRect.bottom - playerViewParams.d3dRect.top)
 				/ static_cast<float>(playerViewParams.viewportHeight * scaleH);
 }
 
@@ -2215,7 +2214,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 	d3d_render_packet_new* pPacket;
 	d3d_render_chunk_new* pChunk;
 
-	D3DGetPlayerOverlayScreenScale(playerViewParams, screenW, screenH);
+	D3DComputePlayerOverlayScreenScale(playerViewParams, &screenW, &screenH);
 
 	// Get player's object flags for special drawing effects
 	const auto* player = GetPlayerInfo();
@@ -2593,7 +2592,7 @@ int getKerningAmount(font_3d* pFont, char* str, char* ptr) {
 bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA * obj_area, const PlayerViewParams& playerViewParams)
 {
 	float screenW, screenH;
-	D3DGetPlayerOverlayScreenScale(playerViewParams, screenW, screenH);
+	D3DComputePlayerOverlayScreenScale(playerViewParams, &screenW, &screenH);
 
 	if (hotspot < 1 || hotspot > HOTSPOT_PLAYER_MAX)
 	{

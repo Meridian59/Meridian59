@@ -68,7 +68,7 @@ messages:
       oRoom = send(who,@GetOwner);
       oTarget = First(lTargets);
 
-      if not isclass(oTarget,&DeadBody)
+      if NOT (IsClass(oTarget,&DeadBody) AND Send(oTarget,@WasPlayer))
       {
          send(who,@MsgSendUser,#message_rsc=Animate_bad_target,#parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@Getname));
 

@@ -872,6 +872,10 @@ void InterfaceDrawBarBorder( RawBitmap* prawbmpBackground, HDC hdc, AREA *a )
   InterfaceElement *e;
   bool vertical;
 
+  // Themes with custom stat bars do not use the default bar border.
+  if (ThemeUsesCustomStatBars())
+    return;
+
   elements[ELEMENT_BARRIGHT].x = a->cx;
 
   for (i = ELEMENT_BARLEFT; i <= ELEMENT_BARRIGHT; i++)

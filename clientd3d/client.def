@@ -216,3 +216,4 @@ EXPORTS
 
 ; ajw
 	GetUserTargetID
+	GetTargetsByName

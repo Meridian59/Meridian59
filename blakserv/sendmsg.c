@@ -180,6 +180,8 @@ void InitBkodInterpret(void)
 	ccall_table[MINIGAMESTRINGTONUMBER] = C_MinigameStringToNumber;
 
 	ccall_table[SENDWEBHOOK] = C_SendWebhook;
+
+	ccall_table[GETSERVERCONFIGVALUE] = C_GetServerConfigValue;
 }
 
 kod_statistics * GetKodStats()

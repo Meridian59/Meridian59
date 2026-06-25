@@ -1475,6 +1475,7 @@ messages:
       Send(oMasterKey, @DeleteCopies);
       Send(oMaintenance, @RoomDeleted,#what=self);
       Send(oMasterKey, @RoomExpired);
+      Send(SYS, @DeleteRoom, #what=self);
 
       if ptDecoratorArrives <> $
       {

@@ -105,8 +105,8 @@ messages:
             if iRoll > (iChance + HATE_MARGIN) 
             {
                % oops!  since you failed, now they really hate you!
-               send(first(oMonster),@TargetSwitch,#what=who,#iHatred=send(who,@GetKarma));
-               send(first(oMonster),@EnterStateChase,#target=who,#actnow=TRUE);
+               send(oMonster,@TargetSwitch,#what=who,#iHatred=send(who,@GetKarma));
+               send(oMonster,@EnterStateChase,#target=who,#actnow=TRUE);
             }
          }
       }

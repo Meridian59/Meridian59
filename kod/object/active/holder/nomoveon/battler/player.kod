@@ -7690,7 +7690,7 @@ messages:
          if what = self
          {
             Send(self,@AdvancementCheck,#what=victim,#killing_blow=TRUE);
-            Send(self,@NotifyWeaponProfCapped,#victim=victim);
+            Send(self,@NotifyWeaponProficiencyCapped,#victim=victim);
          }
          else
          {
@@ -7704,11 +7704,10 @@ messages:
       propagate;
    }
 
-   NotifyWeaponProfCapped(victim=$)
-   "Called when this player lands the killing blow.  If the wielded weapon's"
-   "proficiency can no longer improve from a creature this weak, tell the"
-   "player to seek tougher opponents.  Mirrors the spit-on-corpse message:"
-   "informative, fired once at the kill rather than on every swing."
+   NotifyWeaponProficiencyCapped(victim=$)
+   "If the wielded weapon's proficiency can no longer improve from a creature "
+   "this weak, occasionally remind the player to seek tougher opponents.  "
+   "Purely informative, like the spit-on-corpse message."
    {
       local oWeapon, iProfNum, iAbility, oSkill;
 

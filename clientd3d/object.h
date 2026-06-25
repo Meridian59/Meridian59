@@ -106,10 +106,6 @@ typedef struct {
    int         distance;          /* Distance from player to object; may not be valid */
    bool        visible;           // True when object is visible in current frame
    int			boundingHeightAdjust;	// adjustment in height from overlays
-   int         depthBin;          // Hardware-renderer scratch: per-frame stack index among objects
-                                   // sharing this object's tile. Gives co-located objects non-overlapping
-                                   // z-bias bands so their main sprites/overlays don't interleave. Recomputed
-                                   // each frame; ignored by the software renderer.
 } room_contents_node;
 
 M59EXPORT bool CompareIdObject(void *idnum, void *obj);

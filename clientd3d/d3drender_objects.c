@@ -94,6 +94,19 @@ static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 
 // Implementations
 
+// Per-frame stack index for each object, keyed by object id. Objects sharing a tile get successive
+// bins so their z-bias bands don't overlap (see DEPTH_BIN_STRIDE). Rebuilt every frame by
+// D3DRenderObjects before the draw passes read it; lives here rather than on room_contents_node so the
+// shared object struct stays free of hardware-renderer scratch.
+static std::unordered_map<int, int> objectDepthBins;
+
+// Stack index for an object's tile band, or 0 if it wasn't assigned a bin this frame.
+static int D3DRenderObjectDepthBin(int objectId)
+{
+	auto it = objectDepthBins.find(objectId);
+	return (it == objectDepthBins.end()) ? 0 : it->second;
+}
+
 /**
 * The main entry point for rendering objects in the game world.
 * Returns the total time taken to render all objects.
@@ -117,11 +130,12 @@ long D3DRenderObjects(
 	// Assign every visible object a per-tile "stack bin". Objects that share a tile (same motion x/y)
 	// would otherwise be drawn with identical z-bias bands, causing their main sprites and overlays to
 	// interleave (one object's overlay appearing over a different object's sprite). The main-sprite and
-	// overlay passes each run as separate loops in different orders, so we compute the bins once here and
-	// stash the result on the node (depthBin) for both passes to read. We sort by object id first so the
-	// front/back assignment is stable frame-to-frame and doesn't flicker.
+	// overlay passes each run as separate loops in different orders, so we compute the bins once here into
+	// objectDepthBins for both passes to read. We sort by object id first so the front/back assignment is
+	// stable frame-to-frame and doesn't flicker.
 	{
 		const auto* localPlayer = GetPlayerInfo();
+		objectDepthBins.clear();
 		std::vector<room_contents_node*> stackNodes;
 		std::unordered_set<int> seenIds;
 		for (long i = 0; i < gameObjectDataParams.numItems; i++)
@@ -131,7 +145,6 @@ long D3DRenderObjects(
 			room_contents_node* node = gameObjectDataParams.drawData[i].u.object.object->draw.obj;
 			if (node == NULL || node->obj.id == localPlayer->id)
 				continue;
-			node->depthBin = 0;
 			if (seenIds.insert(node->obj.id).second)
 				stackNodes.push_back(node);
 		}
@@ -144,7 +157,7 @@ long D3DRenderObjects(
 		for (room_contents_node* node : stackNodes)
 		{
 			int64 key = ((int64)node->motion.x << 32) | (int)(node->motion.y & 0xFFFFFFFF);
-			node->depthBin = tileCount[key]++;
+			objectDepthBins[node->obj.id] = tileCount[key]++;
 		}
 	}
 
@@ -1003,7 +1016,7 @@ void D3DRenderOverlaysDraw(
 					pChunk->xLat1 = xLat1;
 					// Apply the same per-object band shift used for the main sprite so this overlay stays
 					// grouped with its own object and doesn't interleave with a co-located one.
-					pChunk->zBias = zBias + (BYTE)(pRNode->depthBin * DEPTH_BIN_STRIDE);
+					pChunk->zBias = zBias + (BYTE)(D3DRenderObjectDepthBin(pRNode->obj.id) * DEPTH_BIN_STRIDE);
 
 					zBias++;
 
@@ -1605,9 +1618,9 @@ void D3DRenderObjectsDraw(
 
 
 		// Shift this object's whole z-bias band clear of any other object sharing its tile, so their
-		// main sprites and overlays never interleave. depthBin is assigned once per frame; the overlay
+		// main sprites and overlays never interleave. The bin is assigned once per frame; the overlay
 		// pass applies the identical shift so an object's layers stay grouped with its main sprite.
-		pChunk->zBias += (BYTE)(pRNode->depthBin * DEPTH_BIN_STRIDE);
+		pChunk->zBias += (BYTE)(D3DRenderObjectDepthBin(pRNode->obj.id) * DEPTH_BIN_STRIDE);
 
 		lastDistance = 0;
 

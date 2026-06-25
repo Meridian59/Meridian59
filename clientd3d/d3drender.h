@@ -28,7 +28,7 @@ static constexpr int ZBIAS_WORLD = 2;
 static constexpr int ZBIAS_MASK = 1;
 
 // Each object's layers (underlays 1..6, main sprite 10, overlays 11..15) occupy a z-bias band ~[1..15+].
-// Co-located objects (same tile) are separated by shifting their whole band by depthBin * this stride
+// Co-located objects (same tile) are separated by shifting their whole band by their stack bin * this stride
 // so the bands don't overlap. Must exceed the widest single-object band. zBias is a BYTE, so this also
 // caps the number of cleanly-separable co-located objects at 255 / DEPTH_BIN_STRIDE (~12).
 static constexpr int DEPTH_BIN_STRIDE = 20;

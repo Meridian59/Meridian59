@@ -24,13 +24,21 @@ Three kinds of themeable bitmap surface exist:
 
 The wrapper ornaments live in `module/merintr/drawint.c`.  Five groups exist today:
 
-| Group | Wraps | Dark variants today |
+| Group | Wraps | Dark theme handling |
 | ----- | ----- | ------------------- |
 | `E*` | Outer client-window edge | Yes |
 | `M*` | Minimap | Yes |
-| `S*` | Stats area outer panel | No (skipped in dark) |
-| `B*` | Chat edit box | No (silver in dark) |
+| `S*` | Stats area outer panel | No (solid-line border) |
+| `B*` | Chat edit box | No (solid-line border) |
 | `I*` | Inventory area | No (skipped for every theme) |
+
+## Optional solid-line border for stats area and chat box
+
+A theme can skip the `S*` and `B*` ornaments and draw a thin solid-line border in their place, for when the ornament artwork does not read well against the theme's sidebar fill.
+
+Three theme switches control this: one to skip the stats area frame, one to skip the chat box frame, and a shared border color used for both.  Returning no color keeps the default border.
+
+The frame and the border are independent.  Setting a border color without skipping the frame draws both, which may not look good.  Whether to combine them is the theme author's choice.
 
 ## Sidebar fill
 

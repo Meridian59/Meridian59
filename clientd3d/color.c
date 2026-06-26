@@ -320,6 +320,19 @@ int MainThemeResourceId(int id)
 }
 /************************************************************************/
 /*
+ * ThemeBorderColor:  Returns the active theme's border color, or
+ *   CLR_INVALID when the theme sets none.
+ */
+COLORREF ThemeBorderColor(void)
+{
+	switch (ThemeCurrent())
+	{
+	case Theme::Dark: return RGB(80, 80, 80);
+	default:          return CLR_INVALID;
+	}
+}
+/************************************************************************/
+/*
  * ThemeMenuBarColor:  Returns the color the active theme uses for the
  *   menu bar background.  Returns CLR_INVALID for themes that use the
  *   system default.

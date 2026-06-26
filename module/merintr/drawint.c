@@ -807,15 +807,19 @@ void InterfaceDrawElements(HDC hdc)
   InterfaceElement *e;
   bool vertical;
 
+  // The theme does not change mid-draw, so read these once instead of per element.
+  bool drawStatsOrnamentalFrame = ThemeDrawsStatsAreaOrnamentalFrame();
+  bool drawChatOrnamentalFrame  = ThemeDrawsChatBoxOrnamentalFrame();
+
   for (i=0; i < NUM_AUTO_ELEMENTS; i++)
   {
-	  /* Skip inventory corner bitmaps.  The inventory edge repeaters
-	     (ELEMENT_ITOP through ELEMENT_IRIGHT) are already skipped in
-	     the repeater loop below, so these corners have no connecting
-	     edges and draw as floating fragments.  Stats-area corners are
-	     also skipped, depending on the active theme. */
+	  // Skip inventory corner bitmaps.  The inventory edge repeaters (ELEMENT_ITOP
+	  // through ELEMENT_IRIGHT) are already skipped in the repeater loop below, so
+	  // these corners have no connecting edges and draw as floating fragments.
+	  // Stats area and chat box corner bitmaps draw only when the theme draws its ornamental frame.
 	  if ((i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT) ||
-	      (ThemeSkipStatsAreaFrame() && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT))
+	      (!drawStatsOrnamentalFrame && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT) ||
+	      (!drawChatOrnamentalFrame  && i >= ELEMENT_BULTOP && i <= ELEMENT_BLRRIGHT))
 		  continue;
 
     OffscreenWindowBackground(NULL, elements[i].x, elements[i].y, elements[i].width, elements[i].height);
@@ -834,10 +838,11 @@ void InterfaceDrawElements(HDC hdc)
 	  //	disable xxx
 	if( i >= ELEMENT_TOP && i <= ELEMENT_RIGHT )
 		continue;
-	// Skip the edit-box bottom repeater.  Stats-area edge repeaters
-	// are also skipped, depending on the active theme.
+	// Skip the edit box bottom repeater.  Stats area and chat box edge
+	// repeater bitmaps draw only when the theme draws its ornamental frame.
 	if ((i == ELEMENT_BBOTTOM) ||
-	    (ThemeSkipStatsAreaFrame() && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT))
+	    (!drawStatsOrnamentalFrame && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT) ||
+	    (!drawChatOrnamentalFrame  && i >= ELEMENT_BTOP && i <= ELEMENT_BRIGHT))
 		continue;
 
 	e = &repeaters[i].element;
@@ -859,6 +864,15 @@ void InterfaceDrawElements(HDC hdc)
 
       GdiFlush();
     }
+  }
+
+  // Draw a stats area border if the active theme has a border color.
+  COLORREF borderColor = ThemeBorderColor();
+  if (borderColor != CLR_INVALID)
+  {
+    AREA stat;
+    StatsGetArea(&stat);
+    DrawBorder(&stat, GetClosestPaletteIndex(borderColor), NULL);
   }
 }
 /****************************************************************************/

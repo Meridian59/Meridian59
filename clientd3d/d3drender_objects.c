@@ -107,6 +107,39 @@ static int D3DRenderObjectDepthBin(int objectId)
 	return (it == objectDepthBins.end()) ? 0 : it->second;
 }
 
+// Rebuild objectDepthBins for the current frame. Objects sharing a tile (same motion x/y) would
+// otherwise draw with identical z-bias bands, causing their sprites and overlays to interleave (one
+// object's overlay appearing over a different object's sprite). Sorting by object id keeps the
+// front/back assignment stable frame-to-frame so it doesn't flicker.
+static void D3DRenderBuildObjectDepthBins(const GameObjectDataParams& gameObjectDataParams)
+{
+	const auto* localPlayer = GetPlayerInfo();
+	objectDepthBins.clear();
+	std::vector<room_contents_node*> stackNodes;
+	std::unordered_set<int> seenIds;
+	for (long i = 0; i < gameObjectDataParams.numItems; i++)
+	{
+		if (gameObjectDataParams.drawData[i].type != DrawObjectType)
+			continue;
+		room_contents_node* node = gameObjectDataParams.drawData[i].u.object.object->draw.obj;
+		if (node == NULL || node->obj.id == localPlayer->id)
+			continue;
+		if (seenIds.insert(node->obj.id).second)
+			stackNodes.push_back(node);
+	}
+	std::sort(stackNodes.begin(), stackNodes.end(),
+		[](const room_contents_node* a, const room_contents_node* b) { return a->obj.id < b->obj.id; });
+	// Each object's bin is the number of objects already placed at its location, so co-located
+	// objects get successive bins (0, 1, 2, ...). Combine the object's x and y position into a
+	// single int64 to use as the per-location map key.
+	std::unordered_map<int64, int> tileCount;
+	for (room_contents_node* node : stackNodes)
+	{
+		int64 key = ((int64)node->motion.x << 32) | (int)(node->motion.y & 0xFFFFFFFF);
+		objectDepthBins[node->obj.id] = tileCount[key]++;
+	}
+}
+
 /**
 * The main entry point for rendering objects in the game world.
 * Returns the total time taken to render all objects.
@@ -127,39 +160,9 @@ long D3DRenderObjects(
 	const auto room = objectsRenderParams.room;
 	const auto params = objectsRenderParams.params;
 
-	// Assign every visible object a per-tile "stack bin". Objects that share a tile (same motion x/y)
-	// would otherwise be drawn with identical z-bias bands, causing their main sprites and overlays to
-	// interleave (one object's overlay appearing over a different object's sprite). The main-sprite and
-	// overlay passes each run as separate loops in different orders, so we compute the bins once here into
-	// objectDepthBins for both passes to read. We sort by object id first so the front/back assignment is
-	// stable frame-to-frame and doesn't flicker.
-	{
-		const auto* localPlayer = GetPlayerInfo();
-		objectDepthBins.clear();
-		std::vector<room_contents_node*> stackNodes;
-		std::unordered_set<int> seenIds;
-		for (long i = 0; i < gameObjectDataParams.numItems; i++)
-		{
-			if (gameObjectDataParams.drawData[i].type != DrawObjectType)
-				continue;
-			room_contents_node* node = gameObjectDataParams.drawData[i].u.object.object->draw.obj;
-			if (node == NULL || node->obj.id == localPlayer->id)
-				continue;
-			if (seenIds.insert(node->obj.id).second)
-				stackNodes.push_back(node);
-		}
-		std::sort(stackNodes.begin(), stackNodes.end(),
-			[](const room_contents_node* a, const room_contents_node* b) { return a->obj.id < b->obj.id; });
-		// Each object's bin is the number of objects already placed at its location, so co-located
-		// objects get successive bins (0, 1, 2, ...). Combine the object's x and y position into a
-		// single int64 to use as the per-location map key.
-		std::unordered_map<int64, int> tileCount;
-		for (room_contents_node* node : stackNodes)
-		{
-			int64 key = ((int64)node->motion.x << 32) | (int)(node->motion.y & 0xFFFFFFFF);
-			objectDepthBins[node->obj.id] = tileCount[key]++;
-		}
-	}
+	// The main-sprite and overlay passes run as separate loops in different orders, so compute the
+	// per-tile stack bins once up front for both passes to read.
+	D3DRenderBuildObjectDepthBins(gameObjectDataParams);
 
 	if (config.draw_names)
 	{

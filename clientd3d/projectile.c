@@ -90,10 +90,7 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
 
       distance = sqrtf(dx_f * dx_f + dy_f * dy_f + dz_f * dz_f) / FINENESS;
 
-      // Calculate normal increment based on speed, where increment is "progress per
-      // millisecond". Projectiles fly faster than walking objects, so they use a /1000
-      // divisor rather than the /10000 MoveObject2() uses for object motion.
-      float normal_increment = ((float) speed) / 1000.0f / distance;
+      float normal_increment = ((float) speed) / PROJECTILE_SPEED_PERIOD_MSEC / distance;
 
       // Cap maximum travel time to prevent extremely long-range projectiles from taking
       // 30+ seconds to arrive, which breaks gameplay (attack sounds/animations finish

@@ -166,8 +166,7 @@ void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace)
 	else 
 	{
 		float distance = sqrtf((float)(dx * dx + dy * dy)) / (float)FINENESS;
-		// Object motion is given in # of grid squares per 10 seconds
-		r->motion.increment = (((float) r->motion.speed) / 10000.0f) / distance;
+		r->motion.increment = (((float) r->motion.speed) / OBJECT_SPEED_PERIOD_MSEC) / distance;
 	}
 	
 	r->motion.move_animating = true;

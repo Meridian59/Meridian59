@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -340,7 +340,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	BOOL bQuit = FALSE;
 
 	InitCommonControls();
-  SetUpCrashReporting();
+	SetUpCrashReporting();
 
 	hInst = hInstance;
 
@@ -405,6 +405,8 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	GenerateCRC16();
 
 	MainInitState(STATE_OFFLINE);
+
+	InitializeTime();
 
 	ShowWindow(hMain, showCmd);
 	UpdateWindow(hMain);

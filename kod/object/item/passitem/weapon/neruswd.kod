@@ -90,6 +90,16 @@ messages:
       propagate;
    }
 
+   CanEnchant(oSpell = $)
+   "Nerudite swords cannot be enchanted to Kraanan."
+   {
+      if Send(oSpell,@GetSpellNum) = SID_ENCHANT_WEAPON
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

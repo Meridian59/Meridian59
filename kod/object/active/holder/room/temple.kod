@@ -26,6 +26,8 @@ resources:
    temple_close = "Close"
 
    temple_music = temple.mid
+   
+   item_cleansed_in_pool = "The sacred waters of Shal'ille glimmer briefly."
 
 classvars:
 
@@ -69,9 +71,51 @@ messages:
          }
       }
       
+      if new_row >= 8 AND new_row <= 11
+         AND new_col >= 11 AND new_col <= 13
+         AND what <> $
+         AND IsClass(what,&Item)
+      {
+         Send(self,@ItemDroppedInSacredPool,#what=what);
+      }
+      
       propagate;
    }
    
+   ItemDroppedInSacredPool(what=$)
+   {
+      local i, oItemAtt, iNum, oPlayer;
+
+      % Fix Nerudite swords with incorrect type flags
+      if IsClass(what,&NeruditeSword)
+      {
+         % Ensure Kraanan enchantment is gone
+         for i in Send(what,@GetItemAttributes)
+         {
+             iNum = Send(what,@GetNumFromCompound,#compound=First(i));
+             
+             if iNum = WA_ENCHANTED
+             {
+                oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+                Send(oItemAtt,@RemoveFromItem,#oItem=what);
+             }
+         }
+         
+         % Now remove any lingering ATCK_WEAP_MAGIC or ATCK_WEAP_NONMAGIC flags
+         Send(what,@SetTypeFlag,#flag=ATCK_WEAP_MAGIC,#value=FALSE);
+         Send(what,@SetTypeFlag,#flag=ATCK_WEAP_NONMAGIC,#value=FALSE);
+         
+         oPlayer = Send(what,@GetOwner);
+         if oPlayer <> $
+            AND IsClass(oPlayer,&Player)
+         {
+            Send(oPlayer,@MsgSendUser,#message_rsc=item_cleansed_in_pool);
+         }
+      }
+
+      return;
+   }
+
    LeaveHold(what=$)
    {
       if isClass(what,&Scepter)

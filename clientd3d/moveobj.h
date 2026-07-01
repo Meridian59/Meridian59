@@ -18,8 +18,8 @@
 // (speed / period) / distance.  Object motion is given in # of grid squares per 10
 // seconds; projectiles are given per 1 second, so the same speed value moves a
 // projectile ten times as far per millisecond.
-static const float PROJECTILE_SPEED_PERIOD_MSEC = 1000.0f;
-static const float OBJECT_SPEED_PERIOD_MSEC     = 10.0f * PROJECTILE_SPEED_PERIOD_MSEC;
+static const float PROJECTILE_INTERVAL_MS = 1000.0f;
+static const float OBJECT_INTERVAL_MS     = 10.0f * PROJECTILE_INTERVAL_MS;
 
 void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace);
 bool ObjectsMove(int dt);

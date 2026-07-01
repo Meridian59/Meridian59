@@ -90,7 +90,7 @@ void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD f
 
       distance = sqrtf(dx_f * dx_f + dy_f * dy_f + dz_f * dz_f) / FINENESS;
 
-      float normal_increment = ((float) speed) / PROJECTILE_SPEED_PERIOD_MSEC / distance;
+      float normal_increment = ((float) speed) / PROJECTILE_INTERVAL_MS / distance;
 
       // Cap maximum travel time to prevent extremely long-range projectiles from taking
       // 30+ seconds to arrive, which breaks gameplay (attack sounds/animations finish

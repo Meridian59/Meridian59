@@ -6666,6 +6666,13 @@ messages:
       % keeps the old list until recreated. Remove after PostPatchUpdates has been applied.
       Send(Send(self, @FindRoomByNum, #num=RID_KA0), @Recreate);
 
+      % Wipe all outstanding Royal Ballots so no cheaply-purchased ballots remain
+      % after the ballot cost/eligibility changes.
+      Send(&BallotItem, @Delete);
+
+      % Recreate the settings object so the new Justicar eligibility settings take effect
+      Send(SYS,@RecreateSettings);
+
       return;
    }
 

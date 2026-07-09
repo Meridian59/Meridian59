@@ -6670,9 +6670,6 @@ messages:
       % after the ballot cost/eligibility changes.
       Send(&BallotItem, @Delete);
 
-      % Recreate the settings object so the new Justicar eligibility settings take effect
-      Send(SYS,@RecreateSettings);
-
       return;
    }
 

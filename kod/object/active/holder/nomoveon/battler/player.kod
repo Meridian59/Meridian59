@@ -8571,30 +8571,33 @@ messages:
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
 
-		 oWeapon = Send(self,@LookupPlayerWeapon);	 
-		 if oWeapon <> $
-		 {
+		 oWeapon = Send(self,@LookupPlayerWeapon);
+
+         % If the right hand is holding a melee weapon, animate casting while wielding it.
+         if oWeapon <> $ AND NOT isClass(oWeapon,&Bow)
+         {
 			AddPacket(4,Send(oWeapon,@GetWindowOverlay));  % Get the weapon graphic filename.
 			AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
 			Send(oWeapon,@SendWindowOverlayCastAnimation);
+         }
 
-			AddPacket(1,1);
-		    AddPacket(4,player_window_overlay_glow, 1,HS_CENTER,
-                      1,ANIMATE_ONCE, 4,300, 2,1, 2,3, 2,0);
-		 }
-		 else
-		 {
+         % Otherwise, show the right hand performing the spellcasting animation.
+		 % This also shows while wielding a bow on the left hand.
+         else
+         {
             AddPacket(4,player_window_overlay_hand);
             AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
             AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,0);
+         }
 
-			AddPacket(1,1);
-		    AddPacket(4,player_window_overlay_glow, 1,HS_RIGHT_HAND,
-                      1,ANIMATE_ONCE, 4,300, 2,1, 2,3, 2,0);
-		 }
-         SendPacket(poSession);    
+         % Display the magic glow on the used animation.
+         AddPacket(1,1);
+         AddPacket(4,player_window_overlay_glow, 1,HS_RIGHT_HAND,
+                   1,ANIMATE_ONCE, 4,300, 2,1, 2,3, 2,0);
+
+         SendPacket(poSession);
       }
-      
+
       return;
    }
 

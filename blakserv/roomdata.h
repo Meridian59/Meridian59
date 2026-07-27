@@ -13,7 +13,7 @@
 #ifndef _ROOMDATA_H
 #define _ROOMDATA_H
 
-typedef struct roomdata_struct
+struct roomdata_node
 {
    int GetSize(void) const
    {
@@ -30,10 +30,13 @@ typedef struct roomdata_struct
 
       return (int) total;
    }
-   struct roomdata_struct *next;
+  
+   roomdata_node *next;
    room_type file_info;
-   blak_int roomdata_id;
-} roomdata_node;
+   blak_int roomdata_id;  // Server-assigned unique ID
+   int resource_id;  // Resource number of the .roo filename resource
+   std::string room_filename;  // With no extension; lowercase
+};
 
 enum
 {
@@ -45,6 +48,7 @@ void ResetRoomData(void);
 bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_col);
 bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int to_col);
 blak_int LoadRoomData(int resource_id);
-roomdata_node * GetRoomDataByID(int id);
+roomdata_node *GetRoomDataByID(int id);
+roomdata_node *GetRoomDataByFilename(const std::string &name);
 
 #endif

@@ -22,7 +22,8 @@ roomdata_node *roomdata;
 blak_int num_roomdata;
 
 /* local function prototypes */
-bool LoadRoomFile(char *fname,room_type *file_info);
+static bool LoadRoomFile(char *fname,room_type *file_info);
+static std::string tolower(std::string s);
 
 #define signum(a) ((a)<0 ? -1 : ((a) > 0 ? 1 : 0))
 
@@ -88,6 +89,9 @@ blak_int LoadRoomData(int resource_id)
    AddMemoryCount(MALLOC_ID_ROOM, (int64_t)room->GetSize());
 
    room->roomdata_id = num_roomdata++;
+   room->resource_id = resource_id;
+   std::filesystem::path path(r->resource_val);
+   room->room_filename = tolower(path.stem().string());
    room->next = roomdata;
    roomdata = room;
 
@@ -108,6 +112,22 @@ roomdata_node * GetRoomDataByID(int id)
       room = room->next;
    }
    return NULL;
+}
+
+roomdata_node *GetRoomDataByFilename(const std::string &name)
+{
+   roomdata_node *room;
+   // Accept names with or without an extension, in any case
+   auto lowername = tolower(std::filesystem::path(name).stem().string());
+   
+   room = roomdata;
+   while (room != NULL)
+   {
+     if (room->room_filename == lowername)
+       return room;
+     room = room->next;
+   }
+   return nullptr;
 }
 
 bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_col)
@@ -369,3 +389,8 @@ bool LoadRoomFile(char *fname,room_type *file_info)
    return BSPRooFileLoadServer(s,file_info);
 }
 
+std::string tolower(std::string s) {
+  std::transform(s.begin(), s.end(), s.begin(),
+                 [](unsigned char c){ return std::tolower(c); });
+  return s;
+}

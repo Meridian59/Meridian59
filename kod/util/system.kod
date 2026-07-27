@@ -1240,6 +1240,29 @@ messages:
       return GetTableEntry(phRooms,num);
    }
 
+   FindRoomNumByResource(rsc = $)
+   "Returns the room number (RID) of the first room object whose room "
+   "resource matches rsc, or $ if none.  This magic function name is "
+	"looked up in the server to find rooms based on their resource ID."
+   {
+      local i;
+
+      if rsc = $
+      {
+         return $;
+      }
+
+      for i in plRooms
+      {
+         if Send(i,@GetRoomResource) = rsc
+         {
+            return Send(i,@GetRoomNum);
+         }
+      }
+
+      return $;
+   }
+
    FindSpellByNum(num = 0)
    {
       return GetTableEntry(phSpells,num);

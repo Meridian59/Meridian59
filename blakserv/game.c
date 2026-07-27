@@ -639,38 +639,85 @@ void GameDMCommand(session_node *s,int type,char *str)
    switch (type)
    {
    case DM_CMD_GO_ROOM :
-      if (0 != atoi(str))
-      {
-	 //ASSERT(0 != ACCOUNT_ADMIN);
-	 //ASSERT(0 != ACCOUNT_DM);
-	 if (ConfigInt(RIGHTS_GOROOMBYNUM) == 0)
-	 {
-	    dprintf("DM Command GOROOM (by number) disabled.");
-	    break;
-	 }
-	 if (ConfigInt(RIGHTS_GOROOMBYNUM) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
-	 {
-	    dprintf("DM Command GOROOM (by number) disabled for DMs; must be Admin.");
-	    break;
-	 }
-      }
-      if (ConfigInt(RIGHTS_GOROOM) == 0)
-      {
-	 dprintf("DM Command GOROOM disabled.");
-	 break;
-      }
-      if (ConfigInt(RIGHTS_GOROOM) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
-      {
-	 dprintf("DM Command GOROOM disabled for DMs; must be Admin.");
-	 break;
-      }
-      snprintf(buf, sizeof(buf), "send object %i teleportto rid int %s",s->game->object_id,str);
-      SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
-      TryAdminCommand(s->session_id,buf); 
-      break;
+   {
+     if (0 != atoi(str))
+     {
+       if (ConfigInt(RIGHTS_GOROOMBYNUM) == 0)
+       {
+         dprintf("DM Command GOROOM (by number) disabled.");
+         break;
+       }
+       if (ConfigInt(RIGHTS_GOROOMBYNUM) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
+       {
+         dprintf("DM Command GOROOM (by number) disabled for DMs; must be Admin.");
+         break;
+       }
+     }
+     if (ConfigInt(RIGHTS_GOROOM) == 0)
+     {
+       dprintf("DM Command GOROOM disabled.");
+       break;
+     }
+     if (ConfigInt(RIGHTS_GOROOM) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
+     {
+       dprintf("DM Command GOROOM disabled for DMs; must be Admin.");
+       break;
+     }
 
+     int rid = atoi(str);
+     if (rid == 0)
+     {
+       // Room specified by filename ("tos") or by a symbolic
+       // constant from blakston.khd ("rid_tos").
+       roomdata_node *room = GetRoomDataByFilename(str);
+       if (room != nullptr)
+       {
+         // Ask kod which room object uses this .roo resource; the room
+         // number lives only on the Blakod side (piRoom_num).
+         int message_id = GetIDByName("FindRoomNumByResource");
+         int parm_id = GetIDByName("rsc");
+         if (message_id == INVALID_ID || parm_id == INVALID_ID)
+         {
+           SendSessionAdminText(s->session_id,
+                                "Couldn't find kod function FindRoomNumByResource to look up room.\n");
+           break;
+         }
+
+         val_type rsc_val;
+         rsc_val.v.tag = TAG_RESOURCE;
+         rsc_val.v.data = room->resource_id;
+
+         parm_node p;
+         p.type = CONSTANT;
+         p.value = rsc_val.int_val;
+         p.name_id = parm_id;
+
+         val_type ret_val;
+         ret_val.int_val = SendTopLevelBlakodMessage(GetSystemObjectID(),message_id,1,&p);
+         if (ret_val.v.tag != TAG_INT)
+         {
+           SendSessionAdminText(s->session_id,
+                                "Room \"%s\" is loaded but no room object uses it.\n",str);
+           break;
+         }
+         rid = (int) ret_val.v.data;
+       }
+       else if (LookupAdminConstant(str,&rid) == false || rid == 0)
+       {
+         SendSessionAdminText(s->session_id,
+                              "No loaded room or constant matches \"%s\".\n",str);
+         break;
+       }
+     }
+
+     snprintf(buf, sizeof(buf), "send object %i teleportto rid int %i",s->game->object_id,rid);
+     SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
+     TryAdminCommand(s->session_id,buf);
+     break;
+   }
+   
    case DM_CMD_GO_PLAYER :
-      if (ConfigInt(RIGHTS_GOPLAYER) == 0)
+     if (ConfigInt(RIGHTS_GOPLAYER) == 0)
 	 break;
       if (ConfigInt(RIGHTS_GOPLAYER) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
 	 break;

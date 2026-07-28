@@ -218,6 +218,9 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		/* Store structure in dialog box's extra bytes */
 		SetWindowLongPtr(hDlg, DWLP_USER, (LONG_PTR) info);
 		
+		// Set the title bar before the dialog is shown to avoid a fade.
+		ThemeApplyDialogTitleBar(hDlg);
+
 		hwndBitmap = GetDlgItem(hDlg, IDC_DESCBITMAP);
 		hFixed = GetDlgItem(hDlg, IDC_DESCFIXED);
 		hEdit = GetDlgItem(hDlg, IDC_DESCBOX);
@@ -357,7 +360,7 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 	   
 	   RectToArea(&dlg_rect, &area);
 	   DrawStretchedObjectGroupTransparent(hdc, info->obj, info->obj->animate->group, &area,
-		   GetSysColorBrush(COLOR_3DFACE));
+		   ThemeColorsDialogs() ? GetBrush(COLOR_EDITBGD) : GetSysColorBrush(COLOR_3DFACE));
 	   
 	   ReleaseDC(hwndBitmap, hdc);
 	   break;
@@ -379,6 +382,9 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
        case ODA_SELECT:
        case ODA_DRAWENTIRE:
 		   SelectPalette(lpdis->hDC, hPal, FALSE);
+		   // The name banner bypasses the dialog control-color path.
+		   if (ThemeColorsDialogs())
+			   FillRect(lpdis->hDC, &lpdis->rcItem, GetBrush(COLOR_EDITBGD));
 		   hFont = info->hFontTitle;
 		   SelectObject(lpdis->hDC, hFont);
 		   SetBkMode(lpdis->hDC, TRANSPARENT);
@@ -544,6 +550,7 @@ INT_PTR CALLBACK AmountDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 	case WM_INITDIALOG:
 		hAmountDialog = hDlg;
 		info = (AmountDialogStruct *) lParam;
+		ThemeApplyDialogTitleBar(hDlg);
 		hEdit = GetDlgItem(hDlg, IDC_AMOUNTBOX);      
 		
 		GetWindowRect(hDlg, &dlg_rect);

@@ -10,6 +10,7 @@
 */
 
 #include "client.h"
+#include <dwmapi.h>
 
 typedef struct {
 	WORD fg;     /* Foreground color of sample text */
@@ -360,6 +361,44 @@ bool ThemeUsesDarkTitleBar(void)
 	}
 }
 /************************************************************************/
+/*
+ * ThemeColorsDialogs:  Returns true when the active theme paints its whole
+ *   dialog interior from the color palette, background and labels included.
+ *   Returns false when the dialog background and labels keep the default
+ *   system look.
+ */
+bool ThemeColorsDialogs(void)
+{
+	switch (ThemeCurrent())
+	{
+	case Theme::Dark: return true;
+	default:          return false;
+	}
+}
+/************************************************************************/
+/*
+ * ThemeApplyTitleBar:  Sets a top-level window's title bar to the active
+ *   theme's style, dark or light.
+ */
+void ThemeApplyTitleBar(HWND hwnd)
+{
+	// DWM needs a 4-byte BOOL, not a 1-byte bool.
+	BOOL dwmDark = static_cast<BOOL>(ThemeUsesDarkTitleBar());
+	DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE,
+		&dwmDark, sizeof(dwmDark));
+}
+/************************************************************************/
+/*
+ * ThemeApplyDialogTitleBar:  Sets a dialog's title bar to the active
+ *   theme's style, and leaves it untouched under themes where dialogs keep
+ *   the default system look.
+ */
+void ThemeApplyDialogTitleBar(HWND hwnd)
+{
+	if (ThemeColorsDialogs())
+		ThemeApplyTitleBar(hwnd);
+}
+/************************************************************************/
 void ColorsRestoreDefaults(void)
 {
 	ColorsDestroy();
@@ -525,12 +564,32 @@ HBRUSH MainCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 /****************************************************************************/
 /*
 * DialogCtlColor:  Returns a brush and sets DC colors for dialog controls.
-*   Only the default theme reads from GetColor().  Other themes use stock
-*   white/black brushes so theme palettes stay out of dialogs.  See
-*   docs/themes.md.
+*   Themes where ThemeColorsDialogs() is true paint the whole dialog interior
+*   from the palette.  Otherwise the dialog keeps the default system look,
+*   except edit boxes and lists, which the default theme colors from its
+*   palette.  See docs/themes.md
 */
 HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 {
+	if (ThemeColorsDialogs())
+	{
+		SelectPalette(hdc, hPal, FALSE);
+
+		// List boxes use the theme's list colors so the unfilled area matches
+		// the owner-drawn item rows.
+		if (type == CTLCOLOR_LISTBOX)
+		{
+			SetTextColor(hdc, GetColor(COLOR_LISTFGD));
+			SetBkColor(hdc, GetColor(COLOR_LISTBGD));
+			return GetBrush(COLOR_LISTBGD);
+		}
+
+		// The dialog surface, labels, and edit boxes share one background.
+		SetTextColor(hdc, GetColor(COLOR_EDITFGD));
+		SetBkColor(hdc, GetColor(COLOR_EDITBGD));
+		return GetBrush(COLOR_EDITBGD);
+	}
+
 	switch (type)
 	{
 	case CTLCOLOR_EDIT:

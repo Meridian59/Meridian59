@@ -73,6 +73,7 @@ INT_PTR CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
    {
    case WM_INITDIALOG:
       CenterWindow(hDlg, c->hMain);
+      ThemeApplyDialogTitleBar(hDlg);
       hInput      = GetDlgItem(hDlg, IDC_COMBO);
       hText       = GetDlgItem(hDlg, IDC_ADMINTEXT);
       hUserList   = GetDlgItem(hDlg, IDC_USERS);

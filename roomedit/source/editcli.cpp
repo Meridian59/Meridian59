@@ -4422,18 +4422,15 @@ void TEditorClient::CmCheckNames ()
 // -------------
 //
 void TEditorClient::EvMouseWheel (uint modKeys, int zDelta, const TPoint& point)
-{
-	if (modKeys & MK_CONTROL)
-	{
-		if (zDelta > 0)
-			CmZoomIn();
-		else if (zDelta < 0)
-			CmZoomOut();
-	}
-	else
-	{
-		TLayoutWindow::EvMouseWheel(modKeys, zDelta, point);
-	}
+{	
+	// WM_MOUSEWHEEL reports screen coords; the zoom transform is client-space
+	TPoint client = point;
+	ScreenToClient(client);
+
+	if (zDelta > 0)
+		ZoomBy(TRUE,  client.x, client.y);
+	else if (zDelta < 0)
+		ZoomBy(FALSE, client.x, client.y);
 }
 
 
@@ -4443,26 +4440,7 @@ void TEditorClient::EvMouseWheel (uint modKeys, int zDelta, const TPoint& point)
 //
 void TEditorClient::CmZoomIn ()
 {
-	float oldScale = Scale;
-
-#ifdef DEU_FOLLOW_POINTER
-	OrigX += (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
-	OrigY += (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
-#endif
-
-	IncScale();
-
-#ifdef DEU_FOLLOW_POINTER
-	OrigX -= (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
-	OrigY -= (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
-#endif
-
-	// If scale has really changed
-	if ( Scale != oldScale )
-	{
-		AdjustScroller();       // Adjust scroller units
-		RefreshWindows();     	// Redraw map
-	}
+	ZoomBy(TRUE, ScrCenterX, ScrCenterY);
 }
 
 
@@ -4472,28 +4450,35 @@ void TEditorClient::CmZoomIn ()
 //
 void TEditorClient::CmZoomOut ()
 {
-	float oldScale = Scale;
-
-#ifdef DEU_FOLLOW_POINTER
-	OrigX += (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
-	OrigY += (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
-#endif
-
-	DecScale();
-
-#ifdef DEU_FOLLOW_POINTER
-	OrigX -= (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
-	OrigY -= (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
-#endif
-
-	// If scale has really changed
-	if ( Scale != oldScale )
-	{
-		AdjustScroller();       // Adjust scroller units
-		RefreshWindows () ;     // Redraw map
-	}
+	ZoomBy(FALSE, ScrCenterX, ScrCenterY);
 }
 
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::ZoomBy (bool zoomIn, SHORT anchorX, SHORT anchorY)
+{
+	float oldScale = Scale;
+
+	OrigX += (SHORT) ((anchorX - ScrCenterX) * DIV_SCALE);
+	OrigY += (SHORT) ((ScrCenterY - anchorY) * DIV_SCALE);
+
+	if (zoomIn)
+		IncScale();
+	else
+		DecScale();
+
+	OrigX -= (SHORT) ((anchorX - ScrCenterX) * DIV_SCALE);
+	OrigY -= (SHORT) ((ScrCenterY - anchorY) * DIV_SCALE);
+
+	if ( Scale != oldScale )
+	{
+		AdjustScroller();  // Adjust scroller units
+		RefreshWindows();  // Redraw map
+	}
+}
 
 /////////////////////////////////////////////////////////////////////
 // TEditorClient

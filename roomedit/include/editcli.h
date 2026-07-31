@@ -227,6 +227,7 @@ protected:
 	void CmCheckMenu ();
 	void CmZoomIn ();
 	void CmZoomOut ();
+	void ZoomBy (bool zoomIn, SHORT anchorX, SHORT anchorY);
 	void CmAutoLayout ();
 	void CmLayout ();
 	void CmWindowGridNext ();

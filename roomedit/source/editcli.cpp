@@ -3101,7 +3101,7 @@ void TEditorClient::CmModePrev ()
 			NewMode = OBJ_SECTORS;
 			break;
 		case OBJ_VERTEXES:
-			NewMode = OBJ_THINGS;
+			NewMode = OBJ_SECTORS;
 			break;
 		case OBJ_LINEDEFS:
 			NewMode = OBJ_VERTEXES;

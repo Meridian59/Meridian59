@@ -339,7 +339,6 @@ void TMainFrame::SetupEditorControlBar()
 	// Inserts editor window gadgets
 	controlBar->Insert(*new TButtonGadget(CM_FILE_SAVE, CM_FILE_SAVE));
 	controlBar->Insert(*new TSeparatorGadget(6));
-	controlBar->Insert(*new TButtonGadget(CM_MODE_THINGS, CM_MODE_THINGS));
 	controlBar->Insert(*new TButtonGadget(CM_MODE_VERTEXES, CM_MODE_VERTEXES));
 	controlBar->Insert(*new TButtonGadget(CM_MODE_LINEDEFS, CM_MODE_LINEDEFS));
 	controlBar->Insert(*new TButtonGadget(CM_MODE_SECTORS, CM_MODE_SECTORS));

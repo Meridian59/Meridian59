@@ -189,6 +189,7 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_COMMAND(CM_EDIT_ADDOBJ, CmEditAdd),
 	EV_COMMAND(CM_EDIT_OBJECT, CmEditObject),
 	EV_COMMAND(CM_EDIT_PREFERENCES, CmEditPreferences),
+	EV_COMMAND(CM_MODE_THINGS, CmModeThings),
 	EV_COMMAND(CM_MODE_LINEDEFS, CmModeLinedefs),
 	EV_COMMAND(CM_MODE_VERTEXES, CmModeVertexes),
 	EV_COMMAND(CM_MODE_SECTORS, CmModeSectors),
@@ -355,7 +356,7 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 	//
 	// Init. Editor data member
 	//
-	EditMode = OBJ_VERTEXES;
+	EditMode = OBJ_THINGS;
 
 	CurObject = -1;
 
@@ -683,6 +684,9 @@ void TEditorClient::SetupMenu()
 	const char *newMiscMenuName;
 
 	// Uncheck and check appropriate mode menu item
+	menu.CheckMenuItem (CM_MODE_THINGS, MF_BYCOMMAND |
+		(EditMode == OBJ_THINGS ? MF_CHECKED : MF_UNCHECKED) );
+
 	menu.CheckMenuItem (CM_MODE_LINEDEFS, MF_BYCOMMAND |
 		(EditMode == OBJ_LINEDEFS ? MF_CHECKED : MF_UNCHECKED) );
 
@@ -3010,6 +3014,20 @@ void TEditorClient::CmObjectsPolygon ()
 // TEditorClient
 // -------------
 //
+void TEditorClient::CmModeThings ()
+{
+	// Ignore if "insert object" mode
+	if ( InsertingObject )
+		return;
+
+	ForgetSelection(&Selected);
+	ChangeMode (OBJ_THINGS);
+}
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
 void TEditorClient::CmModeVertexes ()
 {
 	// Ignore if "insert object" mode
@@ -3061,7 +3079,7 @@ void TEditorClient::CmModeNext ()
 	if ( InsertingObject )
 		return;
 
-	int NewMode = EditMode;
+	int NewMode;
 
 	switch (EditMode)
 	{
@@ -3093,7 +3111,7 @@ void TEditorClient::CmModePrev ()
 	if ( InsertingObject )
 		return;
 
-	int NewMode = EditMode;
+	int NewMode;
 
 	switch (EditMode)
 	{

@@ -136,6 +136,7 @@ MENU_EDITOR MENU
 
  POPUP "&Modes"
  {
+  MENUITEM "&Things\tT", CM_MODE_THINGS
   MENUITEM "&Vertices\tV", CM_MODE_VERTEXES
   MENUITEM "&LineDefs / SideDefs\tL", CM_MODE_LINEDEFS
   MENUITEM "&Sectors\tS", CM_MODE_SECTORS
@@ -272,6 +273,7 @@ MENU_THINGS MENU
 
   POPUP "Modes"
   {
+   MENUITEM "Things", CM_MODE_THINGS
    MENUITEM "Vertices", CM_MODE_VERTEXES
    MENUITEM "LineDefs / SideDefs", CM_MODE_LINEDEFS
    MENUITEM "Sectors", CM_MODE_SECTORS
@@ -319,6 +321,7 @@ MENU_LINEDEFS MENU
 
   POPUP "Modes"
   {
+   MENUITEM "Things", CM_MODE_THINGS
    MENUITEM "Vertices", CM_MODE_VERTEXES
    MENUITEM "LineDefs / SideDefs", CM_MODE_LINEDEFS
    MENUITEM "Sectors", CM_MODE_SECTORS
@@ -355,6 +358,7 @@ MENU_VERTEXES MENU
 
   POPUP "Modes"
   {
+   MENUITEM "Things", CM_MODE_THINGS
    MENUITEM "Vertices", CM_MODE_VERTEXES
    MENUITEM "LineDefs / SideDefs", CM_MODE_LINEDEFS
    MENUITEM "Sectors", CM_MODE_SECTORS
@@ -392,6 +396,7 @@ MENU_SECTORS MENU
 
   POPUP "Modes"
   {
+   MENUITEM "Things", CM_MODE_THINGS
    MENUITEM "Vertices", CM_MODE_VERTEXES
    MENUITEM "LineDefs / SideDefs", CM_MODE_LINEDEFS
    MENUITEM "Sectors", CM_MODE_SECTORS
@@ -421,6 +426,7 @@ MENU_OBJECTS MENU
 
   POPUP "Edit mode"
   {
+   MENUITEM "Things", CM_MODE_THINGS
    MENUITEM "Vertices", CM_MODE_VERTEXES
    MENUITEM "LineDefs / SideDefs", CM_MODE_LINEDEFS
    MENUITEM "Sectors", CM_MODE_SECTORS
@@ -455,6 +461,7 @@ MENU_EDITOR ACCELERATORS
  "O", CM_EDIT_COPYOBJ, VIRTKEY, NOINVERT
  VK_TAB, CM_MODE_NEXT, VIRTKEY, NOINVERT
  VK_TAB, CM_MODE_PREV, VIRTKEY, NOINVERT, SHIFT
+ "T", CM_MODE_THINGS, VIRTKEY, NOINVERT
  "L", CM_MODE_LINEDEFS, VIRTKEY, NOINVERT
  "V", CM_MODE_VERTEXES, VIRTKEY, NOINVERT
  "S", CM_MODE_SECTORS, VIRTKEY, NOINVERT
@@ -540,6 +547,7 @@ STRINGTABLE
  CM_SEARCH_JUMPOBJ, "Go to a object given its number"
  CM_OBJECTS_RECTANGLE, "Insert a rectangle\nInsert rectangle"
  CM_OBJECTS_POLYGON, "Insert a polygon given its number of sides\nInsert polygon"
+ CM_MODE_THINGS, "Switch to the 'things' editing mode\nThings mode"
  CM_MODE_LINEDEFS, "Switch to the 'LineDefs and SideDefs' editing mode\nLineDefs mode"
  CM_MODE_VERTEXES, "Switch to the 'Vertices' editing mode\nVertices mode"
  CM_MODE_SECTORS, "Switch to the 'Sectors' editing mode\nSectors mode"

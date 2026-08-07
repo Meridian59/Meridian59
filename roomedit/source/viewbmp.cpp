@@ -411,7 +411,12 @@ void TViewBitmapListDialog::LBNSelchange ()
 	{
 	   TextureInfo *info = FindTextureByName(BitmapName);
 	   pBitmapControl->SelectBitmap2 (info->filename);
-	   SetCaption(info->filename);
+
+	   char caption[MAX_BITMAPNAME + 32];
+	   sprintf (caption, "%s (%dx%d)", info->filename,
+				pBitmapControl->GetBitmapWidth(),
+				pBitmapControl->GetBitmapHeight());
+	   SetCaption (caption);
 	}
 }
 
@@ -708,7 +713,11 @@ int TDisplayBitmapDialog::SelectBitmap2 (const char *str)
 {
 	pBitmapControl->SelectBitmap2 (str);
 
-	SetCaption(str);
+	char caption[MAX_BITMAPNAME + 32];
+	sprintf (caption, "%s (%dx%d)", str,
+			 pBitmapControl->GetBitmapWidth(),
+			 pBitmapControl->GetBitmapHeight());
+	SetCaption (caption);
 
 	return 1;
 }

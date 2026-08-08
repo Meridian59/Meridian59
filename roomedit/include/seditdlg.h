@@ -58,10 +58,6 @@
 	#include "objects.h"	// SelPtr
 #endif
 
-#ifndef __viewbmp_h
-	class TDisplayFloorTextureDialog;
-#endif
-
 #ifndef __cnfsedlg_h
 	#include "cnfsedlg.h"
 #endif
@@ -78,7 +74,6 @@ private:
 	Sector CurSector;
 	char TextureName[MAX_BITMAPNAME + 1];
 	SelPtr SelSectors;
-	TDisplayFloorTextureDialog *pFTextureDialog;
 	TConfirmSectorDialogXfer ConfirmData;
 
 protected:

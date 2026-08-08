@@ -102,6 +102,10 @@
 	#include "prefdlg.h"
 #endif
 
+#ifndef __viewbmp_h
+	#include "viewbmp.h"
+#endif
+
 #ifndef __levels_h
 	#include "levels.h"
 #endif
@@ -324,7 +328,6 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 	pVertexInfo = new TInfoControl (this, 234, 2, "Vertex");
 	pSectorInfo = new TInfoControl (this, 235, 9, "Sector");
 
-
 	// Retrieve pointer to status bar of MainFrame
 	TMainFrame *mainFrame =
 		TYPESAFE_DOWNCAST (GetApplication()->GetMainWindow(), TMainFrame);
@@ -412,6 +415,9 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 //
 TEditorClient::~TEditorClient ()
 {
+	// Destroy shared texture preview before the editor window.
+	CloseTexturePreview ();
+
 	// Destroy window
 	Destroy();
 

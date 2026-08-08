@@ -183,9 +183,6 @@ TSectorEditDialog::TSectorEditDialog (TWindow* parent, SelPtr sel,
 	TextureName[0] = '\0';
 	memset(&ConfirmData, 0, sizeof(ConfirmData));
 
-	// Crete object for texture view, but do not create dialog box.
-	pFTextureDialog = NULL;
-
 	// Create objects for controls
 	pNoAmbientCheck    = newTCheckBox(this, IDC_NOAMBIENT, 0);
 //	pTagEdit           = newTEdit(this, IDC_TAG_EDIT, 6);
@@ -245,7 +242,6 @@ TSectorEditDialog::TSectorEditDialog (TWindow* parent, SelPtr sel,
 TSectorEditDialog::~TSectorEditDialog ()
 {
 	Destroy();
-	delete pFTextureDialog;
 }
 
 
@@ -969,10 +965,8 @@ void TSectorEditDialog::TextureSelChange ()
 	strcpy (TextureName, texname);
 
 	// If texture view dialog box opened, display texture
-	if ( pFTextureDialog != NULL && pFTextureDialog->IsWindow() )
-	{
+	if (IsTexturePreviewOpen ())
 		TextureDblclick();
-	}
 }
 
 
@@ -986,26 +980,7 @@ void TSectorEditDialog::TextureDblclick ()
 	if ( TextureName[0] == '\0' || strcmp (TextureName, "-") == 0 )
 		return;
 
-	// Create modeless dialog box
-	if ( pFTextureDialog == NULL || pFTextureDialog->IsWindow() == FALSE )
-	{
-		delete pFTextureDialog;
-		pFTextureDialog = new TDisplayFloorTextureDialog (Parent);
-		pFTextureDialog->Create();
-	}
-
-	if ( pFTextureDialog->IsWindow() )
-	{
-	   TextureInfo *info = FindTextureByName(TextureName);
-	   
-	   if ( pFTextureDialog->SelectBitmap2 (info->filename) < 0 )
-	      Notify ("Error: Cannot select the texture name \"%s\" in the "
-		      "dialog box of Floor/Ceiling Texture view ! (BUG)",
-		      TextureName);
-	}
-	else
-		Notify ("Error: Cannot create dialog box of Floor/Ceiling "
-				"Texture view !");
+	ShowTexturePreview (Parent, TextureName, TRUE);
 }
 
 

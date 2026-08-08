@@ -114,9 +114,6 @@ TPreferencesDialog::TPreferencesDialog (TWindow* parent, TResId resId, TModule* 
 	memset (WTextureName, 0, MAX_BITMAPNAME + 1);
 	memset (FTextureName, 0, MAX_BITMAPNAME + 1);
 
-	pWTextureDialog = NULL;
-	pFTextureDialog = NULL;
-
 	pWTextureList  = newTListBox(this, IDC_WTEXTURE_LIST);
 	pFTextureList  = newTListBox(this, IDC_FTEXTURE_LIST);
 	pFloorHeight   = newTEdit(this, IDC_FLOOR_HEIGHT, 6);
@@ -152,8 +149,6 @@ TPreferencesDialog::TPreferencesDialog (TWindow* parent, TResId resId, TModule* 
 //
 TPreferencesDialog::~TPreferencesDialog ()
 {
-	delete pWTextureDialog;
-	delete pFTextureDialog;
 	Destroy();
 }
 
@@ -446,10 +441,8 @@ void TPreferencesDialog::FTextureSelChange ()
 	strcpy (FTextureName, texname);
 
 	// If texture view dialog box opened, display texture
-	if ( pFTextureDialog != NULL && pFTextureDialog->IsWindow() )
-	{
+	if (IsTexturePreviewOpen ())
 		FTextureDblClk();
-	}
 }
 
 
@@ -462,27 +455,8 @@ void TPreferencesDialog::FTextureDblClk ()
    // Don't select empty texture !
    if ( FTextureName[0] == '\0' || strcmp (FTextureName, "-") == 0 )
       return;
-   
-   // Create modeless dialog box
-   if ( pFTextureDialog == NULL || pFTextureDialog->IsWindow() == FALSE )
-   {
-      delete pFTextureDialog;
-      pFTextureDialog = new TDisplayFloorTextureDialog (Parent);
-      pFTextureDialog->Create();
-   }
-   
-   if ( pFTextureDialog->IsWindow() )
-   {
-      TextureInfo *info = FindTextureByName(FTextureName);
-      
-      if ( pFTextureDialog->SelectBitmap2 (info->filename) < 0 )
-	 Notify ("Error: Cannot select the texture name \"%s\" in the "
-		 "dialog box of Floor/Ceiling Texture view ! (BUG)",
-		 FTextureName);
-   }
-   else
-      Notify ("Error: Cannot create dialog box of Floor/Ceiling "
-	      "Texture view !");
+
+   ShowTexturePreview (Parent, FTextureName, TRUE);
 }
 
 
@@ -508,10 +482,8 @@ void TPreferencesDialog::WTextureSelChange ()
 	strcpy (WTextureName, texname);
 
 	// If texture view dialog box opened, display texture
-	if ( pWTextureDialog != NULL && pWTextureDialog->IsWindow() )
-	{
+	if (IsTexturePreviewOpen ())
 		WTextureDblClk();
-	}
 }
 
 
@@ -524,27 +496,8 @@ void TPreferencesDialog::WTextureDblClk ()
    // Don't select empty texture !
    if ( WTextureName[0] == '\0' || strcmp (WTextureName, "-") == 0 )
       return;
-   
-   // Create modeless dialog box
-   if ( pWTextureDialog == NULL || pWTextureDialog->IsWindow() == FALSE )
-   {
-      delete pWTextureDialog;
-      pWTextureDialog = new TDisplayWallTextureDialog (Parent);
-      pWTextureDialog->Create();
-   }
-   
-   if ( pWTextureDialog->IsWindow() )
-   {
-      TextureInfo *info = FindTextureByName(WTextureName);
-      
-      if ( pWTextureDialog->SelectBitmap2 (info->filename) < 0 )
-	 Notify ("Error: Cannot select the texture name \"%s\" in the "
-		 "dialog box of Wall Texture view ! (BUG)",
-		 WTextureName);
-   }
-   else
-      Notify ("Error: Cannot create dialog box of Wall "
-	      "Texture view !");
+
+   ShowTexturePreview (Parent, WTextureName, TRUE);
 }
 
 

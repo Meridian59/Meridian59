@@ -334,9 +334,6 @@ TDialog(parent, resId, module)
    CurLineDef = LineDefs[Selected->objnum];
    memset(&ConfirmData, 0, sizeof(ConfirmData));
    
-   // Crete object for texture view, but do not create dialog box.
-   pWTextureDialog = NULL;
-   
    pPassPosCheck      = newTCheckBox(this, IDC_PASSPOS, 0);
    pPassNegCheck      = newTCheckBox(this, IDC_PASSNEG, 0);
    pTransPosCheck     = newTCheckBox(this, IDC_TRANSPOS, 0);
@@ -437,7 +434,6 @@ TDialog(parent, resId, module)
 TLineDefEditDialog::~TLineDefEditDialog ()
 {
    Destroy();
-   delete pWTextureDialog;
 }
 
 
@@ -1802,10 +1798,8 @@ void TLineDefEditDialog::TextureSelchange ()
    strcpy (TextureName, texname);
    
    // If texture view dialog box opened, change selection
-   if ( pWTextureDialog != NULL && pWTextureDialog->IsWindow() )
-   {
+   if (IsTexturePreviewOpen ())
       TextureListDBLClick();
-   }
 }
 
 
@@ -1818,25 +1812,8 @@ void TLineDefEditDialog::TextureListDBLClick ()
    // Don't select empty texture !
    if ( TextureName[0] == '\0' || strcmp (TextureName, "-") == 0 )
       return;
-   
-   // Create modeless dialog box
-   if ( pWTextureDialog == NULL || pWTextureDialog->IsWindow() == FALSE )
-   {
-      delete pWTextureDialog;
-      pWTextureDialog = new TDisplayWallTextureDialog (Parent);
-      pWTextureDialog->Create();
-   }
-   
-   if ( pWTextureDialog->IsWindow() )
-   {
-      TextureInfo *info = FindTextureByName(TextureName);
 
-      if ( pWTextureDialog->SelectBitmap2 (info->filename) < 0 )
-	 Notify ("Error: Cannot select the texture name \"%s\" in the "
-		 "dialog box of Wall Texture view ! (BUG)", TextureName);
-   }
-   else
-      Notify ("Error: Cannot create dialog box of Wall Texture view !");
+   ShowTexturePreview (Parent, TextureName, TRUE);
 }
 
 

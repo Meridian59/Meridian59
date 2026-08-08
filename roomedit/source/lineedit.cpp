@@ -422,8 +422,8 @@ TDialog(parent, resId, module)
    pScrollMediumRadio[1]  = newTRadioButton(this, IDC_SCROLLMEDIUM2);
    pScrollFastRadio[1]  = newTRadioButton(this, IDC_SCROLLFAST2);
 
-   pTranslucencyPos = newTComboBox(this, IDC_TRANSLUCENCY_POS);
-   pTranslucencyNeg = newTComboBox(this, IDC_TRANSLUCENCY_NEG);
+   pTranslucencyPos = newTComboBox(this, IDC_POS_TRANSLUCENCY);
+   pTranslucencyNeg = newTComboBox(this, IDC_NEG_TRANSLUCENCY);
 }
 
 
@@ -718,7 +718,13 @@ void TLineDefEditDialog::CmOk ()
 	       }
 
 	       pSelLineDef->blak_flags = lflags;
-	    }
+
+          if (ConfirmData.pTranslucencyPosCheck)
+             pSelLineDef->translucency_pos = CurLineDef.translucency_pos;
+
+          if (ConfirmData.pTranslucencyNegCheck)
+             pSelLineDef->translucency_neg = CurLineDef.translucency_neg;
+       }
 	    
 	    // Did we made changes?
 	    if ( memcmp (pSelLineDef, &LineDefBefore, sizeof (CurLineDef)) != 0 )
@@ -844,8 +850,20 @@ void TLineDefEditDialog::GetLineDef ()
    // Read translucency dropdowns
    int tpos = pTranslucencyPos->GetSelIndex();
    int tneg = pTranslucencyNeg->GetSelIndex();
-   CurLineDef.translucency_pos = (BYTE)(tpos >= 0 ? tpos : 0);
-   CurLineDef.translucency_neg = (BYTE)(tneg >= 0 ? tneg : 0);
+   BYTE new_tpos = (BYTE) (tpos >= 0 ? tpos : 0);
+   BYTE new_tneg = (BYTE) (tneg >= 0 ? tneg : 0);
+   if (CurLineDef.translucency_pos != new_tpos)
+   {
+      ConfirmData.pFlagsCheck = TRUE;
+      ConfirmData.pTranslucencyPosCheck = TRUE;
+   }
+   if (CurLineDef.translucency_neg != new_tneg)
+   {
+      ConfirmData.pFlagsCheck = TRUE;
+      ConfirmData.pTranslucencyNegCheck = TRUE;
+   }
+   CurLineDef.translucency_pos = new_tpos;
+   CurLineDef.translucency_neg = new_tneg;
 }
 
 

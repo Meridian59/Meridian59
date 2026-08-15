@@ -164,6 +164,7 @@
 #define CM_MISCV_DELETE         2202
 #define CM_MISCV_MERGE          2203
 #define CM_MISCV_ADD            2204
+#define CM_MISCV_SLOPE          2205
 
 //
 // MENU_MISC_SECTORS

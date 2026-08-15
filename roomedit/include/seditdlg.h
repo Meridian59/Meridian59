@@ -96,6 +96,11 @@ public:
 	TSectorEditDialog (TWindow* parent, SelPtr sel, TResId resId = IDD_SECTOR_EDIT, TModule* module = 0);
 	virtual ~TSectorEditDialog ();
 
+	// Preset the floor and ceiling slopes to the given vertices, with
+	// all heights at the sector's flat floor/ceiling heights.  Call
+	// before Execute().
+	void SetSlopePreset (SHORT v1, SHORT v2, SHORT v3);
+
 //{{TSectorEditDialogVIRTUAL_BEGIN}}
 public:
 	virtual void SetupWindow ();

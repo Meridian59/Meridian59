@@ -240,6 +240,7 @@ MENU_MISC_VERTEXES MENU
  MENUITEM "Delete Vertex and join LineDefs\tShift-Del", CM_MISCV_DELETE
  MENUITEM "Merge several Vertices into one", CM_MISCV_MERGE
  MENUITEM "Add a LineDef and split Sector\tX", CM_MISCV_ADD
+ MENUITEM "Set up slope...\tShift+S", CM_MISCV_SLOPE
 }
 
 
@@ -349,6 +350,7 @@ MENU_VERTEXES MENU
   MENUITEM "Delete (join LineDefs)\tShift-Del", CM_MISCV_DELETE
   MENUITEM "Merge", CM_MISCV_MERGE
   MENUITEM "Split Sector\tX", CM_MISCV_ADD
+  MENUITEM "Set up slope...\tShift+S", CM_MISCV_SLOPE
   MENUITEM SEPARATOR
   POPUP "Standard object"
   {
@@ -501,6 +503,7 @@ MENU_EDITOR ACCELERATORS
  "=", CM_SEARCH_JUMPOBJ, ASCII, NOINVERT
  "J", CM_SEARCH_JUMPOBJ, VIRTKEY, NOINVERT
  "X", CM_MISCV_ADD, VIRTKEY, NOINVERT
+ "S", CM_MISCV_SLOPE, VIRTKEY, NOINVERT, SHIFT
  VK_RETURN, CM_EDIT_OBJECT, VIRTKEY, NOINVERT
  VK_SPACE, CM_WINDOW_SLOW_SCROLL, VIRTKEY, NOINVERT
  "Z", CM_EDIT_UNDO, VIRTKEY, NOINVERT, CONTROL
@@ -1459,6 +1462,7 @@ STRINGTABLE
  CM_MISCV_DELETE, "Delete a vertex and join the two LineDefs"
  CM_MISCV_MERGE, "Merge the selected Vertices into one"
  CM_MISCV_ADD, "Add a LineDef between the two selected Vertices and split the Sector"
+ CM_MISCV_SLOPE, "Set up a floor and ceiling slope from the three selected Vertices"
 }
 
 

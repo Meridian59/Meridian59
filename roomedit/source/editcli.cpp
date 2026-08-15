@@ -227,6 +227,7 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_COMMAND(CM_MISCV_DELETE, CmMiscVDelete),
 	EV_COMMAND(CM_MISCV_MERGE, CmMiscVMerge),
 	EV_COMMAND(CM_MISCV_ADD, CmMiscVAddLineDef),
+	EV_COMMAND(CM_MISCV_SLOPE, CmMiscVSlope),
 	EV_COMMAND(CM_MISCS_MAKEDOOR, CmMiscSMakeDoor),
 	EV_COMMAND(CM_MISCS_MAKELIFT, CmMiscSMakeLift),
 	EV_COMMAND(CM_MISCS_DISTRIBFLOOR, CmMiscSDitribFloor),
@@ -264,6 +265,7 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_COMMAND(CM_INFOWIN_VERT_UPRIGHT, CmVertUpRight),
 	EV_COMMAND_ENABLE(CM_EDIT_DELETEOBJ, CmDeleteEnable),
 	EV_COMMAND_ENABLE(CM_EDIT_COPYOBJ, CmCopyEnable),
+	EV_COMMAND_ENABLE(CM_MISCV_SLOPE, CmMiscVSlopeEnable),
 	EV_COMMAND_ENABLE(CM_EDIT_UNDO, CmUndoEnable),
 	EV_COMMAND_ENABLE(CM_EDIT_REDO, CmRedoEnable),
 	EV_COMMAND_ENABLE(CM_WINDOW_LAYOUT, CmLayoutEnable),
@@ -3414,6 +3416,135 @@ void TEditorClient::CmMiscVAddLineDef ()
 
 End:
 	RESTORE_HELP_CONTEXT();
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// Return the number of a Sector having all three vertices on its
+// boundary, or -1 if there is none.
+//
+static SHORT FindVertexCommonSector (SHORT v1, SHORT v2, SHORT v3)
+{
+	SHORT result = -1;
+
+	BYTE *mask = new BYTE[NumSectors];
+	memset (mask, 0, NumSectors);
+
+	for (int i = 0; i < NumLineDefs; i++)
+	{
+		int bits = 0;
+		if ( LineDefs[i].start == v1 || LineDefs[i].end == v1 )
+			bits |= 1;
+		if ( LineDefs[i].start == v2 || LineDefs[i].end == v2 )
+			bits |= 2;
+		if ( LineDefs[i].start == v3 || LineDefs[i].end == v3 )
+			bits |= 4;
+		if ( bits == 0 )
+			continue;
+
+		if ( LineDefs[i].sidedef1 != -1 )
+		{
+			SHORT s = SideDefs[LineDefs[i].sidedef1].sector;
+			if ( s >= 0 && s < NumSectors )
+				mask[s] |= bits;
+		}
+		if ( LineDefs[i].sidedef2 != -1 )
+		{
+			SHORT s = SideDefs[LineDefs[i].sidedef2].sector;
+			if ( s >= 0 && s < NumSectors )
+				mask[s] |= bits;
+		}
+	}
+
+	for (SHORT s = 0; s < NumSectors; s++)
+		if ( mask[s] == 7 )
+		{
+			result = s;
+			break;
+		}
+
+	delete[] mask;
+	return result;
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmMiscVSlopeEnable (TCommandEnabler &tce)
+{
+	BOOL enable = FALSE;
+
+	// Exactly 3 vertices selected, all on the boundary of one sector
+	if ( EditMode == OBJ_VERTEXES &&
+		 Selected != NULL && Selected->next != NULL &&
+		 Selected->next->next != NULL &&
+		 Selected->next->next->next == NULL )
+	{
+		enable = (FindVertexCommonSector (Selected->objnum,
+										  Selected->next->objnum,
+										  Selected->next->next->objnum) >= 0);
+	}
+
+	tce.Enable (enable);
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmMiscVSlope ()
+{
+	// Ignore if "insert object" mode
+	if ( InsertingObject )
+		return;
+
+	if ( EditMode != OBJ_VERTEXES )
+		return;
+
+	// Check three vertices selected
+	if ( CheckSelection (3, 3) == FALSE )
+		return;
+
+	SHORT v1 = Selected->objnum;
+	SHORT v2 = Selected->next->objnum;
+	SHORT v3 = Selected->next->next->objnum;
+
+	SHORT sector = FindVertexCommonSector (v1, v2, v3);
+	if ( sector < 0 )
+	{
+		Notify ("The selected vertices do not all lie on the boundary "
+				"of one sector!");
+		SetupSelection (FALSE);
+		return;
+	}
+
+	// Start UNDO recording
+	StartUndoRecording ("Set up slope");
+
+	// Edit the shared sector with the slopes preset to the selected
+	// vertices at the sector's flat heights
+	SelPtr list = NULL;
+	SelectObject (&list, sector);
+	int rc = IDCANCEL;
+	SET_HELP_CONTEXT(Sectors_edit_mode);
+	TSectorEditDialog dlg (this, list);
+	dlg.SetSlopePreset (v1, v2, v3);
+	rc = dlg.Execute();
+	RESTORE_HELP_CONTEXT();
+	ForgetSelection (&list);
+
+	// Save UNDO data
+	StopUndoRecording();
+
+	// Restore old selection
+	SetupSelection (FALSE);
+
+	// Redraw map
+	if ( rc == IDOK )
+		RefreshWindows();
 }
 
 

@@ -255,6 +255,37 @@ TSectorEditDialog::~TSectorEditDialog ()
 //////////////////////////////////////////////////////////////////////
 // TSectorEditDialog
 // -----------------
+// Preset the floor and ceiling slopes to the given vertices, with all
+// heights at the sector's flat floor/ceiling heights.
+//
+void TSectorEditDialog::SetSlopePreset (SHORT v1, SHORT v2, SHORT v3)
+{
+   int i;
+   SHORT v[3];
+
+   v[0] = v1;
+   v[1] = v2;
+   v[2] = v3;
+
+   if (!(CurSector.blak_flags & SF_SLOPED_FLOOR))
+      CurSector.floor_slope.angle = 0;
+   if (!(CurSector.blak_flags & SF_SLOPED_CEILING))
+      CurSector.ceiling_slope.angle = 0;
+
+   for (i = 0; i < 3; i++)
+   {
+      CurSector.floor_slope.points[i].vertex = v[i];
+      CurSector.floor_slope.points[i].z = CurSector.floorh;
+      CurSector.ceiling_slope.points[i].vertex = v[i];
+      CurSector.ceiling_slope.points[i].z = CurSector.ceilh;
+   }
+   CurSector.blak_flags |= SF_SLOPED_FLOOR | SF_SLOPED_CEILING;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// TSectorEditDialog
+// -----------------
 //
 void TSectorEditDialog::SetupWindow ()
 {

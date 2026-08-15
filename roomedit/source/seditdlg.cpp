@@ -138,6 +138,8 @@ DEFINE_RESPONSE_TABLE1(TSectorEditDialog, TDialog)
 	EV_BN_CLICKED(IDC_TO_CEILING, ToCeilingClicked),
 	EV_BN_CLICKED(IDC_FLOOR_CLEAR, FloorClearClicked),
 	EV_BN_CLICKED(IDC_CEILING_CLEAR, CeilingClearClicked),
+	EV_BN_CLICKED(IDC_FLOOR_SLOPE_CLEAR, FloorSlopeClearClicked),
+	EV_BN_CLICKED(IDC_CEILING_SLOPE_CLEAR, CeilingSlopeClearClicked),
 	EV_BN_CLICKED(IDC_DEPTHNONE, DepthClicked),
 	EV_BN_CLICKED(IDC_DEPTHSHALLOW, DepthClicked),
 	EV_BN_CLICKED(IDC_DEPTHDEEP, DepthClicked),
@@ -971,6 +973,38 @@ void TSectorEditDialog::CeilingClearClicked ()
 	pCeilingStatic->SetText ("-");
 	ConfirmData.pCeilingTextureCheck = TRUE;
 }
+
+//////////////////////////////////////////////////////////////////////
+// TSectorEditDialog
+// -----------------
+//
+void TSectorEditDialog::FloorSlopeClearClicked ()
+{
+   for (int i = 0; i < 3; i++)
+   {
+      pSlopeFloorVertex[i]->SetSelIndex (0);
+      pSlopeFloorHeight[i]->SetText ("");
+   }
+   pFloorAngle->SetText ("");
+   pFloorStyle->SetText ("(flat)");
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// TSectorEditDialog
+// -----------------
+//
+void TSectorEditDialog::CeilingSlopeClearClicked ()
+{
+   for (int i = 0; i < 3; i++)
+   {
+      pSlopeCeilingVertex[i]->SetSelIndex (0);
+      pSlopeCeilingHeight[i]->SetText ("");
+   }
+   pCeilingAngle->SetText ("");
+   pCeilingStyle->SetText ("(flat)");
+}
+
 
 //////////////////////////////////////////////////////////////////////
 // TSectorEditDialog

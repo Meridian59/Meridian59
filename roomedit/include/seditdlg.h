@@ -113,6 +113,8 @@ protected:
 	void FloorClearClicked ();
 	void ToCeilingClicked ();
 	void CeilingClearClicked ();
+	void FloorSlopeClearClicked ();
+	void CeilingSlopeClearClicked ();
 	void SectorSelChange ();
 	void TextureSelChange ();
 	void TextureDblclick ();

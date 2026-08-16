@@ -3420,12 +3420,14 @@ End:
 
 
 /////////////////////////////////////////////////////////////////////
-// Return the number of a Sector having all three vertices on its
-// boundary, or -1 if there is none.
+// Find the Sectors having all three vertices on their boundary.
+// Store up to two of them in 'sectors' and return how many were
+// stored.
 //
-static SHORT FindVertexCommonSector (SHORT v1, SHORT v2, SHORT v3)
+static int FindVertexCommonSectors (SHORT v1, SHORT v2, SHORT v3,
+									SHORT sectors[2])
 {
-	SHORT result = -1;
+	int count = 0;
 
 	BYTE *mask = new BYTE[NumSectors];
 	memset (mask, 0, NumSectors);
@@ -3456,16 +3458,59 @@ static SHORT FindVertexCommonSector (SHORT v1, SHORT v2, SHORT v3)
 		}
 	}
 
-	for (SHORT s = 0; s < NumSectors; s++)
+	for (SHORT s = 0; s < NumSectors && count < 2; s++)
 		if ( mask[s] == 7 )
-		{
-			result = s;
-			break;
-		}
+			sectors[count++] = s;
 
 	delete[] mask;
-	return result;
+	return count;
 }
+
+
+/////////////////////////////////////////////////////////////////////
+// TSelectSectorDialog
+// -------------------
+// Ask the user which of two sectors to edit.  GetChoice() returns the
+// chosen sector number, or -1 if the dialog was cancelled (Escape).
+//
+class TSelectSectorDialog : public TDialog
+{
+public:
+	TSelectSectorDialog (TWindow *parent, SHORT s1, SHORT s2):
+		TDialog(parent, IDD_SELECT_SECTOR)
+	{
+		Sector1 = s1;
+		Sector2 = s2;
+		Choice  = -1;
+	}
+
+	SHORT GetChoice () { return Choice; }
+
+protected:
+	virtual void SetupWindow ()
+	{
+		TDialog::SetupWindow();
+		::CenterWindow (this);
+
+		char str[32];
+		wsprintf (str, "Sector %d", Sector1);
+		SetDlgItemText (IDC_SELECT_SECTOR1, str);
+		wsprintf (str, "Sector %d", Sector2);
+		SetDlgItemText (IDC_SELECT_SECTOR2, str);
+	}
+
+	void Sector1Clicked ()	{ Choice = Sector1; CmOk(); }
+	void Sector2Clicked ()	{ Choice = Sector2; CmOk(); }
+
+	SHORT Sector1, Sector2, Choice;
+
+	DECLARE_RESPONSE_TABLE(TSelectSectorDialog);
+};
+
+DEFINE_RESPONSE_TABLE1(TSelectSectorDialog, TDialog)
+	EV_BN_CLICKED(IDC_SELECT_SECTOR1, Sector1Clicked),
+	EV_BN_CLICKED(IDC_SELECT_SECTOR2, Sector2Clicked),
+END_RESPONSE_TABLE;
 
 
 /////////////////////////////////////////////////////////////////////
@@ -3482,9 +3527,11 @@ void TEditorClient::CmMiscVSlopeEnable (TCommandEnabler &tce)
 		 Selected->next->next != NULL &&
 		 Selected->next->next->next == NULL )
 	{
-		enable = (FindVertexCommonSector (Selected->objnum,
-										  Selected->next->objnum,
-										  Selected->next->next->objnum) >= 0);
+		SHORT sectors[2];
+		enable = (FindVertexCommonSectors (Selected->objnum,
+										   Selected->next->objnum,
+										   Selected->next->next->objnum,
+										   sectors) >= 1);
 	}
 
 	tce.Enable (enable);
@@ -3512,13 +3559,29 @@ void TEditorClient::CmMiscVSlope ()
 	SHORT v2 = Selected->next->objnum;
 	SHORT v3 = Selected->next->next->objnum;
 
-	SHORT sector = FindVertexCommonSector (v1, v2, v3);
-	if ( sector < 0 )
+	SHORT sectors[2];
+	int count = FindVertexCommonSectors (v1, v2, v3, sectors);
+	if ( count == 0 )
 	{
 		Notify ("The selected vertices do not all lie on the boundary "
 				"of one sector!");
 		SetupSelection (FALSE);
 		return;
+	}
+
+	// If the vertices border two sectors, ask which one to edit
+	SHORT sector = sectors[0];
+	if ( count > 1 )
+	{
+		TSelectSectorDialog seldlg (this, sectors[0], sectors[1]);
+		seldlg.Execute();
+		sector = seldlg.GetChoice();
+		if ( sector < 0 )
+		{
+			// Cancelled with Escape
+			SetupSelection (FALSE);
+			return;
+		}
 	}
 
 	// Start UNDO recording

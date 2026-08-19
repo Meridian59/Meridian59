@@ -45,6 +45,10 @@ resources:
    admin_gone_mortal = "%s appears more vulnerable."
    admin_gone_immortal = "%s appears less vulnerable."
 
+   admin_placed_all_monsters = "Placed %i of each monster type (%i monsters)."
+   admin_placed_translucent_monsters = \
+      "Placed %i of each translucent and stone monster type (%i monsters)."
+
    admin_logoffghost_on = "Logoff penalties are now active."
    admin_logoffghost_off = "Logoff penalties are now inactive."
    admin_logoffghost_temp_off = "Logoff penalties are now temporarily inactive."
@@ -361,6 +365,22 @@ messages:
          return;
       }
 
+      % Handled here rather than propagating, since the DM monster-by-name
+      % command matches any string containing "monster".
+      if StringEqual(string,"place all monsters")
+      {
+         Send(self,@PlaceAllMonsters);
+
+         return;
+      }
+
+      if StringEqual(string,"place translucent monsters")
+      {
+         Send(self,@PlaceTranslucentMonsters);
+
+         return;
+      }
+
       %%% Code for placing an ornamental object
       if StringContain(string,"place ornament")
       {
@@ -510,7 +530,7 @@ messages:
    }
 
    AdminPlaceObject(class=$)
-   "Creates an object of the given class at the admin's position."
+   "Creates an object of the given class at the admin's position, and returns it."
    {
       local oObject;
 
@@ -520,6 +540,79 @@ messages:
            #new_col=Send(self, @GetCol),
            #fine_row=Send(self, @GetFineRow),
            #fine_col=Send(self, @GetFineCol));
+
+      return oObject;
+   }
+
+   PlaceMonsterCopies(oTemplate = $,iEachCount = 1)
+   "Creates iEachCount monsters of oTemplate's class at the admin's position."
+   {
+      local iCopy, oMonster;
+
+      iCopy = 0;
+      while iCopy < iEachCount
+      {
+         oMonster = Send(self,@AdminPlaceObject,#class=GetClass(oTemplate));
+
+         % Keep these from being cleaned up when the room empties, and from
+         % counting against the killer's karma.
+         Send(oMonster,@SetDontDispose);
+
+         iCopy = iCopy + 1;
+      }
+
+      return;
+   }
+
+   PlaceAllMonsters(iEachCount = 1)
+   "Creates iEachCount of every monster template at the admin's position, "
+   "for testing. Change the default here to spawn a bigger crowd, but note "
+   "that every monster stays until killed, and a few hundred of them in one "
+   "room will bog that room down."
+   {
+      local i, iSpawned;
+
+      iSpawned = 0;
+
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         Send(self,@PlaceMonsterCopies,#oTemplate=i,#iEachCount=iEachCount);
+         iSpawned = iSpawned + iEachCount;
+      }
+
+      Send(self,@MsgSendUser,#message_rsc=admin_placed_all_monsters,
+           #parm1=iEachCount,#parm2=iSpawned);
+
+      return;
+   }
+
+   PlaceTranslucentMonsters(iEachCount = 1)
+   "Creates iEachCount of every monster template drawn with a translucency or "
+   "second-translation (stone) effect, for eyeballing those blend modes side "
+   "by side. Same crowding caveat as PlaceAllMonsters."
+   {
+      local i, iSpawned, lBlendedEffects;
+
+      % Monsters are opaque unless they carry one of these draw effects, so
+      % this list decides what counts as translucent. DRAWFX_BLACK and
+      % DRAWFX_INVISIBLE are deliberately absent: neither blends.
+      lBlendedEffects = [ DRAWFX_TRANSLUCENT_25, DRAWFX_TRANSLUCENT_50,
+                          DRAWFX_TRANSLUCENT_75, DRAWFX_DITHERTRANS,
+                          DRAWFX_DOUBLETRANS, DRAWFX_SECONDTRANS ];
+
+      iSpawned = 0;
+
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         if FindListElem(lBlendedEffects,Send(i,@GetDrawFX)) <> 0
+         {
+            Send(self,@PlaceMonsterCopies,#oTemplate=i,#iEachCount=iEachCount);
+            iSpawned = iSpawned + iEachCount;
+         }
+      }
+
+      Send(self,@MsgSendUser,#message_rsc=admin_placed_translucent_monsters,
+           #parm1=iEachCount,#parm2=iSpawned);
 
       return;
    }

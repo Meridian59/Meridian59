@@ -41,6 +41,8 @@ BEGIN
                     ES_READONLY | WS_VSCROLL
     PUSHBUTTON      "&Go to room",IDC_TELEPORT,1,158,43,11
     PUSHBUTTON      "&Reset data",IDC_INVALIDATE,48,158,43,11
+    CONTROL         "&Sort A-Z",IDC_SORTPROPS,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,290,159,48,10
     GROUPBOX        "&Users",IDC_USERFRAME,1,170,146,98
     LISTBOX         IDC_USERS,5,180,78,84,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP

@@ -1195,7 +1195,8 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
             config.colorcodes = IsDlgButtonChecked(hDlg, IDC_COLORCODES);
 
             Theme new_theme = static_cast<Theme>(ComboBox_GetCurSel(GetDlgItem(hDlg, IDC_THEME)));
-            if (new_theme != config.theme)
+            bool theme_changed = (new_theme != config.theme);
+            if (theme_changed)
             {
                 config.theme = new_theme;
                 ThemeApply();
@@ -1211,8 +1212,9 @@ static INT_PTR CALLBACK CommonPreferencesDlgProc(HWND hDlg, UINT message, WPARAM
               ResetMusicVolume();
             }
             
-            // Redraw main window to reflect new settings
-            if (toolbar_changed || lagbox_changed)
+            // Redraw main window to reflect new settings.  A theme change can
+            // alter the stat bar height, so relayout for that too.
+            if (toolbar_changed || lagbox_changed || theme_changed)
             {
               ResizeAll();
             }

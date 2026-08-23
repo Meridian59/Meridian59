@@ -1688,7 +1688,7 @@ Recreate()
 			      [ 18, 19 ],\
 			      30,\
 			      [],\
-			      100,\
+			      0,\
 			      [ [ Q_R2_QN_ASSIGNABLE, FALSE ], [ Q_R2_IS_GUILD_MEMBER_OF, $ ] ]
 			                                    ], plQuestTemplates );
    % QST_ID_GUILDSHIELD_INTRO

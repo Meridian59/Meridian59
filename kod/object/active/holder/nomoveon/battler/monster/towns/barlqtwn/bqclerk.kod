@@ -68,10 +68,12 @@ resources:
       "--Caramo"
    barloque_clerk_election_open_subject = "The Election Campaign Hath Begun"
    barloque_clerk_election_open = \
-      "The election for Justicar hath begun.  Thou mayest now buy a ballot from me. "
-      "Write the name of the candidate of thy preference and return it for official"
-      " tally.  Do remember, under current Meridian law, neither new citizens nor "
-      "outlaws can vote or hold office."
+      "The election for Justicar hath begun.  Thou mayest now purchase a ballot from "
+      "me.  Write the name of the candidate of thy preference and return it for "
+      "official tally.  Do remember, under current Meridian law, a citizen must be "
+      "hardy enough and have spent enough time in the lands to vote or hold office, "
+      "by the measure the Crown doth set; neither new citizens nor outlaws can do "
+      "either."
       "\n\n"
       "--Caramo"
    barloque_clerk_tally_day = \
@@ -169,7 +171,9 @@ resources:
 
    barloqueclerk_hands_back = "~bCaramo hands back the ballot."
    barloqueclerk_bad_candidate = "%q is ineligible for the office of Justicar."
-   barloqueclerk_no_newbie_voter = "You are not yet eligible to vote."
+   barloqueclerk_no_newbie_voter = \
+      "You are not yet eligible to vote.  By the Crown's present measure, thou must "
+      "be hardier and have spent more time in the lands ere thou may cast a ballot."
    barloqueclerk_no_outlaw_voter = "Criminals have no voting rights.  Begone."
 
    barloque_clerk_notify_ad = \
@@ -366,6 +370,16 @@ messages:
       plFor_sale = [ [ Create(&BallotItem) ],
                      $,$];
       return;
+   }
+
+   GetPrice(what = $, who = $)
+   {
+      if IsClass(what,&BallotItem)
+      {
+         return Send(Send(SYS,@GetSettings),@GetBallotCost);
+      }
+
+      propagate;
    }
 
    %%% Handling people and disordery conduct.
@@ -946,7 +960,7 @@ messages:
    UserStartAdvertise(who=$)
    "Adds user to the advertising list."
    {
-      if NOT Send(self, @IsPlayerSeniorEnough, #who = who)
+      if NOT Send(self,@IsQualifiedVoter,#who=who)
       {
          Send(self,@Say,#message_rsc=barloque_clerk_no_start_ad_angel);
 
@@ -1019,8 +1033,8 @@ messages:
    "Sends a user to 'who' if not an outlaw/murderer."
    {
       if NOT (Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-              OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-         AND Send(self, @IsPlayerSeniorEnough, #who = who)
+            OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+         AND Send(self,@IsQualifiedVoter,#who=who)
       {
          Send(who,@MsgSendUser,#message_rsc=barloque_clerk_notify_ad);
       }
@@ -1174,7 +1188,7 @@ messages:
 
    IsLegalVoter(voter=$)
    {
-      if NOT Send(self, @IsPlayerSeniorEnough, #who = voter)
+      if NOT Send(self,@IsQualifiedVoter,#who=voter)
       {
          Send(self,@SayToOne,#message_rsc=barloqueclerk_no_newbie_voter,#target=voter);
          
@@ -1201,6 +1215,11 @@ messages:
       
       if Send(candidate,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          OR Send(candidate,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         return FALSE;
+      }
+
+      if NOT Send(self,@IsQualifiedCandidate,#who=candidate)
       {
          return FALSE;
       }
@@ -1376,12 +1395,28 @@ messages:
       return poJusticar;
    }
 
-   IsPlayerSeniorEnough(who = $)
-   "Determine whether the given player is senior enough to partipate in Justicar voting. "
-   "This is to prevent mules from swamping the voting."
+   IsQualifiedVoter(who = $)
+   "Whether the player is qualified to vote for Justicar. Prevents mules from swamping the voting."
    {
-      return Send(who, @GetBaseMaxHealth) >= 
-             Send(Send(SYS, @GetSettings), @GetMinHPForJusticar);
+      if Send(who,@GetBaseMaxHealth) < Send(Send(SYS,@GetSettings),@GetMinHPForJusticarVoter)
+      {
+         return FALSE;
+      }
+
+      return Send(who,@GetTimeLoggedIn) >=
+             Send(Send(SYS,@GetSettings),@GetMinHoursOnlineForJusticar) * 3600;
+   }
+
+   IsQualifiedCandidate(who = $)
+   "Whether the player is qualified to hold the office of Justicar."
+   {
+      if Send(who,@GetBaseMaxHealth) < Send(Send(SYS,@GetSettings),@GetMinHPForJusticar)
+      {
+         return FALSE;
+      }
+
+      return Send(who,@GetTimeLoggedIn) >=
+             Send(Send(SYS,@GetSettings),@GetMinHoursOnlineForJusticar) * 3600;
    }
 
    ResetBrain()

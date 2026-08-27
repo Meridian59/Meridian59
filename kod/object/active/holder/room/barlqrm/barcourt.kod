@@ -33,11 +33,13 @@ resources:
       "of being an outlaw or a murderer.  The Justicar is elected by the "
       "people of the land."
       "\n\n"
-      "To vote, buy a ballot from Caramo the royal clerk.  Write the name of "
-      "the person that you wish to vote for on the ballot and hand it back to "
-      "her.  Note that outlaws, murderers, and individuals still under "
-      "Shal'ille's protection are not able to vote for or hold the office of "
-      "Justicar."
+      "To vote, buy a ballot from Caramo the royal clerk, write the name of "
+      "the person that you wish to vote for on the ballot, and hand it back "
+      "to her.  The price of a ballot, along with the hardiness and the time "
+      "spent in the lands required to vote for or hold the office, are set by "
+      "the Crown and may change from time to time.  Outlaws, murderers, and "
+      "individuals still under Shal'ille's protection are not able to vote for "
+      "or hold the office of Justicar."
       "\n\n"
       "If elected Justicar, Caramo will send you a mail with details about "
       "the abilities and responsibilities of the office."
@@ -185,20 +187,6 @@ messages:
    {
       return poBookOfJala;
    }
-   
-   Delete()
-   {
-      if poCaramo <> $
-      {
-         Send(poCaramo,@NewOwner,#what=$);
-         poCaramo = $;
-      }
-      
-      poBookofJala = $;
-
-      propagate;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

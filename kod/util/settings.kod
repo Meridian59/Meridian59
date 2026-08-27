@@ -121,9 +121,18 @@ properties:
    % How many summoned objects can be in a room
    piPlayerSummonedObjectLimit = 18
 
-   % Minimum number of HP you have to have to vote for or become
-   % Justicar
+   % Minimum number of HP needed to vote for Justicar
+   piMinHPForJusticarVoter = 100
+   
+   % Minimum number of HP needed to become Justicar
    piMinHPForJusticar = 100
+
+   % Minimum cumulative real playtime (in hours) needed to vote for or
+   % become Justicar
+   piMinHoursOnlineForJusticar = 160
+
+   % Cost per Royal Ballot.
+   piBallotCost = 10000
 
    % If enabled, unsafe penalties send the player to their hometown.
    % This is intended to prevent being players 'kept offline' by enemies.
@@ -329,6 +338,21 @@ messages:
    GetMinHPForJusticar()
    {
       return piMinHPForJusticar;
+   }
+
+   GetMinHPForJusticarVoter()
+   {
+      return piMinHPForJusticarVoter;
+   }
+
+   GetMinHoursOnlineForJusticar()
+   {
+      return piMinHoursOnlineForJusticar;
+   }
+
+   GetBallotCost()
+   {
+      return piBallotCost;
    }
    
    % This returns whether players go to a room's blink spot or their hometown when they pen

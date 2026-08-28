@@ -2292,9 +2292,9 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 				}
 				else
 				{
-					assert(0);
-					// the hotspot wasn't in the base object pdib
-					// must be an overlay on an overlay, so find base overlay
+					// The hotspot wasn't found on this group so it is skipped instead.
+					// Used for animations where not every frame has a hotspot defined.
+					continue;
 				}
 			}
 

@@ -3,11 +3,11 @@
 # 1-4 attacking
 # 5 carried
 5
-sswpovA.bmp   
-sswpovB.bmp  
-sswpovC.bmp 
-sswpovD.bmp
-sswpovH.bmp  
+sswpovA.bmp   [0, 0] :1    -21 [27, 101]
+sswpovB.bmp   [0, 0] :1    -21 [29, 97]
+sswpovC.bmp   [0, 0] :1    -21 [20, 178]
+sswpovD.bmp   [0, 0]
+sswpovH.bmp   [0, 0]
 5
  1      1
  1      2

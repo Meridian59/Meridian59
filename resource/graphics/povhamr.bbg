@@ -4,11 +4,11 @@
 # 5 carried
 
 5
-hampovA.bmp [0, 0]
-hampovB.bmp [0, 0]
-hampovC.bmp [0, 0]
-hampovD.bmp [0, 0]
-hampovH.bmp [0, 0]
+hampovA.bmp   [0, 0] :1    -21 [38, 226]
+hampovB.bmp   [0, 0] :1    -21 [35, 49]
+hampovC.bmp   [0, 0] :1    -21 [38, 232]
+hampovD.bmp   [0, 0]
+hampovH.bmp   [0, 0]
 5
  1      1
  1      2

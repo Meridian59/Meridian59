@@ -8551,34 +8551,41 @@ messages:
 
    DoWindowOverlayHandGlow()
    {
-      local i,iGroup;
+      local oWeapon;
 
       if pbLogged_on
       {
-         iGroup = 0;
-         for i in plWindow_overlays
-         {
-            if Send(i,@GetWindowOverlayID) = PWO_RIGHT_HAND
-            {  
-               % Of right hand overlay already exists, we can't restore it correctly
-               %  yet, so just don't change it
-               return;
-            }
-         }
-         
-         AddPacket(1,BP_PLAYER_OVERLAY);
+		 AddPacket(1,BP_PLAYER_OVERLAY);
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
-         AddPacket(4,player_window_overlay_hand);
-         AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
-         AddPacket(1,ANIMATE_ONCE,4,300,2,4,2,6,2,iGroup);
+
+		 oWeapon = Send(self,@LookupPlayerWeapon);
+
+         % If the right hand is holding a melee weapon, animate casting while wielding it.
+         if oWeapon <> $ AND NOT isClass(oWeapon,&Bow)
+         {
+			AddPacket(4,Send(oWeapon,@GetWindowOverlay));  % Get the weapon graphic filename.
+			AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
+			Send(oWeapon,@SendWindowOverlayCastAnimation);
+         }
+
+         % Otherwise, show the right hand performing the spellcasting animation.
+		 % This also shows while wielding a bow on the left hand.
+         else
+         {
+            AddPacket(4,player_window_overlay_hand);
+            AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
+            AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,0);
+         }
+
+         % Display the magic glow on the used animation.
          AddPacket(1,1);
          AddPacket(4,player_window_overlay_glow, 1,HS_RIGHT_HAND,
                    1,ANIMATE_ONCE, 4,300, 2,1, 2,3, 2,0);
 
-         SendPacket(poSession);    
+         SendPacket(poSession);
       }
-      
+
       return;
    }
 

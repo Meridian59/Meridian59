@@ -4,11 +4,11 @@
 # 5 carried
 
 5
-qswpovA.bmp    
-qswpovB.bmp   
-qswpovC.bmp  
-qswpovD.bmp 
-qswpovH.bmp
+qswpovA.bmp   [0, 0] :1    -21 [49, 138]
+qswpovB.bmp   [0, 0] :1    -21 [53, 58]
+qswpovC.bmp   [0, 0] :1    -21 [25, 232]
+qswpovD.bmp   [0, 0]
+qswpovH.bmp   [0, 0]
 5
  1      1
  1      2

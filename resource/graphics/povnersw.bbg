@@ -4,11 +4,11 @@
 # 5 carried
 
 5
-nerpovA.bmp    
-nerpovB.bmp   
-nerpovC.bmp  
-nerpovD.bmp 
-nerpovH.bmp
+nerpovA.bmp   [0, 0] :1    -21 [0, 164]
+nerpovB.bmp   [0, 0] :1    -21 [18, 83]
+nerpovC.bmp   [0, 0] :1    -21 [2, 230]
+nerpovD.bmp   [0, 0]
+nerpovH.bmp   [0, 0]
 5
  1      1
  1      2

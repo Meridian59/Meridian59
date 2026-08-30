@@ -118,6 +118,58 @@ static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 
 // Implementations
 
+// Object id -> its stack index among the objects sharing its location, for the current frame.
+// Co-located objects get successive indices (0, 1, 2, ...) so their z-bias bands can be shifted
+// apart (index * ZBIAS_STACK_STRIDE) instead of overlapping and interleaving.
+static std::unordered_map<int, int> objectStackIndices;
+
+// Stack index assigned this frame, or 0 for an object that shares its location with no other
+// (and so needs no shift).
+static int D3DRenderObjectStackIndex(int objectId)
+{
+	auto it = objectStackIndices.find(objectId);
+	return (it == objectStackIndices.end()) ? 0 : it->second;
+}
+
+// Assign stack indices for the current frame. Objects at the same location would otherwise draw in
+// identical z-bias bands and interleave (one object's overlay appearing over another's sprite). The
+// main-sprite and overlay passes iterate in different orders, so indices are assigned once here and
+// both passes read them. Ordering by object id keeps the assignment stable frame-to-frame, so
+// co-located objects don't flicker past each other.
+static void D3DRenderAssignObjectStackIndices(const GameObjectDataParams& gameObjectDataParams)
+{
+	objectStackIndices.clear();
+
+	const auto* localPlayer = GetPlayerInfo();
+	std::vector<room_contents_node*> nodes;
+	std::unordered_set<int> seenIds;
+	for (long i = 0; i < gameObjectDataParams.numItems; i++)
+	{
+		if (gameObjectDataParams.drawData[i].type != DrawObjectType)
+			continue;
+		room_contents_node* node = gameObjectDataParams.drawData[i].u.object.object->draw.obj;
+		if (node == NULL || node->obj.id == localPlayer->id)
+			continue;
+		if (seenIds.insert(node->obj.id).second)
+			nodes.push_back(node);
+	}
+
+	std::sort(nodes.begin(), nodes.end(),
+		[](const room_contents_node* a, const room_contents_node* b) { return a->obj.id < b->obj.id; });
+
+	// Each object's bin is the number of objects already placed at its location, so co-located
+	// objects get successive bins (0, 1, 2, ...). Combine the object's x and y position into a
+	// single int64 to use as the per-location map key.
+	std::unordered_map<int64, int> countAtLocation;
+	for (room_contents_node* node : nodes)
+	{
+		int64 location = ((int64)node->motion.x << 32) | (int)(node->motion.y & 0xFFFFFFFF);
+		int stackIndex = countAtLocation[location];
+		objectStackIndices[node->obj.id] = stackIndex;
+		countAtLocation[location] = stackIndex + 1;
+	}
+}
+
 /**
 * The main entry point for rendering objects in the game world.
 * Returns the total time taken to render all objects.
@@ -137,6 +189,8 @@ long D3DRenderObjects(
 	long timeObjects = timeGetTime();
 	const auto room = objectsRenderParams.room;
 	const auto params = objectsRenderParams.params;
+
+	D3DRenderAssignObjectStackIndices(gameObjectDataParams);
 
 	if (config.draw_names)
 	{
@@ -985,7 +1039,9 @@ void D3DRenderOverlaysDraw(
 					pChunk->numPrimitives = pChunk->numVertices - 2;
 					pChunk->xLat0 = xLat0;
 					pChunk->xLat1 = xLat1;
-					pChunk->zBias = zBias;
+					// Shift by the same amount as the object's main sprite so this overlay stays grouped
+					// with its own object and doesn't interleave with a co-located one.
+					pChunk->zBias = zBias + (BYTE)(D3DRenderObjectStackIndex(pRNode->obj.id) * ZBIAS_STACK_STRIDE);
 
 					zBias++;
 
@@ -1385,12 +1441,6 @@ void D3DRenderObjectsDraw(
 
 	auto drawdata = gameObjectDataParams.drawData;
 
-	// We track all objects that are in similar positions in the 3D world.
-	// This is to mitigate z-fighting by incrementing z-depths for each unique object in the same position.
-	// The key is composed of the x and y coordinates of the object and the value is the current
-	// count of objects found at that location.
-	std::unordered_map<int64, int> depth_adjustment_map;
-
 	// As we receive objects in different orders from the BSP walk this can cause inconsistent z-depth ordering.
 	// We now attempt to maintain a consistent view by sorting draw data by their ids.
 	// For translucent objects, the caller has already sorted by distance (back-to-front)
@@ -1580,18 +1630,21 @@ void D3DRenderObjectsDraw(
 		pChunk->xLat0 = xLat0;
 		pChunk->xLat1 = xLat1;
 
-		// For players and objects with a bounding height adjustment (such as Tos Fountain), we draw them at the base depth.
+		// For players and objects with a bounding height adjustment, we draw them at the base depth.
 		// This is because they have multiple layers positioned relative to base depth (e.g. behind, in front of and so on).
-		// For everything else we start with the deault z bias which positions them behind these more complex arrangements.
-		pChunk->zBias = (pRNode->obj.flags & OF_PLAYER) || (pRNode->boundingHeightAdjust != 0) ? ZBIAS_BASE : ZBIAS_DEFAULT;
+		// Any object that carries overlays is the same kind of multi-layer arrangement: its overlays use the fixed
+		// under-/over-layer z biases (ZBIAS_UNDERUNDER..ZBIAS_OVEROVER) which straddle ZBIAS_BASE. If its main sprite
+		// were left at ZBIAS_DEFAULT it would equal ZBIAS_UNDERUNDER (z-fighting) and sit in front of its own underlays,
+		// so we draw it at the base depth too.
+		// For everything else we start with the default z bias which positions them behind these more complex arrangements.
+		const bool hasOverlays = pRNode->obj.overlays && (*pRNode->obj.overlays != NULL);
+		pChunk->zBias = (pRNode->obj.flags & OF_PLAYER) || (pRNode->boundingHeightAdjust != 0) || hasOverlays
+			? ZBIAS_BASE : ZBIAS_DEFAULT;
 
 
-		// All objects are drawn at the default depth offset by the number of items already drawn at this location.
-		// Combine objects x and y position into a single int64 for the map key.
-		int64 key = ((int64)pRNode->motion.x << 32) | (int)(pRNode->motion.y & 0xFFFFFFFF);
-
-		// Increment the counter at the appropriate bin and assign the appropriate zBias.
-		pChunk->zBias += (BYTE)depth_adjustment_map[key]++;
+		// Shift this object's whole z-bias band clear of any other object sharing its location, so
+		// their sprites and overlays never interleave. The overlay pass applies the identical shift.
+		pChunk->zBias += (BYTE)(D3DRenderObjectStackIndex(pRNode->obj.id) * ZBIAS_STACK_STRIDE);
 
 		lastDistance = 0;
 

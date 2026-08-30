@@ -119,6 +119,39 @@ static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 // Implementations
 
 /**
+* Shows the color of an object's own steady light (the glow enchantment) on its sprite. Vertex
+* color multiplies the texture, so in a bright sector it is already at full scale and has no
+* headroom left to show the light; the chunk is marked to be drawn with a doubled texture stage,
+* which makes room for the added light at the cost of halving the color written here.
+* Flickering lights (torches) waver rather than glow, and objects drawn by the invisibility
+* material ignore vertex color, so both are left alone.
+*/
+static void ApplySelfLightGlow(const room_contents_node* pRNode, custom_bgra* bgra,
+	d3d_render_chunk_new* pChunk)
+{
+	const WORD lightFlags = pRNode->obj.dLighting.flags;
+
+	if ((lightFlags & (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)) != (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)
+		|| (lightFlags & LIGHT_FLAG_WAVERING)
+		|| IsInvisibleEffect(pRNode->obj.flags))
+		return;
+
+	// Fraction of the light's color added over the sprite. Enough to read in daylight, low
+	// enough that the sprite keeps its own colors.
+	static const float GLOW_STRENGTH = 0.35f;
+	static const float FIVE_BIT_TO_COLOR = COLOR_MAX / 31.0f;
+
+	const WORD lightColor = pRNode->obj.dLighting.color;
+	const float scale = FIVE_BIT_TO_COLOR * GLOW_STRENGTH;
+
+	bgra->r = static_cast<unsigned char>((bgra->r + ((lightColor >> 10) & 0x1F) * scale) / 2.0f);
+	bgra->g = static_cast<unsigned char>((bgra->g + ((lightColor >> 5) & 0x1F) * scale) / 2.0f);
+	bgra->b = static_cast<unsigned char>((bgra->b + (lightColor & 0x1F) * scale) / 2.0f);
+
+	pChunk->isGlowing = true;
+}
+
+/**
 * The main entry point for rendering objects in the game world.
 * Returns the total time taken to render all objects.
 */
@@ -1064,6 +1097,8 @@ void D3DRenderOverlaysDraw(
 						if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
 							objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams))
 							pChunk->flags |= D3DRENDER_NOAMBIENT;
+
+						ApplySelfLightGlow(pRNode, &bgra, pChunk);
 					}
 
 					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -1605,6 +1640,8 @@ void D3DRenderObjectsDraw(
 			if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
 				objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams))
 				pChunk->flags |= D3DRENDER_NOAMBIENT;
+
+			ApplySelfLightGlow(pRNode, &bgra, pChunk);
 		}
 
 		if (GetDrawingEffect(pRNode->obj.flags) == OF_TRANSLUCENT25)
@@ -2531,29 +2568,6 @@ bool D3DObjectLightingCalc(
 		bgra->g = std::min((float)COLOR_AMBIENT, light + lastDistance);
 		bgra->r = std::min((float)COLOR_AMBIENT, light + lastDistance);
 		bgra->a = 255;
-	}
-
-	// Self-illumination: Objects that emit a steady dynamic light (like glow) get tinted
-	// by their own light color. This makes glowing players/objects visibly colored.
-	// Only applies to non-wavering dynamic lights (glow), not flickering (torch).
-	const WORD selfLightFlags = pRNode->obj.dLighting.flags;
-	const bool hasSteadyDynamicLight =
-		(selfLightFlags & (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)) == (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)
-		&& !(selfLightFlags & LIGHT_FLAG_WAVERING);
-
-	if (hasSteadyDynamicLight)
-	{
-		// Convert 16-bit 5-5-5 RGB color to 8-bit components
-		const WORD selfColor = pRNode->obj.dLighting.color;
-		const float selfR = ((selfColor >> 10) & 0x1F) * (255.0f / 31.0f);
-		const float selfG = ((selfColor >> 5) & 0x1F) * (255.0f / 31.0f);
-		const float selfB = (selfColor & 0x1F) * (255.0f / 31.0f);
-
-		// Apply a noticeable tint from the object's own light (40% blend toward light color)
-		const float selfTintStrength = 0.4f;
-		bgra->r = std::min((float)COLOR_AMBIENT, bgra->r * (1.0f - selfTintStrength) + selfR * selfTintStrength);
-		bgra->g = std::min((float)COLOR_AMBIENT, bgra->g * (1.0f - selfTintStrength) + selfG * selfTintStrength);
-		bgra->b = std::min((float)COLOR_AMBIENT, bgra->b * (1.0f - selfTintStrength) + selfB * selfTintStrength);
 	}
 
 	return bFogDisable;

@@ -376,6 +376,13 @@ bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 		D3DRender_SetColorStage(0, D3DTOP_SELECTARG1, D3DTA_DIFFUSE, 0);
 		D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	}
+	else if (pChunk->isGlowing)
+	{
+		// Doubling lets the vertex color brighten the sprite beyond the texture's own colors,
+		// which is what makes an object's light visible on it in an already bright sector.
+		D3DRender_SetColorStage(0, D3DTOP_MODULATE2X, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+		D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	}
 	else
 	{
 		D3DRender_SetColorStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);

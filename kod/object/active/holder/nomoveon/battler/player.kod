@@ -1953,6 +1953,18 @@ messages:
       {
          Send(self,@SetWindowOverlay,#what=i);
       }
+	  Send(self,@PreloadPOVCastingBitmaps);
+
+      return;
+   }
+
+   PreloadPOVCastingBitmaps()
+   "Preloads both the hand and casting glow POV overlays to prevent desync with animations."
+   {
+      AddPacket(1,BP_PRELOAD_BITMAP, 4,player_window_overlay_hand);
+      SendPacket(poSession);
+      AddPacket(1,BP_PRELOAD_BITMAP, 4,player_window_overlay_glow);
+      SendPacket(poSession);   
 
       return;
    }

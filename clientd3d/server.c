@@ -93,6 +93,7 @@ static handler_struct game_handler_table[] = {
 { BP_LOAD_MODULE,       HandleLoadModule },
 { BP_UNLOAD_MODULE,     HandleUnloadModule },
 { BP_CHANGE_RESOURCE,   HandleChangeResource },
+{ BP_PRELOAD_BITMAP,    HandlePreloadBitmap },
 { BP_PLAYER_OVERLAY,    HandlePlayerOverlay },
 { BP_SECTOR_MOVE,       HandleSectorMove },
 { BP_WALL_ANIMATE,      HandleWallAnimate },
@@ -1426,6 +1427,24 @@ bool HandleChangeResource(char *ptr, long len)
 
    ChangeResource(res, res_string);
 
+   return true;
+}
+/********************************************************************/
+bool HandlePreloadBitmap(char *ptr, long len)
+{
+   char *start = ptr;
+   ID bitmapID;
+
+   Extract(&ptr, &bitmapID, SIZE_ID);
+
+   len -= (ptr - start);
+   if (len != 0)
+   {
+      return false;
+   }
+
+   // Loads the bitmap into cache. The returned bitmap is intentionally discarded.
+   GetObjectBitmap(bitmapID);
    return true;
 }
 /********************************************************************/

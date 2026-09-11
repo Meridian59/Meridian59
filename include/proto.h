@@ -215,7 +215,7 @@ enum {
    BP_SET_VIEW              = 237,
    BP_RESET_VIEW            = 238,
    BP_REQ_GET_FROM_CONTAINER  = 239,
-   BP_PRELOAD_BITMAP  = 240,
+   BP_PRELOAD_BITMAPS  = 240,
 };
 
 // User commands (in BP_USERCOMMAND message)

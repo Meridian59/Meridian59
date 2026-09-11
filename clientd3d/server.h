@@ -114,7 +114,7 @@ bool HandleShoot(char *ptr, long len);
 bool HandleUsers(char *ptr, long len);
 bool HandleLoadModule(char *ptr, long len);
 bool HandleChangeResource(char *ptr, long len);
-bool HandlePreloadBitmap(char *ptr, long len);
+bool HandlePreloadBitmaps(char *ptr, long len);
 bool HandlePlayerOverlay(char *ptr, long len);
 bool HandleSectorMove(char *ptr, long len);
 bool HandleUnloadModule(char *ptr, long len);

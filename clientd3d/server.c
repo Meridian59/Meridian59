@@ -93,7 +93,7 @@ static handler_struct game_handler_table[] = {
 { BP_LOAD_MODULE,       HandleLoadModule },
 { BP_UNLOAD_MODULE,     HandleUnloadModule },
 { BP_CHANGE_RESOURCE,   HandleChangeResource },
-{ BP_PRELOAD_BITMAP,    HandlePreloadBitmap },
+{ BP_PRELOAD_BITMAPS,    HandlePreloadBitmaps },
 { BP_PLAYER_OVERLAY,    HandlePlayerOverlay },
 { BP_SECTOR_MOVE,       HandleSectorMove },
 { BP_WALL_ANIMATE,      HandleWallAnimate },
@@ -1430,21 +1430,27 @@ bool HandleChangeResource(char *ptr, long len)
    return true;
 }
 /********************************************************************/
-bool HandlePreloadBitmap(char *ptr, long len)
+bool HandlePreloadBitmaps(char *ptr, long len)
 {
-   char *start = ptr;
    ID bitmapID;
 
-   Extract(&ptr, &bitmapID, SIZE_ID);
-
-   len -= (ptr - start);
-   if (len != 0)
+   // First make sure that the packet length is a multiple of SIZE_ID.
+   if ((len % SIZE_ID) != 0)
    {
+      debug(("HandlePreloadBitmaps: invalid packet length (%d)\n", len));
       return false;
    }
 
-   // Loads the bitmap into cache. The returned bitmap is intentionally discarded.
-   GetObjectBitmap(bitmapID);
+   while (len >= SIZE_ID)
+   {
+      Extract(&ptr, &bitmapID, SIZE_ID);
+
+      // Loads the bitmap into cache. The returned bitmap is intentionally discarded.
+      GetObjectBitmap(bitmapID);
+	  
+	  len -= SIZE_ID;
+   }
+
    return true;
 }
 /********************************************************************/

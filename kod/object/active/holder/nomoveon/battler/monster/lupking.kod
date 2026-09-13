@@ -19,7 +19,7 @@ constants:
    ANIM_BITE = 2
    ANIM_SPIT = 3
 
-   SPIT_COLOR = 82
+   BAD_COLOR = 83
 
 resources:
 
@@ -299,7 +299,7 @@ messages:
       Send(self,@DoCast);
       Send(oSpell,@DoHold,#what=self,#oTarget=oTarget,#iDurationSecs=iRandom);
       Send(oTarget,@MsgSendUser,#message_rsc=lupoggking_cast_spell);
-      Send(oTarget,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=iRandom*1000,#xlat=SPIT_COLOR); 
+      Send(oTarget,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=iRandom*1000,#xlat=BAD_COLOR); 
 
       % Do damage?
 

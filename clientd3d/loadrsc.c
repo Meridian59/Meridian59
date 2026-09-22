@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -448,4 +448,24 @@ void DeleteAllRscFiles(void)
 			break;
 	}
 	FindClose(hFindFile);
+}
+/******************************************************************************/
+/*
+* LookupRscIDByFilename:  Returns resource ID for a given filename, or 0 if not found.
+*  Intended for use during game setup since this performs a linear search on the resource table.
+*/
+ID LookupRscIDByFilename(const char *filename)
+{
+	for (DWORD i = 0; i < t->size; i++)
+	{
+		for (list_type entry = t->entries[i]; entry != nullptr; entry = entry->next)
+		{
+			resource_type resource = static_cast<resource_type>(entry->data);
+			if (stricmp(resource->data, filename) == 0)
+				return resource->idnum;
+		}
+	}
+
+	debug(("LookupRscIDByFilename: couldn't find %s\n", filename));
+	return 0;
 }

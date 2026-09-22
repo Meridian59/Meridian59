@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -49,6 +49,9 @@ void GameInit(void)
    DrawInitialize();
    SoundInitialize();
    MapFileInitialize();
+
+   // Preload specific bitmaps now that the resource table and cache are initialized.
+   PreloadSelectedBitmaps();
 
    GameSetState(GAME_INVALID);
 

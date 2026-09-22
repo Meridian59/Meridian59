@@ -32,6 +32,19 @@ static bool safety_flipped;
 
 /****************************************************************************/
 /*
+ * SendConfiguredSafety:  Send the configured safety state to the server and
+ *   record it in pinfo.aggressive.
+ */
+static void SendConfiguredSafety(void)
+{
+   pinfo.aggressive = cinfo->config->aggressive;
+   if (pinfo.aggressive)
+      SendSafety(0);
+   else
+      SendSafety(1);
+}
+/****************************************************************************/
+/*
  * InterfaceInit:  Called on startup.  Initialize interface.
  */
 void InterfaceInit(void)
@@ -71,10 +84,7 @@ void InterfaceInit(void)
       RequestRest();
    else
       RequestStand();
-   if (cinfo->config->aggressive)
-      SendSafety(0);
-   else
-      SendSafety(1);
+   SendConfiguredSafety();
 }
 /****************************************************************************/
 /*
@@ -175,10 +185,7 @@ void InterfaceResetData(void)
       RequestRest();
    else
       RequestStand();
-   if (cinfo->config->aggressive)
-      SendSafety(0);
-   else
-      SendSafety(1);
+   SendConfiguredSafety();
 
    RequestSpells();
    RequestSkills();
@@ -416,7 +423,7 @@ void InterfaceUserChanged(void)
       if (cinfo->config->aggressive)
       {
          if (!safety_flipped)
-            SendSafety(0);
+            SendConfiguredSafety();
          safety_flipped = true;
       }
       else 
@@ -430,7 +437,7 @@ void InterfaceUserChanged(void)
       if (!cinfo->config->aggressive)
       {
          if (!safety_flipped)
-            SendSafety(1);
+            SendConfiguredSafety();
          safety_flipped = true;
       }
       else 

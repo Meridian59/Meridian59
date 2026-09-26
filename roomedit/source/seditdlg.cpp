@@ -188,8 +188,6 @@ TSectorEditDialog::TSectorEditDialog (TWindow* parent, SelPtr sel,
 	CurSector =Sectors[sel->objnum];
 	TextureName[0] = '\0';
 	memset(&ConfirmData, 0, sizeof(ConfirmData));
-	SlopeVertexList = NULL;
-	NumSlopeVertexes = 0;
 
 	// Create objects for controls
 	pNoAmbientCheck    = newTCheckBox(this, IDC_NOAMBIENT, 0);
@@ -226,15 +224,15 @@ TSectorEditDialog::TSectorEditDialog (TWindow* parent, SelPtr sel,
 	pScrollMediumRadio = newTRadioButton(this, IDC_SCROLLMEDIUM, 0);
 	pScrollFastRadio   = newTRadioButton(this, IDC_SCROLLFAST, 0);
 	pFlickerCheck      = newTCheckBox(this, IDC_FLICKER, 0);
-	pSlopeFloorVertex[0]  = newTComboBox(this, IDC_FLOORV1);
-	pSlopeFloorVertex[1]  = newTComboBox(this, IDC_FLOORV2);
-	pSlopeFloorVertex[2]  = newTComboBox(this, IDC_FLOORV3);
+	pSlopeFloorVertex[0]  = newTComboBox(this, IDC_FLOORV1, 6);
+	pSlopeFloorVertex[1]  = newTComboBox(this, IDC_FLOORV2, 6);
+	pSlopeFloorVertex[2]  = newTComboBox(this, IDC_FLOORV3, 6);
 	pSlopeFloorHeight[0]  = newTEdit(this, IDC_FLOORH1, 6);
 	pSlopeFloorHeight[1]  = newTEdit(this, IDC_FLOORH2, 6);
 	pSlopeFloorHeight[2]  = newTEdit(this, IDC_FLOORH3, 6);
-	pSlopeCeilingVertex[0]  = newTComboBox(this, IDC_CEILINGV1);
-	pSlopeCeilingVertex[1]  = newTComboBox(this, IDC_CEILINGV2);
-	pSlopeCeilingVertex[2]  = newTComboBox(this, IDC_CEILINGV3);
+	pSlopeCeilingVertex[0]  = newTComboBox(this, IDC_CEILINGV1, 6);
+	pSlopeCeilingVertex[1]  = newTComboBox(this, IDC_CEILINGV2, 6);
+	pSlopeCeilingVertex[2]  = newTComboBox(this, IDC_CEILINGV3, 6);
 	pSlopeCeilingHeight[0]  = newTEdit(this, IDC_CEILINGH1, 6);
 	pSlopeCeilingHeight[1]  = newTEdit(this, IDC_CEILINGH2, 6);
 	pSlopeCeilingHeight[2]  = newTEdit(this, IDC_CEILINGH3, 6);
@@ -249,7 +247,6 @@ TSectorEditDialog::TSectorEditDialog (TWindow* parent, SelPtr sel,
 //
 TSectorEditDialog::~TSectorEditDialog ()
 {
-	delete[] SlopeVertexList;
 	Destroy();
 }
 
@@ -405,46 +402,30 @@ void TSectorEditDialog::SetVertexLists()
 	 used[v] = TRUE;
    }
 
-   NumSlopeVertexes = 0;
-   SlopeVertexList = new SHORT[NumVertexes];
-   for (v = 0; v < NumVertexes; v++)
-      if (used[v])
-	 SlopeVertexList[NumSlopeVertexes++] = (SHORT)v;
-   delete[] used;
-
+   // First entry means "no vertex"
    for (i = 0; i < 3; i++)
    {
       pSlopeFloorVertex[i]->AddString ("-");
       pSlopeCeilingVertex[i]->AddString ("-");
    }
-   for (v = 0; v < NumSlopeVertexes; v++)
+   for (v = 0; v < NumVertexes; v++)
    {
-      wsprintf (str, "%d", SlopeVertexList[v]);
+      if (!used[v])
+	 continue;
+      wsprintf (str, "%d", v);
       for (i = 0; i < 3; i++)
       {
 	 pSlopeFloorVertex[i]->AddString (str);
 	 pSlopeCeilingVertex[i]->AddString (str);
       }
    }
+   delete[] used;
+
    for (i = 0; i < 3; i++)
    {
       pSlopeFloorVertex[i]->SetSelIndex (0);
       pSlopeCeilingVertex[i]->SetSelIndex (0);
    }
-}
-
-
-//////////////////////////////////////////////////////////////////////
-// TSectorEditDialog
-// -----------------
-// Return the dropdown index for a vertex number (0 = the "-" entry).
-//
-int TSectorEditDialog::SlopeVertexIndex (SHORT vertex)
-{
-   for (int i = 0; i < NumSlopeVertexes; i++)
-      if (SlopeVertexList[i] == vertex)
-	 return i + 1;
-   return 0;
 }
 
 
@@ -573,7 +554,8 @@ void TSectorEditDialog::SetSector()
    {
       for (i=0; i < 3; i++)
       {
-	 pSlopeFloorVertex[i]->SetSelIndex (SlopeVertexIndex (CurSector.floor_slope.points[i].vertex));
+	 wsprintf (str, "%d", CurSector.floor_slope.points[i].vertex);
+	 pSlopeFloorVertex[i]->SetText (str);
 	 wsprintf (str, "%d", CurSector.floor_slope.points[i].z);
 	 pSlopeFloorHeight[i]->SetText (str);
       }
@@ -586,7 +568,8 @@ void TSectorEditDialog::SetSector()
    {
       for (i=0; i < 3; i++)
       {
-	 pSlopeCeilingVertex[i]->SetSelIndex (SlopeVertexIndex (CurSector.ceiling_slope.points[i].vertex));
+	 wsprintf (str, "%d", CurSector.ceiling_slope.points[i].vertex);
+	 pSlopeCeilingVertex[i]->SetText (str);
 	 wsprintf (str, "%d", CurSector.ceiling_slope.points[i].z);
 	 pSlopeCeilingHeight[i]->SetText (str);
       }
@@ -697,10 +680,10 @@ BOOL TSectorEditDialog::GetSector()
    // Get slope info
    for (i=0; i < 3; i++)
    {
-      int sel = pSlopeFloorVertex[i]->GetSelIndex ();
-      if (sel <= 0)
+      pSlopeFloorVertex[i]->GetText (str, 6);
+      if (str[0] == 0 || strcmp (str, "-") == 0)
 	 vertex = -1;
-      else vertex = SlopeVertexList[sel - 1];
+      else vertex = atoi(str);
       if (vertex != CurSector.floor_slope.points[i].vertex)
 	 ConfirmData.pSlopeCheck = TRUE;
       CurSector.floor_slope.points[i].vertex = vertex;
@@ -715,10 +698,10 @@ BOOL TSectorEditDialog::GetSector()
    }   
    for (i=0; i < 3; i++)
    {
-      int sel = pSlopeCeilingVertex[i]->GetSelIndex ();
-      if (sel <= 0)
+      pSlopeCeilingVertex[i]->GetText (str, 6);
+      if (str[0] == 0 || strcmp (str, "-") == 0)
 	 vertex = -1;
-      else vertex = SlopeVertexList[sel - 1];
+      else vertex = atoi(str);
       if (vertex != CurSector.ceiling_slope.points[i].vertex)
 	 ConfirmData.pSlopeCheck = TRUE;
       CurSector.ceiling_slope.points[i].vertex = vertex;

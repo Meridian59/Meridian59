@@ -345,7 +345,7 @@ admin_table_type admin_setacco_table[] =
 	{ AdminSetAccountCredits,  {I,I,N}, false, A, NULL, 0, "credits",
 	"Set an account's number of credits--use Add Account Credit instead" },
 	{ AdminSetAccountName,     {I,R,N}, false, A|M, NULL, 0, "name",
-		"Set account name by account number and password" },
+		"Set account name by account number and name" },
 	{ AdminSetAccountObject,   {I,I,N}, false, A|M, NULL, 0, "object",
 	"Set an object to be the game object for an account, i.e., a character" },
 	{ AdminSetAccountPassword, {I,S,N}, false,A|M, NULL, 0, "password",

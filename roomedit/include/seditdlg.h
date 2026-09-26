@@ -79,14 +79,11 @@ private:
 	char TextureName[MAX_BITMAPNAME + 1];
 	SelPtr SelSectors;
 	TConfirmSectorDialogXfer ConfirmData;
-	SHORT *SlopeVertexList;	// Vertices on this sector's boundary
-	int NumSlopeVertexes;
 
 protected:
 	void SetTextureList();
 	void SetSectorList();
 	void SetVertexLists();
-	int SlopeVertexIndex (SHORT vertex);
 	void SetSector();
         BOOL GetSector();
 	BOOL IsPointInDlgItem (int itemId, TPoint &clientPoint);

@@ -65,6 +65,17 @@ static char colorinfo_default[][COLOR_STR_LEN] = {
 	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY    - purple */
 	{ "252,128,0"},	    /* COLOR_ITEM_TEXT_UNIDENTIFIED - orange */
 	{ "255,0,0"},	    /* COLOR_ITEM_TEXT_CURSED       - red    */
+	// The values below are not used and are placeholders.  A theme may draw custom
+	// stat bars.  The default theme does not, but the count needs to be the same.
+	// The fill and limit placeholders are green and dark red to match the other
+	// default bars.  The frame placeholder is black.
+	{ "0,128,0"},       /* COLOR_HEALTHBAR    */
+	{ "128,0,0"},       /* COLOR_HEALTHLIMIT  */
+	{ "0,128,0"},       /* COLOR_MANABAR      */
+	{ "128,0,0"},       /* COLOR_MANALIMIT    */
+	{ "0,128,0"},       /* COLOR_VIGORBAR     */
+	{ "128,0,0"},       /* COLOR_VIGORLIMIT   */
+	{ "0,0,0"},         /* COLOR_STATBARFRAME */
 };
 
 // Dark theme.
@@ -87,10 +98,10 @@ static char colorinfo_dark[][COLOR_STR_LEN] = {
 	{ "50,50,53"},      /* COLOR_RMMSGBGD */
 	{ "212,212,212"},   /* COLOR_STATSFGD */
 	{ "50,50,53"},      /* COLOR_STATSBGD */
-	{ "0,128,0"},       /* COLOR_BAR1 - bar fill (health/mana/vigor) */
-	{ "128,0,0"},       /* COLOR_BAR2 - limit/damage bar */
-	{ "48,0,0"},        /* COLOR_BAR3 - bar background */
-	{ "255,255,255"},   /* COLOR_BAR4 - bar numbers */
+	{ "25,135,84"},     /* COLOR_BAR1 - bar fill - green */
+	{ "132,32,41"},     /* COLOR_BAR2 - limit bar - dark red */
+	{ "33,37,41"},      /* COLOR_BAR3 - bar background - very dark grey */
+	{ "222,226,230"},   /* COLOR_BAR4 - bar numbers - near white */
 	{ "180,180,180"},   /* COLOR_INVNUMFGD */
 	{ "50,50,53"},      /* COLOR_INVNUMBGD */
 	{ "141,242,242"},   /* COLOR_ITEM_TEXT_UNCOMMON */
@@ -98,6 +109,13 @@ static char colorinfo_dark[][COLOR_STR_LEN] = {
 	{ "255,0,255"},     /* COLOR_ITEM_TEXT_LEGENDARY */
 	{ "252,128,0"},     /* COLOR_ITEM_TEXT_UNIDENTIFIED */
 	{ "255,0,0"},       /* COLOR_ITEM_TEXT_CURSED */
+	{ "220,53,69"},     /* COLOR_HEALTHBAR    - red */
+	{ "88,21,28"},      /* COLOR_HEALTHLIMIT  - dim red */
+	{ "13,110,253"},    /* COLOR_MANABAR      - blue */
+	{ "5,44,101"},      /* COLOR_MANALIMIT    - dim blue */
+	{ "255,193,7"},     /* COLOR_VIGORBAR     - gold */
+	{ "102,77,3"},      /* COLOR_VIGORLIMIT   - dim gold */
+	{ "0,0,0"},         /* COLOR_STATBARFRAME - black */
 };
 
 // INI section names; one section per theme.
@@ -106,7 +124,7 @@ static char color_section_dark[]    = "ColorsDark";
 static char INIColorVersion[]       = "ColorVersion";
 
 // Bump when default values for any color change.
-static const int THEME_COLOR_VERSION = 7;
+static const int THEME_COLOR_VERSION = 12;
 
 // Returns the INI section name for the active theme.
 static char *ColorSectionForTheme(Theme theme)
@@ -352,6 +370,19 @@ COLORREF ThemeMenuBarColor(void)
  *   for the light style (dark text on a light background).
  */
 bool ThemeUsesDarkTitleBar(void)
+{
+	switch (ThemeCurrent())
+	{
+	case Theme::Dark: return true;
+	default:          return false;
+	}
+}
+/************************************************************************/
+/*
+ * ThemeUsesCustomStatBars:  Returns true when the active theme draws its
+ *   own custom stat bars in place of the default bars.
+ */
+bool ThemeUsesCustomStatBars(void)
 {
 	switch (ThemeCurrent())
 	{

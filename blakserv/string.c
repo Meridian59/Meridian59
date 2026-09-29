@@ -69,6 +69,12 @@ int AllocateString()
       strings = (string_node *)
 	 ResizeMemory(MALLOC_ID_STRING,strings,old_strings*sizeof(string_node),
 		      max_strings*sizeof(string_node));      
+      if (strings == NULL)
+      {
+	 eprintf("AllocateString out of memory growing to %i string nodes\n",max_strings);
+	 FlushDefaultChannels();
+	 FatalError("String array allocation failed");
+      }
       lprintf("AllocateStringNode resized to %i string nodes\n",max_strings);
    }
 

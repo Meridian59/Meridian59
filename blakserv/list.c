@@ -52,6 +52,12 @@ void ClearList(void)
 	list_nodes = (list_node *)
 		ResizeMemory(MALLOC_ID_LIST,list_nodes,old_nodes*sizeof(list_node),
 		max_nodes*sizeof(list_node));
+	if (list_nodes == NULL)
+	{
+		eprintf("ClearList out of memory resizing the list node array to %i nodes\n",max_nodes);
+		FlushDefaultChannels();
+		FatalError("List node array allocation failed");
+	}
 }
 
 int GetListNodesUsed(void)

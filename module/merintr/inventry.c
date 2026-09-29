@@ -68,6 +68,7 @@ static void     InventoryBuildCells(void);
 static InvItem *InventoryCellItem(int index);
 static int      InventoryCellIndex(InvItem *item);
 static void     InventoryRelayout(void);
+static void     InventoryDarkScrollbar(void);
 
 static HBRUSH	hbrushScrollBack;
 
@@ -188,6 +189,7 @@ void InventoryBoxCreate(HWND hParent)
 				WS_CHILD | SBS_VERT,
 				0, 0, 100, 100,  /* Make sure scrollbar drawn ok */
 				hwndInvDialog, (HMENU) IDC_INVSCROLL, hInst, NULL);
+   InventoryDarkScrollbar();
 
    inventory_scrollbar_width = GetSystemMetrics(SM_CXVSCROLL);
    num_items = 0;
@@ -654,27 +656,53 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
 	 stack_count = cells[index].count;
    }
    bool number_obj = IsNumberObj(item->obj->id);
+
+   // Draw border around area to clear previous cursor (if any)
+   if (!draw_cursor)
+   {
+      DrawWindowBackgroundBorder(&inventory_bkgnd, hdc, &obj_area, INVENTORY_OBJECT_BORDER,
+				 inventory_area.x + obj_area.x, inventory_area.y + obj_area.y, -1, NULL);
+
+      // thin dark frame per cell so the grid reads, light edge bottom/right
+      HBRUSH dark = CreateSolidBrush(RGB(26, 23, 20));
+      HBRUSH soft = CreateSolidBrush(RGB(58, 53, 46));
+      RECT outer = { area.x + 1, area.y + 1, area.x + INVENTORY_BOX_WIDTH - 1, area.y + INVENTORY_BOX_HEIGHT - 1 };
+      RECT bottom = { outer.left + 1, outer.bottom - 1, outer.right, outer.bottom };
+      RECT right = { outer.right - 1, outer.top + 1, outer.right, outer.bottom };
+      FrameRect(hdc, &outer, dark);
+      FillRect(hdc, &bottom, soft);
+      FillRect(hdc, &right, soft);
+      DeleteObject(dark);
+      DeleteObject(soft);
+   }
+
+   // amounts/stack counts go bottom right with an outline so they don't cover
+   // the icon and stay readable on any colour
    if ((number_obj || stack_count > 1) && cinfo->config->inventory_num)
    {
+      static HFONT count_font = NULL;
+      if (count_font == NULL)
+	 count_font = CreateFont(-10, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
+				 OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY,
+				 DEFAULT_PITCH, "Arial");
       if (number_obj)
 	 sprintf(temp, "%d", item->obj->amount);
       else
 	 sprintf(temp, "x%d", stack_count);
 
       SetBkMode(hdc, TRANSPARENT);
-      SelectObject(hdc, GetFont(FONT_STATNUM));
-
-      SetTextColor(hdc, GetColor(COLOR_INVNUMBGD));
-      TextOut(hdc, obj_area.x + 1, obj_area.y + 1, temp, (int) strlen(temp));
+      HFONT old_font = (HFONT) SelectObject(hdc, count_font);
+      RECT tr = { area.x + 2, area.y + 2, area.x + INVENTORY_BOX_WIDTH - 4, area.y + INVENTORY_BOX_HEIGHT - 3 };
+      SetTextColor(hdc, RGB(0, 0, 0));
+      for (int dx = -1; dx <= 1; dx++)
+	 for (int dy = -1; dy <= 1; dy++)
+	 {
+	    RECT o = { tr.left + dx, tr.top + dy, tr.right + dx, tr.bottom + dy };
+	    DrawText(hdc, temp, -1, &o, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+	 }
       SetTextColor(hdc, GetColor(COLOR_INVNUMFGD));
-      TextOut(hdc, obj_area.x, obj_area.y, temp, (int) strlen(temp));      
-   }
-
-   // Draw border around area to clear previous cursor (if any)
-   if (!draw_cursor)
-   {
-      DrawWindowBackgroundBorder(&inventory_bkgnd, hdc, &obj_area, INVENTORY_OBJECT_BORDER, 
-				 inventory_area.x + obj_area.x, inventory_area.y + obj_area.y, -1, NULL);
+      DrawText(hdc, temp, -1, &tr, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+      SelectObject(hdc, old_font);
    }
 
    if (cinfo->config->show_inventory_rarity)
@@ -1547,4 +1575,141 @@ static void InventoryRelayout(void)
       InventoryDisplayScrollbar();
    InventoryScrollRange();
    InventoryRedraw();
+}
+
+/************************************************************************/
+/*
+ * Dark scrollbar: we paint the inventory scrollbar ourselves (black track,
+ * grey thumb) and turn clicks/drags into the normal WM_VSCROLL messages.
+ * DarkScrollbar=0 under [Interface] keeps the normal Windows one.
+ */
+static WNDPROC scroll_old_proc = NULL;
+static bool    scroll_dragging = false;
+static int     scroll_drag_offset = 0;
+
+static bool ScrollThumb(HWND hwnd, RECT *thumb, SCROLLINFO *si)
+{
+   RECT rc;
+   GetClientRect(hwnd, &rc);
+   si->cbSize = sizeof(*si);
+   si->fMask = SIF_ALL;
+   CallWindowProc(scroll_old_proc, hwnd, SBM_GETSCROLLINFO, 0, (LPARAM) si);
+   int range = si->nMax - si->nMin + 1;
+   if (range <= 0 || (int) si->nPage >= range)
+      return false;
+   int track = rc.bottom - 4;
+   int th = std::max(18, (int) (track * (int) si->nPage / range));
+   int maxpos = std::max(1, range - (int) si->nPage);
+   int ty = 2 + (track - th) * (si->nPos - si->nMin) / maxpos;
+   thumb->left = 2;
+   thumb->right = rc.right - 2;
+   thumb->top = ty;
+   thumb->bottom = ty + th;
+   return true;
+}
+
+static void ScrollSend(HWND hwnd, int code, int pos)
+{
+   SendMessage(GetParent(hwnd), WM_VSCROLL, MAKEWPARAM(code, pos), (LPARAM) hwnd);
+}
+
+static LRESULT CALLBACK DarkScrollProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+   switch (msg)
+   {
+   case WM_ERASEBKGND:
+      return 1;
+
+   case WM_PAINT:
+   {
+      PAINTSTRUCT ps;
+      HDC hdc = BeginPaint(hwnd, &ps);
+      RECT rc, t;
+      SCROLLINFO si;
+      GetClientRect(hwnd, &rc);
+      HBRUSH black = CreateSolidBrush(RGB(6, 6, 6));
+      FillRect(hdc, &rc, black);
+      DeleteObject(black);
+      if (ScrollThumb(hwnd, &t, &si))
+      {
+         HBRUSH thumb = CreateSolidBrush(scroll_dragging ? RGB(92, 86, 78) : RGB(62, 58, 54));
+         FillRect(hdc, &t, thumb);
+         DeleteObject(thumb);
+         HBRUSH edge = CreateSolidBrush(RGB(24, 22, 20));
+         FrameRect(hdc, &t, edge);
+         DeleteObject(edge);
+      }
+      EndPaint(hwnd, &ps);
+      return 0;
+   }
+
+   case WM_LBUTTONDOWN:
+   case WM_LBUTTONDBLCLK:
+   {
+      RECT t;
+      SCROLLINFO si;
+      int y = GET_Y_LPARAM(lParam);
+      if (!ScrollThumb(hwnd, &t, &si))
+         return 0;
+      if (y >= t.top && y < t.bottom)
+      {
+         scroll_dragging = true;
+         scroll_drag_offset = y - t.top;
+         SetCapture(hwnd);
+         InvalidateRect(hwnd, NULL, FALSE);
+      }
+      else
+         ScrollSend(hwnd, y < t.top ? SB_PAGEUP : SB_PAGEDOWN, 0);
+      return 0;
+   }
+
+   case WM_MOUSEMOVE:
+      if (scroll_dragging)
+      {
+         RECT rc, t;
+         SCROLLINFO si;
+         GetClientRect(hwnd, &rc);
+         if (ScrollThumb(hwnd, &t, &si))
+         {
+            int track = rc.bottom - 4, th = t.bottom - t.top;
+            int range = si.nMax - si.nMin + 1, maxpos = std::max(0, range - (int) si.nPage);
+            int ty = GET_Y_LPARAM(lParam) - scroll_drag_offset - 2;
+            int pos = (track - th > 0) ? si.nMin + (ty * maxpos + (track - th) / 2) / (track - th) : si.nMin;
+            pos = std::clamp(pos, si.nMin, si.nMin + maxpos);
+            if (pos != si.nPos)
+               ScrollSend(hwnd, SB_THUMBTRACK, pos);
+         }
+      }
+      return 0;
+
+   case WM_LBUTTONUP:
+      if (scroll_dragging)
+      {
+         scroll_dragging = false;
+         ReleaseCapture();
+         InvalidateRect(hwnd, NULL, FALSE);
+      }
+      return 0;
+
+   case SBM_SETPOS:
+   case SBM_SETRANGE:
+   case SBM_SETRANGEREDRAW:
+   case SBM_SETSCROLLINFO:
+   {
+      LRESULT r = CallWindowProc(scroll_old_proc, hwnd, msg, wParam, lParam);
+      InvalidateRect(hwnd, NULL, FALSE);
+      UpdateWindow(hwnd);
+      return r;
+   }
+   }
+   return CallWindowProc(scroll_old_proc, hwnd, msg, wParam, lParam);
+}
+
+static void InventoryDarkScrollbar(void)
+{
+   if (hwndInvScroll == NULL)
+      return;
+   if (GetPrivateProfileInt("Interface", "DarkScrollbar", 1, cinfo->ini_file) == 0)
+      return;
+   scroll_old_proc = (WNDPROC) SetWindowLongPtr(hwndInvScroll, GWLP_WNDPROC, (LONG_PTR) DarkScrollProc);
 }

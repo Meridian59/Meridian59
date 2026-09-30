@@ -71,15 +71,14 @@ messages:
       return;
    }
 
-   CastSpell(who = $,iSpellPower= 0,ltargets=$)
+   InitializeEnchantmentState(target=$, iSpellpower=0)
    {
-      Send(First(lTargets),@AddAttackModifier,#what=self);       
+      % Add attack modifier here, after parent class confirms target is valid.
+      if target <> $
+      {
+         Send(target,@AddAttackModifier,#what=self);
+      }
 
-      propagate;
-   }
-
-   InitializeEnchantmentState(iSpellpower=$)
-   {
       return iSpellpower;
    }
 

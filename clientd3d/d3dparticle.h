@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -25,16 +25,17 @@ struct particle
 	custom_bgra	bgra;
 	// If false, the particle isn't included in the rendering.
 	bool		isActive;
-	int			timeLeft;
+	float		timeLeft_s;
 };
 
 struct emitter
 {
 	int			numParticles;
 	int			nextSlot;
-	int			particleLifetime;
-	int			timer;
-	int			timerBase;
+
+	float		particleLifetime_s;
+	float		timer_s;
+	float		timerBase_s;
 
 	// The world position of the emitter.
 	custom_xyz	position;
@@ -65,7 +66,7 @@ struct particle_system
 // Prototypes //
 ////////////////
 void	D3DParticleSystemClear(particle_system *pParticleSystem);
-emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int time);
+emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, float time);
 void	D3DParticleEmitterUpdate(emitter *pEmitter, custom_xyz deltaPosition);
 void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem);

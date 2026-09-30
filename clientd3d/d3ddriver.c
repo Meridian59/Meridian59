@@ -111,27 +111,42 @@ bool D3DDriverProfileInit(void)
 	gPresentParam.MultiSampleType = D3DMULTISAMPLE_NONE;
 	gPresentParam.MultiSampleQuality = 0;
 
-	// Push the quality up even higher with multisampling
-	if (!config.gpuEfficiency)
+	// Probing costs a driver round trip per level, so only ask when the player wants it.
+	if (config.multisampleAntialiasing)
 	{
-		// Test for multisample support
-		HRESULT hr;
-		DWORD maxQualityLevels = 0;
+		// Both the render target and the depth stencil must support the level, or
+		// device creation fails and the client falls back to the software renderer.
+		static const D3DMULTISAMPLE_TYPE sampleTypesByPreference[] = {
+			D3DMULTISAMPLE_8_SAMPLES, D3DMULTISAMPLE_4_SAMPLES, D3DMULTISAMPLE_2_SAMPLES };
 
-		hr = IDirect3D9_CheckDeviceMultiSampleType(
-			gpD3D,
-			D3DADAPTER_DEFAULT,
-			D3DDEVTYPE_HAL,
-			gPresentParam.BackBufferFormat,
-			gPresentParam.Windowed,
-			D3DMULTISAMPLE_16_SAMPLES,
-			&maxQualityLevels);
+		for (auto sampleType : sampleTypesByPreference)
+		{
+			DWORD colorQualityLevels = 0;
+			HRESULT colorSupported = IDirect3D9_CheckDeviceMultiSampleType(gpD3D, D3DADAPTER_DEFAULT,
+				D3DDEVTYPE_HAL, gPresentParam.BackBufferFormat, gPresentParam.Windowed,
+				sampleType, &colorQualityLevels);
 
-		if (SUCCEEDED(hr)) {
-			gPresentParam.MultiSampleType = D3DMULTISAMPLE_16_SAMPLES;
-			gPresentParam.MultiSampleQuality = maxQualityLevels - 1;
+			DWORD depthQualityLevels = 0;
+			HRESULT depthSupported = IDirect3D9_CheckDeviceMultiSampleType(gpD3D, D3DADAPTER_DEFAULT,
+				D3DDEVTYPE_HAL, gPresentParam.AutoDepthStencilFormat, gPresentParam.Windowed,
+				sampleType, &depthQualityLevels);
+
+			fprintf(pFile, "Multisample %d samples:  color 0x%08lx, depth 0x%08lx\n",
+				static_cast<int>(sampleType), colorSupported, depthSupported);
+
+			// Quality level 0 is always valid for a supported type and is the cheapest.
+			if (SUCCEEDED(colorSupported) && SUCCEEDED(depthSupported))
+			{
+				gPresentParam.MultiSampleType = sampleType;
+				break;
+			}
 		}
 	}
+
+	// The multisample type is the sample count, so 0 means no antialiasing.
+	fprintf(pFile, "Requesting device:  %d x %d, %d multisample samples, quality level %lu\n",
+		gScreenWidth, gScreenHeight, static_cast<int>(gPresentParam.MultiSampleType),
+		gPresentParam.MultiSampleQuality);
 
 	// first try hardware vertex processing
 	error = IDirect3D9_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
@@ -177,7 +192,7 @@ bool D3DDriverProfileInit(void)
 	IDirect3D9_GetAdapterIdentifier(gpD3D, D3DADAPTER_DEFAULT, 0,
                                    &gD3DDriverProfile.adapterID);
 
-	fprintf(pFile, "Video Hardware Detected\nDriver:  %s\nDescription:  %s\nProduct:  %d\nVersion:  %d\nSubversion:  %d\nBuild:  %d\nGUID:  %x, %x, %x, %s\n",
+	fprintf(pFile, "Video Hardware Detected\nDriver:  %s\nDescription:  %s\nProduct:  %d\nVersion:  %d\nSubversion:  %d\nBuild:  %d\nGUID:  %08lx-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x\n",
 		gD3DDriverProfile.adapterID.Driver,
 		gD3DDriverProfile.adapterID.Description,
 		HIWORD(gD3DDriverProfile.adapterID.DriverVersion.HighPart),
@@ -187,7 +202,14 @@ bool D3DDriverProfileInit(void)
 		gD3DDriverProfile.adapterID.DeviceIdentifier.Data1,
 		gD3DDriverProfile.adapterID.DeviceIdentifier.Data2,
 		gD3DDriverProfile.adapterID.DeviceIdentifier.Data3,
-		gD3DDriverProfile.adapterID.DeviceIdentifier.Data4);
+		gD3DDriverProfile.adapterID.DeviceIdentifier.Data4[0],
+		gD3DDriverProfile.adapterID.DeviceIdentifier.Data4[1],
+		gD3DDriverProfile.adapterID.DeviceIdentifier.Data4[2],
+		gD3DDriverProfile.adapterID.DeviceIdentifier.Data4[3],
+		gD3DDriverProfile.adapterID.DeviceIdentifier.Data4[4],
+		gD3DDriverProfile.adapterID.DeviceIdentifier.Data4[5],
+		gD3DDriverProfile.adapterID.DeviceIdentifier.Data4[6],
+		gD3DDriverProfile.adapterID.DeviceIdentifier.Data4[7]);
 
 	if ((gD3DDriverProfile.d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) == 0)
 	{

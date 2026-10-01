@@ -179,6 +179,7 @@ static void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
 	pChunk->flags = 0;
 	pChunk->zBias = 0;
 	pChunk->isTargeted = FALSE;
+	pChunk->isGlowing = false;
 	pChunk->numIndices = 0;
 	pChunk->xLat0 = 0;
 	pChunk->xLat1 = 0;

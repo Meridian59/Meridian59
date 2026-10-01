@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -29,6 +29,9 @@ M59EXPORT char *GetString(HINSTANCE hModule, ID idnum);
 void MissingResource(void);
 void DeleteRscFiles(list_type files);
 void DeleteAllRscFiles(void);
+
+// Returns resource ID for a given filename, or 0 if not found.
+ID LookupRscIDByFilename(const char *filename);
 
 M59EXPORT char *LookupRsc(ID idnum);
 M59EXPORT char *LookupNameRsc(ID idnum);

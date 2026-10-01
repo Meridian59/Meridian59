@@ -1,10 +1,10 @@
 # Mace - FP attacking
 5
-macpovA.bmp  
-macpovB.bmp 
-macpovC.bmp
-macpovD.bmp  
-macpovH.bmp  
+macpovA.bmp   [0, 0] :1    -21 [21, 234]
+macpovB.bmp   [0, 0] :1    -21 [27, 73]
+macpovC.bmp   [0, 0] :1    -21 [29, 209]
+macpovD.bmp   [0, 0]
+macpovH.bmp   [0, 0]
 5
  1      1
  1      2

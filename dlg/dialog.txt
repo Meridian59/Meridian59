@@ -8165,16 +8165,16 @@ send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "You know
 send o 0 speechlibtrigger who class TosInnKeeper trigger q RYCKSHER
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Is my little brother in trouble again? Ever since I got him the job working in the Duke's Banquet Room, he's been nothing but trouble."
 
-send o 0 speechlibtrigger who class TosInnKeeper mood int LIBRES_MOOD_BAD trigger q sacriligious path. Embrace nature
+send o 0 speechlibtrigger who class TosInnKeeper mood int LIBRES_MOOD_BAD trigger q sacrilegious path. Embrace nature
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock yells, "Get the hell out of here, you nature freak!"
 
-send o 0 speechlibtrigger who class TosInnKeeper mood int LIBRES_MOOD_BAD trigger q sacriligious path. Embrace nature
+send o 0 speechlibtrigger who class TosInnKeeper mood int LIBRES_MOOD_BAD trigger q sacrilegious path. Embrace nature
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock yells, "Would somebody get that tree-hugger out of here."
 
-send o 0 speechlibtrigger who class TosInnKeeper mood int LIBRES_MOOD_GOOD trigger q sacriligious path. Embrace nature
+send o 0 speechlibtrigger who class TosInnKeeper mood int LIBRES_MOOD_GOOD trigger q sacrilegious path. Embrace nature
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock sighs, "Here we go again."
 
-send o 0 speechlibtrigger who class TosInnKeeper mood int LIBRES_MOOD_NEUTRAL trigger q sacriligious path. Embrace nature
+send o 0 speechlibtrigger who class TosInnKeeper mood int LIBRES_MOOD_NEUTRAL trigger q sacrilegious path. Embrace nature
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Oh, for the love of Shal'ille, go someplace else, %NAME! I'm sick of you fanatics."
 
 send o 0 speechlibtrigger who class TosInnKeeper trigger q TOS

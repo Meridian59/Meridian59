@@ -19,8 +19,8 @@ resources:
    room_jasperAB3 = jasab3.roo
    room_name_JasperAB3 = "Old Schoolhouse"
 
-   JasperAB3_Necro_book_name = "The Journal of Seargant Doran"
-   JasperAB3_Necro_book_text = "\n\n\n\n\n\n\n\n\n\nThe Journal of Seargant Doran,\n"
+   JasperAB3_Necro_book_name = "The Journal of Sergeant Doran"
+   JasperAB3_Necro_book_text = "\n\n\n\n\n\n\n\n\n\nThe Journal of Sergeant Doran,\n"
       "reconnaissance specialist for the army of Tos\n\n\n\n\n\n\n\n\n\n\n"
 	   "\xB6"
       "The army of Brax is indeed swelling for an offensive as we had feared.  Every week "

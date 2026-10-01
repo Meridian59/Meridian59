@@ -67,6 +67,9 @@ int MainThemeResourceId(int id);
 M59EXPORT COLORREF ThemeBorderColor(void);
 COLORREF ThemeMenuBarColor(void);
 bool ThemeUsesDarkTitleBar(void);
+M59EXPORT bool ThemeColorsDialogs(void);
+void ThemeApplyTitleBar(HWND hwnd);
+M59EXPORT void ThemeApplyDialogTitleBar(HWND hwnd);
 COLORREF GetPlayerNameColor(int flags,const char*name);
 
 void UserSelectColor(WORD color);

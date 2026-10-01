@@ -39,6 +39,7 @@ INT_PTR CALLBACK SendOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPA
       hSendOfferDlg = hDlg;
 
       CenterWindow(hDlg, hMain);
+      ThemeApplyDialogTitleBar(hDlg);
 
       hwndSend = GetDlgItem(hDlg, IDC_OFFERSEND);
       hwndReceive = GetDlgItem(hDlg, IDC_OFFERRECEIVE);
@@ -168,6 +169,7 @@ INT_PTR CALLBACK RcvOfferDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    {
    case WM_INITDIALOG:
       CenterWindow(hDlg, hMain);
+      ThemeApplyDialogTitleBar(hDlg);
 
       hwndSend = GetDlgItem(hDlg, IDC_OFFERSEND);
       hwndReceive = GetDlgItem(hDlg, IDC_OFFERRECEIVE);

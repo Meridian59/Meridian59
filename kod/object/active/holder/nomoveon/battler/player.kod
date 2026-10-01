@@ -144,6 +144,12 @@ resources:
    player_improve_maxhealth = "~I~BYou suddenly feel a little tougher."
    player_improve_health_invigorate = "~I~BYou are invigorated by your success."
    player_spits = "You spit on the corpse of your unworthy foe."
+   % Shown after killing a creature whose level is too low to train the
+   % wielded weapon's proficiency any further.  %s is the proficiency name
+   % (e.g. "fencing").
+   player_weapon_prof_capped = \
+      "~IYou feel you've learned all you can about %s from fighting foes this "
+      "weak.  You should seek tougher opponents."
    player_regain_angel = \
       "Due to your weakness, your protective guardian angel returns."
    player_no_angel = "You suddenly feel more vulnerable."
@@ -7709,17 +7715,69 @@ messages:
          if what = self
          {
             Send(self,@AdvancementCheck,#what=victim,#killing_blow=TRUE);
+            Send(self,@NotifyWeaponProficiencyCapped,#victim=victim);
          }
          else
          {
             Send(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE);
          }
-         
+
          poKill_target=$;
          Send(self,@ResetGainFlags);
       }
       
       propagate;
+   }
+
+   NotifyWeaponProficiencyCapped(victim=$)
+   "If the wielded weapon's proficiency can no longer improve from a creature "
+   "this weak, occasionally remind the player to seek tougher opponents.  "
+   "Purely informative, like the spit-on-corpse message."
+   {
+      local oWeapon, iProfNum, iAbility, oSkill;
+
+      % Occasional reminder, like the spit-on-corpse message, rather than on
+      % every weak kill.
+      if random(1,100) >= 10
+      {
+         return;
+      }
+
+      % Only meaningful on creatures you can actually advance on (skip
+      % revenants, illusions, etc) and while wielding a weapon.
+      if NOT Send(victim,@CanPlayerAdvanceOnMe)
+      {
+         return;
+      }
+
+      oWeapon = Send(self,@LookupPlayerWeapon);
+      if oWeapon = $
+      {
+         return;
+      }
+
+      iProfNum = Send(oWeapon,@GetProfNumber);
+      iAbility = Send(self,@GetSkillAbility,#skill_num=iProfNum);
+
+      % A weapon proficiency improves only against creatures whose level
+      % exceeds the current ability (see Stroke ImproveStroke).  At 99 it is
+      % effectively maxed, so no creature would help and there's nothing to say.
+      if iAbility >= 99
+         OR iAbility < Send(victim,@GetLevel)
+      {
+         return;
+      }
+
+      oSkill = Send(SYS,@FindSkillByNum,#num=iProfNum);
+      if oSkill = $
+      {
+         return;
+      }
+
+      Send(self,@MsgSendUser,#message_rsc=player_weapon_prof_capped,
+           #parm1=Send(oSkill,@GetName));
+
+      return;
    }
 
    ResetGainFlags()
@@ -7782,21 +7840,20 @@ messages:
          }
          else
          {
-            % Monster was equal or close to player level.  Small bonus,
-            %  no roll chance.
+            % Monster was equal to or below the player's HP.  One within 5 HP
+            % still adds a small amount toward a future gain (no roll chance).
             if (monster_level + 5) > piBase_Max_health
-               AND IsClass(what,&monster) AND killing_blow 
+               AND IsClass(what,&monster) AND killing_blow
                AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                gain = 1;
             }
-            else
+
+            % A creature at or below your own HP can no longer toughen you, so
+            % occasionally spit on it regardless of any small bonus above.
+            if random(1,100) < 10 AND killing_blow
             {
-               % Monster was too easy for player to kill!
-               if random(1,100) < 10 AND killing_blow
-               {
-                  Send(self,@MsgSendUser,#message_rsc=player_spits);
-               }
+               Send(self,@MsgSendUser,#message_rsc=player_spits);
             }
          }
 

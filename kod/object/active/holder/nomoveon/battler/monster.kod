@@ -904,7 +904,7 @@ messages:
    "If we're not fighting, and the person is right near us, lets reset our "
    "timers so we dont attack unless we're attacked for the first few seconds "
    "This means that chasing mobs will get reset too, but we dont want em to "
-   "hit someome in a room transition."
+   "hit someone in a room transition."
    {
       local oQuestNode;
 

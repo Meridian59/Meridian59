@@ -83,7 +83,7 @@ resources:
 
    guildshield_slash = " tierced in bend sinister by "
    guildshield_half = " astride "
-   guildshield_horiz = " tierced in feld by "
+   guildshield_horiz = " tierced in fess by "
    guildshield_checker = " quartered with "
 
    guildshield_heraldry_known = ": the mark of the "

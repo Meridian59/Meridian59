@@ -33,7 +33,7 @@ resources:
 
    unholyweapon_spell_intro = "Qor Lv. 2: Dedicates your weapon to Qor, enhancing its effectiveness against the holy."
 
-   unholyweapon_lable_rsc = "suplicant of Qor."
+   unholyweapon_lable_rsc = "supplicant of Qor."
 
 classvars:
 

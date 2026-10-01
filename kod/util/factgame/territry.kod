@@ -35,7 +35,7 @@ resources:
    TerritoryGame_Marion = "Marion"
    TerritoryGame_CorNoth = "Cor Noth"
 
-   TerritoryGame_lost_hometown = "~IHaving lost %s home city, %s reluinquishes all claimed territories."
+   TerritoryGame_lost_hometown = "~IHaving lost %s home city, %s relinquishes all claimed territories."
    TerritoryGame_her = "her"
    TerritoryGame_his = "his"
    TerritoryGame_their = "their"

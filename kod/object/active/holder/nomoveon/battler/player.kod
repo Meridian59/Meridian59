@@ -5520,7 +5520,7 @@ messages:
 
    ChooseArmorPosition()
    "Defense now chooses a body place at random, and checks to see if the "
-   "defender has any defense value there.  Much better than rendom pattern "
+   "defender has any defense value there.  Much better than random pattern "
    "of previous combat."
    {
       local rand, armor_pos;

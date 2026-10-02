@@ -52,8 +52,6 @@ messages:
 
    NewOwner(what = $)
    {
-      % Check if the new owner isn't 'nil' before testing if it was dropped in a valid room.
-      % Otherwise an error occurs if attempting room checks on 'nil'.
       if what <> $
          AND IsClass(what,&Room)
          AND NOT Send(what,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)

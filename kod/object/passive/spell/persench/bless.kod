@@ -29,7 +29,7 @@ resources:
    bless_success_rsc = "Kraanan fills %s%s with the spirit of battle."
 
    bless_spell_intro = \
-      "Kraanan Lv. 2: Bestows the Warrior God's blessing, improving your"
+      "Kraanan Lv. 2: Bestows the Warrior God's blessing, improving your "
       "combat abilities."
 
 classvars:

@@ -133,6 +133,7 @@ messages:
               #state=Send(self,@BuildState,#thisVolume=thisVolume,#who=who,
                           #iSpellPower=iSpellPower),
               #time=viDrainTime,#iSpellPower=iSpellPower,#lastcall=FALSE);
+         Send(self,@StartRoomEffects,#oRoom=oRoom);
          Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=jala_song_starts,
               #what=self);
          Send(self,@StartMusic,#oCaster=who,#rMusic=prMusic);
@@ -146,6 +147,12 @@ messages:
    BuildState(thisVolume=0,who=$,iSpellPower=0)
    {
       return [thisVolume,who,iSpellPower];
+   }
+
+   StartRoomEffects(oRoom=$)
+   "Starts the song's effects on the room itself, such as room flags."
+   {
+      return;
    }
 
    BreakTrance(who=$, state=$, event=$, castwhat=$, location=$, usewhat=$)

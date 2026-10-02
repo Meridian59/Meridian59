@@ -86,6 +86,8 @@ messages:
          % For some reason, the client is Sending a null list if you
          %  target a number item with a spell.  for now, assume it's bad.
          Send(who,@MsgSendUser,#message_rsc=apparition_fizzle);
+
+         return FALSE;
       }
 
       oRoom = Send(who,@GetOwner);
@@ -125,6 +127,14 @@ messages:
    {
       local oApparition, oRoom, iRow, iCol, iFine_Row, iFine_Col,
             lMonsList, i;
+
+      % The target may have left during the casting trance.
+      if lTargets = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=apparition_fizzle);
+
+         return;
+      }
 
       oRoom = Send(who,@GetOwner);
 

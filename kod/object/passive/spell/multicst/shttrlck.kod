@@ -28,7 +28,7 @@ resources:
 
    Shatterlock_safety = \
       "You must not have a guardian angel and must turn your safety OFF before "
-      "you cast this spell.  Note that you will marked as an outlaw as the result "
+      "you cast this spell.  Note that you will be marked as an outlaw as the result "
       "of casting this spell."
 
    Shatterlock_outlaw = \

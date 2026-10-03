@@ -48,10 +48,15 @@ static const int fps_window_size = 60;  // Number of fps values to consider in t
 static int average_fps = 0;
 typedef std::chrono::time_point<std::chrono::steady_clock> steady_clock_time_point;
 static steady_clock_time_point lastEndFrame;
+// Time at which the next frame is due, advanced by one frame period per
+// frame so that rounding and oversleep do not accumulate into drift.
+static steady_clock_time_point nextFrameTarget;
 // The clock to use for fps calculations - updating here will update throughout.
 static auto& chrono_time_now = std::chrono::steady_clock::now;
 
 static const int defaultMaxFps = 60;
+static const long long microsecondsPerSecond = 1000000;
+static const long long microsecondsPerMillisecond = 1000;
 
 /************************************************************************/
 /*
@@ -335,29 +340,41 @@ void RedrawForce(void)
    DrawRoom(hdc, view.x, view.y, &current_room, map);
 
    steady_clock_time_point endFrame = chrono_time_now();
-   std::chrono::duration<double> elapsedTime = endFrame - startFrame;
-   auto elapsedMicroseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsedTime).count();
-   auto elapsedMilliseconds = elapsedMicroseconds / 1000;
-   msDrawFrame = elapsedMilliseconds;
+   long long drawMicroseconds =
+      std::chrono::duration_cast<std::chrono::microseconds>(endFrame - startFrame).count();
+   msDrawFrame = static_cast<int>(drawMicroseconds / microsecondsPerMillisecond);
 
-   auto maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
-   fps = 1000 / std::max(1LL, elapsedMilliseconds);
-
-   if (maxFPS)
+   int maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
+   if (maxFPS > 0)
    {
-      if (fps > maxFPS)
-      {
-          // Clamp the fps to the maximum.
-          int msSleep = (1000 / maxFPS) - elapsedMilliseconds;
-          Sleep(msSleep);
+      std::chrono::microseconds framePeriod(microsecondsPerSecond / maxFPS);
 
-          // Reclaulate the fps following the sleep.
-          endFrame = chrono_time_now();
-          elapsedTime = (endFrame - lastEndFrame);
-          elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsedTime).count();
-          fps = 1000 / std::max(1LL, elapsedMilliseconds);
-      }
+      // Sleep until the time this frame was due, rather than for a fixed amount
+      // measured from now, so that a frame that runs long is paid for by the
+      // next one instead of pushing every later frame back by the same amount.
+      nextFrameTarget += framePeriod;
+      steady_clock_time_point now = chrono_time_now();
+      if (nextFrameTarget < now - framePeriod)
+         nextFrameTarget = now;  // More than a frame behind, so stop trying to catch up.
+
+      long long sleepMicroseconds =
+         std::chrono::duration_cast<std::chrono::microseconds>(nextFrameTarget - now).count();
+
+      // Round the wait down, because Sleep only expresses whole milliseconds and
+      // rounding up would overshoot the deadline every frame. The remainder is
+      // smaller than the message loop's own overhead, and the next target
+      // absorbs whatever is left.
+      if (sleepMicroseconds >= microsecondsPerMillisecond)
+         Sleep(static_cast<DWORD>(sleepMicroseconds / microsecondsPerMillisecond));
+
+      endFrame = chrono_time_now();
    }
+
+   long long frameMicroseconds =
+      std::chrono::duration_cast<std::chrono::microseconds>(endFrame - lastEndFrame).count();
+   fps = frameMicroseconds > 0
+      ? static_cast<int>((microsecondsPerSecond + frameMicroseconds / 2) / frameMicroseconds)
+      : 0;
 
    lastEndFrame = endFrame;
 
@@ -377,9 +394,9 @@ void RedrawForce(void)
 
         // Format and display the latest average fps value.
         RECT rc,lagBox;
-        double milliseconds = static_cast<double>(elapsedMicroseconds) / 1000.0;
+        double drawMilliseconds = static_cast<double>(drawMicroseconds) / microsecondsPerMillisecond;
         char buffer[32];
-        snprintf(buffer, sizeof(buffer), "FPS=%d (%.1fms)        ", average_fps, milliseconds);
+        snprintf(buffer, sizeof(buffer), "FPS=%d (%.1fms)        ", average_fps, drawMilliseconds);
         ZeroMemory(&rc,sizeof(rc));
 
         rc.bottom = DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);

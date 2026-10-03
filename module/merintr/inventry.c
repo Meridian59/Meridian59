@@ -14,6 +14,8 @@
 
 #include "client.h"
 #include "merintr.h"
+#include <string>
+#include <vector>
 
 static HWND hwndInvDialog;      /* Inventory modeless dialog */
 static HWND hwndInv;            /* Inventory button (main area) */
@@ -47,6 +49,23 @@ BYTE *inuse_bits;        // Bitmap for in-use highlight
 BYTE	*selftrgt_bits;
 
 static RawBitmap inventory_bkgnd;              // Background bitmap for inventory area
+
+// Stack identical items in the inventory view (same name + icon + rarity).
+// Display only - server inventory doesn't change.  Clicking a stack acts on
+// the first item in it.  Items in use never stack.
+// StackInventory=0 under [Interface] (config.stack_inventory) turns it off.
+struct InvCell {
+   InvItem *item;         // first item, the one actions go to
+   int      count;        // how many are in the stack
+   std::string key;       // empty = doesn't stack
+};
+static std::vector<InvCell> cells;             // what's drawn, in order
+static bool inventory_bulk_add = false;        // true while DisplayInventory adds everything
+
+static void     InventoryBuildCells(void);
+static InvItem *InventoryCellItem(int index);
+static int      InventoryCellIndex(InvItem *item);
+static void     InventoryRelayout(void);
 
 static HBRUSH	hbrushScrollBack;
 
@@ -118,7 +137,6 @@ static void InventoryDisplayScrollbar(void);
 static void InventoryScrollRange(void);
 static bool InventoryCompareIdItem(void *idnum, void *item);
 static void InventoryDrawSingleItem(InvItem *item, int row, int col);
-static void InventoryRedrawSingleItem(InvItem *item);
 static InvItem *InventoryGetCurrentItem(void);
 static ID   InventoryGetCurrentId(void);
 static bool InventoryItemVisible(int row, int col);
@@ -220,6 +238,7 @@ void InventoryBoxDestroy(void)
  */
 void InventoryResetData(void)
 {
+   cells.clear();   // cells point at items, clear before they're freed
    items = list_destroy(items);
 }
 /************************************************************************/
@@ -268,7 +287,8 @@ void InventoryDisplayScrollbar(void)
    ShowWindow(hwndInvDialog, SW_HIDE);  /* Hide scrollbar ugliness */
    ShowWindow(hwndInvScroll, SW_HIDE); 
 
-   has_scrollbar = (num_items > rows * cols);
+   InventoryBuildCells();
+   has_scrollbar = ((int) cells.size() > rows * cols);
 
    InventoryComputeRowsCols();
 
@@ -322,7 +342,7 @@ void InventoryScrollRange(void)
    /* Max is when last item is on bottom of list */
    if (cols != 0)
    {
-      int total_rows = (num_items + cols - 1) / cols;
+      int total_rows = ((int) cells.size() + cols - 1) / cols;
       SCROLLINFO si = { sizeof(si), SIF_RANGE | SIF_PAGE | SIF_POS };
       si.nMin  = 0;
       si.nMax  = total_rows - 1;
@@ -366,7 +386,7 @@ void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       break;
 
    case SB_BOTTOM:
-      new_top = (num_items + cols - 1) / cols - rows;
+      new_top = ((int) cells.size() + cols - 1) / cols - rows;
       break;
 
    case SB_TOP:
@@ -378,7 +398,7 @@ void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       return;
    }
    new_top = std::max(new_top, 0);
-   new_top = std::min(new_top, (num_items + cols - 1) / cols - rows);
+   new_top = std::min(new_top, ((int) cells.size() + cols - 1) / cols - rows);
 
    if (new_top != top_row)
    {
@@ -529,22 +549,15 @@ void InventoryRedraw(void)
 {
    InvItem *item;
    int i, offset, row, col;
-   list_type l;
    HDC hdc;
    RECT r;
 
    offset = top_row * cols;
-   l = items;
-   for (i=0; i < offset; i++)
-     if (l != NULL)
-       l = l->next;
-
-   for (i = 0; i + offset < num_items; i++)
+   for (i = 0; i + offset < (int) cells.size(); i++)
    {
-      if (l == NULL)
+      item = InventoryCellItem(i + offset);
+      if (item == NULL)
 	 break;
-
-      item = (InvItem *) (l->data);
 
       row = i / cols;
       col = i % cols;
@@ -552,9 +565,7 @@ void InventoryRedraw(void)
       if (row >= rows)
 	 return;
 
-      InventoryDrawSingleItem(item, i / cols, i % cols);
-      
-      l = l->next;
+      InventoryDrawSingleItem(item, row, col);
    }
 
    // Clear remaining empty part of inventory
@@ -632,25 +643,60 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
 
    OffscreenCopy(hdc, area.x, area.y, INVENTORY_BOX_WIDTH, INVENTORY_BOX_HEIGHT, 0, 0);
 
-   // Draw numbers for number items
-   if (IsNumberObj(item->obj->id) && cinfo->config->inventory_num)
+   // Draw numbers for number items, and xN for stacks
+   int stack_count = 1;
    {
-      sprintf(temp, "%d", item->obj->amount);
-
-      SetBkMode(hdc, TRANSPARENT);
-      SelectObject(hdc, GetFont(FONT_STATNUM));
-
-      SetTextColor(hdc, GetColor(COLOR_INVNUMBGD));
-      TextOut(hdc, obj_area.x + 1, obj_area.y + 1, temp, (int) strlen(temp));
-      SetTextColor(hdc, GetColor(COLOR_INVNUMFGD));
-      TextOut(hdc, obj_area.x, obj_area.y, temp, (int) strlen(temp));      
+      int index = InventoryCellIndex(item);
+      if (index >= 0 && cells[index].item == item)
+         stack_count = cells[index].count;
    }
+   bool number_obj = IsNumberObj(item->obj->id);
 
    // Draw border around area to clear previous cursor (if any)
    if (!draw_cursor)
    {
-      DrawWindowBackgroundBorder(&inventory_bkgnd, hdc, &obj_area, INVENTORY_OBJECT_BORDER, 
+      DrawWindowBackgroundBorder(&inventory_bkgnd, hdc, &obj_area, INVENTORY_OBJECT_BORDER,
 				 inventory_area.x + obj_area.x, inventory_area.y + obj_area.y, -1, NULL);
+
+      // thin dark frame per cell so the grid reads, light edge bottom/right
+      HBRUSH dark = CreateSolidBrush(RGB(26, 23, 20));
+      HBRUSH soft = CreateSolidBrush(RGB(58, 53, 46));
+      RECT outer = { area.x + 1, area.y + 1, area.x + INVENTORY_BOX_WIDTH - 1, area.y + INVENTORY_BOX_HEIGHT - 1 };
+      RECT bottom = { outer.left + 1, outer.bottom - 1, outer.right, outer.bottom };
+      RECT right = { outer.right - 1, outer.top + 1, outer.right, outer.bottom };
+      FrameRect(hdc, &outer, dark);
+      FillRect(hdc, &bottom, soft);
+      FillRect(hdc, &right, soft);
+      DeleteObject(dark);
+      DeleteObject(soft);
+   }
+
+   // amounts/stack counts go bottom right with an outline so they don't cover
+   // the icon and stay readable on any colour
+   if ((number_obj || stack_count > 1) && cinfo->config->inventory_num)
+   {
+      if (number_obj)
+         sprintf(temp, "%d", item->obj->amount);
+      else
+         sprintf(temp, "x%d", stack_count);
+
+      SetBkMode(hdc, TRANSPARENT);
+      HFONT old_font = (HFONT) SelectObject(hdc, GetFont(FONT_STATNUM));
+      RECT tr = { area.x + 2, area.y + 2, area.x + INVENTORY_BOX_WIDTH - 4, area.y + INVENTORY_BOX_HEIGHT - 3 };
+
+      // outline in the background colour, then the number on top
+      SetTextColor(hdc, GetColor(COLOR_INVNUMBGD));
+      for (int dx = -1; dx <= 1; dx++)
+      {
+         for (int dy = -1; dy <= 1; dy++)
+         {
+            RECT o = { tr.left + dx, tr.top + dy, tr.right + dx, tr.bottom + dy };
+            DrawText(hdc, temp, -1, &o, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+         }
+      }
+      SetTextColor(hdc, GetColor(COLOR_INVNUMFGD));
+      DrawText(hdc, temp, -1, &tr, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+      SelectObject(hdc, old_font);
    }
 
    if (cinfo->config->show_inventory_rarity)
@@ -729,31 +775,6 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
    }
 
    ReleaseDC(hwndInv, hdc);
-}
-/************************************************************************/
-/*
- * InventoryRedrawSingleItem:  Redraw given object in inventory after it has changed.
- */
-void InventoryRedrawSingleItem(InvItem *item)
-{
-   int index = 0;
-   list_type l;
-
-   for (l = items; l != NULL; l = l->next)
-   {
-      InvItem *temp = (InvItem *) (l->data);
-      if (item->obj->id == temp->obj->id)
-      {
-	 int row = index / cols;
-	 int col = index % cols;
-	 
-	 if (InventoryItemVisible(row, col))
-	    InventoryDrawSingleItem(item, row - top_row, col);
-
-	 return;
-      }
-      index++;
-   }
 }
 /************************************************************************/
 /*
@@ -874,12 +895,12 @@ bool InventoryClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
       // Redraw cursor
       if (InventoryItemVisible(old_row, old_col))
       {
-         item = (InvItem *) list_nth_item(items, old_row * cols + old_col);
+         item = InventoryCellItem(old_row * cols + old_col);
          if (item != NULL)
             InventoryDrawSingleItem(item, old_row - top_row, old_col);
       }
       
-      item = (InvItem *) list_nth_item(items, cursor_row * cols + cursor_col);
+      item = InventoryCellItem(cursor_row * cols + cursor_col);
       if (item != NULL)
          InventoryDrawSingleItem(item, cursor_row - top_row, cursor_col);
       break;
@@ -889,7 +910,7 @@ bool InventoryClick(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
       {
          /* User clicked on an object--get its id */
          index = row * cols + col;
-         item = (InvItem *) list_nth_item(items, index);
+         item = InventoryCellItem(index);
          if (item != NULL)
             SelectedObject(item->obj->id);
       }
@@ -1050,7 +1071,7 @@ void InventoryCursorMove(int action)
    new_row = std::max(0, cursor_row + dy);
    
    // See if we're going off end of inventory
-   if (new_row * cols + new_col >= num_items)
+   if (new_row * cols + new_col >= (int) cells.size())
       return;
 
    old_row = cursor_row;
@@ -1068,10 +1089,10 @@ void InventoryCursorMove(int action)
    }
    else // Otherwise, redraw cursor to show movement
    {
-      item = (InvItem *) list_nth_item(items, old_row * cols + old_col);
+      item = InventoryCellItem(old_row * cols + old_col);
       if (item != NULL)
          InventoryDrawSingleItem(item, old_row - top_row, old_col);
-      item = (InvItem *) list_nth_item(items, cursor_row * cols + cursor_col);
+      item = InventoryCellItem(cursor_row * cols + cursor_col);
       if (item != NULL)
          InventoryDrawSingleItem(item, cursor_row - top_row, cursor_col);
    }
@@ -1111,12 +1132,9 @@ void InventoryAddItem(object_node *obj)
    items = list_add_item(items, new_item);
 
    num_items++;
-   InventoryScrollRange();
-   /* See if we should add scroll bar */
-   if (num_items == rows * cols + 1)
-      InventoryDisplayScrollbar();
-
-   InventoryRedrawSingleItem(new_item);
+   if (inventory_bulk_add)
+      return;   // DisplayInventory redoes the layout once when it's done
+   InventoryRelayout();
 }
 /************************************************************************/
 /*
@@ -1141,12 +1159,16 @@ void InventoryRemoveItem(ID id)
    SafeFree(item);
 
    num_items--;
-   InventoryScrollRange();
-   /* See if we should remove scroll bar */
-   if (num_items == rows * cols)
    {
-      InventoryDisplayScrollbar();
-      top_row = 0;
+      bool had_scrollbar = has_scrollbar;
+      InventoryBuildCells();
+      /* See if we should remove scroll bar */
+      if (had_scrollbar != ((int) cells.size() > rows * cols))
+      {
+         InventoryDisplayScrollbar();
+         top_row = 0;
+      }
+      InventoryScrollRange();
    }
 
    WindowEndUpdate(hwndInv);
@@ -1200,7 +1222,7 @@ bool InventoryMoveCurrentItem(int x, int y)
    int row = top_row + y / INVENTORY_BOX_HEIGHT;
    int col = x / INVENTORY_BOX_WIDTH;
 
-   InvItem *drop_position = (InvItem *) list_nth_item(items, row * cols + col);
+   InvItem *drop_position = InventoryCellItem(row * cols + col);
    if (drop_position == NULL)
       return false;
 
@@ -1225,6 +1247,7 @@ bool InventoryMoveCurrentItem(int x, int y)
       pos_target += 1;
 
    items = list_move_item(items, pos_payload, pos_target);
+   InventoryBuildCells();
    InventoryRedraw();
 
    // Blakod indices are 1-based, and inventory list is reversed
@@ -1249,11 +1272,14 @@ void DisplayInventory(list_type inventory)
    cursor_row = 0;
    cursor_col = 0;
    
+   inventory_bulk_add = true;
    for (l = inventory; l != NULL; l = l->next)
    {
       object_node *inv_object = (object_node *) (l->data);
       InventoryAddItem(inv_object);
    }
+   inventory_bulk_add = false;
+   InventoryBuildCells();
 
    InventoryScrollRange();
    WindowEndUpdate(hwndInv);
@@ -1275,7 +1301,7 @@ void DisplaySetUsing(ID obj_id, bool is_using)
 
    item->is_using = is_using;
    
-   InventoryRedrawSingleItem(item);
+   InventoryRelayout();   // used items come out of their stack
 }
 /************************************************************************/
 /*
@@ -1310,7 +1336,7 @@ void InventoryChangeItem(object_node *obj)
    if (item == NULL)
       return;  /* Not an error, since we try to unuse everything we drop */
 
-   InventoryRedrawSingleItem(item);
+   InventoryRelayout();   // name/icon change can move it to another stack
 }
 /************************************************************************/
 /*
@@ -1333,7 +1359,7 @@ ID InventoryGetCurrentId(void)
 InvItem *InventoryGetCurrentItem(void)
 {
    int index = cursor_row * cols + cursor_col;
-   return (InvItem *) list_nth_item(items, index);
+   return InventoryCellItem(index);
 }
 /************************************************************************/
 /*
@@ -1343,7 +1369,7 @@ InvItem *InventoryGetCurrentItem(void)
 bool InventoryItemVisible(int row, int col)
 {
    return (row >= top_row && row < top_row + rows) && (col >= 0 && col < cols) &&
-      (row * cols + col < num_items);
+      (row * cols + col < (int) cells.size());
 }
 /************************************************************************/
 /*
@@ -1379,12 +1405,10 @@ void AnimateInventory(int dt)
 {
    bool need_redraw;
    int index;
-   list_type l;
 
-   index = 0;
-   for (l = items; l != NULL; l = l->next)
+   for (index = 0; index < (int) cells.size() && cols > 0; index++)
    {
-      InvItem *item = (InvItem *) (l->data);
+      InvItem *item = cells[index].item;
       
       need_redraw = AnimateObject(item->obj, dt);
       if (need_redraw)
@@ -1396,7 +1420,6 @@ void AnimateInventory(int dt)
 	 if (InventoryItemVisible(row, col))
 	    InventoryDrawSingleItem(item, row - top_row, col);
       }
-      index++;
    }
 }
 
@@ -1450,4 +1473,77 @@ static void InventoryReloadBackground(void)
 	logbrush.lbColor = DIB_RGB_COLORS;
 	logbrush.lbHatch = (ULONG_PTR) ptr;
 	hbrushScrollBack = CreateBrushIndirect(&logbrush);
+}
+/************************************************************************/
+/*
+ * InventoryStackKey:  key for stacking, empty if the item shouldn't stack
+ */
+static std::string InventoryStackKey(InvItem *item)
+{
+   if (!cinfo->config->stack_inventory || item->is_using || IsNumberObj(item->obj->id))
+      return std::string();
+   char *name = LookupNameRsc(item->obj->name_res);
+   return std::string(name ? name : "") + "|" + std::to_string(item->obj->icon_res) +
+      "|" + std::to_string((int) item->obj->rarity);
+}
+/************************************************************************/
+/*
+ * InventoryBuildCells:  rebuild the cell list from items
+ */
+static void InventoryBuildCells(void)
+{
+   cells.clear();
+   for (list_type l = items; l != NULL; l = l->next)
+   {
+      InvItem *item = (InvItem *) (l->data);
+      std::string key = InventoryStackKey(item);
+      bool merged = false;
+      if (!key.empty())
+         for (InvCell &c : cells)
+            if (c.key == key)
+            {
+               c.count++;
+               merged = true;
+               break;
+            }
+      if (!merged)
+         cells.push_back(InvCell{ item, 1, key });
+   }
+}
+/************************************************************************/
+static InvItem *InventoryCellItem(int index)
+{
+   if (index < 0 || index >= (int) cells.size())
+      return NULL;
+   return cells[index].item;
+}
+/************************************************************************/
+/*
+ * InventoryCellIndex:  cell showing this item (or its stack), -1 if none
+ */
+static int InventoryCellIndex(InvItem *item)
+{
+   for (int i = 0; i < (int) cells.size(); i++)
+      if (cells[i].item == item)
+         return i;
+   std::string key = InventoryStackKey(item);
+   if (key.empty())
+      return -1;
+   for (int i = 0; i < (int) cells.size(); i++)
+      if (cells[i].key == key)
+         return i;
+   return -1;
+}
+/************************************************************************/
+/*
+ * InventoryRelayout:  rebuild cells + redraw, fix up the scrollbar if needed
+ */
+static void InventoryRelayout(void)
+{
+   bool had_scrollbar = has_scrollbar;
+   InventoryBuildCells();
+   if (had_scrollbar != ((int) cells.size() > rows * cols))
+      InventoryDisplayScrollbar();
+   InventoryScrollRange();
+   InventoryRedraw();
 }

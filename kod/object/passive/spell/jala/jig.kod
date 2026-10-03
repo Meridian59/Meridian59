@@ -76,12 +76,8 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $,spellpower = 0)
-   "Called at beginning of spellcast"
+   StartRoomEffects(oRoom=$)
    {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
       Send(oRoom,@SetRoomFlag,#Flag=ROOM_JIG,#value=TRUE);
       Send(oRoom,@SetRoomFlag,#Flag=ROOM_NO_MOB_COMBAT,#value=TRUE);
 

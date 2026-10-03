@@ -22,6 +22,12 @@
 
 #define iswhite(c) ((c)==' ' || (c)=='\t' || (c)=='\n' || (c)=='\r')
 
+// A list of values allowed to be retrieved from the server config.
+static std::vector<int> server_config_whitelist = {
+	UPDATE_MOVE_INTERVAL, 
+	UPDATE_MOVE_COUNT_THRESHOLD
+};
+
 // global buffers for zero-terminated string manipulation
 static char buf0[LEN_MAX_CLIENT_MSG+1];
 static char buf1[LEN_MAX_CLIENT_MSG+1];
@@ -2676,4 +2682,55 @@ blak_int C_SendWebhook(int object_id, local_var_type *local_vars,
     // Send the webhook message
     SendWebhookMessage(json.c_str(), (int)json.length());
     return NIL;
+}
+static bool IsAllowedConfigID(int config_id) {
+	// Returns TRUE if the config id is in the whitelist.
+	return std::find(server_config_whitelist.begin(), server_config_whitelist.end(), config_id) != server_config_whitelist.end();
+}
+
+blak_int C_GetServerConfigValue(int object_id,local_var_type *local_vars,
+				int num_normal_parms,parm_node normal_parm_array[],
+				int num_name_parms,parm_node name_parm_array[])
+{
+	val_type config_id, ret_val;
+		
+	config_id = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+		normal_parm_array[0].value);
+  
+	if (config_id.v.tag != TAG_INT)
+	{
+		bprintf("C_GetServerConfigValue can't set from non-int %i,%" PRId64 "\n",
+			config_id.v.tag,config_id.v.data);
+		return NIL;
+	}
+
+	if (!IsAllowedConfigID(config_id.v.data)) {
+			bprintf("C_GetServerConfigValue: Config ID %" PRId64 " is not allowed\n", config_id.v.data);
+			return NIL;
+	}
+
+	config_node *cnode = GetConfigByID(config_id.v.data);
+
+	if (cnode == NULL || cnode->config_id == INVALID_CONFIG)
+	{
+		bprintf("C_GetServerConfigValue can't find config id %" PRId64 "\n", config_id.v.data);
+		return NIL;
+	}
+
+	switch (cnode->config_type)
+	{
+	case CONFIG_STR:
+		ret_val.v.data = CreateString(cnode->config_str_value);
+		ret_val.v.tag = TAG_STRING;
+		break;
+	case CONFIG_INT:
+		ret_val.v.data = cnode->config_int_value;
+		ret_val.v.tag = TAG_INT;
+		break;
+	default:
+		bprintf("C_GetServerConfigValue: Unknown config node type\n");
+		return NIL;
+	}
+
+	return ret_val.int_val;
 }

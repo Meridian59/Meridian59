@@ -44,6 +44,10 @@ constants:
    RECREATE_PHASE_FOUR = 4
    RECREATE_PHASE_FIVE = 5
 
+   % Default server config values
+   SERVER_CONFIG_DEFAULT_MOVE_INTERVAL = 1000
+   SERVER_CONFIG_DEFAULT_MOVE_COUNT_THRESHOLD = 2
+
 resources:
 
    system_user_killed = "### %q was just killed by %s%q."
@@ -401,6 +405,10 @@ properties:
    % What server-wide flags are we using?
    piServerFlags = 0
 
+   % Server config values
+   piMoveInterval = $
+   piMoveCountThreshold = $
+
 messages:
 
    GetName()
@@ -474,6 +482,34 @@ messages:
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
 
       return;
+   }
+
+   InitializeServerConfigValues()
+   "Initializes system properties from server config settings, falling back to defaults if no config value is set."
+   {
+      piMoveInterval = GetServerConfigValue(SERVER_CONFIG_MOVE_INTERVAL);
+      if piMoveInterval = $
+      {
+         piMoveInterval = SERVER_CONFIG_DEFAULT_MOVE_INTERVAL;
+      }
+
+      piMoveCountThreshold = GetServerConfigValue(SERVER_CONFIG_MOVE_COUNT_THRESHOLD);
+      if piMoveCountThreshold = $
+      {
+         piMoveCountThreshold = SERVER_CONFIG_DEFAULT_MOVE_COUNT_THRESHOLD;
+      }
+
+      return;
+   }
+
+   GetMoveInterval()
+   {
+      return piMoveInterval;
+   }
+
+   GetMoveThreshold()
+   {
+      return piMoveCountThreshold;
    }
 
    ResetRecreateAll()
@@ -905,6 +941,8 @@ messages:
       poHolder2 = Create(&Holder);
 
       Send(self,@RecalcLightAndWeather);
+
+      Send(self,@InitializeServerConfigValues);
 
       return;
    }

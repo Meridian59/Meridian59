@@ -48,12 +48,15 @@ messages:
             Send(i,@AdminGoToSafety);
             oRoom = send(SYS,@FindRoomByNum,#num=send(i,@GetSaveRoom));
             send(SYS,@UtilGoToSquare,#what=j,#where=oRoom,
-                 #row=send(i,@GetSaveRow),#col=send(i,@GetSaveCol));
+                 #new_row=send(i,@GetSaveRow),#new_col=send(i,@GetSaveCol));
 
             sHonor = send(i,@GetHonorString);
-            if StringContain(sHonor,damn_last_annoyed)
+            if sHonor <> $
             {
-               send(i,@SetHonorString,#string=$);
+               if StringContain(sHonor,damn_last_annoyed)
+               {
+                  send(i,@SetHonorString,#string=$);
+               }
             }
 
             continue;
@@ -64,9 +67,12 @@ messages:
             Send(i,@AdminGoToSafety);
 
             sHonor = send(i,@GetHonorString);
-            if StringContain(sHonor,damn_last_annoyed)
+            if sHonor <> $
             {
-               send(i,@SetHonorString,#string=$);
+               if StringContain(sHonor,damn_last_annoyed)
+               {
+                  send(i,@SetHonorString,#string=$);
+               }
             }
 
             continue;

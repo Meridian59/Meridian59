@@ -51,12 +51,9 @@ messages:
                  #new_row=send(i,@GetSaveRow),#new_col=send(i,@GetSaveCol));
 
             sHonor = send(i,@GetHonorString);
-            if sHonor <> $
+            if sHonor <> $ AND StringContain(sHonor,damn_last_annoyed)
             {
-               if StringContain(sHonor,damn_last_annoyed)
-               {
-                  send(i,@SetHonorString,#string=$);
-               }
+               send(i,@SetHonorString,#string=$);
             }
 
             continue;
@@ -67,12 +64,9 @@ messages:
             Send(i,@AdminGoToSafety);
 
             sHonor = send(i,@GetHonorString);
-            if sHonor <> $
+            if sHonor <> $ AND StringContain(sHonor,damn_last_annoyed)
             {
-               if StringContain(sHonor,damn_last_annoyed)
-               {
-                  send(i,@SetHonorString,#string=$);
-               }
+               send(i,@SetHonorString,#string=$);
             }
 
             continue;

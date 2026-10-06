@@ -57,8 +57,6 @@ void ResetObject()
 		   max_objects*sizeof(object_node));
    if (objects == NULL)
    {
-      eprintf("ResetObject out of memory resizing the object array to %i objects\n",max_objects);
-      FlushDefaultChannels();
       FatalError("Object array allocation failed");
    }
 }
@@ -80,8 +78,6 @@ void ClearObject()
 		   max_objects*sizeof(object_node));
    if (objects == NULL)
    {
-      eprintf("ClearObject out of memory resizing the object array to %i objects\n",max_objects);
-      FlushDefaultChannels();
       FatalError("Object array allocation failed");
    }
 }
@@ -112,8 +108,6 @@ int AllocateObject(int class_id)
 		      max_objects*sizeof(object_node));
       if (objects == NULL)
       {
-	 eprintf("AllocateObject out of memory growing to %i objects\n",max_objects);
-	 FlushDefaultChannels();
 	 FatalError("Object array allocation failed");
       }
       lprintf("AllocateObject resized to %i objects\n",max_objects);

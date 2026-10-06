@@ -53,8 +53,6 @@ void ResetString()
 		   max_strings*sizeof(string_node));
    if (strings == NULL)
    {
-      eprintf("ResetString out of memory resizing the string array to %i string nodes\n",max_strings);
-      FlushDefaultChannels();
       FatalError("String array allocation failed");
    }
 }
@@ -77,8 +75,6 @@ int AllocateString()
 		      max_strings*sizeof(string_node));      
       if (strings == NULL)
       {
-	 eprintf("AllocateString out of memory growing to %i string nodes\n",max_strings);
-	 FlushDefaultChannels();
 	 FatalError("String array allocation failed");
       }
       lprintf("AllocateStringNode resized to %i string nodes\n",max_strings);

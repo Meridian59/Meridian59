@@ -54,8 +54,6 @@ void ClearList(void)
 		max_nodes*sizeof(list_node));
 	if (list_nodes == NULL)
 	{
-		eprintf("ClearList out of memory resizing the list node array to %i nodes\n",max_nodes);
-		FlushDefaultChannels();
 		FatalError("List node array allocation failed");
 	}
 }
@@ -79,8 +77,6 @@ int AllocateListNode(void)
 			max_nodes*sizeof(list_node));      
 		if (list_nodes == NULL)
 		{
-			eprintf("AllocateListNode out of memory growing to %i list nodes\n",max_nodes);
-			FlushDefaultChannels();
 			FatalError("List node array allocation failed");
 		}
 		lprintf("AllocateListNode resized to %i list nodes\n",max_nodes);

@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -240,32 +240,4 @@ void FreeBitmaps(void)
 {
    FreeBackgroundBitmap();
    CacheClearAll();
-}
-/************************************************************************/
-/* 
- * PreloadSelectedBitmaps:  Loads and caches specific .bgf files at startup.
- *   Used for bitmaps that need to be cached before first use.
- *   Otherwise the game loads bitmaps on demand.
- */
-void PreloadSelectedBitmaps(void)
-{
-   static constexpr const char *bitmapsToPreload[] =
-   {
-      // Prevents a one-time desync in paired bitmap animations caused when the
-      // glow overlay needs to load in while the other overlay is already cached.
-      "povhand.bgf",
-      "povglow.bgf"
-   };
-
-   debug(("Preloading bitmaps...\n"));
-
-   for (const auto* bitmap : bitmapsToPreload)
-   {
-      ID id = LookupRscIDByFilename(bitmap);
-      if (id != 0)
-      {
-         // Loads the bitmap into cache. The returned bitmap is intentionally discarded.
-         GetObjectBitmap(id);
-      }
-   }
 }

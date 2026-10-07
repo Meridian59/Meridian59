@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -28,9 +28,6 @@ typedef struct {
 } *object_bitmap_type, object_bitmap_struct;
 
 void FreeBitmaps(void);
-
-// Loads and caches specific .bgf files at startup.
-void PreloadSelectedBitmaps(void);
 
 /* Functions to retrieve bitmaps based on ID numbers */
 object_bitmap_type GetObjectBitmap(ID obj_id);

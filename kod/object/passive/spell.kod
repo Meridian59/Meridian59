@@ -1429,7 +1429,7 @@ messages:
 
       if Send(self,@AffectsSpellPower)
       {
-         Send(oRoom,@SetRoomFlag,#flag=ROOM_ANTI_MAGIC,#value=TRUE);
+         Send(oRoom,@SetRoomFlag,#flag=ROOM_SPELL_POWER_MODIFIED,#value=TRUE);
       }
 
       if IsClass(who,&Player)
@@ -2206,7 +2206,7 @@ messages:
 
       iSpellPower = iPrimaryBonus + iSecondaryBonus + iPowerBonus + iBase;
            
-      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_ANTI_MAGIC)
+      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_SPELL_POWER_MODIFIED)
       {
          oModifierSpell = Send(SYS,@FindspellByNum,#num=SID_ANTIMAGIC_AURA);
          iAbilityLoss = Send(oModifierSpell,@ModifySpellPower,#oRoom=oRoom,#oSpell=self);
@@ -2344,7 +2344,7 @@ messages:
             }
          }
 
-         Send(where,@SetRoomFlag,#flag=ROOM_ANTI_MAGIC,#value=FALSE);
+         Send(where,@SetRoomFlag,#flag=ROOM_SPELL_POWER_MODIFIED,#value=FALSE);
       }
       
       return;

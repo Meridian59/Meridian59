@@ -4792,6 +4792,19 @@ messages:
       return piWeaponInfo/1000;
    }
 
+   IsOutsideSafeAttackRoom()
+   "Returns TRUE unless this player is in a room where players may attack "
+   "each other without penalty."
+   {
+      % A player who has logged off is in no room.
+      if poOwner = $
+      {
+         return TRUE;
+      }
+
+      return NOT Send(poOwner,@SafePlayerAttack);
+   }
+
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
@@ -4834,7 +4847,7 @@ messages:
          Send(oSoldierShield,@KilledSomething,#what=what);
       }
 
-      if IsClass(what,&User) AND NOT Send(poOwner,@SafePlayerAttack)
+      if IsClass(what,&User) AND Send(self,@IsOutsideSafeAttackRoom)
          AND what <> self
       {
          Send(Send(SYS, @GetStatistics), @PlayerKillsCounter);
@@ -5030,7 +5043,7 @@ messages:
    {
       local oChance, oGuild, iFaction, oSpell;
 
-      if IsClass(poOwner,&Guildhall)
+      if poOwner <> $ AND IsClass(poOwner,&Guildhall)
       {
          return 0;
       }
@@ -5110,7 +5123,7 @@ messages:
       oChance = (bound(oChance,2,30) + (5*piKill_count_decay));
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
-      if Send(poOwner,@IsEnchanted,#what=oSpell)
+      if poOwner <> $ AND Send(poOwner,@IsEnchanted,#what=oSpell)
       {
          oChance = oChance + (oChance * Send(poOwner,@GetEnchantmentState,#what=oSpell) / 100);
       }

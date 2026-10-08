@@ -4,11 +4,11 @@
 # 5 carried
 
 5
-dagpovA.bmp    
-dagpovB.bmp   
-dagpovC.bmp  
-dagpovD.bmp 
-dagpovH.bmp
+dagpovA.bmp  [0, 0] :1    -21 [10, 50]
+dagpovB.bmp  [0, 0] :1    -21 [12, 68]
+dagpovC.bmp  [0, 0] :1    -21 [-5, 127]
+dagpovD.bmp  [0, 0]
+dagpovH.bmp  [0, 0]
 5
  1      1
  1      2

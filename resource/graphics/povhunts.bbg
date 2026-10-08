@@ -4,11 +4,11 @@
 # 5 carried
 
 5
-hswpovA.bmp    
-hswpovB.bmp   
-hswpovC.bmp  
-hswpovD.bmp 
-hswpovH.bmp
+hswpovA.bmp   [0, 0] :1    -21 [31, 171]
+hswpovB.bmp   [0, 0] :1    -21 [38, 69]
+hswpovC.bmp   [0, 0] :1    -21 [14, 222]
+hswpovD.bmp   [0, 0]
+hswpovH.bmp   [0, 0]
 5
  1      1
  1      2

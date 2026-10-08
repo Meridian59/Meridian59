@@ -1636,7 +1636,7 @@ messages:
                %  mysterious murder message!
                if rMessage = $
                   AND Send(killer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-                  AND Send(killer,@IsPenalizedForKilling)
+                  AND Send(killer,@IsOutsideSafeAttackRoom)
                {
                   rMessage = system_user_killed_by_pker;
                   poLastMurderer = killer;

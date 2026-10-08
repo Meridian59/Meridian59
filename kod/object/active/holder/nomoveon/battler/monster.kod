@@ -1274,7 +1274,7 @@ messages:
       local oSpell;
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_ANTIMAGIC_AURA);
-      if Send(poOwner,@CheckRoomFlag,#flag=ROOM_ANTI_MAGIC)
+      if Send(poOwner,@CheckRoomFlag,#flag=ROOM_CHECK_SPELL_POWER)
          AND (Send(poOwner,@GetEnchantmentState,#what=oSpell) <> $)
       {
          % Reduce chance to 2/3 by multiplying base by 3/2

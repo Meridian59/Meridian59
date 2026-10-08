@@ -1047,8 +1047,8 @@
    ROOM_LAMPS         = 0x0040
    % Vigor heals twice as quickly here!
    ROOM_SANCTUARY     = 0x0080
-   % Magic is tougher to cast here, usually due to a spell effect.
-   ROOM_ANTI_MAGIC    = 0x0100
+   % Check the spells here that raise or lower spell power.
+   ROOM_CHECK_SPELL_POWER = 0x0100
    % Anyone may be killed here.
    ROOM_KILL_ZONE     = 0x0200
    % This is one of the RID_GUEST rooms.

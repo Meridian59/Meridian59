@@ -2116,11 +2116,12 @@ messages:
          iSecondaryBonus = abs(Send(who,@GetKarma)/10);
 
          % Forces of Light boosts Shal'ille
-         if Send(oRoom,@IsEnchanted,#what=SID_FORCES_OF_LIGHT)
+         oModifierSpell = Send(SYS,@FindSpellByNum,#num=SID_FORCES_OF_LIGHT);
+         if Send(oRoom,@IsEnchanted,#what=oModifierSpell)
          {
             % Add a function of the spellpower.
-            iAbilityGain = Send(oRoom,@GetEnchantMentState,
-                                #what=SID_FORCES_OF_LIGHT);  
+            iAbilityGain = Send(oRoom,@GetEnchantmentState,
+                                #what=oModifierSpell);
             iAbilityGain = iAbilityGain/10;
             iSecondaryBonus = iSecondaryBonus + iAbilityGain;
          }
@@ -2134,12 +2135,13 @@ messages:
          iSecondaryBonus = abs(Send(who,@GetKarma)/10);
 
          % Darkness boosts Qor
-         if Send(oRoom,@IsEnchanted,#what=SID_DARKNESS)
+         oModifierSpell = Send(SYS,@FindSpellByNum,#num=SID_DARKNESS);
+         if Send(oRoom,@IsEnchanted,#what=oModifierSpell)
          {
             % This reconstructs the darkness spellpower.
             iAbilityGain = Send(oRoom,@GetEnchantmentState,
-                                #what=SID_DARKNESS);
-            iAbilityGain = -(iAbilityGain - 25);
+                                #what=oModifierSpell);
+            iAbilityGain = -(iAbilityGain + 25);
             iAbilityGain = iAbilityGain/10;
             iSecondaryBonus = iSecondaryBonus + iAbilityGain;
          }

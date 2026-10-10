@@ -2201,7 +2201,14 @@ messages:
                          #who=who,#theSpell=self);
 
       % Bind the bonuses to reasonable values.
-      iPrimaryBonus = bound(iPrimaryBonus,0,30);
+      if viSchool = SS_JALA
+      {
+         iPrimaryBonus = bound(iPrimaryBonus,0,40);
+      }
+      else
+      {
+         iPrimaryBonus = bound(iPrimaryBonus,0,30);
+      }
       iSecondaryBonus = bound(iSecondaryBonus,0,10);
 
       iSpellPower = iPrimaryBonus + iSecondaryBonus + iPowerBonus + iBase;

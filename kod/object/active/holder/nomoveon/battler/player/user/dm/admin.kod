@@ -530,7 +530,7 @@ messages:
    }
 
    AdminPlaceObject(class=$)
-   "Creates an object of the given class at the admin's position, and returns it."
+   "Creates an object of the given class at the admin's position."
    {
       local oObject;
 
@@ -541,23 +541,18 @@ messages:
            #fine_row=Send(self, @GetFineRow),
            #fine_col=Send(self, @GetFineCol));
 
-      return oObject;
+      return;
    }
 
    PlaceMonsterCopies(oTemplate = $,iEachCount = 1)
    "Creates iEachCount monsters of oTemplate's class at the admin's position."
    {
-      local iCopy, oMonster;
+      local iCopy;
 
       iCopy = 0;
       while iCopy < iEachCount
       {
-         oMonster = Send(self,@AdminPlaceObject,#class=GetClass(oTemplate));
-
-         % Keep these from being cleaned up when the room empties, and from
-         % counting against the killer's karma.
-         Send(oMonster,@SetDontDispose);
-
+         Send(self,@AdminPlaceObject,#class=GetClass(oTemplate));
          iCopy = iCopy + 1;
       }
 
@@ -566,9 +561,9 @@ messages:
 
    PlaceAllMonsters(iEachCount = 1)
    "Creates iEachCount of every monster template at the admin's position, "
-   "for testing. Change the default here to spawn a bigger crowd, but note "
-   "that every monster stays until killed, and a few hundred of them in one "
-   "room will bog that room down."
+   "for testing. They are cleaned up like any other monster when the room "
+   "empties. Change the default here to spawn a bigger crowd, but note that "
+   "a few hundred of them in one room will bog that room down."
    {
       local i, iSpawned;
 

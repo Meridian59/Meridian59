@@ -65,6 +65,8 @@ static bool D3DObjectLightingCalc(
 
 static int getKerningAmount(font_3d* pFont, char* str, char* ptr);
 static bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA* obj_area, const PlayerViewParams& playerViewParams);
+static int D3DRenderObjectStackIndex(int objectId);
+static void D3DRenderAssignObjectStackIndices(const GameObjectDataParams& gameObjectDataParams);
 
 // Functions
 
@@ -93,58 +95,6 @@ static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 }
 
 // Implementations
-
-// Object id -> its stack index among the objects sharing its location, for the current frame.
-// Co-located objects get successive indices (0, 1, 2, ...) so their z-bias bands can be shifted
-// apart (index * ZBIAS_STACK_STRIDE) instead of overlapping and interleaving.
-static std::unordered_map<int, int> objectStackIndices;
-
-// Stack index assigned this frame, or 0 for an object that shares its location with no other
-// (and so needs no shift).
-static int D3DRenderObjectStackIndex(int objectId)
-{
-	auto it = objectStackIndices.find(objectId);
-	return (it == objectStackIndices.end()) ? 0 : it->second;
-}
-
-// Assign stack indices for the current frame. Objects at the same location would otherwise draw in
-// identical z-bias bands and interleave (one object's overlay appearing over another's sprite). The
-// main-sprite and overlay passes iterate in different orders, so indices are assigned once here and
-// both passes read them. Ordering by object id keeps the assignment stable frame-to-frame, so
-// co-located objects don't flicker past each other.
-static void D3DRenderAssignObjectStackIndices(const GameObjectDataParams& gameObjectDataParams)
-{
-	objectStackIndices.clear();
-
-	const auto* localPlayer = GetPlayerInfo();
-	std::vector<room_contents_node*> nodes;
-	std::unordered_set<int> seenIds;
-	for (long i = 0; i < gameObjectDataParams.numItems; i++)
-	{
-		if (gameObjectDataParams.drawData[i].type != DrawObjectType)
-			continue;
-		room_contents_node* node = gameObjectDataParams.drawData[i].u.object.object->draw.obj;
-		if (node == NULL || node->obj.id == localPlayer->id)
-			continue;
-		if (seenIds.insert(node->obj.id).second)
-			nodes.push_back(node);
-	}
-
-	std::sort(nodes.begin(), nodes.end(),
-		[](const room_contents_node* a, const room_contents_node* b) { return a->obj.id < b->obj.id; });
-
-	// Each object's bin is the number of objects already placed at its location, so co-located
-	// objects get successive bins (0, 1, 2, ...). Combine the object's x and y position into a
-	// single int64 to use as the per-location map key.
-	std::unordered_map<int64, int> countAtLocation;
-	for (room_contents_node* node : nodes)
-	{
-		int64 location = ((int64)node->motion.x << 32) | (int)(node->motion.y & 0xFFFFFFFF);
-		int stackIndex = countAtLocation[location];
-		objectStackIndices[node->obj.id] = stackIndex;
-		countAtLocation[location] = stackIndex + 1;
-	}
-}
 
 /**
 * The main entry point for rendering objects in the game world.
@@ -2693,4 +2643,56 @@ bool D3DComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA * obj_area, const
 	obj_area->cx = DibWidth(pdib) / (float)screenW;
 	obj_area->cy = DibHeight(pdib) / (float)screenH;
 	return true;
+}
+
+// Object id -> its stack index among the objects sharing its location, for the current frame.
+// Co-located objects get successive indices (0, 1, 2, ...) so their z-bias bands can be shifted
+// apart (index * ZBIAS_STACK_STRIDE) instead of overlapping and interleaving.
+static std::unordered_map<int, int> objectStackIndices;
+
+// Stack index assigned this frame, or 0 for an object that shares its location with no other
+// (and so needs no shift).
+static int D3DRenderObjectStackIndex(int objectId)
+{
+	auto it = objectStackIndices.find(objectId);
+	return (it == objectStackIndices.end()) ? 0 : it->second;
+}
+
+// Assign stack indices for the current frame. Objects at the same location would otherwise draw in
+// identical z-bias bands and interleave (one object's overlay appearing over another's sprite). The
+// main-sprite and overlay passes iterate in different orders, so indices are assigned once here and
+// both passes read them. Ordering by object id keeps the assignment stable frame-to-frame, so
+// co-located objects don't flicker past each other.
+static void D3DRenderAssignObjectStackIndices(const GameObjectDataParams& gameObjectDataParams)
+{
+	objectStackIndices.clear();
+
+	const auto* localPlayer = GetPlayerInfo();
+	std::vector<room_contents_node*> nodes;
+	std::unordered_set<int> seenIds;
+	for (long i = 0; i < gameObjectDataParams.numItems; i++)
+	{
+		if (gameObjectDataParams.drawData[i].type != DrawObjectType)
+			continue;
+		room_contents_node* node = gameObjectDataParams.drawData[i].u.object.object->draw.obj;
+		if (node == NULL || node->obj.id == localPlayer->id)
+			continue;
+		if (seenIds.insert(node->obj.id).second)
+			nodes.push_back(node);
+	}
+
+	std::sort(nodes.begin(), nodes.end(),
+		[](const room_contents_node* a, const room_contents_node* b) { return a->obj.id < b->obj.id; });
+
+	// Each object's bin is the number of objects already placed at its location, so co-located
+	// objects get successive bins (0, 1, 2, ...). Combine the object's x and y position into a
+	// single int64 to use as the per-location map key.
+	std::unordered_map<int64, int> countAtLocation;
+	for (room_contents_node* node : nodes)
+	{
+		int64 location = ((int64)node->motion.x << 32) | (int)(node->motion.y & 0xFFFFFFFF);
+		int stackIndex = countAtLocation[location];
+		objectStackIndices[node->obj.id] = stackIndex;
+		countAtLocation[location] = stackIndex + 1;
+	}
 }

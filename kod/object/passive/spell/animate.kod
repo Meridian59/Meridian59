@@ -25,7 +25,7 @@ resources:
       "Requires the blood of a shaman to cast."
    
    Animate_bad_target = "You can't cast animate on %s%s!"
-   Animate_failed_rsc = "%s's corpse remains inanimate on the gound."
+   Animate_failed_rsc = "%s's corpse remains inanimate on the ground."
    Animate_cast_rsc = "%s's corpse pulls itself up off of the ground."
    Animate_expire_rsc = "Your control over %s%s wanes."
 

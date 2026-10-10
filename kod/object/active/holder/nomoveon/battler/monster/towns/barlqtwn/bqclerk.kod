@@ -1377,7 +1377,7 @@ messages:
    }
 
    IsPlayerSeniorEnough(who = $)
-   "Determine whether the given player is senior enough to partipate in Justicar voting. "
+   "Determine whether the given player is senior enough to participate in Justicar voting. "
    "This is to prevent mules from swamping the voting."
    {
       return Send(who, @GetBaseMaxHealth) >= 

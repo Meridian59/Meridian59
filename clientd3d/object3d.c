@@ -315,7 +315,7 @@ bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, bool bTargetSelectEf
    y = (starty - obj_area->y) * yinc;
 
    /* Find palette to use, depending on distance */
-   if (dos->flags & (OF_FLICKERING | OF_FLASHING))
+   if (ObjectHasLightEffect(dos->flags))
    {
       palette = GetLightPalette(dos->distance, dos->light, FINENESS,GetFlicker(dos->obj));
    }
@@ -770,7 +770,7 @@ void DrawObjectDecorations(DrawnObject *object)
    else
    {
       // Draw name with color that fades with distance, just like object
-      if (r->obj.flags & (OF_FLICKERING | OF_FLASHING))
+      if (ObjectHasLightEffect(r->obj.flags))
       {
          palette = GetLightPalette(object->distance, object->light, FINENESS,GetFlicker(r));
       }

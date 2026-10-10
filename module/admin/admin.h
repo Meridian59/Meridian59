@@ -46,6 +46,8 @@ extern void AdminNewLine(char *str);
 extern void AdminDisplayOwner(int num);
 extern void AdminDisplayObject(int num, char *class_name);
 extern void AdminShowProperty(int index);
+extern void AdminFillPropertyList(void);
+extern void AdminClearProperties(void);
 
 #endif /* #ifndef _ADMIN_H */
 

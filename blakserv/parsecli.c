@@ -331,7 +331,15 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 							
 							switch (command_table[i].client_parms[j].type_parm)
 							{
-							case LIST_RSC_PARM : temp.v.tag = TAG_RESOURCE; break;
+							case LIST_RSC_PARM :
+								temp.v.tag = TAG_RESOURCE;
+								if (NULL == GetResourceByID(temp.v.data))
+								{
+									eprintf("ParseClientSendBlakod got invalid resource reference %" PRId64 " in a list\n",
+									        temp.v.data);
+									return;
+								}
+								break;
 							case LIST_INT_PARM : temp.v.tag = TAG_INT; break;
 							}
 							list_val.v.data = Cons(temp,list_val);

@@ -34,7 +34,6 @@ channel_table_type channel_table[] =
 channel_node channel[NUM_CHANNELS];
 
 /* local function prototypes */
-void WriteStrChannel(int channel_id,char *s);
 FILE *CreateFileChannel(int channel_id);
 
 std::string obj_to_string(int tag, INT64 data)

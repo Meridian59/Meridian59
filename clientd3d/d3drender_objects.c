@@ -119,6 +119,39 @@ static void updateRenderChunkAnimationIntensity(d3d_render_chunk_new* pChunk)
 // Implementations
 
 /**
+* Shows the color of an object's own steady light (the glow enchantment) on its sprite. Vertex
+* color multiplies the texture, so in a bright sector it is already at full scale and has no
+* headroom left to show the light; the chunk is marked to be drawn with a doubled texture stage,
+* which makes room for the added light at the cost of halving the color written here.
+* Flickering lights (torches) waver rather than glow, and objects drawn by the invisibility
+* material ignore vertex color, so both are left alone.
+*/
+static void ApplySelfLightGlow(const room_contents_node* pRNode, custom_bgra* bgra,
+	d3d_render_chunk_new* pChunk)
+{
+	const WORD lightFlags = pRNode->obj.dLighting.flags;
+
+	if ((lightFlags & (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)) != (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)
+		|| (lightFlags & LIGHT_FLAG_WAVERING)
+		|| IsInvisibleEffect(pRNode->obj.flags))
+		return;
+
+	// Fraction of the light's color added over the sprite. Enough to read in daylight, low
+	// enough that the sprite keeps its own colors.
+	static const float GLOW_STRENGTH = 0.35f;
+	static const float FIVE_BIT_TO_COLOR = COLOR_MAX / 31.0f;
+
+	const WORD lightColor = pRNode->obj.dLighting.color;
+	const float scale = FIVE_BIT_TO_COLOR * GLOW_STRENGTH;
+
+	bgra->r = static_cast<unsigned char>((bgra->r + ((lightColor >> 10) & 0x1F) * scale) / 2.0f);
+	bgra->g = static_cast<unsigned char>((bgra->g + ((lightColor >> 5) & 0x1F) * scale) / 2.0f);
+	bgra->b = static_cast<unsigned char>((bgra->b + (lightColor & 0x1F) * scale) / 2.0f);
+
+	pChunk->isGlowing = true;
+}
+
+/**
 * The main entry point for rendering objects in the game world.
 * Returns the total time taken to render all objects.
 */
@@ -190,12 +223,13 @@ long D3DRenderObjects(
 	long vx = objectsRenderParams.params->viewer_x;
 	long vy = objectsRenderParams.params->viewer_y;
 
-	// Compute camera forward direction in world space.
-	int angleHeading = objectsRenderParams.params->viewer_angle + 3 * NUMDEGREES / 4;
+	// Camera forward direction on the ground plane. The X term must be negative to
+	// match the view rotation.
+	int angleHeading = objectsRenderParams.params->viewer_angle + LEGACY_HEADING_OFFSET;
 	if (angleHeading >= NUMDEGREES)
 		angleHeading -= NUMDEGREES;
 	float theta = static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD;
-	float fwdX = sinf(theta);
+	float fwdX = -sinf(theta);
 	float fwdY = cosf(theta);
 
 	std::sort(drawdata, drawdata + gameObjectDataParams.numItems,
@@ -478,14 +512,7 @@ void D3DRenderNamesDraw3D(
 		else
 		{
 			// Draw name with color that fades with distance, just like object
-			if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
-			{
-				palette = GetLightPalette(D3DRENDER_LIGHT_DISTANCE, 63, FINENESS, 0);
-			}
-			else
-			{
-				palette = GetLightPalette(D3DRENDER_LIGHT_DISTANCE, 63, FINENESS, 0);
-			}
+			palette = GetLightPalette(D3DRENDER_LIGHT_DISTANCE, 63, FINENESS, 0);
 			color = base_palette[palette[GetClosestPaletteIndex(fg_color)]];
 			D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams);
 
@@ -1070,6 +1097,8 @@ void D3DRenderOverlaysDraw(
 						if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
 							objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams))
 							pChunk->flags |= D3DRENDER_NOAMBIENT;
+
+						ApplySelfLightGlow(pRNode, &bgra, pChunk);
 					}
 
 					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
@@ -1611,6 +1640,8 @@ void D3DRenderObjectsDraw(
 			if (D3DObjectLightingCalc(objectsRenderParams.room, pRNode, &bgra, 0, 
 				objectsRenderParams.driverProfile.bFogEnable, lightAndTextureParams))
 				pChunk->flags |= D3DRENDER_NOAMBIENT;
+
+			ApplySelfLightGlow(pRNode, &bgra, pChunk);
 		}
 
 		if (GetDrawingEffect(pRNode->obj.flags) == OF_TRANSLUCENT25)
@@ -2422,6 +2453,36 @@ void D3DRenderPlayerOverlayOverlaysDraw(
 }
 
 /**
+* Narrows closestLight to the nearest light in the cache, if any of them beats what is already
+* there. Distance is measured in units of each light's own half radius, so a large light wins over
+* a small one that is nearer.
+*/
+static void UpdateClosestLight(d_light_cache* pDLightCache, const room_contents_node* pRNode,
+	float& closestDistance, d_light*& closestLight)
+{
+	for (int numLights = 0; numLights < pDLightCache->numLights; numLights++)
+	{
+		d_light* pLight = &pDLightCache->dLights[numLights];
+		custom_xyz vector;
+
+		vector.x = pRNode->motion.x - pLight->xyz.x;
+		vector.y = pRNode->motion.y - pLight->xyz.y;
+		vector.z = pRNode->motion.z - pLight->xyz.z;
+
+		float distance = (vector.x * vector.x) + (vector.y * vector.y) + (vector.z * vector.z);
+		distance = (float)sqrt((double)distance);
+
+		distance /= (pLight->xyzScale.x / 2.0f);
+
+		if (distance < closestDistance)
+		{
+			closestDistance = distance;
+			closestLight = pLight;
+		}
+	}
+}
+
+/**
 * Lighting calculations for world objects.
 */
 bool D3DObjectLightingCalc(
@@ -2432,55 +2493,17 @@ bool D3DObjectLightingCalc(
 	bool fogEnabled,
 	const LightAndTextureParams& lightAndTextureParams)
 {
-	int			light, intDistance, numLights;
+	int			light, intDistance;
 	d_light* pDLight = NULL;
 	float		distX, distY;
-	float		lastDistance, distance;
+	float		lastDistance;
 	bool		bFogDisable = false;
 
 	lastDistance = dlight_scale(255);
 
-	for (numLights = 0; numLights < lightAndTextureParams.lightCache->numLights; numLights++)
-	{
-		custom_xyz	vector;
-
-		vector.x = pRNode->motion.x - lightAndTextureParams.lightCache->dLights[numLights].xyz.x;
-		vector.y = pRNode->motion.y - lightAndTextureParams.lightCache->dLights[numLights].xyz.y;
-		vector.z = pRNode->motion.z - lightAndTextureParams.lightCache->dLights[numLights].xyz.z;
-
-		distance = (vector.x * vector.x) + (vector.y * vector.y) +
-			(vector.z * vector.z);
-		distance = (float)sqrt((double)distance);
-
-		distance /= (lightAndTextureParams.lightCache->dLights[numLights].xyzScale.x / 2.0f);
-
-		if (distance < lastDistance)
-		{
-			lastDistance = distance;
-			pDLight = &lightAndTextureParams.lightCache->dLights[numLights];
-		}
-	}
-
-	for (numLights = 0; numLights < lightAndTextureParams.lightCacheDynamic->numLights; numLights++)
-	{
-		custom_xyz	vector;
-
-		vector.x = pRNode->motion.x - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.x;
-		vector.y = pRNode->motion.y - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.y;
-		vector.z = pRNode->motion.z - lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyz.z;
-
-		distance = (vector.x * vector.x) + (vector.y * vector.y) +
-			(vector.z * vector.z);
-		distance = (float)sqrt((double)distance);
-
-		distance /= (lightAndTextureParams.lightCacheDynamic->dLights[numLights].xyzScale.x / 2.0f);
-
-		if (distance < lastDistance)
-		{
-			lastDistance = distance;
-			pDLight = &lightAndTextureParams.lightCacheDynamic->dLights[numLights];
-		}
-	}
+	UpdateClosestLight(lightAndTextureParams.lightCache, pRNode, lastDistance, pDLight);
+	UpdateClosestLight(lightAndTextureParams.lightCacheDynamic, pRNode, lastDistance, pDLight);
+	UpdateClosestLight(lightAndTextureParams.lightCacheFlicker, pRNode, lastDistance, pDLight);
 
 	lastDistance = 1.0f - lastDistance;
 	lastDistance = std::max(0.0f, lastDistance);
@@ -2507,12 +2530,12 @@ bool D3DObjectLightingCalc(
 	// OF_FLASHING (used e.g. for detect-invisible reveal) must pulse regardless
 	// of daylight, so only OF_FLICKERING is daylight-gated.
 	int effectiveLightAdjust = pRNode->obj.lightAdjust;
-	if (light > 127 && (pRNode->obj.flags & OF_FLICKERING))
+	if (light > 127 && ObjectHasFlickeringLight(pRNode->obj.flags))
 	{
 		effectiveLightAdjust = 0;  // Disable visual flicker during daytime
 	}
 
-	if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
+	if (ObjectHasLightEffect(pRNode->obj.flags))
 		light = GetLightPaletteIndex(intDistance, light, FINENESS, effectiveLightAdjust);
 	else
 		light = GetLightPaletteIndex(intDistance, light, FINENESS, 0);
@@ -2531,7 +2554,7 @@ bool D3DObjectLightingCalc(
 		bgra->r = std::min((float)COLOR_AMBIENT, bgra->r + (lastDistance * pDLight->color.r / COLOR_AMBIENT));
 		
 		// Apply flickering/flashing adjustment to the combined lighting (base + dynamic)
-		if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
+		if (ObjectHasLightEffect(pRNode->obj.flags))
 		{
 			float adjustment = (float)pRNode->obj.lightAdjust / GetFlickerLevel();
 			bgra->b = std::min((float)COLOR_AMBIENT, bgra->b + (bgra->b * adjustment));
@@ -2545,29 +2568,6 @@ bool D3DObjectLightingCalc(
 		bgra->g = std::min((float)COLOR_AMBIENT, light + lastDistance);
 		bgra->r = std::min((float)COLOR_AMBIENT, light + lastDistance);
 		bgra->a = 255;
-	}
-
-	// Self-illumination: Objects that emit a steady dynamic light (like glow) get tinted
-	// by their own light color. This makes glowing players/objects visibly colored.
-	// Only applies to non-wavering dynamic lights (glow), not flickering (torch).
-	const WORD selfLightFlags = pRNode->obj.dLighting.flags;
-	const bool hasSteadyDynamicLight =
-		(selfLightFlags & (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)) == (LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC)
-		&& !(selfLightFlags & LIGHT_FLAG_WAVERING);
-
-	if (hasSteadyDynamicLight)
-	{
-		// Convert 16-bit 5-5-5 RGB color to 8-bit components
-		const WORD selfColor = pRNode->obj.dLighting.color;
-		const float selfR = ((selfColor >> 10) & 0x1F) * (255.0f / 31.0f);
-		const float selfG = ((selfColor >> 5) & 0x1F) * (255.0f / 31.0f);
-		const float selfB = (selfColor & 0x1F) * (255.0f / 31.0f);
-
-		// Apply a noticeable tint from the object's own light (40% blend toward light color)
-		const float selfTintStrength = 0.4f;
-		bgra->r = std::min((float)COLOR_AMBIENT, bgra->r * (1.0f - selfTintStrength) + selfR * selfTintStrength);
-		bgra->g = std::min((float)COLOR_AMBIENT, bgra->g * (1.0f - selfTintStrength) + selfG * selfTintStrength);
-		bgra->b = std::min((float)COLOR_AMBIENT, bgra->b * (1.0f - selfTintStrength) + selfB * selfTintStrength);
 	}
 
 	return bFogDisable;

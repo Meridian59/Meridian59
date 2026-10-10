@@ -167,7 +167,7 @@ resources:
    kraanandisciple_success = "`B`bYou have done well. You are a worthy follower.  Perhaps it is you who will crack "
          "the stone around Kraanan's soul.  Seek me when you wish to learn more of his ways and his spells."
    kraanandisciple_failure = "Subject: Your weakness of heart\n"
-         "I lack faith in your ability to serve Kraanan.  We need those with determinination, focus and skill.  "
+         "I lack faith in your ability to serve Kraanan.  We need those with determination, focus and skill.  "
          "Return here only when these things are within you."
 
    shalilledisciple_trigger = "The ways of violence and destruction have hardened our people.  It is time to move "
@@ -185,7 +185,7 @@ resources:
          "will begin our journey down the road to harmony once again."
 
    farendisciple_trigger = "You have defiled the land with your ways.  The land gives life, yet you treat it "
-         "as the enemy to be conquered.  You are fools, all, if you continue on this sacriligious path.  Embrace "
+         "as the enemy to be conquered.  You are fools, all, if you continue on this sacrilegious path.  Embrace "
          "nature, do not spurn it like a forgotten lover.  Repent your ways.  Follow the words of Faren.  Live for "
          "nature, not in opposition to it."
    farendisciple_assign = "`B`gYou wish the blessing of the land through our Lord Faren.  You must prove that you "
@@ -259,7 +259,7 @@ resources:
          "realm.  These plants may change the course of history.  They are an antidote to a terrible disease that "
          "is beginning to spread through the land.  Come to me when thou would learn from me, friend."
    fadelearn_failure_4 = "Subject:  Plant growth formula\n"
-         "Thy dallience hath cost not only to yourself the possibility of learning my magicks, but also to "
+         "Thy dalliance hath cost not only to yourself the possibility of learning my magicks, but also to "
          "the entire realm a chance to resist a new disease that is slowly spreading.  I hope thou dost not catch "
          "it thyself.  That would be a fine bit of justice, eh?  Trouble me no further, knave."
 
@@ -273,7 +273,7 @@ resources:
    dementlearn_success_2 = "Thank you, %NAME.  I hope that this %CARGO will help me dispel the force of which you "
          "were warned.  Go now, unless you wish to be so afflicted as well."
    dementlearn_failure_2 = "Subject:  Delivery of the %CARGO\n"
-         "I understand your aprehension and fear of approaching %NPC.  Nonetheless, you have failed and our deal "
+         "I understand your apprehension and fear of approaching %NPC.  Nonetheless, you have failed and our deal "
          "is hereby nullified."
    dementlearn_success_3 = "Ah, you have returned from your errand, %NAME.  You have done well.  I hope you have "
          "not suffered too greatly from your contact with %SOURCE_NPC.  I understand the effects are only temporary.  "
@@ -606,7 +606,7 @@ resources:
    factioninsignia_success_4 = "Hmmm, fascinating.  I will have my spies scry further, but your information has "
          "provided the insight that I required.  Here, please accept my insignia as a token of my appreciation."
    factioninsignia_failure_4 = "Subject: Insignia mission\n"
-         "I'm afraid you've failed the little test your leige and I concocted.  As we had expected, your "
+         "I'm afraid you've failed the little test your liege and I concocted.  As we had expected, your "
          "loyalty is questionable."
 
    mysterymonster_assign_2 = "Wouldst thou do something for me?  I will reward thee.  I have insect troubles, "

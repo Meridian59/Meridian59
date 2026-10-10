@@ -82,28 +82,30 @@ messages:
       iDamage = Send(what,@AssessDamage,#what=poCaster,#damage=Random(0,iMaxDamage),
                      #aspell=ATCK_SPELL_SHOCK,#report=FALSE,#report_resistance=FALSE);
 
+      % The hit killed the target.
       if iDamage = $
       {
          Send(poCaster,@KilledSomething,#what=what);
-      }
 
-      if IsClass(poCaster,&Player)
-      {
-         if iDamage = $
+         % Credit a player caster with the damage.
+         if IsClass(poCaster,&Player)
          {
             Send(poCaster,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+         }
 
-            return;
-         }
-         else
-         {
-            if piMaxDamage > 0
-            {
-               Send(poCaster,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
-            }
-         }
+         % AssessDamage returns NIL instead of the damage when the hit kills.
+         % Stop here, so the damage messages never use that NIL.
+         return;
       }
 
+      % The hit did not kill.  Credit a player caster if the wall can do damage.
+      if IsClass(poCaster,&Player)
+         AND piMaxDamage > 0
+      {
+         Send(poCaster,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+      }
+
+      % If the target is a player, tell them how hard the wall hit them.
       if IsClass(what,&Player)
       {
          if iDamage = 0

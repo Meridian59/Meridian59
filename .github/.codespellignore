@@ -13,7 +13,6 @@ cunt
 # Kraanan spell name
 dispell
 ende
-feld
 # NPC speech sometimes uses ~i text flag to italicize text
 kno
 # lightnin.bgf resource name
@@ -39,7 +38,6 @@ tought
 # DM resource sound effect ("tranport.wav")
 tranport
 # item attribute property and trigger word
-transcendant
 tread
 # treasure type class
 trestype

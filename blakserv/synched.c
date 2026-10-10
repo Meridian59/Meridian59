@@ -397,6 +397,7 @@ void SynchedAcceptLogin(session_node *s,char *name,char *password)
          //
          AddByteToPacket(AP_ACCOUNTUSED);
          SendPacket(s->session_id);
+         return;
       }
    }
 

@@ -340,7 +340,7 @@ messages:
 
    DoSpinAttack(lFinalTargets=$)
    {
-      local i, lTargets, iDamage;
+      local i, lTargets, iDamage, iDamageTaken;
 
       iDamage = Random(SPIN_DAMAGE_MIN,SPIN_DAMAGE_MAX);
 
@@ -351,14 +351,23 @@ messages:
          lTargets = Send(self,@GetFinalTargets);
       }
 
+      % The first player is hit for the rolled damage.  Each player after that
+      %  is hit for the damage the player before them took, after that
+      %  player's armor and resistances, so the spin gets weaker down the
+      %  line.  If the spin kills a player, the next player is hit for the
+      %  same damage the killed player was hit for.
       for i in lTargets
       {
-         iDamage = Send(i,@AssessDamage,#what=self,#damage=iDamage,
-                        #atype=viAttack_type,#aspell=viAttack_spell);
-         if iDamage = $
+         iDamageTaken = Send(i,@AssessDamage,#what=self,#damage=iDamage,
+                             #atype=viAttack_type,#aspell=viAttack_spell);
+         if iDamageTaken = $
          {
             Send(self,@KilledSomething,#what=i,#use_weapon=self);
          } 
+         else
+         {
+            iDamage = iDamageTaken;
+         }
 
          Send(i,@MsgSendUser,#message_rsc=thrasher_spin_message);
          Send(i,@WaveSendUser,#wave_rsc=thrasher_sound_attack);

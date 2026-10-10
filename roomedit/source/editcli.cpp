@@ -102,6 +102,10 @@
 	#include "prefdlg.h"
 #endif
 
+#ifndef __viewbmp_h
+	#include "viewbmp.h"
+#endif
+
 #ifndef __levels_h
 	#include "levels.h"
 #endif
@@ -141,6 +145,11 @@ static const char* _apszDirection[] =
 static const char* _apszSpeed[] =
 {
 	"none", "slow", "med", "fast"
+};
+
+static const char* _apszTranslucency[] =
+{
+	"0", "75", "50", "25"
 };
 
 //
@@ -218,6 +227,7 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_COMMAND(CM_MISCV_DELETE, CmMiscVDelete),
 	EV_COMMAND(CM_MISCV_MERGE, CmMiscVMerge),
 	EV_COMMAND(CM_MISCV_ADD, CmMiscVAddLineDef),
+	EV_COMMAND(CM_MISCV_SLOPE, CmMiscVSlope),
 	EV_COMMAND(CM_MISCS_MAKEDOOR, CmMiscSMakeDoor),
 	EV_COMMAND(CM_MISCS_MAKELIFT, CmMiscSMakeLift),
 	EV_COMMAND(CM_MISCS_DISTRIBFLOOR, CmMiscSDitribFloor),
@@ -255,6 +265,7 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_COMMAND(CM_INFOWIN_VERT_UPRIGHT, CmVertUpRight),
 	EV_COMMAND_ENABLE(CM_EDIT_DELETEOBJ, CmDeleteEnable),
 	EV_COMMAND_ENABLE(CM_EDIT_COPYOBJ, CmCopyEnable),
+	EV_COMMAND_ENABLE(CM_MISCV_SLOPE, CmMiscVSlopeEnable),
 	EV_COMMAND_ENABLE(CM_EDIT_UNDO, CmUndoEnable),
 	EV_COMMAND_ENABLE(CM_EDIT_REDO, CmRedoEnable),
 	EV_COMMAND_ENABLE(CM_WINDOW_LAYOUT, CmLayoutEnable),
@@ -323,7 +334,6 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 	pSideDef2Info = new TInfoControl (this, 233, 7, "Second SideDef");
 	pVertexInfo = new TInfoControl (this, 234, 2, "Vertex");
 	pSectorInfo = new TInfoControl (this, 235, 9, "Sector");
-
 
 	// Retrieve pointer to status bar of MainFrame
 	TMainFrame *mainFrame =
@@ -412,6 +422,9 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 //
 TEditorClient::~TEditorClient ()
 {
+	// Destroy shared texture preview before the editor window.
+	CloseTexturePreview ();
+
 	// Destroy window
 	Destroy();
 
@@ -1981,7 +1994,7 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 			LineDef *pLineDef = &LineDefs[objnum];
 
 			pLineDefInfo->SetStyle (TA_CENTER, BLACK);
-			pLineDefInfo->Insert ("Selected LineDef (#%d)", objnum);
+			pLineDefInfo->Insert ("Selected LineDef %d", objnum);
 
 			pLineDefInfo->SetStyle (TA_LEFT, LIGHTBLUE);
 			pLineDefInfo->Insert ("Flags: %s", 
@@ -2053,7 +2066,7 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 			}
 			else
 				pSideDef1Info->SetStyle (TA_LEFT, LIGHTBLUE);
-			pSideDef1Info->Insert ("Upper texture:  %s", texname);
+			pSideDef1Info->Insert ("Upper texture: %s", texname);
 
 			// Lower texture
 			pSideDef1Info->SetStyle (TA_LEFT, LIGHTBLUE);
@@ -2065,12 +2078,17 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 			}
 			else
 				pSideDef1Info->SetStyle (TA_LEFT, LIGHTBLUE);
-			pSideDef1Info->Insert ("Lower texture:  %s", texname);
+			pSideDef1Info->Insert ("Lower texture: %s", texname);
 
 			pSideDef1Info->SetStyle (TA_LEFT, LIGHTBLUE);
-			pSideDef1Info->Insert ("Tex. offset:  (%d, %d)", pSideDef1->xoff, pSideDef1->yoff);
-			pSideDef1Info->Insert ("Sector:         #%d", s1);
-			pSideDef1Info->Insert ("User id #:       %d", pSideDef1->user_id);
+			BYTE tpos = LineDefs[objnum].translucency_pos;
+			if (tpos > 3)
+				tpos = 0;
+			pSideDef1Info->Insert ("Translucency: %s", _apszTranslucency[tpos]);
+
+			pSideDef1Info->SetStyle (TA_LEFT, LIGHTBLUE);
+			pSideDef1Info->Insert ("Tex. offset: %d, %d", pSideDef1->xoff, pSideDef1->yoff);
+			pSideDef1Info->Insert ("Sector: %d", s1);
 		}
 		pSideDef1Info->EndInsert();
 
@@ -2104,7 +2122,7 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 			}
 			else
 				pSideDef2Info->SetStyle (TA_LEFT, LIGHTBLUE);
-			pSideDef2Info->Insert ("Upper texture:  %s", texname);
+			pSideDef2Info->Insert ("Upper texture: %s", texname);
 
 			// Lower texture
 			pSideDef2Info->SetStyle (TA_LEFT, LIGHTBLUE);
@@ -2116,12 +2134,17 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 			}
 			else
 				pSideDef2Info->SetStyle (TA_LEFT, LIGHTBLUE);
-			pSideDef2Info->Insert ("Lower texture:  %s", texname);
+			pSideDef2Info->Insert ("Lower texture: %s", texname);
 
 			pSideDef2Info->SetStyle (TA_LEFT, LIGHTBLUE);
-			pSideDef2Info->Insert ("Tex. offset:  (%d %d)", pSideDef2->xoff, pSideDef2->yoff);
-			pSideDef2Info->Insert ("Sector:         #%d", s2);
-			pSideDef2Info->Insert ("User id #:       %d", pSideDef2->user_id);
+			BYTE tneg = LineDefs[objnum].translucency_neg;
+			if (tneg > 3)
+				tneg = 0;
+			pSideDef2Info->Insert ("Translucency: %s", _apszTranslucency[tneg]);
+
+			pSideDef2Info->SetStyle (TA_LEFT, LIGHTBLUE);
+			pSideDef2Info->Insert ("Tex. offset: %d, %d", pSideDef2->xoff, pSideDef2->yoff);
+			pSideDef2Info->Insert ("Sector: %d", s2);
 		}
 		pSideDef2Info->EndInsert();
 		break;
@@ -3093,7 +3116,7 @@ void TEditorClient::CmModeNext ()
 			NewMode = OBJ_SECTORS;
 			break;
 		case OBJ_SECTORS:
-			NewMode = OBJ_THINGS;
+			NewMode = OBJ_VERTEXES;
 			break;
 	}
 
@@ -3119,7 +3142,7 @@ void TEditorClient::CmModePrev ()
 			NewMode = OBJ_SECTORS;
 			break;
 		case OBJ_VERTEXES:
-			NewMode = OBJ_THINGS;
+			NewMode = OBJ_SECTORS;
 			break;
 		case OBJ_LINEDEFS:
 			NewMode = OBJ_VERTEXES;
@@ -3393,6 +3416,198 @@ void TEditorClient::CmMiscVAddLineDef ()
 
 End:
 	RESTORE_HELP_CONTEXT();
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// Find the Sectors having all three vertices on their boundary.
+// Store up to two of them in 'sectors' and return how many were
+// stored.
+//
+static int FindVertexCommonSectors (SHORT v1, SHORT v2, SHORT v3,
+									SHORT sectors[2])
+{
+	int count = 0;
+
+	BYTE *mask = new BYTE[NumSectors];
+	memset (mask, 0, NumSectors);
+
+	for (int i = 0; i < NumLineDefs; i++)
+	{
+		int bits = 0;
+		if ( LineDefs[i].start == v1 || LineDefs[i].end == v1 )
+			bits |= 1;
+		if ( LineDefs[i].start == v2 || LineDefs[i].end == v2 )
+			bits |= 2;
+		if ( LineDefs[i].start == v3 || LineDefs[i].end == v3 )
+			bits |= 4;
+		if ( bits == 0 )
+			continue;
+
+		if ( LineDefs[i].sidedef1 != -1 )
+		{
+			SHORT s = SideDefs[LineDefs[i].sidedef1].sector;
+			if ( s >= 0 && s < NumSectors )
+				mask[s] |= bits;
+		}
+		if ( LineDefs[i].sidedef2 != -1 )
+		{
+			SHORT s = SideDefs[LineDefs[i].sidedef2].sector;
+			if ( s >= 0 && s < NumSectors )
+				mask[s] |= bits;
+		}
+	}
+
+	for (SHORT s = 0; s < NumSectors && count < 2; s++)
+		if ( mask[s] == 7 )
+			sectors[count++] = s;
+
+	delete[] mask;
+	return count;
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// TSelectSectorDialog
+// -------------------
+// Ask the user which of two sectors to edit.  GetChoice() returns the
+// chosen sector number, or -1 if the dialog was cancelled (Escape).
+//
+class TSelectSectorDialog : public TDialog
+{
+public:
+	TSelectSectorDialog (TWindow *parent, SHORT s1, SHORT s2):
+		TDialog(parent, IDD_SELECT_SECTOR)
+	{
+		Sector1 = s1;
+		Sector2 = s2;
+		Choice  = -1;
+	}
+
+	SHORT GetChoice () { return Choice; }
+
+protected:
+	virtual void SetupWindow ()
+	{
+		TDialog::SetupWindow();
+		::CenterWindow (this);
+
+		char str[32];
+		wsprintf (str, "Sector %d", Sector1);
+		SetDlgItemText (IDC_SELECT_SECTOR1, str);
+		wsprintf (str, "Sector %d", Sector2);
+		SetDlgItemText (IDC_SELECT_SECTOR2, str);
+	}
+
+	void Sector1Clicked ()	{ Choice = Sector1; CmOk(); }
+	void Sector2Clicked ()	{ Choice = Sector2; CmOk(); }
+
+	SHORT Sector1, Sector2, Choice;
+
+	DECLARE_RESPONSE_TABLE(TSelectSectorDialog);
+};
+
+DEFINE_RESPONSE_TABLE1(TSelectSectorDialog, TDialog)
+	EV_BN_CLICKED(IDC_SELECT_SECTOR1, Sector1Clicked),
+	EV_BN_CLICKED(IDC_SELECT_SECTOR2, Sector2Clicked),
+END_RESPONSE_TABLE;
+
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmMiscVSlopeEnable (TCommandEnabler &tce)
+{
+	BOOL enable = FALSE;
+
+	// Exactly 3 vertices selected, all on the boundary of one sector
+	if ( EditMode == OBJ_VERTEXES &&
+		 Selected != NULL && Selected->next != NULL &&
+		 Selected->next->next != NULL &&
+		 Selected->next->next->next == NULL )
+	{
+		SHORT sectors[2];
+		enable = (FindVertexCommonSectors (Selected->objnum,
+										   Selected->next->objnum,
+										   Selected->next->next->objnum,
+										   sectors) >= 1);
+	}
+
+	tce.Enable (enable);
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmMiscVSlope ()
+{
+	// Ignore if "insert object" mode
+	if ( InsertingObject )
+		return;
+
+	if ( EditMode != OBJ_VERTEXES )
+		return;
+
+	// Check three vertices selected
+	if ( CheckSelection (3, 3) == FALSE )
+		return;
+
+	SHORT v1 = Selected->objnum;
+	SHORT v2 = Selected->next->objnum;
+	SHORT v3 = Selected->next->next->objnum;
+
+	SHORT sectors[2];
+	int count = FindVertexCommonSectors (v1, v2, v3, sectors);
+	if ( count == 0 )
+	{
+		Notify ("The selected vertices do not all lie on the boundary "
+				"of one sector!");
+		SetupSelection (FALSE);
+		return;
+	}
+
+	// If the vertices border two sectors, ask which one to edit
+	SHORT sector = sectors[0];
+	if ( count > 1 )
+	{
+		TSelectSectorDialog seldlg (this, sectors[0], sectors[1]);
+		seldlg.Execute();
+		sector = seldlg.GetChoice();
+		if ( sector < 0 )
+		{
+			// Cancelled with Escape
+			SetupSelection (FALSE);
+			return;
+		}
+	}
+
+	// Start UNDO recording
+	StartUndoRecording ("Set up slope");
+
+	// Edit the shared sector with the slopes preset to the selected
+	// vertices at the sector's flat heights
+	SelPtr list = NULL;
+	SelectObject (&list, sector);
+	int rc = IDCANCEL;
+	SET_HELP_CONTEXT(Sectors_edit_mode);
+	TSectorEditDialog dlg (this, list);
+	dlg.SetSlopePreset (v1, v2, v3);
+	rc = dlg.Execute();
+	RESTORE_HELP_CONTEXT();
+	ForgetSelection (&list);
+
+	// Save UNDO data
+	StopUndoRecording();
+
+	// Restore old selection
+	SetupSelection (FALSE);
+
+	// Redraw map
+	if ( rc == IDOK )
+		RefreshWindows();
 }
 
 
@@ -4422,18 +4637,15 @@ void TEditorClient::CmCheckNames ()
 // -------------
 //
 void TEditorClient::EvMouseWheel (uint modKeys, int zDelta, const TPoint& point)
-{
-	if (modKeys & MK_CONTROL)
-	{
-		if (zDelta > 0)
-			CmZoomIn();
-		else if (zDelta < 0)
-			CmZoomOut();
-	}
-	else
-	{
-		TLayoutWindow::EvMouseWheel(modKeys, zDelta, point);
-	}
+{	
+	// WM_MOUSEWHEEL reports screen coords; the zoom transform is client-space
+	TPoint client = point;
+	ScreenToClient(client);
+
+	if (zDelta > 0)
+		ZoomBy(TRUE,  client.x, client.y);
+	else if (zDelta < 0)
+		ZoomBy(FALSE, client.x, client.y);
 }
 
 
@@ -4443,26 +4655,7 @@ void TEditorClient::EvMouseWheel (uint modKeys, int zDelta, const TPoint& point)
 //
 void TEditorClient::CmZoomIn ()
 {
-	float oldScale = Scale;
-
-#ifdef DEU_FOLLOW_POINTER
-	OrigX += (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
-	OrigY += (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
-#endif
-
-	IncScale();
-
-#ifdef DEU_FOLLOW_POINTER
-	OrigX -= (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
-	OrigY -= (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
-#endif
-
-	// If scale has really changed
-	if ( Scale != oldScale )
-	{
-		AdjustScroller();       // Adjust scroller units
-		RefreshWindows();     	// Redraw map
-	}
+	ZoomBy(TRUE, ScrCenterX, ScrCenterY);
 }
 
 
@@ -4472,28 +4665,35 @@ void TEditorClient::CmZoomIn ()
 //
 void TEditorClient::CmZoomOut ()
 {
-	float oldScale = Scale;
-
-#ifdef DEU_FOLLOW_POINTER
-	OrigX += (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
-	OrigY += (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
-#endif
-
-	DecScale();
-
-#ifdef DEU_FOLLOW_POINTER
-	OrigX -= (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
-	OrigY -= (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
-#endif
-
-	// If scale has really changed
-	if ( Scale != oldScale )
-	{
-		AdjustScroller();       // Adjust scroller units
-		RefreshWindows () ;     // Redraw map
-	}
+	ZoomBy(FALSE, ScrCenterX, ScrCenterY);
 }
 
+
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::ZoomBy (bool zoomIn, SHORT anchorX, SHORT anchorY)
+{
+	float oldScale = Scale;
+
+	OrigX += (SHORT) ((anchorX - ScrCenterX) * DIV_SCALE);
+	OrigY += (SHORT) ((ScrCenterY - anchorY) * DIV_SCALE);
+
+	if (zoomIn)
+		IncScale();
+	else
+		DecScale();
+
+	OrigX -= (SHORT) ((anchorX - ScrCenterX) * DIV_SCALE);
+	OrigY -= (SHORT) ((ScrCenterY - anchorY) * DIV_SCALE);
+
+	if ( Scale != oldScale )
+	{
+		AdjustScroller();  // Adjust scroller units
+		RefreshWindows();  // Redraw map
+	}
+}
 
 /////////////////////////////////////////////////////////////////////
 // TEditorClient

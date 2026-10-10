@@ -81,10 +81,6 @@
 	#include "cnflddlg.h"
 #endif
 
-#ifndef __viewbmp_h
-	class TDisplayWallTextureDialog;
-#endif
-
 #include "lineedit.rh"
 
 
@@ -99,7 +95,6 @@ protected:
 	SideDef CurSD[2];
 	char TextureName[MAX_BITMAPNAME + 1];
 	int  TextureNum;
-	TDisplayWallTextureDialog *pWTextureDialog;
 	TConfirmLineDefDialogXfer ConfirmData;
 
 protected:

@@ -207,6 +207,7 @@ protected:
 	void CmMiscVDelete ();
 	void CmMiscVMerge ();
 	void CmMiscVAddLineDef ();
+	void CmMiscVSlope ();
 	void CmMiscSMakeDoor ();
 	void CmMiscSMakeLift ();
 	void CmMiscSDitribFloor ();
@@ -227,6 +228,7 @@ protected:
 	void CmCheckMenu ();
 	void CmZoomIn ();
 	void CmZoomOut ();
+	void ZoomBy (bool zoomIn, SHORT anchorX, SHORT anchorY);
 	void CmAutoLayout ();
 	void CmLayout ();
 	void CmWindowGridNext ();
@@ -254,6 +256,7 @@ protected:
 	void CmVertUpRight ();
 	void CmDeleteEnable (TCommandEnabler &tce);
 	void CmCopyEnable (TCommandEnabler &tce);
+	void CmMiscVSlopeEnable (TCommandEnabler &tce);
 	void CmUndoEnable (TCommandEnabler &tce);
 	void CmRedoEnable (TCommandEnabler &tce);
 	void CmLayoutEnable (TCommandEnabler &tce);

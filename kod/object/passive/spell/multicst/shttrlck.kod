@@ -28,7 +28,7 @@ resources:
 
    Shatterlock_safety = \
       "You must not have a guardian angel and must turn your safety OFF before "
-      "you cast this spell.  Note that you will marked as an outlaw as the result "
+      "you cast this spell.  Note that you will be marked as an outlaw as the result "
       "of casting this spell."
 
    Shatterlock_outlaw = \
@@ -38,6 +38,9 @@ resources:
 
    ShatterLock_cast_complete = \
       "As you finish your incantation, the door to the guild hall opens!"
+
+   Shatterlock_not_guildhall = \
+      "The prism flickers, but finds no guild hall lock here to shatter."
 
    ShatterLock_guildwarning = \
       "You have a strange feeling that your guild hall's defenses are being "
@@ -93,16 +96,19 @@ messages:
 
       if IsClass(who,&Player)
          AND (Send(who,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
-              OR NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+              OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
       {
-         Send(who,@MsgSendUser,#message=Shatterlock_safety);
+         Send(who,@MsgSendUser,#message_rsc=Shatterlock_safety);
 
          return FALSE;
       }
 
       oPrism = Send(self,@FindPrism,#who=who);
-      if NOT IsClass(Send(oPrism,@GetOwner),&GuildHall)
+      if oPrism <> $
+         AND NOT IsClass(Send(oPrism,@GetOwner),&GuildHall)
       {
+         Send(who,@MsgSendUser,#message_rsc=Shatterlock_not_guildhall);
+
          return FALSE;
       }
 

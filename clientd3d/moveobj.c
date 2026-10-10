@@ -229,7 +229,7 @@ bool ObjectsMove(int dt)
 			if (r->motion.v_z == 0)
 				RoomObjectSetHeight(r);
 		}
-		if (OF_BOUNCING == (OF_BOUNCING & r->obj.flags))
+		if (ObjectIsBouncing(r->obj.flags))
 		{
 			if (!(OF_PLAYER & r->obj.flags))
 			{

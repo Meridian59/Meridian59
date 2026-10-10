@@ -108,6 +108,11 @@ typedef struct {
    int			boundingHeightAdjust;	// adjustment in height from overlays
 } room_contents_node;
 
+bool ObjectIsBouncing(int flags);
+bool ObjectHasFlickeringLight(int flags);
+bool ObjectHasFlashingLight(int flags);
+bool ObjectHasLightEffect(int flags);
+
 M59EXPORT bool CompareIdObject(void *idnum, void *obj);
 bool CompareId(void *id1, void *id2);
 bool CompareIdRoomObject(void *idnum, void *obj);

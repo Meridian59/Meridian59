@@ -103,6 +103,8 @@ public:
 	UINT GetZoomFactor() 	{ return ZoomFactor; }
 	void SetGammaLevel (BYTE level);
 	UINT GetGammaLevel ()	{ return GammaLevel; }
+	USHORT GetBitmapWidth () const  { return BitmapXSize; }
+	USHORT GetBitmapHeight () const { return BitmapYSize; }
 
 //{{TBitmap256ControlVIRTUAL_BEGIN}}
 public:

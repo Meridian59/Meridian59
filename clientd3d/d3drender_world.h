@@ -20,6 +20,7 @@ struct WorldCacheSystemParams {
     d3d_render_cache_system* worldCacheSystemStatic;
 
     d3d_render_cache_system* lMapCacheSystem;
+    d3d_render_cache_system* lMapCacheSystemMoving;
     d3d_render_cache_system* lMapCacheSystemStatic;
 
     d3d_render_cache_system* wallMaskCacheSystem; // geometry
@@ -28,12 +29,14 @@ struct WorldCacheSystemParams {
         d3d_render_cache_system* worldCacheSystemParam,
         d3d_render_cache_system* worldCacheSystemStaticParam,
         d3d_render_cache_system* lMapCacheSystemParam,
+        d3d_render_cache_system* lMapCacheSystemMovingParam,
         d3d_render_cache_system* lMapCacheSystemStaticParam,
         d3d_render_cache_system* wallMaskCacheSystemParam
     )
         : worldCacheSystem(worldCacheSystemParam),
           worldCacheSystemStatic(worldCacheSystemStaticParam),
           lMapCacheSystem(lMapCacheSystemParam),
+          lMapCacheSystemMoving(lMapCacheSystemMovingParam),
           lMapCacheSystemStatic(lMapCacheSystemStaticParam),
           wallMaskCacheSystem(wallMaskCacheSystemParam)
     {}
@@ -65,14 +68,11 @@ struct WorldPoolParams {
 };
 
 struct WorldPropertyParams {
-    
-    LPDIRECT3DTEXTURE9 noLookThroughTexture;
-    LPDIRECT3DTEXTURE9 lightOrangeTexture;
 
-	WorldPropertyParams(LPDIRECT3DTEXTURE9 noLookThroughTextureParam,
-        LPDIRECT3DTEXTURE9 lightOrangeTextureParam)
-		: noLookThroughTexture(noLookThroughTextureParam),
-		  lightOrangeTexture(lightOrangeTextureParam)
+    LPDIRECT3DTEXTURE9 noLookThroughTexture;
+
+	WorldPropertyParams(LPDIRECT3DTEXTURE9 noLookThroughTextureParam)
+		: noLookThroughTexture(noLookThroughTextureParam)
 	{}
 };
 

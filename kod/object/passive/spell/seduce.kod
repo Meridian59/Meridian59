@@ -235,6 +235,11 @@ messages:
          return;
       }
       
+      if Send(who,@GetHealth) <= 0
+      {
+         return;
+      }
+
       % Post because this must be done after the enchantment is gone from
       % the monster's enchantment list
       Post(who,@ResetBehaviorFlags);

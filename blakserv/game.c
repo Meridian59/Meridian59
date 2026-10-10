@@ -42,6 +42,7 @@ void GameTryGetUser(session_node *s);
 void GameSendEachUserChoice(user_node *u);
 void GameSendSystemEnter(session_node *s);
 void GameDMCommand(session_node *s,int type,char *str);
+bool GameDMParseObjectID(const char *str,int *object_id);
 
 static char* _redbookstring = NULL;
 static int _redbookid = 0;
@@ -493,7 +494,7 @@ void GameProtocolParse(session_node *s,client_msg *msg)
       len = *(short *)(msg->data+index);
       if (index + 2 + len > msg->len) /* 2 = length word len */
 	 break;
-      if (len-1 > sizeof(password))
+      if (len < 0 || len >= (int) sizeof(password))
 	 break;
       memcpy(password,msg->data+index+2,len);
       password[len] = 0; /* null terminate string */
@@ -502,13 +503,13 @@ void GameProtocolParse(session_node *s,client_msg *msg)
       len = *(short *)(msg->data+index);
       if (index + 2 + len > msg->len)
 	 break;
-      if (len-1 > sizeof(new_password))
+      if (len < 0 || len >= (int) sizeof(new_password))
 	 break;
       memcpy(new_password,msg->data+index+2,len);
       new_password[len] = 0; /* null terminate string */
       index += 2 + len;
 
-      if (s->account->password == password)
+      if (s->account->password != password)
       {
 	 AddByteToPacket(BP_PASSWORD_NOT_OK);
 	 SendPacket(s->session_id);
@@ -624,10 +625,33 @@ void GameSendSystemEnter(session_node *s)
 
 }
 
+/* Parse a client-supplied object id for a DM command.  The string must be
+   nothing but a decimal integer naming an existing object; anything else is
+   rejected so that client text can never reach the admin command parser. */
+bool GameDMParseObjectID(const char *str,int *object_id)
+{
+   char *end;
+   long val;
+
+   if (str == NULL || *str == 0)
+      return false;
+
+   val = strtol(str,&end,10);
+   if (*end != 0 || val < 0 || val > INT_MAX)
+      return false;
+
+   if (GetObjectByID((int) val) == NULL)
+      return false;
+
+   *object_id = (int) val;
+   return true;
+}
+
 void GameDMCommand(session_node *s,int type,char *str)
 {
    char buf[LEN_MAX_CLIENT_MSG + 200];
    int acctype;
+   int target_id;
 
    acctype = ACCOUNT_NORMAL;
    if (s && s->account)
@@ -721,7 +745,12 @@ void GameDMCommand(session_node *s,int type,char *str)
 	 break;
       if (ConfigInt(RIGHTS_GOPLAYER) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
 	 break;
-      snprintf(buf, sizeof(buf), "send object %i admingotoobject what object %s",s->game->object_id,str);
+      if (!GameDMParseObjectID(str,&target_id))
+      {
+         SendSessionAdminText(s->session_id,"Invalid object id \"%s\".\n",str);
+         break;
+      }
+      snprintf(buf, sizeof(buf), "send object %i admingotoobject what object %i",s->game->object_id,target_id);
       SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
       TryAdminCommand(s->session_id,buf); 
       break;
@@ -731,7 +760,12 @@ void GameDMCommand(session_node *s,int type,char *str)
 	 break;
       if (ConfigInt(RIGHTS_GETPLAYER) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
 	 break;
-      snprintf(buf, sizeof(buf), "send object %s admingotoobject what object %i",str,s->game->object_id);
+      if (!GameDMParseObjectID(str,&target_id))
+      {
+         SendSessionAdminText(s->session_id,"Invalid object id \"%s\".\n",str);
+         break;
+      }
+      snprintf(buf, sizeof(buf), "send object %i admingotoobject what object %i",target_id,s->game->object_id);
       SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
       TryAdminCommand(s->session_id,buf); 
       break;

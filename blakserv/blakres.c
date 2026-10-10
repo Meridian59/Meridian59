@@ -185,6 +185,9 @@ resource_node * GetResourceByID(int id)
 {
 	resource_node *r;
 
+	if (id < 0)
+		return NULL;
+
 	r = resources[id % resources_table_size];
 	while (r != NULL)
 	{

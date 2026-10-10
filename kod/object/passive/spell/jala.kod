@@ -307,7 +307,7 @@ messages:
       % Send to room: restart the background music.
       Post(oRoom,@ResendRoomBackgroundMusic);
       
-      return;
+      propagate;
    }
 
    StartMusic(oCaster=$, rMusic=$)

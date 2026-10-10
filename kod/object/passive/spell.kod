@@ -2334,11 +2334,18 @@ messages:
    {
       local iEnch;
       
+      % When the ending spell affects room spell power, turn off the related
+      %  room flag unless another active spell still affects it.
       if Send(self,@AffectsSpellPower)
       {
          for iEnch in Send(where,@GetEnchantmentList)
          {
-            if Send(Nth(iEnch,2),@AffectsSpellPower) AND Nth(iEnch,2) <> self
+            % If another spell on the room still affects spell power, keep
+            %  the flag on.  Skip the spell that is ending.  All casts of a
+            %  spell share one spell object, so also compare state: each
+            %  cast has its own, and one cast can end while another goes on.
+            if Send(Nth(iEnch,2),@AffectsSpellPower)
+               AND (Nth(iEnch,2) <> self OR Nth(iEnch,3) <> state)
             {
                return;
             }

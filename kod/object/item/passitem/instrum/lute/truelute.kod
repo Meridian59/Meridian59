@@ -25,7 +25,7 @@ resources:
 
 classvars:
 
-   viInstrument_strength = 40
+   viInstrument_strength = 30
    vrName = TrueLute_name_rsc
    vrDesc = TrueLute_desc_rsc
 
@@ -39,6 +39,19 @@ classvars:
 properties:
 
 messages:
+
+   GetBaseSpellModifier(oSpell=$)
+   "Returns 10 extra spell power for Jala songs, on top of the instrument "
+   "strength.  Spell power caps what an instrument's strength adds, and this "
+   "bonus lets the true lute go past that cap."
+   {
+      if Send(oSpell,@GetSchool) = SS_JALA
+      {
+         return 10;
+      }
+
+      propagate;
+   }
 
 
 end

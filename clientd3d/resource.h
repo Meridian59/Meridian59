@@ -645,6 +645,11 @@
 #define IDC_ANNOTATION_ZOOM_LIMIT       3653
 #define IDS_THEME_DEFAULT               3654
 #define IDS_THEME_DARK                  3655
+#define IDC_ANTIALIASING                3656
+#define IDS_TIP_DYNAMIC_LIGHTING        3657
+#define IDS_TIP_SOFTWARE_RENDERER       3658
+#define IDS_TIP_GPU_EFFICIENCY          3659
+#define IDS_TIP_ANTIALIASING            3660
 
 // Next default values for new objects
 // 

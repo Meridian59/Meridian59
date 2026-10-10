@@ -130,6 +130,11 @@ typedef struct {
    // and switches D3D present mode to D3DPRESENT_INTERVAL_DEFAULT 
    // for more stable, power-efficient rendering.
    bool gpuEfficiency;
+
+   // Ask the graphics card for multisample antialiasing, which smooths jagged edges
+   // at the cost of fill rate.  Cards that support no multisample level render
+   // without it.
+   bool multisampleAntialiasing;
    bool show_inventory_rarity;   /* Add inventory item rarity symbols? */
 } Config;
 

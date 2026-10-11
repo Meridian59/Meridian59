@@ -3776,7 +3776,7 @@ messages:
       }
 
       oBrain = Send(mob,@GetBrain);
-      if mob <> $
+      if oBrain <> $
       {
          if Send(oBrain,@AttemptTargetSwitch,#mob=mob,#what=what,#event=7)
          {

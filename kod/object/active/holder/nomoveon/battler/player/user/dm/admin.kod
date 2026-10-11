@@ -545,9 +545,18 @@ messages:
    }
 
    PlaceMonsterCopies(oTemplate = $,iEachCount = 1)
-   "Creates iEachCount monsters of oTemplate's class at the admin's position."
+   "Creates iEachCount monsters of oTemplate's class at the admin's position. "
+   "Returns the number of monsters created."
    {
       local iCopy;
+
+      % The lich queen is a unique NPC that only the game itself may create.
+      % Any copy placed outside her guild hall teleports straight back there
+      % ("Bad Lich" error), and extra copies break her guild and NPC state.
+      if IsClass(oTemplate,&Lich)
+      {
+         return 0;
+      }
 
       iCopy = 0;
       while iCopy < iEachCount
@@ -556,7 +565,7 @@ messages:
          iCopy = iCopy + 1;
       }
 
-      return;
+      return iEachCount;
    }
 
    PlaceAllMonsters(iEachCount = 1)
@@ -571,8 +580,8 @@ messages:
 
       for i in Send(SYS,@GetMonsterTemplates)
       {
-         Send(self,@PlaceMonsterCopies,#oTemplate=i,#iEachCount=iEachCount);
-         iSpawned = iSpawned + iEachCount;
+         iSpawned = iSpawned + Send(self,@PlaceMonsterCopies,#oTemplate=i,
+                                    #iEachCount=iEachCount);
       }
 
       Send(self,@MsgSendUser,#message_rsc=admin_placed_all_monsters,
@@ -601,8 +610,8 @@ messages:
       {
          if FindListElem(lBlendedEffects,Send(i,@GetDrawFX)) <> 0
          {
-            Send(self,@PlaceMonsterCopies,#oTemplate=i,#iEachCount=iEachCount);
-            iSpawned = iSpawned + iEachCount;
+            iSpawned = iSpawned + Send(self,@PlaceMonsterCopies,#oTemplate=i,
+                                       #iEachCount=iEachCount);
          }
       }
 

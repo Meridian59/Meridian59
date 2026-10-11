@@ -15,6 +15,8 @@
 #include <vector>
 #include <numeric>
 #include <chrono>
+#include <cmath>
+#include <thread>
 
 //	Duplicate of what is in merint\userarea.h.
 #define USERAREA_HEIGHT 64
@@ -55,8 +57,7 @@ static steady_clock_time_point nextFrameTarget;
 static auto& chrono_time_now = std::chrono::steady_clock::now;
 
 static const int defaultMaxFps = 60;
-static const long long microsecondsPerSecond = 1000000;
-static const long long microsecondsPerMillisecond = 1000;
+static const double millisecondsPerSecond = 1000.0;
 
 /************************************************************************/
 /*
@@ -340,14 +341,14 @@ void RedrawForce(void)
    DrawRoom(hdc, view.x, view.y, &current_room, map);
 
    steady_clock_time_point endFrame = chrono_time_now();
-   long long drawMicroseconds =
-      std::chrono::duration_cast<std::chrono::microseconds>(endFrame - startFrame).count();
-   msDrawFrame = static_cast<int>(drawMicroseconds / microsecondsPerMillisecond);
+   std::chrono::duration<double> drawSeconds = endFrame - startFrame;
+   msDrawFrame = static_cast<int>(drawSeconds.count() * millisecondsPerSecond);
 
    int maxFPS = config.gpuEfficiency ? defaultMaxFps : config.maxFPS;
    if (maxFPS > 0)
    {
-      std::chrono::microseconds framePeriod(microsecondsPerSecond / maxFPS);
+      auto framePeriod = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+         std::chrono::duration<double>(1.0 / maxFPS));
 
       // Sleep until the time this frame was due, rather than for a fixed amount
       // measured from now, so that a frame that runs long is paid for by the
@@ -357,24 +358,12 @@ void RedrawForce(void)
       if (nextFrameTarget < now - framePeriod)
          nextFrameTarget = now;  // More than a frame behind, so stop trying to catch up.
 
-      long long sleepMicroseconds =
-         std::chrono::duration_cast<std::chrono::microseconds>(nextFrameTarget - now).count();
-
-      // Round the wait down, because Sleep only expresses whole milliseconds and
-      // rounding up would overshoot the deadline every frame. The remainder is
-      // smaller than the message loop's own overhead, and the next target
-      // absorbs whatever is left.
-      if (sleepMicroseconds >= microsecondsPerMillisecond)
-         Sleep(static_cast<DWORD>(sleepMicroseconds / microsecondsPerMillisecond));
-
+      std::this_thread::sleep_until(nextFrameTarget);
       endFrame = chrono_time_now();
    }
 
-   long long frameMicroseconds =
-      std::chrono::duration_cast<std::chrono::microseconds>(endFrame - lastEndFrame).count();
-   fps = frameMicroseconds > 0
-      ? static_cast<int>((microsecondsPerSecond + frameMicroseconds / 2) / frameMicroseconds)
-      : 0;
+   std::chrono::duration<double> frameSeconds = endFrame - lastEndFrame;
+   fps = frameSeconds.count() > 0 ? static_cast<int>(std::lround(1.0 / frameSeconds.count())) : 0;
 
    lastEndFrame = endFrame;
 
@@ -394,7 +383,7 @@ void RedrawForce(void)
 
         // Format and display the latest average fps value.
         RECT rc,lagBox;
-        double drawMilliseconds = static_cast<double>(drawMicroseconds) / microsecondsPerMillisecond;
+        double drawMilliseconds = drawSeconds.count() * millisecondsPerSecond;
         char buffer[32];
         snprintf(buffer, sizeof(buffer), "FPS=%d (%.1fms)        ", average_fps, drawMilliseconds);
         ZeroMemory(&rc,sizeof(rc));

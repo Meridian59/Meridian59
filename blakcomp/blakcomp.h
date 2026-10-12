@@ -313,8 +313,8 @@ class_type make_class(class_type c, list_type resources, list_type classvars,
 /* miscellaneous */
 void enter_loop(void);
 void leave_loop(void);
-int  enter_block(void);
-void leave_block(int saved_maxlocals, list_type locals);
+void enter_block(void);
+void leave_block(void);
 void action_error(const char *fmt, ...);
 void action_warning(const char *fmt, ...);
 void simple_error(const char *fmt, ...);

@@ -227,13 +227,6 @@ messages:
    {
       local oTwin, oRoom, iRow, iCol;
 
-      % An evil twin can only copy a player.
-      if target <> self
-         AND IsClass(target,&Monster)
-      {
-         return FALSE;
-      }
-
       oRoom = Send(target,@GetOwner);
 
       % Check the summon limit restrictions
@@ -252,6 +245,12 @@ messages:
       }
       else
       {
+         % An evil twin can only copy a player.
+         if NOT IsClass(target,&Player)
+         {
+            return FALSE;
+         }
+
          oTwin = Create(&EvilTwin,#iSpellpower=100,#oMaster=self,
                         #oTarget=target);
       }

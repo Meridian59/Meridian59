@@ -1,4 +1,4 @@
-% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
 % This software is distributed under a license that is described in
@@ -7983,6 +7983,10 @@ messages:
       {
          piHealth = 1;
          Send(self,@NewHealth);
+
+         % Break any trances that are still being upheld.
+         Send(self,@BreakTrance);
+         
          %Currently, the following block is only for Necromancer Amulets and Hunter Swords.
          for i in plActive
          {

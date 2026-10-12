@@ -1974,11 +1974,10 @@ messages:
    "of values selected.  See system.kod, SendCharInfo(), for what these "
    "values mean."
    {
-      local i,lFaceparts,lStats,lSpells,lSkills,iPoints,iLevel,iHair_translation,
-            iSkin_translation, bQor, bShalille, oSpell, oSkill;
+      local i;
      
-      bQor = FALSE;
-      bShalille = FALSE;
+      local bQor = FALSE;
+      local bShalille = FALSE;
 
       psPlayerDescription = desc;
 
@@ -1995,7 +1994,7 @@ messages:
       % list of initial spells
       % list of initial skills
 
-      lFaceparts = Nth(charinfo,1);
+      local lFaceparts = Nth(charinfo,1);
       if (Length(lFaceparts) <> 5)
       {
          % Hacking the protocol -> default char
@@ -2020,8 +2019,8 @@ messages:
       prMouth = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,5), 
           #res_list = Send(SYS, @GetAllowedMouthIcons, #iGender = gender));
 
-      iHair_translation = Nth(charinfo,2);
-      iSkin_translation = Nth(charinfo,3);
+      local iHair_translation = Nth(charinfo,2);
+      local iSkin_translation = Nth(charinfo,3);
 
       if iHair_translation <> 0
          AND iHair_translation <> PT_GRAY_TO_ORANGE
@@ -2060,14 +2059,14 @@ messages:
       Send(self,@ResetPlayerArms);
       Send(self,@ResetPlayerLegs);
 
-      lStats = Nth(charinfo,4);
+      local lStats = Nth(charinfo,4);
       if (Length(lStats) <> 6)
       {
          % Hacking the protocol -> junk char for you
          lStats = [1, 1, 1, 1, 1, 1];
       }
 
-      iPoints = Nth(lStats,1) + Nth(lStats,2) + Nth(lStats,3);
+      local iPoints = Nth(lStats,1) + Nth(lStats,2) + Nth(lStats,3);
       iPoints = iPoints + Nth(lStats,4) + Nth(lStats,5) + Nth(lStats,6);
 
       if Nth(lStats,1) < 1 OR Nth(lStats,1) > 50
@@ -2138,13 +2137,13 @@ messages:
       Send(self,@AddDefaultSpells);
       Send(self,@AddDefaultSkills);
 
-      lSpells = Nth(charinfo,5);
-      lSkills = Nth(charinfo,6);
+      local lSpells = Nth(charinfo,5);
+      local lSkills = Nth(charinfo,6);
 
       iPoints = 0;
       for i in lSpells
       {
-         iLevel = Send(Send(SYS,@FindSpellByNum,#num=i),@GetLevel);
+         local iLevel = Send(Send(SYS,@FindSpellByNum,#num=i),@GetLevel);
 
          if iLevel >= 2
          {
@@ -2158,7 +2157,7 @@ messages:
       
       for i in lSkills
       {
-         iLevel = Send(Send(SYS,@FindSkillByNum,#num=i),@GetLevel);
+         local iLevel = Send(Send(SYS,@FindSkillByNum,#num=i),@GetLevel);
 
          if iLevel >= 2
          {
@@ -2180,11 +2179,11 @@ messages:
          {
             for i in lSpells
             {
-               oSpell = Send(SYS, @FindSpellByNum, #num=i);
+               local oSpell = Send(SYS, @FindSpellByNum, #num=i);
                % Not offered to new characters -> cheating, skip spell
                if (oSpell <> $ AND Send(oSpell, @OfferToNewCharacters)) 
                {
-                  iLevel = Send(oSpell,@GetLevel);
+                  local iLevel = Send(oSpell,@GetLevel);
                   if (iLevel <= 2)
                   {
                      Send(self,@AddSpell,#num=i,#initial=TRUE);
@@ -2202,10 +2201,10 @@ messages:
             
             for i in lSkills
             {
-               oSkill = Send(SYS,@FindSkillByNum,#num=i);
+               local oSkill = Send(SYS,@FindSkillByNum,#num=i);
                if (oSkill <> $)
                {
-                  iLevel = Send(oSkill,@GetLevel);
+                  local iLevel = Send(oSkill,@GetLevel);
                   if (iLevel <= 2)
                   {
                      Send(self,@AddSkill,#num=i,#initial=TRUE);

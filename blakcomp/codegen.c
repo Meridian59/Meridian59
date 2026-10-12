@@ -727,8 +727,10 @@ void codegen_message(message_handler_type m)
       for ( ; p != NULL; p = p->next)
 	 codegen_parameter( (param_type) p->data);
 
-   /* # of local variables, including parameters.  -1 is to start at 0. */
-   numlocals = list_length(m->locals) + list_length(m->header->params) - 1;
+   /* Highest # local variable, including parameters; -1 if none.  Block-scoped
+    * locals reuse #s, so this is the peak computed by the parser rather than
+    * a count of declarations. */
+   numlocals = m->maxlocal;
    maxlocals = numlocals;
 
    /* Write out code */

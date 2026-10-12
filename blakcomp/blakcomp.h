@@ -185,7 +185,10 @@ typedef struct {
 typedef struct {
    message_header_type header;
    const_type          comment;     /* Index of per-handler comment string, or NULL if none */
-   list_type locals;
+   int maxlocal;    /* Highest local variable # used by parameters and declared locals
+                       (excluding temporaries), or -1 if there are none.  Locals declared
+                       in sibling blocks share slots, so this can be less than the total
+                       number of declarations. */
    list_type body;
 } *message_handler_type, message_handler_struct;
 
@@ -227,7 +230,8 @@ typedef struct {
 			  */
    list_type classes;    /* List of all classes */
    int maxid;            /* Highest identifier # in use */
-   int maxlocals;        /* # of local variables in current handler */
+   int maxlocals;        /* Highest local variable # currently in scope; restored when a block ends */
+   int peaklocals;       /* Highest local variable # used anywhere in current handler */
    int maxproperties;    /* # of properties in current class */
    int maxclassvars;     /* # of classvars in current class */
    int maxresources;     /* Highest # resource used so far */
@@ -265,7 +269,8 @@ const_type make_literal_class(id_type id);
 const_type make_literal_message(id_type id);
 
 id_type make_identifier(char *);
-id_type make_var(id_type);
+id_type make_var(id_type id, expr_type init);
+list_type take_local_inits(void);
 
 
 expr_type make_expr_from_id(id_type);
@@ -298,7 +303,7 @@ stmt_type allocate_statement(void);
 list_type add_statement(list_type l, stmt_type s);
 
 message_handler_type make_message_handler(message_header_type header, char *comment,
-					  list_type locals, list_type stmts);
+					  list_type stmts);
 message_header_type make_message_header(id_type, list_type);
 
 class_type make_class_signature(id_type, id_type);
@@ -308,6 +313,8 @@ class_type make_class(class_type c, list_type resources, list_type classvars,
 /* miscellaneous */
 void enter_loop(void);
 void leave_loop(void);
+void enter_block(void);
+void leave_block(void);
 void action_error(const char *fmt, ...);
 void action_warning(const char *fmt, ...);
 void simple_error(const char *fmt, ...);

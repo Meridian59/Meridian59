@@ -322,6 +322,9 @@ messages:
       if poOriginal = $
       {
          post(self,@Delete);
+
+         % Without an original, return this reflection's own flags.
+         propagate;
       }
 
       iFlags = Send(poOriginal,@GetObjectFlags);

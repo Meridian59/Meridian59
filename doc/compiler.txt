@@ -70,6 +70,14 @@ the highest # ever allocated in the handler; codegen numbers temporaries
 above that peak (message_handler_struct.maxlocal) rather than above a
 count of declarations.
 
+	A declaration may carry an initializer ("local a = 0").  make_var
+turns each one into an ordinary assignment statement; the grammar
+collects these (take_local_inits) right after the declaration line and
+prepends them to the block's statement list, so codegen never sees
+anything but assignments.  The initializer marks the variable as
+assigned, which is what the unused-local and use-before-assignment
+checks look at.
+
 Superclasses
 ------------
 	

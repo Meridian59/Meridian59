@@ -168,7 +168,12 @@ ending with a semicolon.  The first statement optionally declares a
 list of local variables used by the handler.  The same is true of the
 braced block of any {\tt if}, {\tt else}, {\tt for} or {\tt while}
 statement: its first statement may declare local variables, which go
-out of scope at the block's closing brace.  A class also inherits
+out of scope at the block's closing brace.  Each declared variable may
+be given an initial value, as in {\tt local a = 0, b = a + 1, c;}.
+The initial values are ordinary expressions, evaluated in order each
+time the block is entered, before the block's other statements; an
+initializer may refer to variables declared earlier on the same line.
+A class also inherits
 its superclass's message handlers.  When an object's class hierarchy
 contains more than one message handler of the same name, the handler
 for the lowest class in the object's hierarchy is called first.  This

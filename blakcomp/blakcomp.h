@@ -269,7 +269,8 @@ const_type make_literal_class(id_type id);
 const_type make_literal_message(id_type id);
 
 id_type make_identifier(char *);
-id_type make_var(id_type);
+id_type make_var(id_type id, expr_type init);
+list_type take_local_inits(void);
 
 
 expr_type make_expr_from_id(id_type);

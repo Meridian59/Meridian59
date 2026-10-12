@@ -8563,15 +8563,13 @@ messages:
 
    DoWindowOverlayHandGlow()
    {
-      local oWeapon;
-
       if pbLogged_on
       {
 		 AddPacket(1,BP_PLAYER_OVERLAY);
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
 
-		 oWeapon = Send(self,@LookupPlayerWeapon);
+		 local oWeapon = Send(self,@LookupPlayerWeapon);
 
          % If the right hand is holding a melee weapon, animate casting while wielding it.
          if oWeapon <> $ AND NOT isClass(oWeapon,&Bow)

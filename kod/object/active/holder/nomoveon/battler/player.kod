@@ -1975,7 +1975,7 @@ messages:
    "values mean."
    {
       local i,lFaceparts,lStats,lSpells,lSkills,iPoints,iLevel,iHair_translation,
-            iSkin_translation, bQor, bShalille, oSpell, oSkill;
+            iSkin_translation, bQor, bShalille;
      
       bQor = FALSE;
       bShalille = FALSE;
@@ -2180,6 +2180,7 @@ messages:
          {
             for i in lSpells
             {
+               local oSpell;
                oSpell = Send(SYS, @FindSpellByNum, #num=i);
                % Not offered to new characters -> cheating, skip spell
                if (oSpell <> $ AND Send(oSpell, @OfferToNewCharacters)) 
@@ -2202,6 +2203,7 @@ messages:
             
             for i in lSkills
             {
+               local oSkill;
                oSkill = Send(SYS,@FindSkillByNum,#num=i);
                if (oSkill <> $)
                {

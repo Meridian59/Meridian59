@@ -61,6 +61,15 @@ temporary values, which are all stored in local variables.  Thus the
 actual # of local variables in a message is likely to be higher than the
 # of variables declared by that procedure.
 
+	Local variables may also be declared at the start of any braced
+block (if, else, for, while).  The parser hands each block's locals to
+leave_block at the closing brace, which removes them from the local
+table and restores st.maxlocals to its value at the opening brace, so
+sibling blocks reuse the same local variable #s.  st.peaklocals records
+the highest # ever allocated in the handler; codegen numbers temporaries
+above that peak (message_handler_struct.maxlocal) rather than above a
+count of declarations.
+
 Superclasses
 ------------
 	

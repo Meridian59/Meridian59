@@ -21,6 +21,7 @@ extern int numbuiltins;
 extern int lineno;
 
 static int loop_depth = 0;
+static const char *current_handler_name = "";  /* For warnings about block-scoped locals */
 SymbolTable st;
 
 /* Miscellaneous procedures */
@@ -67,6 +68,7 @@ void initialize_parser(void)
    st.maxid = IDBASE; /* Base for user-defined ids; builtins have lower #s */
    st.maxresources = RESOURCEBASE;
    st.maxlocals = -1; /* So that first local is numbered 0 */
+   st.peaklocals = -1;
    st.maxclassvars = -1; /* So that first class variable is numbered 0 */
    st.maxproperties = 0; /* So that first property is numbered 1; 0 = self */
    
@@ -372,6 +374,9 @@ id_type make_identifier(char *name)
    id->type = I_UNDEFINED;   /* Type is undefined until it's looked up */
    id->name = name;
    id->source = COMPILE;     /* Id came from a newly compiled file */
+   id->idnum = 0;
+   id->ownernum = 0;
+   id->assigned = false;     /* Unused/uninitialized-variable checks rely on this */
    return id;
 }
 /************************************************************************/
@@ -1180,8 +1185,50 @@ void leave_loop(void)
    loop_depth--;
 }
 /************************************************************************/
+/*
+ * enter_block: Called at the opening brace of a block.  Returns the value
+ *   the caller must hand back to leave_block so that local variable #s
+ *   allocated inside the block can be reused by later, non-overlapping blocks.
+ */
+int enter_block(void)
+{
+   return st.maxlocals;
+}
+/************************************************************************/
+/*
+ * leave_block: Called at the closing brace of a block.  locals is the list of
+ *   local variables declared at the start of the block; they go out of scope
+ *   here.  Their variable #s are released for reuse by later blocks.
+ */
+void leave_block(int saved_maxlocals, list_type locals)
+{
+   list_type l;
+
+   /* Remember the most locals ever live at once; codegen numbers temporaries above this */
+   if (st.maxlocals > st.peaklocals)
+      st.peaklocals = st.maxlocals;
+
+   for (l = locals; l != NULL; l = l->next)
+   {
+      id_type id = (id_type) l->data;
+
+      /* A duplicate declaration (already reported) was never entered into the
+       * table, so skip it rather than evict the original. */
+      if (table_lookup(st.localvars, (void *) id, id_hash, id_compare) != (void *) id)
+	 continue;
+
+      // Unused local variable is an error
+      if (!id->assigned)
+	 action_warning("Unused local %s in handler %s", id->name, current_handler_name);
+
+      table_delete_item(st.localvars, (void *) id, id_hash, id_compare);
+   }
+
+   st.maxlocals = saved_maxlocals;
+}
+/************************************************************************/
 message_handler_type make_message_handler(message_header_type header, char *comment,
-					  list_type locals, list_type stmts)
+					  list_type stmts)
 {
    message_handler_type h = (message_handler_type) SafeMalloc(sizeof(message_handler_struct));
    stmt_type stmt;
@@ -1189,33 +1236,31 @@ message_handler_type make_message_handler(message_header_type header, char *comm
    /* Last statement of body must be PROPAGATE or RETURN */
    stmt = (stmt_type) list_last_item(stmts);
 
-   if (stmt == NULL || (stmt->type != S_RETURN && stmt->type != S_PROP)) 
+   if (stmt == NULL || (stmt->type != S_RETURN && stmt->type != S_PROP))
       action_error("Last statement must be PROPAGATE or RETURN");
-   
+
    h->header  = header;
-   h->locals  = locals;
    h->body    = stmts;
    if (comment == NULL)
       h->comment = NULL;
    else h->comment = make_string_constant(comment);
 
-   /* Clean out local variable table.  We must do this at the end of 
+   /* Blocks release their locals' #s as they close, so the peak (not the
+    * current count) is what codegen needs to place temporaries above. */
+   h->maxlocal = st.peaklocals;
+
+   /* Clean out local variable table.  We must do this at the end of
     * each handler, since in make_message_header we have already checked
     * parameters names against old variables, which includes parameters
-    * from the current function in the local table.
+    * from the current function in the local table.  (Block-scoped locals
+    * normally remove themselves in leave_block, but parser error recovery
+    * can skip a block's closing brace.)
     */
    table_delete(st.localvars);
    st.maxlocals = -1; /* So that first local is numbered 0 */
+   st.peaklocals = -1;
+   loop_depth = 0;    /* Also may be left nonzero by error recovery */
 
-   // Unused local variable is an error
-   for (auto local = h->locals; local != NULL; local = local->next) {
-     auto id = (id_type) local->data;
-     if (!id->assigned) {
-       action_warning("Unused local %s in handler %s", id->name,
-                      header->message_id->name);
-     }
-   }
-   
    return h;
 }
 /************************************************************************/
@@ -1269,6 +1314,9 @@ message_header_type make_message_header(id_type id, list_type args)
    }
 
    s->message_id = id;
+   current_handler_name = id->name;
+   st.peaklocals = -1;
+
    /* Sort parameters in increasing id # order */
    s->params = SortParameterList(args);
 

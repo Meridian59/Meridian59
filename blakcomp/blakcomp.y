@@ -33,7 +33,8 @@
 
 %type <int_val>		Classes
 %type <stmt_val> 	statement
-%type <list_val> 	statement_list parameter_list argument_list vars
+%type <list_val> 	statement_list parameter_list argument_list vars block
+%type <int_val>		start_block
 %type <list_val>	locals classvar_list property_list resource_list expression_list 
 %type <list_val>	message_handler_list arg_list2 param_list2
 %type <list_val>	Messages_Block Classvars_Block Properties_Block Resources_Block
@@ -175,11 +176,22 @@ message_handler_list:
 	;
 
 message_handler:
-		message_header '{' locals statement_list '}'
-		{ $$ = make_message_handler($1, NULL, $3, $4); }
+		message_header block
+		{ $$ = make_message_handler($1, NULL, $2); }
  	/* this form includes a comment string describing the message handler */
-        |       message_header STRING_CONSTANT '{' locals statement_list '}'
-		{ $$ = make_message_handler($1, $2, $4, $5); }
+        |       message_header STRING_CONSTANT block
+		{ $$ = make_message_handler($1, $2, $3); }
+	;
+
+/* A braced block of statements.  Local variables may be declared at the start
+ * of any block; their scope ends at the closing brace, and the slots they
+ * occupy are reused by later blocks that don't overlap with this one. */
+block:
+		'{' start_block locals statement_list '}'
+		{ leave_block($2, $3); $$ = $4; }
+	;
+
+start_block:	/* empty */	{ $$ = enter_block(); }
 	;
 
 message_header:
@@ -245,11 +257,10 @@ statement:
 	;
 
 if_stmt:
-		IF expression '{' statement_list '}'
-		{ $$ = make_if_stmt($2, $4, NULL); }
-	|	IF expression '{' statement_list '}'  
-                  ELSE '{' statement_list '}' 
-		{ $$ = make_if_stmt($2, $4, $8); }
+		IF expression block
+		{ $$ = make_if_stmt($2, $3, NULL); }
+	|	IF expression block ELSE block
+		{ $$ = make_if_stmt($2, $3, $5); }
 	;
 
 assign_stmt:
@@ -258,8 +269,8 @@ assign_stmt:
 	;
 
 for_stmt:
-		FOR loop_variable IN expression '{' start_loop statement_list '}' end_loop
-		{ $$ = make_for_stmt($2, $4, $7); }
+		FOR loop_variable IN expression start_loop block end_loop
+		{ $$ = make_for_stmt($2, $4, $6); }
 	;
 
 loop_variable: 
@@ -267,8 +278,8 @@ loop_variable:
 ;
 
 while_stmt:
-		WHILE expression '{' start_loop statement_list '}' end_loop
-		{ $$ = make_while_stmt($2, $5); }
+		WHILE expression start_loop block end_loop
+		{ $$ = make_while_stmt($2, $4); }
 	;
 
 start_loop:	/* empty*/	{ enter_loop(); }

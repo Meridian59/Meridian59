@@ -165,7 +165,10 @@ these comments in the game.
 
 A message handler's body contains a sequence of statements, each
 ending with a semicolon.  The first statement optionally declares a
-list of local variables used by the handler.  A class also inherits
+list of local variables used by the handler.  The same is true of the
+braced block of any {\tt if}, {\tt else}, {\tt for} or {\tt while}
+statement: its first statement may declare local variables, which go
+out of scope at the block's closing brace.  A class also inherits
 its superclass's message handlers.  When an object's class hierarchy
 contains more than one message handler of the same name, the handler
 for the lowest class in the object's hierarchy is called first.  This
@@ -186,8 +189,14 @@ must be globally unique, and message handler names must be unique
 within a class.  The scope of all identifiers appearing on the left
 hand sides of assignments in the constant, resource, property, and
 classvar blocks is the class in which the blocks appear.  Parameter
-names and local variables appearing in a message handler have scope
-restricted to that message handler.
+names and local variables declared at the start of a message handler
+have scope restricted to that message handler.  Local variables
+declared at the start of a braced block have scope restricted to that
+block.  A name may not be redeclared while it is still in scope (so a
+block cannot shadow a parameter or an enclosing local), but two blocks
+that do not overlap may each declare a local of the same name.  Like
+handler-level locals, block locals are not initialized when the block
+is entered; the compiler requires that they be assigned before use.
 
 
 

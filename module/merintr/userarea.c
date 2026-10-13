@@ -61,6 +61,8 @@ void UserAreaRedraw(void)
    else
    {
       OffscreenSidebarBackground(user_area.x, user_area.y, user_area.cx, user_area.cy);
+      // The portrait draw starts at y = 1, so restore the uncovered top row.
+      OffscreenCopy(hdc, 0, 0, user_area.cx, 1, 0, 0);
 
 	  if (GetUserTargetID() == GetPlayer()->id)
 		OffscreenStretchBlt(hdc, 0, 0, user_area.cx, user_area.cy,

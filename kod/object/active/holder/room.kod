@@ -1737,8 +1737,10 @@ messages:
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
 
-            if each_obj <> what AND Send(each_obj,@GetRow) = new_row
-               AND Send(each_obj,@GetCol) = new_col
+            % This list entry is the room's record of where the object lies:
+            % its 3rd and 4th values are the object's row and column.
+            if each_obj <> what AND Nth(i,3) = new_row
+               AND Nth(i,4) = new_col
             {
                if GetClass(what) = GetClass(each_obj)
                {

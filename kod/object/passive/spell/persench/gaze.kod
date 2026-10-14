@@ -101,6 +101,13 @@ messages:
 
       % TODO: Make chance to paralyze based on if caster is facing opponent?
 
+      % An evil twin asks its original for its defense, so a caster who
+      % attacks their own twin arrives here as the attacker.
+      if what = who
+      {
+         return defense_power;
+      }
+
       if IsClass(what,&Revenant)
       {
          Send(who,@MsgSendUser,#message_rsc=paralyze_no_soul, 

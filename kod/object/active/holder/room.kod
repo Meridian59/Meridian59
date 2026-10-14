@@ -2387,7 +2387,7 @@ messages:
       }
       % Search plPassive only if the object was not found in plActive.
       % An object is only ever on one of the two lists.
-      if not bFound
+      if NOT bFound
       {
          for i in plPassive
          {

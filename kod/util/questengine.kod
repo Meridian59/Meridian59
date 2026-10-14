@@ -6679,7 +6679,7 @@ SetQuestNodeTimeLimit( index = 0, new_limit = $ )
 
 %% AddQuestTemplate:
 %	Adds a new quest template to plQuestTemplates
-%	Returns index number of new quest template if successful, 0 otherwise
+%	Returns TRUE if template was added, FALSE otherwise
 %	Will be scheduled next timer fire, if successful.
 %
 	% QuestTemplate is
@@ -6769,7 +6769,7 @@ AddQuestTemplate(	num_players = $,
 	%	Can only add to front of list
 	plQuestTemplates = Cons( lThisQuestTemplate, plQuestTemplates );
 
-	return Length( plQuestNodeTemplates );
+	return TRUE;
 }
 
 %% IsValidQuestTemplate()

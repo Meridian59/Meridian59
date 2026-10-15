@@ -17,6 +17,7 @@
 static HWND hWhoDialog = NULL;        /* Non-null if Who dialog is up */
 
 extern player_info player;
+extern HWND hCurrentDlg;
 
 #define WHOM_UPDATE (WM_APP+5)
 #define WHOM_RESET  (WM_APP+6)
@@ -123,6 +124,12 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
       hWhoDialog = hDlg;
       return TRUE;
 
+   case WM_ACTIVATE:
+      if (wParam == 0)
+         hCurrentDlg = NULL;
+      else hCurrentDlg = hDlg;
+      return TRUE;
+
    case WHOM_UPDATE:
    {
      BOOL bAdded = (BOOL)wParam;
@@ -190,7 +197,7 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
         return TRUE;
         
       case IDCANCEL:
-        EndDialog(hDlg, IDCANCEL);
+        DestroyWindow(hDlg);
         return TRUE;
         
       case IDOK:
@@ -222,13 +229,16 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
         config.no_broadcast = IsDlgButtonChecked(hDlg, IDC_BROADCAST);
         
         RedrawAll();
-        EndDialog(hDlg, IDOK);
+        DestroyWindow(hDlg);
         return TRUE;
       }
       break;
       
    case WM_DESTROY:
      hWhoDialog = NULL;
+     // This window may be destroyed while it is still the active one.
+     if (hCurrentDlg == hDlg)
+       hCurrentDlg = NULL;
      return TRUE;
    }
    
@@ -255,6 +265,14 @@ void MessageSaid(ID sender_id, ID sender_name, BYTE say_type, char *message)
   }
   
   DisplayServerMessage(message, GetColor(COLOR_MAINEDITFGD), 0);
+}
+/*****************************************************************************/
+/*
+ * WhoDialogGet:  Returns the who dialog's window, or NULL when none is open.
+ */
+HWND WhoDialogGet(void)
+{
+   return hWhoDialog;
 }
 /*****************************************************************************/
 /*

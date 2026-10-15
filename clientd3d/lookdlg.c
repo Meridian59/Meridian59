@@ -154,6 +154,7 @@ BOOL LookInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    info = (LookDialogStruct *) lParam;
 
    CenterWindow(hDlg, GetParent(hDlg));
+   ThemeApplyDialogTitleBar(hDlg);
    info->hwndListBox = GetDlgItem(hDlg, IDC_ITEMLIST);
    info->hwndFind = GetDlgItem(hDlg, IDC_ITEMFIND);
    info->hwndQuanList = GetDlgItem(hDlg, IDC_QUANLIST);

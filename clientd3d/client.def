@@ -61,6 +61,8 @@ EXPORTS
 	GetBrush
 	ThemeCurrent
 	ThemeBorderColor
+	ThemeColorsDialogs
+	ThemeApplyDialogTitleBar
 	CenterWindow
 	GetFontHeight	
 	EditBoxScroll

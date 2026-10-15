@@ -75,6 +75,10 @@ resources:
    user_err_get_unk = "You can't pick up %s%s; it is no longer accessible."
    user_err_get_dist = "You can't pick up %s%s; it's too far away."
    user_disallow_get = "You're unable to pick up %s%s."
+   user_disallow_get_weight = "You're carrying too much weight to pick up %s%s."
+   user_disallow_get_bulk = "You don't have enough room to carry %s%s."
+   user_disallow_get_weight_bulk = \
+      "You're carrying too much weight and don't have enough room for %s%s."
    user_got_some = "You can't pick up all the %s."
    user_cant_pickup_item_wav_rsc = player_cannot_carry.wav
    user_disallow_drop = "You are unable to drop %s%s."
@@ -3571,7 +3575,8 @@ messages:
    "an amount of that item (number)."
    {
       local oOldOwner, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
-            iCan_hold, iNumber, oSplit;
+            iCan_hold, iNumber, oSplit, iWeight_can_hold, iBulk_can_hold,
+            rMessage, bCheckCapacity, bCanHoldWeight, bCanHoldBulk;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3715,7 +3720,51 @@ messages:
             }
             else
             {
-               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               rMessage = user_disallow_get;
+
+               % An amount at or below zero is invalid, not a capacity failure.
+               bCheckCapacity = TRUE;
+               if number <> $
+               {
+                  if number <= 0
+                  {
+                     bCheckCapacity = FALSE;
+                  }
+               }
+
+               if bCheckCapacity
+                  AND Send(self,@GetWeightMax) <> $
+                  AND Send(self,@GetBulkMax) <> $
+               {
+                  iWeight_can_hold = Send(what,@GetNumberCanHoldWeight,
+                     #weight=Send(self,@GetWeightMax)-Send(self,@GetWeightHold));
+                  iBulk_can_hold = Send(what,@GetNumberCanHoldBulk,
+                     #bulk=Send(self,@GetBulkMax)-Send(self,@GetBulkHold));
+
+                  if iWeight_can_hold <> INFINITE_COUNT
+                     AND iWeight_can_hold <= 0
+                  {
+                     if iBulk_can_hold <> INFINITE_COUNT
+                        AND iBulk_can_hold <= 0
+                     {
+                        rMessage = user_disallow_get_weight_bulk;
+                     }
+                     else
+                     {
+                        rMessage = user_disallow_get_weight;
+                     }
+                  }
+                  else
+                  {
+                     if iBulk_can_hold <> INFINITE_COUNT
+                        AND iBulk_can_hold <= 0
+                     {
+                        rMessage = user_disallow_get_bulk;
+                     }
+                  }
+               }
+
+               Send(self,@MsgSendUser,#message_rsc=rMessage,
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);
@@ -3729,7 +3778,32 @@ messages:
             %  KLUDGE!!  -Asif
             if not IsClass(what,&HunterSword)
             {
-               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               rMessage = user_disallow_get;
+               bCanHoldWeight = Send(self,@CanHoldWeightAndBulk,
+                  #weight=Send(what,@GetWeight),#bulk=0);
+               bCanHoldBulk = Send(self,@CanHoldWeightAndBulk,
+                  #weight=0,#bulk=Send(what,@GetBulk));
+
+               if NOT bCanHoldWeight
+               {
+                  if NOT bCanHoldBulk
+                  {
+                     rMessage = user_disallow_get_weight_bulk;
+                  }
+                  else
+                  {
+                     rMessage = user_disallow_get_weight;
+                  }
+               }
+               else
+               {
+                  if NOT bCanHoldBulk
+                  {
+                     rMessage = user_disallow_get_bulk;
+                  }
+               }
+
+               Send(self,@MsgSendUser,#message_rsc=rMessage,
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);

@@ -3575,8 +3575,7 @@ messages:
    "an amount of that item (number)."
    {
       local oOldOwner, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
-            iCan_hold, iNumber, oSplit, iWeight_can_hold, iBulk_can_hold,
-            rMessage, bCheckCapacity, bCanHoldWeight, bCanHoldBulk;
+            iCan_hold, iNumber, oSplit;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3720,51 +3719,9 @@ messages:
             }
             else
             {
-               rMessage = user_disallow_get;
-
-               % An amount at or below zero is invalid, not a capacity failure.
-               bCheckCapacity = TRUE;
-               if number <> $
-               {
-                  if number <= 0
-                  {
-                     bCheckCapacity = FALSE;
-                  }
-               }
-
-               if bCheckCapacity
-                  AND Send(self,@GetWeightMax) <> $
-                  AND Send(self,@GetBulkMax) <> $
-               {
-                  iWeight_can_hold = Send(what,@GetNumberCanHoldWeight,
-                     #weight=Send(self,@GetWeightMax)-Send(self,@GetWeightHold));
-                  iBulk_can_hold = Send(what,@GetNumberCanHoldBulk,
-                     #bulk=Send(self,@GetBulkMax)-Send(self,@GetBulkHold));
-
-                  if iWeight_can_hold <> INFINITE_COUNT
-                     AND iWeight_can_hold <= 0
-                  {
-                     if iBulk_can_hold <> INFINITE_COUNT
-                        AND iBulk_can_hold <= 0
-                     {
-                        rMessage = user_disallow_get_weight_bulk;
-                     }
-                     else
-                     {
-                        rMessage = user_disallow_get_weight;
-                     }
-                  }
-                  else
-                  {
-                     if iBulk_can_hold <> INFINITE_COUNT
-                        AND iBulk_can_hold <= 0
-                     {
-                        rMessage = user_disallow_get_bulk;
-                     }
-                  }
-               }
-
-               Send(self,@MsgSendUser,#message_rsc=rMessage,
+               Send(self,@MsgSendUser,
+                    #message_rsc=Send(self,@GetPickupFailRsc,#what=what,
+                                      #number=number),
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);
@@ -3778,32 +3735,8 @@ messages:
             %  KLUDGE!!  -Asif
             if not IsClass(what,&HunterSword)
             {
-               rMessage = user_disallow_get;
-               bCanHoldWeight = Send(self,@CanHoldWeightAndBulk,
-                  #weight=Send(what,@GetWeight),#bulk=0);
-               bCanHoldBulk = Send(self,@CanHoldWeightAndBulk,
-                  #weight=0,#bulk=Send(what,@GetBulk));
-
-               if NOT bCanHoldWeight
-               {
-                  if NOT bCanHoldBulk
-                  {
-                     rMessage = user_disallow_get_weight_bulk;
-                  }
-                  else
-                  {
-                     rMessage = user_disallow_get_weight;
-                  }
-               }
-               else
-               {
-                  if NOT bCanHoldBulk
-                  {
-                     rMessage = user_disallow_get_bulk;
-                  }
-               }
-
-               Send(self,@MsgSendUser,#message_rsc=rMessage,
+               Send(self,@MsgSendUser,
+                    #message_rsc=Send(self,@GetPickupFailRsc,#what=what),
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);
@@ -3816,6 +3749,60 @@ messages:
       Send(self,@NewHold,#what=what);
       
       return;
+   }
+
+   GetPickupFailRsc(what = $, number = $)
+   "Returns the message for a failed UserGet of what (number is the amount "
+   "requested, if any).  Names the carrying limits that stopped it."
+   {
+      local iWeight_can_hold, iBulk_can_hold, bNo_weight, bNo_bulk;
+
+      if IsClass(what,&NumberItem)
+      {
+         % A zero or negative amount is bad input, not a capacity failure.
+         if (number <> $ AND number <= 0)
+            OR Send(self,@GetWeightMax) = $
+            OR Send(self,@GetBulkMax) = $
+         {
+            return user_disallow_get;
+         }
+
+         % Not even one item fit, so check each limit the way
+         % GetNumberCanHold does.
+         iWeight_can_hold = Send(what,@GetNumberCanHoldWeight,
+                                 #weight=Send(self,@GetWeightMax)-piWeight_hold);
+         iBulk_can_hold = Send(what,@GetNumberCanHoldBulk,
+                               #bulk=Send(self,@GetBulkMax)-piBulk_hold);
+         bNo_weight = (iWeight_can_hold <> INFINITE_COUNT
+                       AND iWeight_can_hold <= 0);
+         bNo_bulk = (iBulk_can_hold <> INFINITE_COUNT
+                     AND iBulk_can_hold <= 0);
+      }
+      else
+      {
+         % ReqNewHold failed; a held object may have refused it instead.
+         bNo_weight = NOT Send(self,@CanHoldWeightAndBulk,
+                               #weight=Send(what,@GetWeight));
+         bNo_bulk = NOT Send(self,@CanHoldWeightAndBulk,
+                             #bulk=Send(what,@GetBulk));
+      }
+
+      if bNo_weight AND bNo_bulk
+      {
+         return user_disallow_get_weight_bulk;
+      }
+
+      if bNo_weight
+      {
+         return user_disallow_get_weight;
+      }
+
+      if bNo_bulk
+      {
+         return user_disallow_get_bulk;
+      }
+
+      return user_disallow_get;
    }
 
    UserBlockedSend(what = $)

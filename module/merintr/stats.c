@@ -186,23 +186,47 @@ void StatsResetFont(void)
 }
 /************************************************************************/
 /*
+ * StatsBarHeight:  Returns the stat bar height for the active theme.
+ */
+int StatsBarHeight(void)
+{
+   return ThemeUsesCustomStatBars() ? STATS_BAR_HEIGHT_CUSTOM : STATS_BAR_HEIGHT;
+}
+/************************************************************************/
+/*
+ * StatsBarSetColors:  Sets a stat bar's colors: fill, limit, background, and
+ *   outline.
+ */
+void StatsBarSetColors(HWND hControl, COLORREF bar, COLORREF limit)
+{
+   SendMessage(hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, bar);
+   SendMessage(hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, limit);
+   SendMessage(hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));
+
+   // A theme with custom bars draws its own bar outline, so give it a frame color.
+   // Other themes reset to -1, the graph control's default.  A theme switch reuses
+   // these controls instead of recreating them.  Without the reset, a default bar
+   // would draw its outline in the leftover custom color instead of its default.
+   SendMessage(hControl, GRPH_COLORSET, GRAPHCOLOR_FRAME,
+               ThemeUsesCustomStatBars() ? GetColor(COLOR_STATBARFRAME) : (COLORREF) -1);
+}
+/************************************************************************/
+/*
  * StatsChangeColor:  Called when user changes a color.
  */
 void StatsChangeColor(void)
 {
    list_type l;
    // Change colors in bar graphs
-   
+
    for (l = stats; l != NULL; l = l->next)
    {
       Statistic *s = (Statistic *) (l->data);
 
       if (s->numeric.tag != STAT_INT)
 	 continue;
-      
-      SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
-      SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_LIMITBAR, GetColor(COLOR_BAR2));
-      SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BKGND, GetColor(COLOR_BAR3));
+
+      StatsBarSetColors(s->hControl, GetColor(COLOR_BAR1), GetColor(COLOR_BAR2));
    }
 }
 

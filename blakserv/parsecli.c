@@ -194,7 +194,7 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				len_str = *(short *)(msg_data + msg_byte_offset);
 				if (msg_byte_offset + 2 + len_str > msg_len)
 				{
-					eprintf("ParseCientSendBlakod got invalid string length %u\n",len_str);
+					eprintf("ParseClientSendBlakod got invalid string length %u\n",len_str);
 					return;
 				}
 				/*
@@ -221,9 +221,18 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 				
 			case TAG_TEMP_STRING :
 				len_str = *(short *)(msg_data + msg_byte_offset);
+				if (len_str < 0)
+				{
+					eprintf("ParseClientSendBlakod got negative temp string length %d\n", len_str);
+					return;
+				}
+				// Client assembles messages into MAXMESSAGE (4096) buffers.
+				// Cap here to prevent overflow on the receiving end.
+				if (len_str > 4000)
+					len_str = 4000;
 				if (msg_byte_offset + 2 + len_str > msg_len)
 				{
-					eprintf("ParseCientSendBlakod got invalid temp string length %u\n",len_str);
+					eprintf("ParseClientSendBlakod got invalid temp string length %u\n",len_str);
 					return;
 				}
 				/*

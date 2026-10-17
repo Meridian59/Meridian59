@@ -64,6 +64,7 @@ static char INIDrawMap[]     = "DrawMap";
 static char INIScrollLock[]  = "ScrollLock";
 static char INITooltips[]    = "Tooltips";
 static char INIInventory[]   = "InventoryNum";
+static char INIStackInventory[] = "StackInventory";
 static char INIAggressive[]  = "Aggressive";
 static char INIBounce[]      = "Bounce";
 static char INIToolbar[]     = "Toolbar";
@@ -239,6 +240,7 @@ void ConfigLoad(void)
    config.drawmap      = GetConfigInt(interface_section, INIDrawMap, true, ini_file);
    config.tooltips     = GetConfigInt(interface_section, INITooltips, true, ini_file);
    config.inventory_num= GetConfigInt(interface_section, INIInventory, true, ini_file);
+   config.stack_inventory = GetConfigInt(interface_section, INIStackInventory, true, ini_file);
    config.aggressive   = GetConfigInt(interface_section, INIAggressive, false, ini_file);
    config.bounce       = GetConfigInt(interface_section, INIBounce, true, ini_file);
    config.toolbar      = GetConfigInt(interface_section, INIToolbar, true, ini_file);
@@ -362,6 +364,7 @@ void ConfigSave(void)
    WriteConfigInt(interface_section, INIScrollLock, config.scroll_lock, ini_file);
    WriteConfigInt(interface_section, INITooltips, config.tooltips, ini_file);
    WriteConfigInt(interface_section, INIInventory, config.inventory_num, ini_file);
+   WriteConfigInt(interface_section, INIStackInventory, config.stack_inventory, ini_file);
    WriteConfigInt(interface_section, INIAggressive, config.aggressive, ini_file);
    WriteConfigInt(interface_section, INIBounce, config.bounce, ini_file);
    WriteConfigInt(interface_section, INIToolbar, config.toolbar, ini_file);

@@ -131,6 +131,7 @@ typedef struct {
    // for more stable, power-efficient rendering.
    bool gpuEfficiency;
    bool show_inventory_rarity;   /* Add inventory item rarity symbols? */
+   bool stack_inventory;         /* Show identical inventory items as one stack? */
 } Config;
 
 void ConfigInit(void);

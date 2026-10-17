@@ -4,9 +4,9 @@
 # 5 carried
 
 5
-gswpovA.bmp    
-gswpovB.bmp   
-gswpovC.bmp  
+gswpovA.bmp   [0, 0] :1    -21 [35, 198]
+gswpovB.bmp   [0, 0] :1    -21 [28, 107]
+gswpovC.bmp   [0, 0] :1    -21 [20, 206]
 gswpovD.bmp 
 gswpovH.bmp
 5

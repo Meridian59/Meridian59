@@ -115,6 +115,8 @@ classvars:
    vrWeapon_window_attack_start = 1
    vrWeapon_window_attack_end = 4
    vrWeapon_window_hold = 5
+   % End frame for casting while holding a weapon.
+   vrWeapon_window_weapon_cast_end = 3
 
    vrWeapon_overlay = $
 
@@ -726,6 +728,15 @@ messages:
       }
       
       return;      
+   }
+   
+   SendWindowOverlayCastAnimation()
+   "Show a casting animation while wielding a weapon."
+   {
+      AddPacket(1,ANIMATE_ONCE, 4,300, 2,vrWeapon_window_attack_start,
+			     2,vrWeapon_window_weapon_cast_end, 2,vrWeapon_window_hold);
+
+      return;
    }
 
    SendWindowOverlayOverlays()

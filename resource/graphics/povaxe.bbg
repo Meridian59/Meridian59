@@ -3,9 +3,9 @@
 # 1-4 attacking
 # 5 carrying
 5
-axepovA.bmp  [0, 0]
-axepovB.bmp  [0, 0]
-axepovC.bmp  [0, 0]
+axepovA.bmp  [0, 0] :1    -21 [21, 272]
+axepovB.bmp  [0, 0] :1    -21 [25, 38]
+axepovC.bmp  [0, 0] :1    -21 [58, 263]
 axepovD.bmp  [0, 0]
 axepovH.bmp  [0, 0]
 5

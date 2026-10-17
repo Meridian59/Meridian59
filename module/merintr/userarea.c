@@ -69,7 +69,7 @@ void UserAreaRedraw(void)
 
       memcpy(&area, &user_area, sizeof(AREA));
       area.x = 0;
-	  area.y = 1;
+	  area.y = 0;
       // Try to tell if we're a player--if not, we want to draw the entire object, and not
       // just the face, because most objects don't have separate face overlays
       if (list_length(*r->obj.overlays) >= MIN_PLAYER_OVERLAYS)

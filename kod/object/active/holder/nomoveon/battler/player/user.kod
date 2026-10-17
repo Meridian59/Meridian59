@@ -4984,7 +4984,7 @@ messages:
 
    UserDeposit(what = $,item_list = $,number_list = $)
    {
-      local i, lNumbers, oOffer_num, iNumber;
+      local i, lNumbers, lObjects, oOffer_num, iNumber;
 
       % Only deposit to NPCs.
       if NOT IsClass(what,&Monster)
@@ -5003,12 +5003,25 @@ messages:
       }
 
       % must be holding things you're offering
+      lObjects = $;
       for i in item_list
       {
+         % The list may not name the same item more than once.
+         if lObjects <> $
+            AND FindListElem(lObjects,i) <> 0
+         {
+            Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to deposit "
+                  "the same item twice to",Send(what,@GetTrueName),what,".");
+
+            return FALSE;
+         }
+
          if Send(i,@GetOwner) <> self
          {
             return;
          }
+
+         lObjects = Cons(i,lObjects);
       }
 
       if poOffer_who <> $
@@ -5217,6 +5230,7 @@ messages:
       }
 
       plOffer_items = $;
+      pbOffer_OtherAccepted = FALSE;
 
       return;
    }
@@ -5295,6 +5309,14 @@ messages:
 
          if Send(i,@GetOwner) <> self
          {
+            % plOffer_items has already been cleared above, so the offer must
+            % not be left open: accepting it now would hand over nothing in
+            % exchange for the other side's items.
+            Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to "
+                  "counter-offer an item it doesn't hold to",
+                  Send(poOffer_who,@GetTrueName),poOffer_who,".");
+            Send(self,@CancelIfOffer);
+
             return FALSE;
          }
 

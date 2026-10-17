@@ -239,6 +239,11 @@ void ChangeResource(ID res, char *value)
 */
 void FreeResources(void)
 {
+	// Resources may never have been loaded (e.g. a download happens before the
+	// game starts), or may already have been freed.
+	if (t == NULL)
+		return;
+
 	table_destroy(t, FreeRsc);
 	t = NULL;  // Set to NULL after destroying to avoid dangling pointer
 }

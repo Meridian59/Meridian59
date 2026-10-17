@@ -447,13 +447,19 @@ void LookCommand(HWND hDlg, int ctrl_id, HWND hwndCtl, UINT codeNotify)
 	    ObjectDestroyAndFree(obj);
       }
 
+      /* Drop the now-freed/transferred item data so a repaint or a re-entrant
+       * terminator (e.g. AbortLookList firing on a resync while this dialog is
+       * still on the stack) can't deref dangling listbox item data. */
+      ListBox_ResetContent(info->hwndListBox);
+
       LookDialogRetval = selection;
       EndDialog(hDlg, IDOK);
       break;
-      
+
    case IDCANCEL:
       LookListFreeContents(info->hwndListBox);
-      
+      ListBox_ResetContent(info->hwndListBox);
+
       LookDialogRetval = NULL;
       EndDialog(hDlg, IDCANCEL);
       break;

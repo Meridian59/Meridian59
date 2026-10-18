@@ -388,6 +388,17 @@ messages:
       return IsClass(poOwner,&DM);
    }
 
+   ReqUseSomething(what=$)
+   {
+      % We go on the owner's back instead.
+      if IsClass(what,&OrcShield)
+      {
+         return TRUE;
+      }
+
+      propagate;
+   }
+
    NewUnused(what=$, Recalibrate=FALSE)
    {
       % Non DMs cannot unuse the item.

@@ -3441,7 +3441,18 @@ messages:
    "Prefers to yield items of the same kind (weapon vs. non-weapon) as `what`, "
    "so e.g. swapping one weapon for another does not drop an equipped shield."
    {
-      local i, iHandUsed, iNeeded, lSameKind, lOtherKind, bWantWeapon;
+      local i, iHandUsed, iNeeded, lSameKind, lOtherKind, bWantWeapon,
+            oSoldierShield;
+
+      % Otherwise the weapon would be unequipped to make room.
+      if IsClass(what,&OrcShield)
+      {
+         oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+         if oSoldierShield <> $
+         {
+            Send(oSoldierShield,@SlingOnBack);
+         }
+      }
 
       iNeeded = Send(what,@GetItemUseAmount);
       bWantWeapon = IsClass(what,&Weapon);

@@ -729,6 +729,12 @@ messages:
       return FALSE;
    }
 
+   UserEntered(who = $)
+   "A User just entered the room."
+   {
+      return;
+   }
+
    LichKilled()
    {
       if poOwner <> $ and isClass(poOwner,&User)

@@ -32,5 +32,11 @@ messages:
       return FALSE;
    }
 
+   UserEntered(who = $)
+   "A User just entered the room."
+   {
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

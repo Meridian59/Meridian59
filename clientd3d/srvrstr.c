@@ -33,10 +33,11 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    char *fmt, *next_ptr; /* next_ptr points into format string fmt */
    char tempfmt[MAXMESSAGE], format[MAXMESSAGE], *param_ptr = *params;
    char* message;
-   char *rsc, type_char, *orig_message;
+   char *rsc, type_char, *orig_message, *message_end;
    DWORD field, num_chars;
    WORD string_len;
    bool done = false;
+   size_t remaining, copy_len;
 
    /* qparams are %q parameters; we need to save their positions and replace them last, 
     * even after %s (in case replacement %q string contains a literal %s) */
@@ -81,6 +82,7 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 
    /* Prepare to format into the caller's message buffer. */
    orig_message = message;
+   message_end = orig_message + MAXMESSAGE;
 
    /* Keep looping through string until there's nothing left to replace */
    while (!done)
@@ -116,7 +118,8 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	 switch (type_char)
 	 {
 	 case '%':              /* %% ==> % */
-	    *message++ = '%';
+	    if (message < message_end - 1)
+	       *message++ = '%';
 	    break;
 	    
 	 case 'd':
@@ -138,11 +141,17 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	       if ((rsc = LookupRsc(field)) == NULL)
 		  return false;
 
-	       num_chars = sprintf(message, tempfmt, rsc);
-	    }	 
+	       remaining = message_end - message;
+	       num_chars = snprintf(message, remaining, tempfmt, rsc);
+	       if (num_chars >= remaining)
+	          num_chars = remaining > 0 ? (DWORD)(remaining - 1) : 0;
+	    }
 	    else
 	    {
-	       num_chars = sprintf(message, tempfmt, field);
+	       remaining = message_end - message;
+	       num_chars = snprintf(message, remaining, tempfmt, field);
+	       if (num_chars >= remaining)
+	          num_chars = remaining > 0 ? (DWORD)(remaining - 1) : 0;
 	    }
 	    
 	    message += num_chars;  /* Overwrite null char next time */
@@ -172,8 +181,12 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	    }
 	    
 	    /* Copy this section of format string */
-	    strncpy(message, tempfmt, (next_ptr - fmt));
-	    message += (next_ptr - fmt);
+	    copy_len = next_ptr - fmt;
+	    remaining = message_end - message - 1;
+	    if (copy_len > remaining)
+	       copy_len = remaining;
+	    strncpy(message, tempfmt, copy_len);
+	    message += copy_len;
 	    
 	    /* Skip string */
 	    param_ptr += string_len;
@@ -186,7 +199,12 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	 next_ptr = strchr(fmt, '%');      
       }
       /* Copy over last part of string */
-      strcpy(message, fmt);
+      remaining = message_end - message;
+      if (remaining > 0)
+      {
+         strncpy(message, fmt, remaining - 1);
+         message[remaining - 1] = '\0';
+      }
 
       /* Prepare for next pass */
       message = orig_message;
@@ -231,18 +249,34 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
       tempfmt[(next_ptr - fmt) - 2] = '\0';
       
       /* Add tempfmt and then literal string to end of message */
-      strcpy(message, tempfmt);
-      message += strlen(tempfmt);
+      remaining = message_end - message;
+      if (remaining > 1)
+      {
+         strncpy(message, tempfmt, remaining - 1);
+         message[remaining - 1] = '\0';
+         message += strlen(message);
+      }
 
-      strncpy(message, param_ptr, string_len);
-      message += string_len;
+      remaining = message_end - message - 1;
+      if (string_len > remaining)
+         string_len = (WORD)remaining;
+      if (string_len > 0)
+      {
+         strncpy(message, param_ptr, string_len);
+         message += string_len;
+      }
 
       fmt = next_ptr;
       next_ptr = strchr(fmt, '%');
    }
 
    /* Copy over last part of string */
-   strcpy(message, fmt);
+   remaining = message_end - message;
+   if (remaining > 0)
+   {
+      strncpy(message, fmt, remaining - 1);
+      message[remaining - 1] = '\0';
+   }
 
    return true;
 }

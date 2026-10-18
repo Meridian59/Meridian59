@@ -1811,7 +1811,10 @@ messages:
             for i in plActive
             {
                each_obj = First(i);
-               Send(each_obj,@UserEntered,#who=what);
+               if IsClass(each_obj,&Monster)
+               {
+                  Send(each_obj,@UserEntered,#who=what);
+               }
             }
          }
 

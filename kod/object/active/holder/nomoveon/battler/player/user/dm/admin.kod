@@ -550,10 +550,7 @@ messages:
    {
       local iCopy;
 
-      % The lich queen is a unique NPC that only the game itself may create.
-      % Any copy placed outside her guild hall teleports straight back there
-      % ("Bad Lich" error), and extra copies break her guild and NPC state.
-      if IsClass(oTemplate,&Lich)
+      if NOT Send(oTemplate,@DMCanPlace)
       {
          return 0;
       }

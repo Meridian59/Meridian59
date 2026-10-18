@@ -96,6 +96,12 @@ messages:
       propagate;
    }
 
+   CanBeWornInSameSlotWith(what = $)
+   "The soldier shield is slung on the back while an orc shield is in use."
+   {
+      return IsClass(what,&SoldierShield);
+   }
+
    GetBaseSpellModifier(oSpell=$)
    {
       if send(oSpell,@GetSchool) = SS_SHALILLE

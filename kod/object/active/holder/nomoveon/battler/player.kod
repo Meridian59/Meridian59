@@ -3445,13 +3445,13 @@ messages:
             oSoldierShield;
 
       % Otherwise the weapon would be unequipped to make room.
-      if IsClass(what,&OrcShield)
+      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      if oSoldierShield <> $
+         AND IsClass(what,&DefenseModifier)
+         AND (Send(what,@CanBeWornInSameSlotWith,#what=oSoldierShield)
+              OR Send(oSoldierShield,@CanBeWornInSameSlotWith,#what=what))
       {
-         oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
-         if oSoldierShield <> $
-         {
-            Send(oSoldierShield,@SlingOnBack);
-         }
+         Send(oSoldierShield,@SlingOnBack);
       }
 
       iNeeded = Send(what,@GetItemUseAmount);

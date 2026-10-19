@@ -3165,8 +3165,6 @@ messages:
    "Called when the user wants to broadcast a string.  Return True/False, "
    "and use some mana too."
    {
-      local iCost, iBroadcastPenaltyPercent;
-      
       if piFlags & PFLAG_SQUELCHED
       {
          Send(self,@MsgSendUser,#message_rsc=player_squelched);
@@ -3176,14 +3174,14 @@ messages:
 
       if NOT Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
       {
-         iBroadcastPenaltyPercent = Send(Send(SYS,@GetSettings),@GetBroadcastManaCostPercent);
+         local iBroadcastPenaltyPercent = Send(Send(SYS,@GetSettings),@GetBroadcastManaCostPercent);
 
          if iBroadcastPenaltyPercent = 0
          {
             return TRUE;
          }
             
-         iCost = Bound((piMax_Mana * iBroadcastPenaltyPercent / 100 + 1),1,$);
+         local iCost = Bound((piMax_Mana * iBroadcastPenaltyPercent / 100 + 1),1,$);
 
          if piMana < iCost
          {
@@ -8194,7 +8192,7 @@ messages:
 
    ApplyDeathPenalties()
    {
-      local iAmount, bLostHealth, i;
+      local iAmount, i;
       
       if Send(SYS,@GetChaosNight)
       {
@@ -8205,7 +8203,7 @@ messages:
          return;
       }
 
-      bLostHealth = FALSE;
+      local bLostHealth = FALSE;
 
       % Lose your revenant, satisfied if you took a real death.
       if piDeathCost >= Send(Send(SYS, @GetSettings), @GetDefaultDeathCost)
@@ -10000,20 +9998,18 @@ messages:
 
    GetRestTime()
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
-
-      iTime = 1000 + (30* (51-Send(self,@getStamina))); 
+      local iTime = 1000 + (30 * (51 - Send(self,@getStamina))); 
 
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
+         local lJalaInfo = Send(poOwner,@GetJalaInfo);
 
          if lJalaInfo <> $
          {
-            oJalaSpell = Nth(lJalaInfo,2);
+            local oJalaSpell = Nth(lJalaInfo,2);
             if IsClass(oJalaSpell,&Invigorate)
             {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
+               local iJalaPower = Nth(Nth(lJalaInfo,3),3);
                iTime = Send(oJalaSpell,@AdjustVigorTime,#time=iTime,#iSpellPower=iJalaPower);
             }
          }

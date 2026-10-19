@@ -1307,17 +1307,17 @@ messages:
       {
          return;
       }
-      
+
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_SANCTUARY) AND amount < 0
       {
          iAmount = 2 * Amount;
       }
-      
+
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_TRIPLE_HEAL) AND amount < 0
       {
          iAmount = 3 * Amount;
       }    
-            
+
       piExertion = piExertion + iAmount;
       if abs(piExertion) > MIN_VIGOR_CHANGE
       {    
@@ -1330,18 +1330,18 @@ messages:
          piExertion = 0;
          Send(self,@NewVigor);
       }
-      
+
       return;
    }
 
    UpdateStomach()
    "Removes consumed food from stomach"
    {
-      local now = GetTime();
-      piStomach = piStomach - (now - piTimeLastStomachUpdate) * FOOD_USE_RATE / 100;
+      local iNow = GetTime();
+      piStomach = piStomach - (iNow - piTimeLastStomachUpdate) * FOOD_USE_RATE / 100;
       piStomach = bound(piStomach,1,100);
-      piTimeLastStomachUpdate = now;
-      
+      piTimeLastStomachUpdate = iNow;
+
       return;
    }
 
@@ -1503,9 +1503,9 @@ messages:
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND poIllusion_set <> $
       {
-         local HitPoint_Percent = piHealth * 100 / piMax_Health;
+         local iHitPoint_Percent = piHealth * 100 / piMax_Health;
          Send(poIllusion_set,@IllusionShowDesc,#who=self,
-              #iHitPoint_Percent=HitPoint_Percent);
+              #iHitPoint_Percent=iHitPoint_Percent);
 
          return;
       }
@@ -5617,14 +5617,14 @@ messages:
    {
       % Faster regen with higher vigor
       local iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
-      
+
       iTime = ((125-Send(self,@GetStamina)) * iTime)/100;
       local iMaxHealth = bound(piMax_health,40,100);
       iTime = (iTime *100)/iMaxHealth;
 
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                            #who=self,#hpregen=TRUE);
-      
+
       if poOwner <> $
       {
          local lJalaInfo = Send(poOwner,@GetJalaInfo);
@@ -5678,7 +5678,7 @@ messages:
                                #iSpellPower=iJalaPower);
                }
             }
-         
+
             iTime = bound(iTime,500,60000);
          }
 
@@ -5739,22 +5739,22 @@ messages:
 
       % Track the last 'piStomach' value to help prevent spamming
       %  fullness messages on every food or drink consumption.	  
-	  local lastStomachValue = piStomach;
-	  
+	  local iLastStomachValue = piStomach;
+
       piStomach = piStomach + filling;
-	  
+
       % Display fullness messages only if the player's stomach value passed the 50% or 75% thresholds.
       % This helps avoid spamming the messages on every bite or drink.
-      if (piStomach >= 50 AND piStomach < 75) AND lastStomachValue < 50
+      if (piStomach >= 50 AND piStomach < 75) AND iLastStomachValue < 50
       {
          Send(self,@MsgSendUser,#message_rsc=player_half_full);
       }
 
-      if piStomach >= 75 AND lastStomachValue < 75
+      if piStomach >= 75 AND iLastStomachValue < 75
       {
          Send(self,@MsgSendUser,#message_rsc=player_almost_full);
       }
-      
+
       return;
    }
 
@@ -5795,13 +5795,13 @@ messages:
    GainHealthNormal(amount = $)
    "Don't add beyond piMax_health"
    {
-      local oldhealth = piHealth;
-      
+      local iOldHealth = piHealth;
+
       if amount < 0
       {
          return;
       }
-      
+
       if piHealth > piMax_health
       {
          return 0;
@@ -5814,8 +5814,8 @@ messages:
       }
 
       Send(self,@NewHealth);
-      
-      return (piHealth - OldHealth);
+
+      return (piHealth - iOldHealth);
     }
   
    NewHealth()
@@ -5909,10 +5909,10 @@ messages:
          Send(self,@ReceiveNestedMail,#from=player_angel,
               #dest_list=[self],#nest_list=[4,player_tutorial_mail]);           
       }
-      
+
       Send(self,@PlayerIsIntriguing);
       Send(self,@GainMaxhealth,#amount=amount);
-      
+
       return;
    }
 
@@ -5952,7 +5952,7 @@ messages:
       %else { piHealth = bound(piHealth, $, piMax_health); }
 
       Send(self,@NewHealth); % in case need heal timer
-      
+
       return piMax_health - iPrev_max;
    }
 
@@ -6084,7 +6084,7 @@ messages:
       {
          piNodelist = piNodelist | node_num;
       }
-      
+
       if amount < 0 AND node_num <> -1
       {
          if piNodelist & node_num
@@ -6096,11 +6096,11 @@ messages:
             Debug("BAD: missing node_num from nodelist in mana adjust.",self);
          }
       }
-      
+
       piMax_Mana = piMax_mana+amount;      
 
       Send(self,@NewMana);
-      
+
       return (piMax_mana - iPrev_max);
    }
 
@@ -6108,23 +6108,23 @@ messages:
    {
       local i;
 
-      local index = 1;
-      local iNodelist = piNodelist;
-      
+      local iNodeFlag = 1;
+      local iNodeList = piNodelist;
+
       piMax_mana = Send(self, @GetInitialMaxMana);
-      
-      while iNodeList > 0 AND index <= NODE_MAX_VALUE
-      {          
-         if (iNodeList & index)   
-         {      
-            local oNode = Send(SYS,@FindNodeByNum,#num=index);      
+
+      while iNodeList > 0 AND iNodeFlag <= NODE_MAX_VALUE
+      {
+         if (iNodeList & iNodeFlag)
+         {
+            local oNode = Send(SYS,@FindNodeByNum,#num=iNodeFlag);
             piMax_mana = piMax_mana + Send(oNode,@GetManaAdjust,#who=self);
-            iNodelist = iNodelist & ~index;
+            iNodeList = iNodeList & ~iNodeFlag;
          }
-         
-         index=index*2;
+
+         iNodeFlag = iNodeFlag * 2;
       }
-      
+
       % account for any items that may affect max mana
       for i in plUsing
       {
@@ -6133,7 +6133,7 @@ messages:
             piMax_mana = piMax_mana + Send(i,@GetManaChange);
          }
       }
-      
+
       for i in plEnchantments
       {
          if Send(Nth(i,2),@AffectsMaxMana)
@@ -6141,28 +6141,28 @@ messages:
             piMax_mana = piMax_mana + Send(Nth(i,2),@getManaBonus,#state=Nth(i,3));
          }
       }
-      
+
       Send(self,@NewMana);
-      
+
       return;
    }
 
    NumManaNodes()
    {
-      local n = 0;
-      local i = 1;
+      local iNodeCount = 0;
+      local iNodeFlag = 1;
 
-      while i <= NODE_MAX_VALUE
+      while iNodeFlag <= NODE_MAX_VALUE
       {
-         if piNodelist & i
+         if piNodelist & iNodeFlag
          {
-            n = n + 1;
+            iNodeCount = iNodeCount + 1;
          }
-         
-         i = 2 * i;
+
+         iNodeFlag = 2 * iNodeFlag;
       }
-      
-      return n;
+
+      return iNodeCount;
    }
 
    GetNodeList()

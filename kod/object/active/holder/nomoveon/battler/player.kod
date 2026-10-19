@@ -1244,9 +1244,7 @@ messages:
 
    AddExertion(amount = 0, SetToThreshold = FALSE)
    {
-      local iExertionAdded, iPercentReduced, iVigorLost;
-      
-      iExertionAdded = amount;
+      local iExertionAdded = amount;
 
       % If we cannot gain vigor due to Second Wind, return out if trying
       %  to take away exertion
@@ -1259,7 +1257,7 @@ messages:
       if iExertionAdded > 0
       {
          % Parliament adjustment for exertion reduction.  Remove a % from the amount added.
-         iPercentReduced = Send(Send(SYS,@GetParliament),@GetFactionVigorBonus,#who=self);
+         local iPercentReduced = Send(Send(SYS,@GetParliament),@GetFactionVigorBonus,#who=self);
          iExertionAdded = (iExertionAdded * (100 - iPercentReduced))/100;
       }
 
@@ -1274,7 +1272,7 @@ messages:
          }
          else
          {
-            iVigorLost = piExertion / 10000;
+            local iVigorLost = piExertion / 10000;
             piVigor = piVigor - iVigorLost;
             piExertion = piExertion - (iVigorLost * 10000);
          }
@@ -1296,9 +1294,7 @@ messages:
    RestAddExertion(amount = 0)
    "Gives inns a bonus as resting places."
    {        
-      local iAmount;
-
-      iAmount = amount;
+      local iAmount = amount;
 
       % Return if extertion is being added but second wind skill is active
       if Send(self,@IsEnchanted,#byClass=&SecondWind)
@@ -1341,9 +1337,7 @@ messages:
    UpdateStomach()
    "Removes consumed food from stomach"
    {
-      local now;
-
-      now = GetTime();
+      local now = GetTime();
       piStomach = piStomach - (now - piTimeLastStomachUpdate) * FOOD_USE_RATE / 100;
       piStomach = bound(piStomach,1,100);
       piTimeLastStomachUpdate = now;
@@ -1506,12 +1500,10 @@ messages:
 
    ShowDesc()
    {
-      local HitPoint_Percent;
-
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND poIllusion_set <> $
       {
-         HitPoint_Percent = piHealth * 100 / piMax_Health;
+         local HitPoint_Percent = piHealth * 100 / piMax_Health;
          Send(poIllusion_set,@IllusionShowDesc,#who=self,
               #iHitPoint_Percent=HitPoint_Percent);
 
@@ -5623,13 +5615,11 @@ messages:
    CalculateHealthTime()
    "Calculate # of milliseconds until user will gain a health point"
    {
-      local iTime, iMaxHealth, lJalaInfo, oJalaSpell, iJalaPower;
-      
       % Faster regen with higher vigor
-      iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
+      local iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
       
       iTime = ((125-Send(self,@GetStamina)) * iTime)/100;
-      iMaxHealth = bound(piMax_health,40,100);
+      local iMaxHealth = bound(piMax_health,40,100);
       iTime = (iTime *100)/iMaxHealth;
 
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
@@ -5637,14 +5627,14 @@ messages:
       
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
+         local lJalaInfo = Send(poOwner,@GetJalaInfo);
 
          if lJalaInfo <> $
          {
-            oJalaSpell = Nth(lJalaInfo,2);
+            local oJalaSpell = Nth(lJalaInfo,2);
             if IsClass(oJalaSpell,&Restorate)
             {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
+               local iJalaPower = Nth(Nth(lJalaInfo,3),3);
                return Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
                             #iSpellPower=iJalaPower);
             }
@@ -5657,7 +5647,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell, iSpellPower;
+      local iTime;
 
       if piMana > piMax_mana
       {
@@ -5676,14 +5666,14 @@ messages:
 
          if poOwner <> $
          {
-            lJalaInfo = Send(poOwner,@GetJalaInfo);
+            local lJalaInfo = Send(poOwner,@GetJalaInfo);
 
             if lJalaInfo <> $
             {
-               oJalaSpell = Nth(lJalaInfo,2);
+               local oJalaSpell = Nth(lJalaInfo,2);
                if IsClass(oJalaSpell,&Rejuvenate)
                {
-                  iJalaPower = Nth(Nth(lJalaInfo,3),3);
+                  local iJalaPower = Nth(Nth(lJalaInfo,3),3);
                   iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
                                #iSpellPower=iJalaPower);
                }
@@ -5693,10 +5683,10 @@ messages:
          }
 
          % Mana Focus will adjust mana regen time based on its spellpower.
-         oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
+         local oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
          if Send(self,@IsEnchanted,#what=oSpell)
          {
-            iSpellPower = send(oSpell,@GetSpellPower,#who=self);
+            local iSpellPower = send(oSpell,@GetSpellPower,#who=self);
             iTime = Send(oSpell,@AdjustManaTime,#time=iTime,#iSpellPower=iSpellPower);
          }
       }
@@ -5745,13 +5735,11 @@ messages:
 
    EatSomething(nutrition = 0, filling = 0)
    {
-      local lastStomachValue;
-	  
 	  Send(self,@AddExertion,#amount=-10000*nutrition);
 
       % Track the last 'piStomach' value to help prevent spamming
       %  fullness messages on every food or drink consumption.	  
-	  lastStomachValue = piStomach;
+	  local lastStomachValue = piStomach;
 	  
       piStomach = piStomach + filling;
 	  
@@ -5807,9 +5795,7 @@ messages:
    GainHealthNormal(amount = $)
    "Don't add beyond piMax_health"
    {
-      local oldhealth;
-
-      oldhealth = piHealth;
+      local oldhealth = piHealth;
       
       if amount < 0
       {
@@ -5908,9 +5894,7 @@ messages:
 
    GainBaseMaxHealth(amount = 0)
    {
-      local iPrev_max;
-
-      iPrev_max = piBase_max_health;
+      local iPrev_max = piBase_max_health;
 
       piBase_max_health = bound(piBase_max_health + amount, 20, (100 + Send(self,@GetStamina)));
       % Bound ourselves at the top end to 150.
@@ -5936,9 +5920,7 @@ messages:
    "Call this any time you modify piMax_health, to set stuff on the user's display, "
    "and make sure the value doesn't get too high.  Returns actual amount changed"
    {
-      local iPrev_max;
-
-      iPrev_max = piMax_health;
+      local iPrev_max = piMax_health;
       piMax_health = bound(piMax_health + amount, 20, $);
 
       %  no longer reset health to max - will need to test for abusability
@@ -6097,9 +6079,7 @@ messages:
    "This is called from the mana node.  Unlike newMaxHealth, the amount is "
    "checked here.  Returns actual amount changed"
    {
-      local iPrev_max;
-
-      iPrev_max = piMax_mana;
+      local iPrev_max = piMax_mana;
       if amount > 0 AND node_num <> -1
       {
          piNodelist = piNodelist | node_num;
@@ -6126,10 +6106,10 @@ messages:
 
    ComputeMaxMana()
    {
-      local index, iNodeList, oNode, i;
+      local i;
 
-      index = 1;
-      iNodelist = piNodelist;
+      local index = 1;
+      local iNodelist = piNodelist;
       
       piMax_mana = Send(self, @GetInitialMaxMana);
       
@@ -6137,7 +6117,7 @@ messages:
       {          
          if (iNodeList & index)   
          {      
-            oNode = Send(SYS,@FindNodeByNum,#num=index);      
+            local oNode = Send(SYS,@FindNodeByNum,#num=index);      
             piMax_mana = piMax_mana + Send(oNode,@GetManaAdjust,#who=self);
             iNodelist = iNodelist & ~index;
          }
@@ -6169,10 +6149,8 @@ messages:
 
    NumManaNodes()
    {
-      local i, n;
-      
-      n = 0;
-      i = 1;
+      local n = 0;
+      local i = 1;
 
       while i <= NODE_MAX_VALUE
       {
@@ -6210,9 +6188,7 @@ messages:
 
    GainMana(amount=0, bCapped=FALSE)
    {
-      local iManaGained;
-   
-      iManaGained = amount;
+      local iManaGained = amount;
       piMana = piMana + amount;
 
       if bCapped AND piMana > piMax_Mana

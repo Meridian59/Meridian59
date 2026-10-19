@@ -122,7 +122,7 @@ messages:
    }
 
    SuccessChance()
-   "Always returns TRUE for combat strokes.  COmbat strokes are figured"
+   "Always returns TRUE for combat strokes.  Combat strokes are figured"
    "differently than other skills - are figured in player.kod."
    {
       return TRUE;

@@ -3770,9 +3770,9 @@ messages:
          % Not even one item fit, so check each limit the way
          % GetNumberCanHold does.
          iWeight_can_hold = Send(what,@GetNumberCanHoldWeight,
-                                 #weight=Send(self,@GetWeightMax)-piWeight_hold);
+                                 #weight=Bound(Send(self,@GetWeightMax)-piWeight_hold,0,$));
          iBulk_can_hold = Send(what,@GetNumberCanHoldBulk,
-                               #bulk=Send(self,@GetBulkMax)-piBulk_hold);
+                               #bulk=Bound(Send(self,@GetBulkMax)-piBulk_hold,0,$));
          bNo_weight = (iWeight_can_hold <> INFINITE_COUNT
                        AND iWeight_can_hold <= 0);
          bNo_bulk = (iBulk_can_hold <> INFINITE_COUNT

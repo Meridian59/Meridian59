@@ -5791,6 +5791,12 @@ messages:
       return TRUE;
    }
 
+   DMCanPlace()
+   "Can an admin spawn extra copies of this monster?"
+   {
+      return TRUE;
+   }
+
    CanBeSilenced()
    "Can this monster be silenced by the room enchantment?"
    {

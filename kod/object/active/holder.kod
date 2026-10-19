@@ -307,9 +307,12 @@ messages:
       {
          return $;
       }
+
+      % A holder already over a limit has no room left.  A negative amount
+      % can divide out to -1 in NumberItem, which reads as INFINITE_COUNT.
       return Send(what,@GetNumberCanHold,
-                  #weight=send(self,@GetWeightMax)-piWeight_hold,
-                  #bulk=send(self,@GetBulkMax)-piBulk_hold);
+                  #weight=Bound(send(self,@GetWeightMax)-piWeight_hold,0,$),
+                  #bulk=Bound(send(self,@GetBulkMax)-piBulk_hold,0,$));
    }
 
    NewHold(what = $)

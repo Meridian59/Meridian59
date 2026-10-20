@@ -1055,21 +1055,21 @@ messages:
          }
          else
          {
-            local ccond = player_safety_off_mail;
+            local rSafetyMail = player_safety_off_mail;
             if Send(self,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
             {
-               ccond = player_safety_on_mail;
+               rSafetyMail = player_safety_on_mail;
             }
 
             if Send(SYS,@IsPKAllowed)
             {
                Send(self,@ReceiveNestedMail,#from=player_angel,
-                    #dest_list=[self],#nest_list=[4,player_ready_to_kill,4,ccond]);
+                    #dest_list=[self],#nest_list=[4,player_ready_to_kill,4,rSafetyMail]);
             }
             else
             {
                Send(self,@ReceiveNestedMail,#from=player_angel,
-                    #dest_list=[self],#nest_list=[4,player_ready_to_guild,4,ccond]);
+                    #dest_list=[self],#nest_list=[4,player_ready_to_guild,4,rSafetyMail]);
             }
          }
       }
@@ -4526,11 +4526,11 @@ messages:
    {
       local i, iResistance;
 
-      local color_rsc = player_hit_color_none;
+      local rHitTextColor = player_hit_color_none;
       
       if what <> $ AND IsClass(what,&monster)
       {
-         color_rsc = player_hit_color_blue;
+         rHitTextColor = player_hit_color_blue;
       }
 
       if NOT absolute
@@ -4635,7 +4635,7 @@ messages:
          }
          
          Post(self,@MsgPlayerResistsHit,#what=what,#resistance=iResistance,#target=self,
-              #color_rsc=color_rsc);
+              #color_rsc=rHitTextColor);
       }
       
       return damage;
@@ -5019,14 +5019,14 @@ messages:
          return 0;
       }
 
-      local oChance = 10;
+      local iChance = 10;
       local oGuild = Send(target,@GetGuild);
       
       if poGuild <> $ AND oGuild <> $ 
       {
          if poGuild = oGuild
          {
-            oChance = oChance + 20;
+            iChance = iChance + 20;
          }
          else
          {
@@ -5037,22 +5037,22 @@ messages:
             
             if Send(poGuild,@IsAlly,#otherguild=oGuild)
             {
-               oChance = oChance + 10;
+               iChance = iChance + 10;
             }
             
             if Send(oGuild,@IsAlly,#otherguild=poGuild)
             {
-               oChance = oChance + 10;
+               iChance = iChance + 10;
             }
             
             if Send(poGuild,@IsEnemy,#otherguild=oGuild)
             {
-               oChance = oChance - 10;
+               iChance = iChance - 10;
             }
             
             if Send(oGuild,@IsEnemy,#otherguild=poGuild)
             {
-               oChance = oChance - 10;
+               iChance = iChance - 10;
             }
          }
 
@@ -5063,34 +5063,34 @@ messages:
       {
          if piFaction <> iFaction
          {
-            oChance = oChance - 5;
+            iChance = iChance - 5;
          }
          else
          {
-            oChance = oChance + 15;
+            iChance = iChance + 15;
          }
       }
 
       % Punish them more if they beat up someone weaker than they are.
-      oChance = oChance + ((10*piBase_Max_Health)/Send(target,@GetBaseMaxHealth));
+      iChance = iChance + ((10*piBase_Max_Health)/Send(target,@GetBaseMaxHealth));
 
       % People with greater absolute Karma have a greater chance to produce a revenant.  Being a good
       %  person, in general, decreases your chance.  Even if you are murderous scum.
-      oChance = oChance + (abs(Send(target,@GetKarma)-piKarma/100))/20;
+      iChance = iChance + (abs(Send(target,@GetKarma)-piKarma/100))/20;
 
       % Punish them more if they walked away with more health.
-      oChance = oChance + bound(20*piHealth/piBase_Max_health,0,20);
+      iChance = iChance + bound(20*piHealth/piBase_Max_health,0,20);
 
       % Bind the number to a reasonable amount, then add in the penalty for being a repeat killer.
-      oChance = (bound(oChance,2,30) + (5*piKill_count_decay));
+      iChance = (bound(iChance,2,30) + (5*piKill_count_decay));
 
       local oSpell = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
       if poOwner <> $ AND Send(poOwner,@IsEnchanted,#what=oSpell)
       {
-         oChance = oChance + (oChance * Send(poOwner,@GetEnchantmentState,#what=oSpell) / 100);
+         iChance = iChance + (iChance * Send(poOwner,@GetEnchantmentState,#what=oSpell) / 100);
       }
-      
-      return oChance;
+
+      return iChance;
    }
 
    DoHitMessageSound(what = $,damage = 0,stroke_obj = $)
@@ -5498,25 +5498,24 @@ messages:
    "defender has any defense value there.  Much better than random pattern "
    "of previous combat."
    {
-      local rand = random(1,12);
-      local armor_pos = 0;
+      local iRand = random(1,12);
 
-      if rand < 6
+      if iRand < 6
       {
          return ITEM_USE_BODY;
       }
            
-      if rand < 8
+      if iRand < 8
       {
          return ITEM_USE_LEGS;
       }
            
-      if rand < 9
+      if iRand < 9
       {
          return ITEM_USE_HEAD;
       }
                    
-      if rand < 10
+      if iRand < 10
       {
          return ITEM_USE_GAUNTLET;
       }
@@ -5529,11 +5528,9 @@ messages:
    "Returns a number from 0-100."
    {
       local i;
-
-      local armor_mod = 0;
-      local armor_pos = Send(self,@ChooseArmorPosition);
+      local iArmorPosition = Send(self,@ChooseArmorPosition);
       
-      if armor_pos = -1
+      if iArmorPosition = -1
       {
          for i in plUsing
          {
@@ -5547,28 +5544,28 @@ messages:
       }
       else
       {
-         if armor_pos & ITEM_USE_BODY
+         if iArmorPosition & ITEM_USE_BODY
          {
-            local shirt = $;
+            local oShirt = $;
             for i in plUsing
             {
-               if Send(i,@GetItemUseType) & armor_pos
+               if Send(i,@GetItemUseType) & iArmorPosition
                {
                   return i;
                }
                if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
                {
-                  shirt = i;
+                  oShirt = i;
                }
             }
 
-            return shirt;
+            return oShirt;
          }
          else
          {
             for i in plUsing
             {
-               if Send(i,@GetItemUseType) = armor_pos
+               if Send(i,@GetItemUseType) = iArmorPosition
                {
                   return i;
                }
@@ -8301,19 +8298,19 @@ messages:
    {
       %  Send current pant/shirt color to body only if they both use the new two-color xlats
       %        otherwise, Send default colors
-      local inKocatan = FALSE;
+      local bInKocatan = FALSE;
       if pbLogged_on
       {
          if Send(poOwner,@GetRegion) = RID_KOCATAN
          {
-            inKocatan = TRUE;
+            bInKocatan = TRUE;
          }
       }
       else
       {
          if Send(Send(SYS,@FindRoomByNum,#num=Send(self,@GetSaveRoom)),@GetRegion) = RID_KOCATAN
          {
-            inKocatan = TRUE;
+            bInKocatan = TRUE;
          }
       }
 
@@ -8331,7 +8328,7 @@ messages:
                           #PlayerBodyOverlay=player_dead_male_iconb_rsc,
                           #BodyTranslation=Send(self,@GetBodyTranslation),
                           #LegsTranslation=Send(self,@GetLegsTranslation),
-                          #inKocatan = inKocatan,#DearlyDeparted=self);
+                          #inKocatan = bInKocatan,#DearlyDeparted=self);
          }
          else
          {
@@ -8344,7 +8341,7 @@ messages:
                           #PlayerBodyOverlay=player_dead_female_iconb_rsc,
                           #BodyTranslation=Send(self,@GetBodyTranslation),
                           #LegsTranslation=Send(self,@GetLegsTranslation),
-                          #inKocatan = inKocatan,#DearlyDeparted=self);
+                          #inKocatan = bInKocatan,#DearlyDeparted=self);
          }
       }
       
@@ -8356,7 +8353,7 @@ messages:
                        #good=(piKarma>0),#PlayerBodyOverlay=player_dead_male_iconb_rsc,
                        #BodyTranslation=Send(self,@GetDefaultShirtTranslation),
                        #LegsTranslation=Send(self,@GetDefaultPantsTranslation),
-                       #inKocatan = inKocatan,#DearlyDeparted=self);
+                       #inKocatan = bInKocatan,#DearlyDeparted=self);
       }
       % female, default colors
       return Create(&DeadBody,#icon=player_dead_female_icona_rsc,
@@ -8364,7 +8361,7 @@ messages:
                     #good=(piKarma>0),#PlayerBodyOverlay=player_dead_female_iconb_rsc,
                     #BodyTranslation=Send(self,@GetDefaultShirtTranslation),
                     #LegsTranslation=Send(self,@GetDefaultPantsTranslation),
-                    #inKocatan = inKocatan,#DearlyDeparted=self);
+                    #inKocatan = bInKocatan,#DearlyDeparted=self);
    }
 
    FreeHands()
@@ -11009,11 +11006,11 @@ messages:
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
-            local ass_game = Send(SYS,@GetAssassinGame);
-            if Send(ass_game,@IsCombatant,#who=self)
+            local oAssassinGame = Send(SYS,@GetAssassinGame);
+            if Send(oAssassinGame,@IsCombatant,#who=self)
             {
                Send(self,@MsgSendUser,#message_rsc=Player_dagger_shatters);
-               Send(ass_game,@RemoveFromGame,#who=self,#RemoveFromRecords = FALSE);
+               Send(oAssassinGame,@RemoveFromGame,#who=self,#RemoveFromRecords = FALSE);
             }
 
             Send(self,@MsgSendUser,#message_rsc=player_regain_angel);

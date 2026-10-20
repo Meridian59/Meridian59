@@ -1047,8 +1047,6 @@ messages:
    SetPlayerFlag(flag=0,value=FALSE,flagset=1)
    "This always requires the POSITIVE flag name."
    {
-      local ccond;
-      
       if flagset = 1 AND (flag & PFLAG_PKILL_ENABLE) AND value
       {
          if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
@@ -1057,7 +1055,7 @@ messages:
          }
          else
          {
-            ccond = player_safety_off_mail;
+            local ccond = player_safety_off_mail;
             if Send(self,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
             {
                ccond = player_safety_on_mail;
@@ -1413,9 +1411,7 @@ messages:
 
    TryDeflect(what = $,caster=$)
    {
-      local oDeflect;
-      
-      oDeflect = Send(SYS,@FindSpellByNum,#Num=SID_DEFLECT);
+      local oDeflect = Send(SYS,@FindSpellByNum,#Num=SID_DEFLECT);
       if Send(self,@IsEnchanted,#what=oDeflect)
       {
          return Send(oDeflect,@TryDeflect,#caster=caster,#victim=self,
@@ -3122,9 +3118,9 @@ messages:
    RemoveDefenseModifier(what = $)
    "Removes <what> from plDefense_modifiers."
    {
-      local i, bFound;
+      local i;
 
-      bFound = FALSE ;
+      local bFound = FALSE;
       for i in plDefense_modifiers
       {
          if i = what
@@ -3605,10 +3601,8 @@ messages:
    "Will not let a person attack someone who isn't pkill_enabled."
    "Will not let a person who isn't pkill_enabled attack another person."
    {
-      local oRoom;
-      
       % Default location to check is where we are.
-      oRoom = poOwner;
+      local oRoom = poOwner;
 
       % If the victim is in a room, then check that location instead.  This allows
       %  distance attacks (like wall spells) to work properly.
@@ -3757,8 +3751,6 @@ messages:
    "PFLAG_SAFETY prevents accidental attacks. You can always successfully "
    "hit a murderer or outlaw, though."     
    {
-      local oEnemyGuild, oSoldierShield;
-
       % Don't care about monsters.
       % And, free attacks on token holders.
       if IsClass(victim,&Monster)
@@ -3783,8 +3775,8 @@ messages:
          return TRUE;
       }
 
-      oEnemyGuild = Send(victim,@GetGuild);
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oEnemyGuild = Send(victim,@GetGuild);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
 
       % Check for enemy guild or faction soldier fighting - If attacking a (mutual)
       %  enemy, then they can whack on each other freely, without outlaw penalty
@@ -3856,7 +3848,7 @@ messages:
    "of your faction if you attack an innocent or a monster.  Safety will catch a bad "
    "attack, however."
    {
-      local bBooted, rMessage;
+      local rMessage;
 
       % If attacking nothing, or faction is neutral, or attacking self
       %   or in the Arena, or during a Frenzy, don't go any further.
@@ -3869,7 +3861,7 @@ messages:
          return TRUE;
       }
 
-      bBooted = FALSE;
+      local bBooted = FALSE;
 
       % If faction loss is disabled, then attacking a user never boots you
       if Send(SYS, @GetServerFlag, #flag = SERVER_FLAG_DISABLE_FACTION_LOSS)
@@ -3948,8 +3940,6 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local iRange, oWinds, oSandstorm;
-
       % Can't target self.
       if what = self
       {
@@ -3985,7 +3975,7 @@ messages:
       }
 
       % Send to the STROKE to get the range, so unarmed attacks have ranges, too
-      iRange = Send(stroke_obj,@GetRange,#weapon_used=use_weapon);
+      local iRange = Send(stroke_obj,@GetRange,#weapon_used=use_weapon);
 
       % A little fudge factor to account for lag drift, etc.
       %  Don't fudge for ranged weapons.
@@ -4065,8 +4055,8 @@ messages:
       %  Do this after paying the costs so that the arrow is used.
       if use_weapon <> $ AND IsClass(use_weapon,&RangedWeapon)
       {
-         oWinds = Send(SYS,@FindSpellByNum,#num=SID_WINDS);
-         oSandstorm = Send(SYS,@FindSpellByNum,#num=SID_SANDSTORM);
+         local oWinds = Send(SYS,@FindSpellByNum,#num=SID_WINDS);
+         local oSandstorm = Send(SYS,@FindSpellByNum,#num=SID_SANDSTORM);
          
          if Send(poOwner,@IsEnchanted,#what=oWinds)
             AND Send(oWinds,@WindsRuinShot,#who=self)
@@ -4103,10 +4093,7 @@ messages:
    %  iRange=$ means there's no range check.
    TargetWithinSightAndRange(oTarget=$,iRange=$,use_weapon=$,stroke_obj=$)
    {
-      local iSquareRange, iDist, oTargetOwner, oFinalTarget, iAngle, iRow, iCol,
-            iTargetRow, iTargetCol;
-
-      oTargetOwner = Send(oTarget,@GetOwner);
+      local oTargetOwner = Send(oTarget,@GetOwner);
 
       % We are always in range of ourselves or anything we carry.
       if oTarget = self
@@ -4115,7 +4102,7 @@ messages:
          return TRUE;
       }
 
-      oFinalTarget = oTarget;
+      local oFinalTarget = oTarget;
 
       % Strange case of us targeting something that someone else is holding.
       %  This cannot be owned by us, since we already checked that.
@@ -4126,7 +4113,7 @@ messages:
          oTargetOwner = Send(oFinalTarget,@GetOwner);
       }
 
-      iDist = Send(self,@SquaredDistanceTo,#what=oFinalTarget);
+      local iDist = Send(self,@SquaredDistanceTo,#what=oFinalTarget);
 
       % If we don't share the same owner, then we're not in range.
       if poOwner <> oTargetOwner
@@ -4137,7 +4124,7 @@ messages:
       % See if target is within range, if we provided a range.
       if iRange <> $
       {
-         iSquareRange = iRange;
+         local iSquareRange = iRange;
          iSquareRange = iSquareRange * iSquareRange;
 
          if iDist > iSquareRange
@@ -4156,11 +4143,11 @@ messages:
          AND (IsClass(stroke_obj,&Stroke)
               OR (IsClass(stroke_obj,&Spell) AND Send(stroke_obj,@GetNumSpellTargets) = 1))
       {
-         iAngle = Send(self,@GetAngle);
-         iRow = Send(self,@GetRow);
-         iCol = Send(self,@GetCol);
-         iTargetRow = Send(oTarget,@GetRow);
-         iTargetCol = Send(oTarget,@GetCol);
+         local iAngle = Send(self,@GetAngle);
+         local iRow = Send(self,@GetRow);
+         local iCol = Send(self,@GetCol);
+         local iTargetRow = Send(oTarget,@GetRow);
+         local iTargetCol = Send(oTarget,@GetCol);
 
          % What this does:
          % Basically, it finds your direction and makes sure you aren't trying to target
@@ -4215,12 +4202,12 @@ messages:
    % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
+      local i, iStroke, iProficiency, iOffense;
 
-      oWeapon = $;
+      local oWeapon = $;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if (oMonster <> $) and Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          iOffense = Send(oMonster,@GetOffense,#what=what,#stroke_obj=stroke_obj);
@@ -4243,7 +4230,7 @@ messages:
             iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING);
          }
 
-         iAim = Send(self,@GetAim);
+         local iAim = Send(self,@GetAim);
          iOffense = (iStroke*3) + (iProficiency*2) + (iAim*4) + (piBase_Max_Health*3/2);
 
          if oWeapon <> $
@@ -4282,10 +4269,10 @@ messages:
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
    GetDefense(what = $, stroke_obj=$)
    {
-      local i, iParry, iDodge, iBlock, iAgility, iDefense, oMonster;
+      local i, iDefense;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if (oMonster <> $) and Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          iDefense = Send(oMonster,@GetDefense,#what=what,#stroke_obj=stroke_obj);
@@ -4293,9 +4280,9 @@ messages:
       else
       {
          % A player's defense is based on his dodge, parry, block skills, agility, and max hps.
-         iParry = 0;
-         iDodge = 0;
-         iBlock = 0;
+         local iParry = 0;
+         local iDodge = 0;
+         local iBlock = 0;
 
          % Ask the weapon, it might give a bonus to parrying.
          iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
@@ -4305,7 +4292,7 @@ messages:
          
          iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
-         iAgility = Send(self,@GetAgility);
+         local iAgility = Send(self,@GetAgility);
          iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*4) + (piBase_Max_Health*3/2);
       }
 
@@ -4326,16 +4313,14 @@ messages:
    % skills.  Used in player for defense, used in battler for defense messages.
    GetParryAbility(stroke_obj=$)
    {
-      local oWeapon, oMonster;
-
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          return Send(oMonster,@GetParryAbility,#stroke_obj=stroke_obj);
       }
       
-      oWeapon = Send(self,@GetWeapon);
+      local oWeapon = Send(self,@GetWeapon);
       if oWeapon = $
          OR NOT Send(Send(sys,@FindSkillByNum,#num=SKID_PARRY),@CanPayCosts,#who=self)
          OR (stroke_obj <> $ AND NOT Send(stroke_obj,@CanParry))
@@ -4348,17 +4333,15 @@ messages:
 
    GetBlockAbility(stroke_obj=$)
    {
-      local oShield, oMonster;
-
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          % Should only be one morph enchantment on the player.
          return Send(oMonster,@GetBlockAbility,#stroke_obj=stroke_obj);
       }
 
-      oShield = Send(self,@LookupPlayerShield);
+      local oShield = Send(self,@LookupPlayerShield);
       if oShield = $
          OR NOT Send(Send(sys,@FindSkillByNum,#num=SKID_BLOCK),@CanPayCosts,#who=self)
          OR ((stroke_obj <> $) AND NOT Send(stroke_obj,@CanBlock))
@@ -4371,15 +4354,13 @@ messages:
 
    GetDodgeAbility(stroke_obj=$)
    {
-      local oMonster;
-      
       if stroke_obj <> $ AND NOT Send(stroke_obj,@CanDodge)
       {
          return 0;
       }
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MOVE)
       {
@@ -4397,10 +4378,10 @@ messages:
    % This returns the damage done to target "what" before resistances.
    GetDamage(what = $, stroke_obj=$)
    {
-      local i, iDamage, oStroke, oWeapon, iModBonus, iDamageBonus, oMonster;
+      local i, iDamage, oStroke;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          iDamage = Send(oMonster,@GetDamage,#what=what,#stroke_obj=stroke_obj);
@@ -4410,7 +4391,7 @@ messages:
          oStroke = stroke_obj;
          if stroke_obj = $
          {
-            oWeapon = Send(self,@GetWeapon);
+            local oWeapon = Send(self,@GetWeapon);
             if oWeapon = $
             {
                oStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
@@ -4436,12 +4417,12 @@ messages:
       }
 
       % Spells and attmods that modify damage
-      iDamageBonus = 0;
+      local iDamageBonus = 0;
       for i in plAttack_modifiers
       {
          % Attack modifiers return the total damage, subtract out the original
          %  damage to get the damage bonus.
-         iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
+         local iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
                           #stroke_obj=oStroke);
          iDamageBonus = iDamageBonus + (iModBonus - iDamage);
 
@@ -4462,10 +4443,10 @@ messages:
    % This is the type of damage done.
    GetDamageType(what = $, use_weapon = $)
    {
-      local oWeapon, oMonster;
+      local oWeapon;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          return Send(oMonster,@GetDamageType,#what=what);
@@ -4491,10 +4472,10 @@ messages:
 
    GetSpellType(what = $, use_weapon = $)
    {
-      local oWeapon, oMonster;
+      local oWeapon;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          return Send(oMonster,@GetSpellType,#what=what);
@@ -4520,8 +4501,6 @@ messages:
 
    AssessHit(what = $, stroke_obj = $, damage = $)
    {
-      local oMonster;
-      
       if stroke_obj <> $
          AND Send(self,@GetWeaponSwingBonus) > 0
       {
@@ -4530,7 +4509,7 @@ messages:
       }      
 
       % Morphed?  Also apply the morphed monster's hit side effects, if any.
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if (oMonster <> $ AND Send(self, @CheckPlayerFlag, #flag=PFLAG_MORPHED))
       {
          Send(oMonster,@HitSideEffect,#what=what);
@@ -4545,9 +4524,9 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, color_rsc, iDuration, iLimit;
+      local i, iResistance;
 
-      color_rsc = player_hit_color_none;
+      local color_rsc = player_hit_color_none;
       
       if what <> $ AND IsClass(what,&monster)
       {
@@ -4570,7 +4549,7 @@ messages:
          damage = damage + bonus;               
       }
       
-      iDuration = 800;
+      local iDuration = 800;
       if damage <= 6
       {
          iDuration = 600;
@@ -4598,7 +4577,7 @@ messages:
                OR Send(Send(SYS, @GetSettings),@DamageCapProtectionMurderersEnabled))
          {
             % Cap damage to 1/3 of max health (+2 so we "round up")
-            iLimit = (piBase_Max_Health + (MAX_HEALTH_DAMAGE_FRACTION-1)) / MAX_HEALTH_DAMAGE_FRACTION;
+            local iLimit = (piBase_Max_Health + (MAX_HEALTH_DAMAGE_FRACTION-1)) / MAX_HEALTH_DAMAGE_FRACTION;
             damage = bound(damage,$,iLimit);
          }
 
@@ -4609,7 +4588,7 @@ messages:
       % Faction enemies an extra 15% damage to each other, above caps.
       if what <> $ AND IsClass(what,&Player)
       {
-         oSoldierShield = Send(what,@FindUsing,#class=&SoldierShield,#damage=TRUE);
+         local oSoldierShield = Send(what,@FindUsing,#class=&SoldierShield,#damage=TRUE);
          if oSoldierShield <> $
             AND Send(oSoldierShield,@IsEnemyAttack,#what=self,#damage=TRUE)
          {
@@ -4665,9 +4644,9 @@ messages:
    % This function handles when is damage done to opponent.
    DidDamage(what = $, amount = 0)
    {
-      local oWeapon, i;
+      local i;
 
-      oWeapon = Send(self,@GetWeapon);
+      local oWeapon = Send(self,@GetWeapon);
       
       if oWeapon <> $
       {
@@ -4701,9 +4680,7 @@ messages:
    % Returns weapon used.
    GetWeapon()
    {
-      local oWeapon;
-      
-      oWeapon = Send(self,@LookupPlayerWeapon);
+      local oWeapon = Send(self,@LookupPlayerWeapon);
       % If there is no wielded melee weapon, then see if we have a touch attack active.
       if oWeapon = $
       {
@@ -4724,9 +4701,9 @@ messages:
    % This keeps track of the weapon swings.
    SwingWeapon(times=1)
    {
-      local oWeapon, iProfNum;
+      local iProfNum;
 
-      oWeapon = Send(self,@LookupPlayerWeapon);
+      local oWeapon = Send(self,@LookupPlayerWeapon);
 
       if oWeapon <> $
       {
@@ -4797,8 +4774,6 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local oSoldierShield, iChance, oEnemyGuild;
-
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
 
@@ -4830,7 +4805,7 @@ messages:
       }
 
       % Let our shield know we killed something.
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
       if oSoldierShield <> $
       {
          Send(oSoldierShield,@KilledSomething,#what=what);
@@ -4864,7 +4839,7 @@ messages:
 
             % Check for enemy guild - If both guilds are enemies, then they can whack on each other
             %   freely, without murderer or faction penalty.
-            oEnemyGuild = Send(what,@GetGuild);
+            local oEnemyGuild = Send(what,@GetGuild);
 
             % Check for various murderer things if any are true:
             %  We're not in a guild, opponent wasn't in a guild, we're not in a mutual war
@@ -4904,7 +4879,7 @@ messages:
                   % it was competitive (or the victim at least had a shot)
                   % If were twice as strong as them, we get haunted.
                   % If the victim was good, we get haunted.
-                  iChance = Send(self,@RevenantChance,#target=what);
+                  local iChance = Send(self,@RevenantChance,#target=what);
                   if (random(1,100) < iChance) AND NOT Send(SYS,@GetChaosNight)
                   {       
                      Send(self,@SetPlayerFlag,#flag=PFLAG_HAUNTED,#value=TRUE);
@@ -5030,8 +5005,6 @@ messages:
 
    RevenantChance(who=$,target=$)
    {
-      local oChance, oGuild, iFaction, oSpell;
-
       if poOwner <> $ AND IsClass(poOwner,&Guildhall)
       {
          return 0;
@@ -5046,8 +5019,8 @@ messages:
          return 0;
       }
 
-      oChance = 10;
-      oGuild = Send(target,@GetGuild);
+      local oChance = 10;
+      local oGuild = Send(target,@GetGuild);
       
       if poGuild <> $ AND oGuild <> $ 
       {
@@ -5085,7 +5058,7 @@ messages:
 
       }
 
-      iFaction = Send(target,@GetFaction);
+      local iFaction = Send(target,@GetFaction);
       if piFaction <> FACTION_NEUTRAL AND iFaction <> FACTION_NEUTRAL
       {
          if piFaction <> iFaction
@@ -5111,7 +5084,7 @@ messages:
       % Bind the number to a reasonable amount, then add in the penalty for being a repeat killer.
       oChance = (bound(oChance,2,30) + (5*piKill_count_decay));
 
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
+      local oSpell = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
       if poOwner <> $ AND Send(poOwner,@IsEnchanted,#what=oSpell)
       {
          oChance = oChance + (oChance * Send(poOwner,@GetEnchantmentState,#what=oSpell) / 100);
@@ -5525,10 +5498,8 @@ messages:
    "defender has any defense value there.  Much better than random pattern "
    "of previous combat."
    {
-      local rand, armor_pos;
-
-      rand = random(1,12);
-      armor_pos = 0;
+      local rand = random(1,12);
+      local armor_pos = 0;
 
       if rand < 6
       {
@@ -5557,10 +5528,10 @@ messages:
    GetDefenseModifier()
    "Returns a number from 0-100."
    {
-      local armor_mod, armor_pos, i, shirt;
+      local i;
 
-      armor_mod = 0;
-      armor_pos = Send(self,@ChooseArmorPosition);
+      local armor_mod = 0;
+      local armor_pos = Send(self,@ChooseArmorPosition);
       
       if armor_pos = -1
       {
@@ -5578,7 +5549,7 @@ messages:
       {
          if armor_pos & ITEM_USE_BODY
          {
-            shirt = $;
+            local shirt = $;
             for i in plUsing
             {
                if Send(i,@GetItemUseType) & armor_pos
@@ -6476,8 +6447,6 @@ messages:
 
    CalculateKarmaChangeFromAct( karma_doer=$, karma_act=$, Swing_factor = 1)
    {
-      local iBase, iChange;
-
       if karma_doer = $ OR karma_act = $
       {
          return 0;
@@ -6497,9 +6466,9 @@ messages:
          return 0;
       }
 
-      iBase = karma_doer  - karma_act;
+      local iBase = karma_doer  - karma_act;
     
-      iChange = - ((iBase*iBase*ibase)/2500 + (5*iBase));
+      local iChange = - ((iBase*iBase*ibase)/2500 + (5*iBase));
     
       % Swing factor must be a number from 1 to 10
       swing_factor = bound(swing_factor,1,10);
@@ -6509,7 +6478,7 @@ messages:
 
    CalculateKarmaChangeFromKill( karma_killer = 0, karma_victim = 0, bIsMob = FALSE )
    {
-      local iChange, iSwing, oRoom;
+      local iSwing;
 
       % No karma changes from killing players during Frenzies.
       % Also, no Karma change from event monsters: Xeos and admin-spawned.
@@ -6521,7 +6490,7 @@ messages:
 
       % No karma changes in the newbie area.  Otherwise e.g. killing a negative
       % karma monster may make your spell inoperable.
-      oRoom = Send(self, @GetOwner);
+      local oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND Send(oRoom, @GetRegion) = RID_NEWB_BASE
       {
          return 0;
@@ -6566,7 +6535,7 @@ messages:
          }
       }
 
-      iChange = Send(self,@CalculateKarmaChangeFromAct,#karma_doer = karma_killer,
+      local iChange = Send(self,@CalculateKarmaChangeFromAct,#karma_doer = karma_killer,
                      #karma_act = -(karma_victim),#swing_factor = iSwing);
         
       if bIsMob 
@@ -7132,16 +7101,15 @@ messages:
    % to see if they have forgotten the skill/spell (what)
    HasForgetEnchantment(what = $)
    {
-      local oSpell, lState, iStateMember;
-
-      lState = $;
+      local iStateMember;
+      local lState = $;
 
       if NOT piFlags & PFLAG_FORGOTTEN
       {
          return FALSE;
       }
 
-      oSpell = Send(SYS,@FindSpellbyNum,#num=SID_FORGET);
+      local oSpell = Send(SYS,@FindSpellbyNum,#num=SID_FORGET);
       lState = Send(self,@GetEnchantedState,#what=oSpell);
       if lState = $
       {
@@ -7893,8 +7861,7 @@ messages:
 
    Killed(what = $)
    {
-      local lItems,i, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
-            oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom;
+      local lItems, i, oItemAtt, oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem;
 
       % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
       %  is called from LeaveHold() in the Underworld.  This is to allow time
@@ -7977,9 +7944,9 @@ messages:
       % Now we need to determine if it's a 'cheap' death where we don't lose stuff.
 
       Send(self,@RemoveAllEnchantments,#report=FALSE);
-      bNo_drop_death = FALSE;
+      local bNo_drop_death = FALSE;
 
-      iRoom = Send(poOwner,@GetRoomNum);
+      local iRoom = Send(poOwner,@GetRoomNum);
 
       % Reign of Blood Frenzy death?  Newbie death?
       % Don't drop anything or take any penalties.
@@ -8025,7 +7992,7 @@ messages:
       }
 
       % Create the corpse.
-      oBody = Send(self,@CreateCorpse);
+      local oBody = Send(self,@CreateCorpse);
       Send(oRoom,@NewHold,#what=oBody,#new_row=iRow,#new_col=iCol,#fine_row=16,#fine_col=16, #new_angle=iAngle);
 
       % Start losing stuff if applicable.
@@ -8082,7 +8049,7 @@ messages:
          Post(self,@EvaluatePKStatus);
 
          % Let SoldierShields know we died.  It handles itself as appropriate.
-         oSoldierShield = Send(self,@FindUsing,#what=&SoldierShield);
+         local oSoldierShield = Send(self,@FindUsing,#what=&SoldierShield);
          if oSoldierShield <> $
          {
             Send(oSoldierShield,@OwnerDied,#what=what);
@@ -8332,11 +8299,9 @@ messages:
 
    CreateCorpse(Assassinated=FALSE)
    {
-      local inKocatan;
-
       %  Send current pant/shirt color to body only if they both use the new two-color xlats
       %        otherwise, Send default colors
-      inKocatan = FALSE;
+      local inKocatan = FALSE;
       if pbLogged_on
       {
          if Send(poOwner,@GetRegion) = RID_KOCATAN
@@ -9677,14 +9642,12 @@ messages:
    "Send a message to the player if the person hit has a resistance"
    "select a message to Send the player if the person hit has a resistance"
    {
-      local rMessage;
-
       if resistance = $
       {
          return;
       }
 
-      rMessage = $;
+      local rMessage = $;
 
       if resistance > (MAX_RESISTANCE/5)
       {
@@ -9722,14 +9685,12 @@ messages:
    MsgPlayerResistsHit(what = $, resistance= $, color_rsc = player_hit_color_none)
    "Send a message to the player if they have a resistance"
    {
-      local rMessage;
-
       if resistance = $
       {
          return;
       }
 
-      rMessage = $;
+      local rMessage = $;
 
       if resistance > (MAX_RESISTANCE/5) 
       {
@@ -11037,8 +10998,6 @@ messages:
    "(i.e. quits a guild or drops below 30 health).  Also, take steps to ensure "
    "it is not run immediately prior to death."
    {
-      local ass_game;
-
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_LOCK)
       {
          return FALSE;
@@ -11050,7 +11009,7 @@ messages:
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
-            ass_game = Send(SYS,@GetAssassinGame);
+            local ass_game = Send(SYS,@GetAssassinGame);
             if Send(ass_game,@IsCombatant,#who=self)
             {
                Send(self,@MsgSendUser,#message_rsc=Player_dagger_shatters);

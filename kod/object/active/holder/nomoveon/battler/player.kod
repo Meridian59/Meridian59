@@ -4607,7 +4607,7 @@ messages:
             {
                Send(self,@MsgSendUser,
                     #message_rsc=Send(self,@PlayerWasHit,#atype=atype,#aspell=aspell),
-                    #parm1=color_rsc,#parm2=Send(what,@GetCapDef),
+                    #parm1=rHitTextColor,#parm2=Send(what,@GetCapDef),
                     #parm3=Send(what,@GetName));
             }
          }

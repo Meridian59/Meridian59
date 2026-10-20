@@ -8570,11 +8570,12 @@ messages:
          AddPacket(4,PWO_RIGHT_HAND);
 
 		 local oWeapon = Send(self,@LookupPlayerWeapon);
+         local rWeaponOverlay = Send(oWeapon,@GetWindowOverlay);
 
          % If the right hand is holding a melee weapon, animate casting while wielding it.
-         if oWeapon <> $ AND NOT isClass(oWeapon,&Bow)
+         if oWeapon <> $ AND NOT isClass(oWeapon,&Bow) AND rWeaponOverlay <> $
          {
-			AddPacket(4,Send(oWeapon,@GetWindowOverlay));  % Get the weapon graphic filename.
+			AddPacket(4,rWeaponOverlay);  % Get the weapon graphic filename.
 			AddPacket(4,0, 4,0, 4,0); % Flags + item rarity grade
 			Send(oWeapon,@SendWindowOverlayCastAnimation);
          }

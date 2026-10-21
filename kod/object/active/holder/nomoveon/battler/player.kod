@@ -2779,17 +2779,17 @@ messages:
    "returns a subset of plEnchantments whose elements are of the given class"
    {
       local i;
-      local returnList = $;
+      local lEnchantmentMatches = $;
 
       for i in plEnchantments
       {
          if IsClass(Nth(i,2),enchClass)
          {
-            returnList = cons(i,returnList);
+            lEnchantmentMatches = cons(i,lEnchantmentMatches);
          }
       }
       
-      return returnList;
+      return lEnchantmentMatches;
    }
 
    IsEnchanted(what = $, byClass = &Spell)
@@ -2856,7 +2856,7 @@ messages:
    {
       local i;
 
-      local removedSomething = FALSE;
+      local bRemovedSomething = FALSE;
 
       for i in plEnchantments
       {
@@ -2865,7 +2865,7 @@ messages:
            AND ((NOT IsClass(oSpell,&DMSpell)) OR override)
         {
            Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
-           removedSomething = TRUE;
+           bRemovedSomething = TRUE;
         }
       }
       
@@ -2874,7 +2874,7 @@ messages:
       Send(self,@ResetPlayerFlagList);
       Send(self,@ResetPlayerDrawfx,#SendSomethingChanged=TRUE);
       
-      return removedSomething;
+      return bRemovedSomething;
    }
 
    FreezeAllEnchantments()
@@ -2961,10 +2961,10 @@ messages:
       %  exactly well-engineered or even "good", really.
       for i in plActive
       {
-         local each_obj = Send(self,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&NecromancerAmulet)
+         local oItem = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(oItem,&NecromancerAmulet)
          {
-            Send(each_obj,@DispelIllusions);
+            Send(oItem,@DispelIllusions);
          }
       }
       
@@ -3029,13 +3029,13 @@ messages:
    {
       local i,state;
       
-      local removedSomething = FALSE;
+      local bRemovedSomething = FALSE;
 
       for i in plEnchantments
       {
          if IsClass(Nth(i,2),class)
          {
-            removedSomething = TRUE;
+            bRemovedSomething = TRUE;
             if First(i) <> $
             {
                DeleteTimer(First(i));
@@ -3056,7 +3056,7 @@ messages:
          }
       }
       
-      return removedSomething;
+      return bRemovedSomething;
    }
 
    SendEnchantmentIcons()
@@ -3066,10 +3066,10 @@ messages:
       
       for i in plEnchantments
       {
-         local each_obj = Nth(i,2);
-         if NOT (IsClass(each_obj,&Seance) OR IsClass(each_obj,&IllusionaryWounds))
+         local oSpell = Nth(i,2);
+         if NOT (IsClass(oSpell,&Seance) OR IsClass(oSpell,&IllusionaryWounds))
          {
-            Send(self,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_PLAYER);
+            Send(self,@ShowAddEnchantment,#what=oSpell,#type=ENCHANTMENT_PLAYER);
          }
       }
 
@@ -10376,39 +10376,39 @@ messages:
 
    CountKnownAtLevel(school=$,level=$)
    {
-      local i, nSID, nObj;
+      local i, iKnownNum, oKnown;
 
       local iCount = 0;
       for i in plSkills
       {
-         nSID = Send(self,@DecodeSkillNum,#compound=i);
-         nObj = Send(SYS,@FindSkillByNum,#num=nSID);
+         iKnownNum = Send(self,@DecodeSkillNum,#compound=i);
+         oKnown = Send(SYS,@FindSkillByNum,#num=iKnownNum);
          
-         if nObj = $
+         if oKnown = $
          {
             continue;
          }
          
          % Is this in the same school?
-         if Send(nObj,@GetSchool) = school
-            AND Send(nobj,@GetLevel) = level
+         if Send(oKnown,@GetSchool) = school
+            AND Send(oKnown,@GetLevel) = level
          {
             iCount = iCount + 1;
          }
       }
       for i in plSpells
       {
-         nSID = Send(self,@DecodeSpellNum,#compound=i);
-         nObj = Send(SYS,@FindSpellByNum,#num=nSID);
+         iKnownNum = Send(self,@DecodeSpellNum,#compound=i);
+         oKnown = Send(SYS,@FindSpellByNum,#num=iKnownNum);
          
-         if nObj = $
+         if oKnown = $
          {
             continue;
          }
          
          % Is this in the same school?
-         if (Send(nObj,@GetSchool) = school)
-            and (Send(nobj,@GetLevel)) = level
+         if (Send(oKnown,@GetSchool) = school)
+            and (Send(oKnown,@GetLevel)) = level
          {
             iCount = iCount + 1;
          }
@@ -10864,7 +10864,7 @@ messages:
 
    GetTotalLearnPoints(except = $)
    {
-      local iSpell, iSID, oSpellObj, iLevel;
+      local i, iKnownNum, oKnown, iLevel;
 
       local iKraanan = 0;
       local iShalille = 0;
@@ -10874,15 +10874,15 @@ messages:
       local iJala = 0;
       local iWeapon = 0;
             
-      for iSpell in plSpells
+      for i in plSpells
       {
-         iSID = Send(self,@DecodeSpellNum,#compound=iSpell);
-         oSpellObj = Send(SYS,@FindSpellByNum,#num=iSID);
+         iKnownNum = Send(self,@DecodeSpellNum,#compound=i);
+         oKnown = Send(SYS,@FindSpellByNum,#num=iKnownNum);
 
-         local iSchool = Send(oSpellObj,@GetSchool);
-         iLevel = Send(oSpellObj,@GetLevel);
+         local iSchool = Send(oKnown,@GetSchool);
+         iLevel = Send(oKnown,@GetLevel);
 
-         if NOT IsClass(oSpellObj,&Blink)  % DON'T COUNT BLINK!
+         if NOT IsClass(oKnown,&Blink)  % DON'T COUNT BLINK!
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {
@@ -10926,12 +10926,12 @@ messages:
 
       if except <> SKS_FENCING
       {
-         for iSpell in plSkills
+         for i in plSkills
          {
-            iSID = Send(self,@DecodeSkillNum,#compound=iSpell);
-            oSpellObj = Send(SYS,@FindSkillByNum,#num=iSID);
+            iKnownNum = Send(self,@DecodeSkillNum,#compound=i);
+            oKnown = Send(SYS,@FindSkillByNum,#num=iKnownNum);
 
-            iLevel = Send(oSpellObj,@GetLevel);
+            iLevel = Send(oKnown,@GetLevel);
 
             if iLevel > iWeapon
                AND iLevel < 50       % Catch DM only skills
@@ -11480,8 +11480,8 @@ messages:
 
       for i in plSpells
       {
-         local sid = abs(i/100);
-         local oSpell = Send(SYS,@FindSpellByNum,#num=sid);
+         local iSpellNum = abs(i/100);
+         local oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
          if IsClass(oSpell,&Spell) AND Send(oSpell,@GetLevel) = 5
             AND (i mod 100) >= INTRIGUE_ENABLE_SPELL
          {
@@ -12291,10 +12291,10 @@ messages:
          return;
       }
 
-      local oldBondedItem = poBondedItem;
+      local oOldBondedItem = poBondedItem;
       poBondedItem = $;
       Send(Send(SYS,@FindItemAttByNum,#num=IA_BONDED),@RemoveFromItem,
-           #oItem=oldBondedItem);
+           #oItem=oOldBondedItem);
       
       return;
    }

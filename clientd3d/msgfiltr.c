@@ -277,7 +277,7 @@ void MessageSaid(ID sender_id, ID sender_name, BYTE say_type, char *message)
   // The ignore list holds true names, which a message does not always carry.
   // A sender that is not a logged on user keeps the name in the message.
   object_node *sender = CurrentUser(sender_id);
-  ID ignore_name = (sender != NULL) ? sender->name_res : sender_name;
+  ID ignore_name = (sender == NULL) ? sender_name : sender->name_res;
   bool from_admin = (sender != NULL) && IsAdmin(sender->flags);
 
    // Always let non-player says through; check others for blocking

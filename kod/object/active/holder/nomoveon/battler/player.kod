@@ -7742,9 +7742,9 @@ messages:
          {
             local iHighmark = Send(self,@GetHighMark);
             local iRand = random(1,iHighmark);
-            local iGainTheshold = Send(self,@GetGainChance) + bound((iMonsterLevel-piBase_Max_health)/5,0,10);
+            local iGainThreshold = Send(self,@GetGainChance) + bound((iMonsterLevel-piBase_Max_health)/5,0,10);
                   
-            if iRand < iGainTheshold
+            if iRand < iGainThreshold
                AND piBase_Max_health < (101 + Send(self,@GetStamina))
             {
                Send(self,@GainBaseMaxHealth,#amount = 1);

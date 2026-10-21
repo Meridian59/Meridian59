@@ -69,6 +69,39 @@ messages:
       propagate;
    }
 
+   NewUsed()
+   {
+      local oSoldierShield;
+
+      % Unequipping a bow to make room for us unslings the soldier shield.
+      oSoldierShield = Send(poOwner,@FindUsing,#class=&SoldierShield);
+      if oSoldierShield <> $
+      {
+         Send(oSoldierShield,@SlingOnBack);
+      }
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      local oSoldierShield;
+
+      oSoldierShield = Send(poOwner,@FindUsing,#class=&SoldierShield);
+      if oSoldierShield <> $
+      {
+         Send(oSoldierShield,@RemoveFromBack);
+      }
+
+      propagate;
+   }
+
+   CanBeWornInSameSlotWith(what = $)
+   "The soldier shield is slung on the back while an orc shield is in use."
+   {
+      return IsClass(what,&SoldierShield);
+   }
+
    GetBaseSpellModifier(oSpell=$)
    {
       if send(oSpell,@GetSchool) = SS_SHALILLE

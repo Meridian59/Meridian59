@@ -93,6 +93,8 @@ messages:
    ReqUseSomething(what = $)
    {
       if isClass(what,&Shield)
+         AND NOT Send(self,@CanBeWornInSameSlotWith,#what=what)
+         AND NOT Send(what,@CanBeWornInSameSlotWith,#what=self)
       {
          if not send(poOwner,@TryUnuseItem,#what=self)
          {

@@ -746,6 +746,10 @@ properties:
    poSession
    pbLogged_on = FALSE
 
+   % TRUE while the player is logged off: plEnchantments then holds the
+   %  remaining time of each enchantment instead of a timer.
+   pbEnchantments_frozen = TRUE
+
    % This is used to determine raises in hit points only.
    poKill_target = $
    piGain_chance = 0
@@ -2741,13 +2745,22 @@ messages:
       }
       else 
       {
-         if lastcall
+         if pbEnchantments_frozen
          {
-            oTimer = CreateTimer(self,@EnchantmentTimer,time);
+            % Logged off: store the time left, as FreezeAllEnchantments
+            %  does.  ReactivateAllEnchantments starts the timer at logon.
+            oTimer = time;
          }
          else
          {
-            oTimer = CreateTimer(self,@PeriodicEnchantmentTimer,time);
+            if lastcall
+            {
+               oTimer = CreateTimer(self,@EnchantmentTimer,time);
+            }
+            else
+            {
+               oTimer = CreateTimer(self,@PeriodicEnchantmentTimer,time);
+            }
          }
       }
 
@@ -2902,6 +2915,8 @@ messages:
          }
       }
 
+      pbEnchantments_frozen = TRUE;
+
       return;
    }
 
@@ -2909,6 +2924,8 @@ messages:
    "Called when a player logs on."
    {
       local i;
+
+      pbEnchantments_frozen = FALSE;
 
       for i in plEnchantments
       {
@@ -2920,10 +2937,13 @@ messages:
 
          local iTime = first(i);
          
-         if iTime = $ OR iTime < 1
+         if iTime = $
          {
-            Debug("Trying to make a negative timer!",
+            % The saved time was lost; end the enchantment now rather than
+            %  leave its effect on forever.
+            Debug("Enchantment had no saved time",
                   Send(Nth(i,2),@GetTrueName));
+            iTime = 0;
          }
 
          if Send(Nth(i,2),@IsPeriodic,#state=state,#who=self)
@@ -2933,6 +2953,22 @@ messages:
          else
          {
             SetNth(i,1,CreateTimer(self,@EnchantmentTimer,iTime));
+         }
+
+         if First(i) = $
+         {
+            % CreateTimer takes only a time of zero or more.  A save from
+            %  before pbEnchantments_frozen can hold the enchantment's own
+            %  timer here, still running: keep it.  Anything else ends the
+            %  enchantment now.
+            if GetTimeRemaining(iTime) <> $
+            {
+               SetNth(i,1,iTime);
+            }
+            else
+            {
+               SetNth(i,1,CreateTimer(self,@EnchantmentTimer,0));
+            }
          }
           
          Send(Nth(i,2),@RestartEnchantmentEffect,#who=self,#state=state);

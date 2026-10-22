@@ -1800,7 +1800,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oCaramo, oRoom;
+      local i;
       
       for i in plPassive
       {
@@ -1833,7 +1833,7 @@ messages:
          }
       }
 
-      oGame = Send(SYS,@GetAssassinGame);
+      local oGame = Send(SYS,@GetAssassinGame);
       if oGame <> $
          AND Send(oGame,@InAcceptMode)
          AND (NOT Send(oGame,@IsCombatant,#who=self))
@@ -1842,7 +1842,7 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=player_assgame_soon);
       }
 
-      oCaramo = Send(SYS,@GetCaramo);
+      local oCaramo = Send(SYS,@GetCaramo);
       if oCaramo <> $
       {
          Send(oCaramo,@UserLogon,#who=self);
@@ -1872,7 +1872,7 @@ messages:
       Send(self,@ComputeMaxMana);
 
       % Tell others that we're here
-      oRoom = Send(self, @GetOwner);
+      local oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND NOT IsClass(self, &DM) 
       {
          Send(oRoom, @SomethingWaveRoom, #what=self, 
@@ -1884,7 +1884,7 @@ messages:
 
    UserLogoffHook()
    {
-      local i, oRoom;
+      local i;
    
       for i in plPassive
       {
@@ -1920,7 +1920,7 @@ messages:
       Send(self,@CancelRescue);
 
       % Tell others that we're leaving
-      oRoom = Send(self, @GetOwner);
+      local oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND NOT IsClass(self, &DM) 
       {
          Send(oRoom, @SomethingWaveRoom, #what=self, 
@@ -2426,17 +2426,17 @@ messages:
    AddReagentsForSpells(iNumCasts=5)
    "Add reagents to the player for the spells they have.  Enough reagents for iNumCasts casts."
    {
-      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
+      local iInfo, lItems;
 
       for iInfo in plSpells
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=iInfo));
-         lReagents = Send(oSpell,@GetReagents);
+         local oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=iInfo));
+         local lReagents = Send(oSpell,@GetReagents);
 
          for lItems in lReagents
          {
-            cReagent = first(lItems);
-            iNumber = Nth(lItems,2);
+            local cReagent = first(lItems);
+            local iNumber = Nth(lItems,2);
 
             Send(self,@NewHOld,#what=Create(cReagent,#number=(iNumber*iNumCasts)));
          }
@@ -2459,7 +2459,7 @@ messages:
    % If this behavior changes, review all code that loops over inventory and calls DropItem,
    % as it may result in infinite loops or other unintended consequences.
    {
-      local oItem, oDropRoom, iDropRow, iDropCol, oItemAtt;
+      local oItem, oDropRoom, iDropRow, iDropCol;
       
       if droppedItem <> $
       {
@@ -2509,7 +2509,7 @@ messages:
                {
                   % Put the PK pointer attribute on the item to prevent mules from
                   %  grabbing penalty drops from ghosts.
-                  oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
+                  local oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
                   Send(oItemAtt,@AddToItem,#oItem=oItem,#timer_duration=PKPOINTER_TIME,
                        #state1=self);
                }
@@ -2553,8 +2553,7 @@ messages:
    GetGuildHall()
    "Return this player's guild hall, or NIL if none"
    {
-      local oGuild;
-      oGuild = Send(self, @GetGuild);
+      local oGuild = Send(self, @GetGuild);
       
       if oGuild = $
       {
@@ -3141,9 +3140,7 @@ messages:
    SquelchPlayer(value=$)
    "Sets if a player can broadcast or not.  Toggles condition by default."
    {
-      local bSquelched;
-
-      bSquelched = value;
+      local bSquelched = value;
       
       if bSquelched = $
       {
@@ -3208,14 +3205,14 @@ messages:
 
    CheckPosition(what=$,type=$,space=0)
    {
-      local i, iSpace, bAllowCombination;
+      local i;
 
       if space = 0 OR type = $ OR what = $
       {
          return FALSE;
       }
       
-      iSpace = space;
+      local iSpace = space;
       for i in plUsing
       {
          if Send(i,@GetItemUseType) & type
@@ -3255,7 +3252,7 @@ messages:
          else
          {
             % Check if items can be worn in the same slot despite conflicts
-            bAllowCombination = FALSE;
+            local bAllowCombination = FALSE;
             
             for i in plUsing
             {
@@ -3287,7 +3284,7 @@ messages:
 
    TryUseItem(what = $)
    {
-      local i, iUse_type;
+      local i;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
@@ -3304,7 +3301,7 @@ messages:
          return FALSE;
       }
 
-      iUse_type = Send(what,@GetItemUseType);
+      local iUse_type = Send(what,@GetItemUseType);
 
       if iUse_type & ITEM_SINGLE_USE
       {
@@ -3426,14 +3423,14 @@ messages:
    "Prefers to yield items of the same kind (weapon vs. non-weapon) as `what`, "
    "so e.g. swapping one weapon for another does not drop an equipped shield."
    {
-      local i, iHandUsed, iNeeded, lSameKind, lOtherKind, bWantWeapon;
+      local i;
 
-      iNeeded = Send(what,@GetItemUseAmount);
-      bWantWeapon = IsClass(what,&Weapon);
+      local iNeeded = Send(what,@GetItemUseAmount);
+      local bWantWeapon = IsClass(what,&Weapon);
 
-      iHandUsed = 0;
-      lSameKind = $;
-      lOtherKind = $;
+      local iHandUsed = 0;
+      local lSameKind = $;
+      local lOtherKind = $;
       for i in plUsing
       {
          if Send(i,@GetItemUseType) & ITEM_USE_HAND
@@ -3486,9 +3483,9 @@ messages:
 
    TryUnuseItem(what = $)
    {
-      local bFound, i;
+      local i;
 
-      bFound = FALSE;
+      local bFound = FALSE;
 
       %check and see if item disallows
       for i in plUsing
@@ -3547,8 +3544,6 @@ messages:
 
    TryApplyItem(what = $,apply_on = $)
    {
-      local iUse_type;
-      
       if NOT Send(self,@IsHolding,#what=what)
       {
          Send(self,@MsgSendUser,#message_rsc=player_not_holding,#parm1=Send(what,@GetName));
@@ -3556,7 +3551,7 @@ messages:
          return FALSE;
       }
 
-      iUse_type = Send(what,@GetItemUseType);
+      local iUse_type = Send(what,@GetItemUseType);
       if iUse_type <> ITEM_SINGLE_USE
       {
          if iUse_type = ITEM_BROKEN
@@ -5928,26 +5923,24 @@ messages:
  
    StripNodeList(number=$)
    {
-      local nodelist, count;
-      
-      nodelist = Send(self,@GetNodelist);
+      local iNodeFlag = Send(self,@GetNodelist);
 
       if number = $
       {
-         number = length(nodelist);
+         number = length(iNodeFlag);
       }
 
-      count = 1;
+      local iNodeBit = 1;
 
-      while nodelist >=1
+      while iNodeFlag >= 1
       {
-         if ((nodelist/2)*2) <> nodelist  %we do an "# was odd" operator
+         if ((iNodeFlag/2) * 2) <> iNodeFlag  %we do an "# was odd" operator
          {
-            Send(Send(SYS,@FindNodeByNum,#num=count),@UnMeld,#who=self);
+            Send(Send(SYS,@FindNodeByNum,#num=iNodeBit),@UnMeld,#who=self);
          }
          
-         count = count*2;
-         nodelist = nodelist/2;
+         iNodeBit = iNodeBit * 2;
+         iNodeFlag = iNodeFlag / 2;
       }
       
       Send(self,@ResetNodeList);
@@ -5958,17 +5951,15 @@ messages:
 
    StripOneNode(report=TRUE)
    {
-      local lNodes, index, bFaerieNode, bQNode, oNode;
-
       if piNodeList = 0
       {
          return;
       }
 
-      lNodes = $;
-      index = 1;
-      bFaerieNode = FALSE;
-      bQNode = FALSE;
+      local lNodes = $;
+      local index = 1;
+      local bFaerieNode = FALSE;
+      local bQNode = FALSE;
 
       while index <= NODE_MAX_VALUE
       {
@@ -6011,7 +6002,7 @@ messages:
       if lNodes
       {
          index = Nth(lNodes,random(1,length(lNodes)));
-         oNode = Send(SYS,@FindNodeByNum,#num=index);
+         local oNode = Send(SYS,@FindNodeByNum,#num=index);
          Send(oNode,@UnMeld,#who=self);
          
          if report
@@ -9780,9 +9771,7 @@ messages:
    "Returns signed change to might (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigMight;
-
-      iOrigMight = piMightMod;
+      local iOrigMight = piMightMod;
       piMightMod = piMightMod + points;
       
       if NOT bAbsolute
@@ -9799,9 +9788,7 @@ messages:
    "Returns signed change to intellect (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigIntellect;
-
-      iOrigIntellect = piIntellectMod;
+      local iOrigIntellect = piIntellectMod;
       piIntellectMod = piIntellectMod + points;
       
       if NOT bAbsolute
@@ -9818,9 +9805,7 @@ messages:
    "Returns signed change to aim (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigAim;
-
-      iOrigAim = piAimMod;
+      local iOrigAim = piAimMod;
       piAimMod = piAimMod + points;
       
       if NOT bAbsolute
@@ -9837,9 +9822,7 @@ messages:
    "Returns signed change to stamina (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigStamina;
-
-      iOrigStamina = piStaminaMod;
+      local iOrigStamina = piStaminaMod;
       piStaminaMod = piStaminaMod + points;
       
       if NOT bAbsolute
@@ -9856,9 +9839,7 @@ messages:
    "Returns signed change to agility (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigAgility;
-
-      iOrigAgility = piAgilityMod;
+      local iOrigAgility = piAgilityMod;
       piAgilityMod = piAgilityMod + points;
       
       if NOT bAbsolute
@@ -9875,9 +9856,7 @@ messages:
    "Returns signed change to agility (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigMysticism;
-
-      iOrigMysticism = piMysticismMod;
+      local iOrigMysticism = piMysticismMod;
       piMysticismMod = piMysticismMod + points;
       
       if NOT bAbsolute
@@ -10238,9 +10217,9 @@ messages:
 
    RecalibratePlayer()
    {
-      local i, bSoldier;
+      local i;
 
-      bSoldier = FALSE;
+      local bSoldier = FALSE;
       if Send(self,@FindUsing,#class=&SoldierShield) <> $
       {
          bSoldier = TRUE;
@@ -11051,14 +11030,12 @@ messages:
 
    ResetFaction(faction = FACTION_NEUTRAL)
    {
-      local oSoldierShield;
-      
       if faction < FACTION_NEUTRAL OR faction > FACTION_MAX
       {
          return FALSE;
       }
 
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
 
       if oSoldierShield <> $
          AND faction <> Send(oSoldierShield,@GetFaction)
@@ -11082,21 +11059,19 @@ messages:
    
    UpdateFactionService(full=False, middle=False, front=False, adjust=True)
    {
-      local tyme, oSoldierShield;
-      
       if piFaction = FACTION_NEUTRAL
       {
          return;
       }
 
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
 
-      tyme = GetTime();
+      local iNow = GetTime();
 
       % Don't require new service if the player has been an active soldier.
       if oSoldierShield = $
       {
-         piFactionServiceUpdate = piFactionServiceUpdate + tyme - piFactionTimeUpdated;
+         piFactionServiceUpdate = piFactionServiceUpdate + iNow - piFactionTimeUpdated;
       }
       else
       {
@@ -11107,7 +11082,7 @@ messages:
          }
       }
       
-      piFactionTimeUpdated = tyme;
+      piFactionTimeUpdated = iNow;
 
       if NOT adjust
       {
@@ -11217,17 +11192,17 @@ messages:
    PlayerIsIntriguing()
    "Evaluates player and sets the PFLAG_INTRIGUING"
    {
-      local bIntrigue,wasint,i,oParl;
+      local i;
       
-      bIntrigue=0;
+      local bIntrigue = 0;
 
-      oParl=Send(SYS,@GetParliament); 
+      local oParl=Send(SYS,@GetParliament); 
       if oParl = $
       {
          return FALSE;
       }
       
-      wasint = Send(self,@CheckPlayerFlag,#flag=PFLAG_INTRIGUING);
+      local wasint = Send(self,@CheckPlayerFlag,#flag=PFLAG_INTRIGUING);
 
       if wasint AND Send(oParl,@IsShutdown)
       {
@@ -11307,7 +11282,7 @@ messages:
    JoinFaction(new_faction=FACTION_NEUTRAL)
    "Returns true if the joining was a success"
    {
-      local factliege,oQuestEngine;
+      local oFactionLiege;
       if NOT Send(Self,@PlayerIsIntriguing)
       {
          return FALSE;
@@ -11325,7 +11300,7 @@ messages:
 
       piFaction = new_faction;
       %increase the max number of loyalty quests by one, and schedule one.
-      oQuestEngine = Send(SYS,@GetQuestEngine);
+      local oQuestEngine = Send(SYS,@GetQuestEngine);
       
       if piFaction = FACTION_PRINCESS
       {
@@ -11355,25 +11330,23 @@ messages:
       piFactionServiceUpdate = 0;
       if piFaction <> FACTION_NEUTRAL
       {
-         factliege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
+         oFactionLiege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
       }
                           
       Send(Self,@FactionServiceRoutine);
       Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=piFaction);
       Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self);
       Send(self,@MsgSendUser,#message_rsc=player_join_faction,
-           #parm1=Send(factliege,@GetDef),#parm2=Send(factliege,@GetName));
+           #parm1=Send(oFactionLiege,@GetDef),#parm2=Send(oFactionLiege,@GetName));
            
       return TRUE;
    }
 
    ResignFaction()
    {
-      local numMembers, oQuestEngine, oQuest, oFlagPole, iServiceQuestIndex;
+      local iServiceQuestIndex = 0;
 
-      iServiceQuestIndex = 0;
-
-      oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
+      local oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
       if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
       {
          if Send(oFlagPole,@GetClaimer) = self
@@ -11382,7 +11355,7 @@ messages:
          }
       }
 
-      oQuestEngine = Send(SYS,@GetQuestEngine);
+      local oQuestEngine = Send(SYS,@GetQuestEngine);
       if (oQuestEngine = $)
       {
          return;
@@ -11412,7 +11385,7 @@ messages:
 
       if iServiceQuestIndex > 0
       {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+         local lQuest = Send(oQuestEngine,@GetQuestTemplate,
                      #index=iServiceQuestIndex);
          
          % If the player is on a service quest for the faction they're losing, 
@@ -11421,12 +11394,12 @@ messages:
                #report=FALSE);
 
          % Decrease the max number of loyalty quests by one
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-         if numMembers > 0
+         local iNumMembers = Nth(lQuest,QT_MAX_NUM_ACTIVE);
+         if iNumMembers > 0
          {
             Send(oQuestEngine,@SetQuestMaxActive,
                   #index=iServiceQuestIndex,
-                  #new_max=(numMembers-1));
+                  #new_max=(iNumMembers-1));
          }
          else
          {
@@ -11531,10 +11504,8 @@ messages:
 
    TokenDeliveryReward(mob=$)
    {
-      local tobj,classes;
-
-      classes = Send(Send(SYS,@GetLibrary),@GetQuestRewardList);
-      if classes = $
+      local lRewardClasses = Send(Send(SYS,@GetLibrary),@GetQuestRewardList);
+      if lRewardClasses = $
       {
          return;
       }
@@ -11543,20 +11514,20 @@ messages:
          OR (IsClass(mob,&Factions) AND Send(mob,@GetFaction) = piFaction)
          OR (IsClass(mob,&ShalillePriestess) AND piFaction = FACTION_NEUTRAL)
       {
-         tobj = Create(Nth(classes,Random(1,Length(classes))));
-         if Send(self,@ReqNewHold,#what=tobj)
+         local oReward = Create(Nth(lRewardClasses,Random(1,Length(lRewardClasses))));
+         if Send(self,@ReqNewHold,#what=oReward)
          {
-            Send(self,@NewHold,#what=tobj);
+            Send(self,@NewHold,#what=oReward);
             Post(poOwner,@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
-                 #string=player_token_reward,#parm1=Send(tobj,@GetDef),
-                 #parm2=Send(tobj,@GetName));
+                 #string=player_token_reward,#parm1=Send(oReward,@GetDef),
+                 #parm2=Send(oReward,@GetName));
          } 
          else
          {
-            Send(poOwner,@NewHold,#what=tobj,#new_row=piRow,#new_col=piCol);
+            Send(poOwner,@NewHold,#what=oReward,#new_row=piRow,#new_col=piCol);
             Post(poOwner,@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
-                 #string=player_token_reward_heavy,#parm1=Send(tobj,@GetDef),
-                 #parm2=Send(tobj,@GetName));
+                 #string=player_token_reward_heavy,#parm1=Send(oReward,@GetDef),
+                 #parm2=Send(oReward,@GetName));
          }
       }
       
@@ -12143,11 +12114,9 @@ messages:
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,parm4 = $,
                                             parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      local oSnoop;
-
       if type = SAY_NORMAL and what <> self and IsClass(what,&Player)
       {
-         oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
+         local oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
          if oSnoop <> $
          {
             Send(oSnoop,@SomeoneOverheard,#from=what,#to=self,#string=string);
@@ -12318,8 +12287,6 @@ messages:
    "Sets all time variables to the current time.  Useful for when changing "
    "server time."
    {
-      local time;
-
       % Reset our attack timer, a traditional use of this function when attack
       %  time was a timestamp instead of a timer.
       if ptAttackTimer <> $
@@ -12328,13 +12295,13 @@ messages:
          ptAttackTimer = $;
       }
 
-      time = GetTime();
+      local iNow = GetTime();
    
-      piLastDeathTime = time;
-      piGuildRejoinTimestamp = time;
-      piLast_restart_time = time;
-      piTimeLastStomachUpdate = time;
-      piTimeAttackedPlayer = time;
+      piLastDeathTime = iNow;
+      piGuildRejoinTimestamp = iNow;
+      piLast_restart_time = iNow;
+      piTimeLastStomachUpdate = iNow;
+      piTimeAttackedPlayer = iNow;
 
       return;
    }
@@ -12435,25 +12402,23 @@ messages:
    IsInSameRoom(what = $)
    "Determine if given object is in same room as we are."
    {
-      local what_owner, found;
-
       if poOwner = $ OR what = $
       {
          return FALSE;
       }
 
-      found = FALSE;
-      what_owner = Send(what, @GetOwner);
-      while what_owner <> $
+      local bFound = FALSE;
+      local oWhatOwner = Send(what, @GetOwner);
+      while oWhatOwner <> $
       {
-         if what_owner = poOwner
+         if oWhatOwner = poOwner
          {
-            found = TRUE;
+            bFound = TRUE;
             break;
          }
-         what_owner = Send(what_owner, @GetOwner);
+         oWhatOwner = Send(oWhatOwner, @GetOwner);
       }
-      return found;
+      return bFound;
    }
 
    AddDonationYear(year = $)

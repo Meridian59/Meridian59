@@ -5923,24 +5923,24 @@ messages:
  
    StripNodeList(number=$)
    {
-      local iNodeFlag = Send(self,@GetNodelist);
+      local iNodeList = Send(self,@GetNodelist);
 
       if number = $
       {
-         number = length(iNodeFlag);
+         number = length(iNodeList);
       }
 
-      local iNodeBit = 1;
+      local iNodeFlag = 1;
 
-      while iNodeFlag >= 1
+      while iNodeList >= 1
       {
-         if ((iNodeFlag/2) * 2) <> iNodeFlag  %we do an "# was odd" operator
+         if ((iNodeList/2) * 2) <> iNodeList  %we do an "# was odd" operator
          {
-            Send(Send(SYS,@FindNodeByNum,#num=iNodeBit),@UnMeld,#who=self);
+            Send(Send(SYS,@FindNodeByNum,#num=iNodeFlag),@UnMeld,#who=self);
          }
          
-         iNodeBit = iNodeBit * 2;
-         iNodeFlag = iNodeFlag / 2;
+         iNodeFlag = iNodeFlag * 2;
+         iNodeList = iNodeList / 2;
       }
       
       Send(self,@ResetNodeList);
@@ -5957,32 +5957,32 @@ messages:
       }
 
       local lNodes = $;
-      local index = 1;
+      local iNodeFlag = 1;
       local bFaerieNode = FALSE;
       local bQNode = FALSE;
 
-      while index <= NODE_MAX_VALUE
+      while iNodeFlag <= NODE_MAX_VALUE
       {
-         if piNodelist & index
+         if piNodelist & iNodeFlag
          {
-            if index = NODE_FAERIE
+            if iNodeFlag = NODE_FAERIE
             {
                bFaerieNode = TRUE;
             }
             else
             {
-               if index = NODE_Q
+               if iNodeFlag = NODE_Q
                {
                   bQNode = TRUE;
                }
                else
                {
-                  lNodes = cons(index,lNodes);
+                  lNodes = cons(iNodeFlag,lNodes);
                }
             }
          }
 
-         index = index * 2;
+         iNodeFlag = iNodeFlag * 2;
       }
 
       if lNodes = $
@@ -6001,8 +6001,8 @@ messages:
 
       if lNodes
       {
-         index = Nth(lNodes,random(1,length(lNodes)));
-         local oNode = Send(SYS,@FindNodeByNum,#num=index);
+         iNodeFlag = Nth(lNodes,random(1,length(lNodes)));
+         local oNode = Send(SYS,@FindNodeByNum,#num=iNodeFlag);
          Send(oNode,@UnMeld,#who=self);
          
          if report

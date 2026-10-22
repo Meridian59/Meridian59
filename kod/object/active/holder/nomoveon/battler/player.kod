@@ -8782,10 +8782,10 @@ messages:
     "equipped it delegates arm setup to that shirt so shirt-specific arm graphics (e.g. tanktop) "
     "are restored correctly."
    {
-      local iShirt_xlat, i, bFound;
+      local i;
       poArms_set = $;
 
-      bFound = FALSE;
+      local bFound = FALSE;
       for i in plUsing
       { 
          if Send(i,@OverrideArms)
@@ -8825,7 +8825,7 @@ messages:
          }
       }
       
-      iShirt_xlat = Send(self,@GetCurrentShirtColor);
+      local iShirt_xlat = Send(self,@GetCurrentShirtColor);
       piBody_translations2 = piBody_translations2 & ~PLAYER_TRANSLATION2_ARMS_MASK;
       piBody_translations2 = piBody_translations2 | (iShirt_xlat * PLAYER_TRANSLATION2_ARMS_MUL);
 
@@ -8866,9 +8866,8 @@ messages:
    ResetPlayerLegs()
    "Sets our player's legs to show their robes, pants (equipped or un-panted state)."
    {
-      local robes_in_use, pants_in_use, translation;
-      robes_in_use = Send(self,@FindUsing,#class=&Robe);
-      if robes_in_use <> $
+      local oRobesInUse = Send(self,@FindUsing,#class=&Robe);
+      if oRobesInUse <> $
       {
          % Player is wearing robes (regardless of what's changed beneath).
          return;
@@ -8876,10 +8875,11 @@ messages:
 
       poLegs_set = $;
 
-      pants_in_use = Send(self,@FindUsing,#class=&Pants);
-      if pants_in_use = $
+      local iTranslation;
+      local oPantsInUse = Send(self,@FindUsing,#class=&Pants);
+      if oPantsInUse = $
       {
-         translation = Send(self,@GetDefaultPantsTranslation);
+         iTranslation = Send(self,@GetDefaultPantsTranslation);
          if piGender = GENDER_MALE
          {
             prLegs = player_legs_a_rsc;
@@ -8891,13 +8891,13 @@ messages:
       }
       else
       {
-         prLegs = Send(pants_in_use,@GetLegs,#who=self);
-         translation = Send(pants_in_use,@GetPaletteTranslation);
+         prLegs = Send(oPantsInUse,@GetLegs,#who=self);
+         iTranslation = Send(oPantsInUse,@GetPaletteTranslation);
       }
 
       piBody_translations = piBody_translations & ~PLAYER_TRANSLATION_LEGS_MASK;
       piBody_translations = piBody_translations | 
-                           (translation * PLAYER_TRANSLATION_LEGS_MUL); 
+                           (iTranslation * PLAYER_TRANSLATION_LEGS_MUL); 
 
       if poOwner <> $
       {      
@@ -8909,10 +8909,10 @@ messages:
 
    SetDefaultClothes(pants_color = -1,shirt_color = -1, rand=FALSE, increment = TRUE)
    {   
-      local shirt_color_xlat, pants_color_xlat, skin_color, i, bShirt, bLegs, bArms;
+      local iShirtColorXlat, iPantsColorXlat, i;
 
-      skin_color = Send(self,@GetSkinColor);      
-      skin_color = Send(self,@convertskincolortoXLAT,#skin_color = skin_color);
+      local iSkinXlat = Send(self,@GetSkinColor);      
+      iSkinXlat = Send(self,@convertskincolortoXLAT,#skin_color = iSkinXlat);
 
       if rand
       {
@@ -8923,37 +8923,37 @@ messages:
             shirt_color = XLAT_TO_RED;
          }
          
-         shirt_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=skin_color);
-         pants_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=skin_color);
+         iShirtColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=iSkinXlat);
+         iPantsColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=iSkinXlat);
       }
 
       else
       {
          if shirt_color = -1
          {
-            shirt_color_xlat = Send(self,@GetDefaultShirtTranslation);
+            iShirtColorXlat = Send(self,@GetDefaultShirtTranslation);
          } 
          else
          {
-            shirt_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=skin_color);
+            iShirtColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=iSkinXlat);
          }
       
          if pants_color = -1
          {
-            pants_color_xlat = Send(self,@GetDefaultPantsTranslation);
+            iPantsColorXlat = Send(self,@GetDefaultPantsTranslation);
          } 
          else
          {
-            pants_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=skin_color);
+            iPantsColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=iSkinXlat);
          }
       }
 
-      piDefault_clothes = (shirt_color_xlat*SHIRT_MUL) | (pants_color_xlat*PANTS_MUL);
-      
-      bShirt = FALSE;
-      bLegs = FALSE;
-      bArms = FALSE;
-      
+      piDefault_clothes = (iShirtColorXlat * SHIRT_MUL) | (iPantsColorXlat * PANTS_MUL);
+
+      local bShirt = FALSE;
+      local bLegs = FALSE;
+      local bArms = FALSE;
+
       for i in plUsing
       {     
          if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
@@ -9231,8 +9231,7 @@ messages:
 
    SendMoveOverlays(iAnimation = $)
    {
-      local i, iOverlays, hotspot, iLeft_group, iRight_group, iSkin_xlat,
-            iArms_xlat;
+      local i;
 
       if iAnimation = $
       {
@@ -9255,7 +9254,7 @@ messages:
 
       % Player has 7 standard overlays:
       %  right arm, left arm, legs, head, eyes, mouth, nose      
-      iOverlays = 7;
+      local iOverlays = 7;
       
       if poHair_remove = $
       {
@@ -9263,22 +9262,22 @@ messages:
       }
 
       % Which group of arm images do we use?
-      iLeft_group = 1;
-      iRight_group = 1;
+      local iLeft_group = 1;
+      local iRight_group = 1;
 
       for i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays);
-         hotspot = Send(i,@GetOverlayHotspot);
-         if hotspot = HS_RIGHT_WEAPON
+         local iHotspot = Send(i,@GetOverlayHotspot);
+         if iHotspot = HS_RIGHT_WEAPON
          {
             iRight_group = 17;
          }
          else
          {
             % Bend the arm if we have a shield, a bow, or a token.
-            if hotspot = HS_LEFT_WEAPON 
-               OR hotspot = HS_BOTTOM_BOW
+            if iHotspot = HS_LEFT_WEAPON 
+               OR iHotspot = HS_BOTTOM_BOW
                OR IsClass(i,&Token)
             {
                iLeft_group = 7;
@@ -9289,7 +9288,7 @@ messages:
       AddPacket(1,iOverlays);
 
       AddPacket(4,prLeft_arm, 1,HS_LEFT_HAND);
-      iArms_xlat = Send(self,@GetArmsTranslation);
+      local iArms_xlat = Send(self,@GetArmsTranslation);
       if iArms_xlat <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION, 1,iArms_xlat);
@@ -9348,7 +9347,7 @@ messages:
          AddPacket(1,ANIMATE_CYCLE, 4,100, 2,2, 2,5);
       }
 
-      iSkin_xlat = Send(self,@GetSkinColor);
+      local iSkin_xlat = Send(self,@GetSkinColor);
 
       AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                 1,ANIMATE_NONE, 2,1);
@@ -9384,8 +9383,7 @@ messages:
 
    SendOverlays(iAnimation=$)
    {
-      local i, iOverlays, hotspot, iLeft_group, iRight_group, iSkin_xlat,
-            iArms_xlat;
+      local i;
 
       if iAnimation = $
       {
@@ -9412,7 +9410,7 @@ messages:
 
       % Player has 7 standard overlays:
       %  right arm, left arm, legs, head, eyes, mouth, nose
-      iOverlays = 7;
+      local iOverlays = 7;
       
       if poHair_remove = $
       {
@@ -9421,20 +9419,20 @@ messages:
       
       % Overlay info -- display correct group for animation & action
 
-      iLeft_group = 1;
-      iRight_group = 1;
+      local iLeft_group = 1;
+      local iRight_group = 1;
       for i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays,#iAnimation=iAnimation);
-         hotspot = Send(i,@GetOverlayHotspot);
-         if hotspot = HS_RIGHT_WEAPON
+         local iHotspot = Send(i,@GetOverlayHotspot);
+         if iHotspot = HS_RIGHT_WEAPON
          {
             iRight_group = 17;
          }
          else
          {
-            if hotspot = HS_LEFT_WEAPON
-               OR hotspot = HS_BOTTOM_BOW
+            if iHotspot = HS_LEFT_WEAPON
+               OR iHotspot = HS_BOTTOM_BOW
                OR IsClass(i,&Token)
             {
                iLeft_group = 7;
@@ -9443,7 +9441,7 @@ messages:
       }
 
       AddPacket(1, iOverlays);
-      iArms_xlat = Send(self,@GetArmsTranslation);
+      local iArms_xlat = Send(self,@GetArmsTranslation);
 
       AddPacket(4,prLeft_arm, 1,HS_LEFT_HAND);
       if iArms_Xlat <> 0
@@ -9570,7 +9568,7 @@ messages:
          }
       }
 
-      iSkin_xlat = Send(self,@GetSkinColor);
+      local iSkin_xlat = Send(self,@GetSkinColor);
       AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                 1,ANIMATE_NONE, 2,1);
       % Don't send information about face elements if we're wearing the
@@ -10041,10 +10039,10 @@ messages:
    "Recalculates flicker flag by querying equipped items."
    "Glow (steady light) suppresses torch flicker on the character sprite."
    {
-      local i, bIsFlickering, bIsGlowing;
+      local i;
 
-      bIsFlickering = FALSE;
-      bIsGlowing = FALSE;
+      local bIsFlickering = FALSE;
+      local bIsGlowing = FALSE;
 
       for i in plUsing
       {
@@ -10075,22 +10073,20 @@ messages:
    MixLightColors(iColor1 = 0, iColor2 = 0)
    "Mixes two RGB 5-5-5 light colors by averaging their R, G, B components."
    {
-      local iR1, iG1, iB1, iR2, iG2, iB2, iR, iG, iB;
-
       % Extract RGB components from 5-5-5 packed format.
       % Bits 14-10 = Red, Bits 9-5 = Green, Bits 4-0 = Blue.
-      iR1 = (iColor1 / 1024) & 0x1F;
-      iG1 = (iColor1 / 32) & 0x1F;
-      iB1 = iColor1 & 0x1F;
+      local iR1 = (iColor1 / 1024) & 0x1F;
+      local iG1 = (iColor1 / 32) & 0x1F;
+      local iB1 = iColor1 & 0x1F;
 
-      iR2 = (iColor2 / 1024) & 0x1F;
-      iG2 = (iColor2 / 32) & 0x1F;
-      iB2 = iColor2 & 0x1F;
+      local iR2 = (iColor2 / 1024) & 0x1F;
+      local iG2 = (iColor2 / 32) & 0x1F;
+      local iB2 = iColor2 & 0x1F;
 
       % Average each component.
-      iR = (iR1 + iR2) / 2;
-      iG = (iG1 + iG2) / 2;
-      iB = (iB1 + iB2) / 2;
+      local iR = (iR1 + iR2) / 2;
+      local iG = (iG1 + iG2) / 2;
+      local iB = (iB1 + iB2) / 2;
 
       % Repack into RGB 5-5-5.
       return (iR * 1024) + (iG * 32) + iB;
@@ -10166,12 +10162,12 @@ messages:
 
    RecalcLight()
    {
-      local i, iLight, iState, oWeapon;
+      local i;
 
       % TODO: Make this into a general check.
 
       % Default base value
-      iLight = 5;       
+      local iLight = 5;       
 
       % Torch, Amulet
       for i in plUsing
@@ -10187,7 +10183,7 @@ messages:
          }
       }
       
-      iState = Send(self,@GetEnchantedState,
+      local iState = Send(self,@GetEnchantedState,
                     #what=Send(SYS,@FindSpellByNum,#num=SID_NIGHT_VISION));
       if iState <> $
       {
@@ -10195,7 +10191,7 @@ messages:
       }
 
       % Glowing weapons?
-      oWeapon = Send(self,@LookupPlayerWeapon);
+      local oWeapon = Send(self,@LookupPlayerWeapon);
       if oWeapon <> $
       {
          iState = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_GLOWING);
@@ -11903,9 +11899,7 @@ messages:
    GetDefaultShirtColor()
    "This does not include skin tones."
    {
-      local iXlat;
-      
-      iXlat = Send(self,@GetDefaultShirtTranslation);
+      local iXlat = Send(self,@GetDefaultShirtTranslation);
       
       return Send(SYS,@DecodePrimaryColor,#Xlat=iXlat);
    }
@@ -11934,30 +11928,28 @@ messages:
    GetDefaultPantsColor()
    "This does not include skin tones."
    {
-      local iXlat;
-      
-      iXlat = Send(self,@GetDefaultPantsTranslation);
+      local iXlat = Send(self,@GetDefaultPantsTranslation);
       
       return Send(SYS,@DecodePrimaryColor,#Xlat=iXlat);
    }
 
    SetSkinColor(color = 1)
    {
-      local iColor, i, oRoom;
+      local i;
 
       % Arms (hands) and face are the only default things that need to
       %  have skin colors associated with it.  Other items in use
       %  may need to, though (low cut dress).
       
       Send(self,@SetSkinTranslation,#translation=color);
-      iColor = Send(self,@GetDefaultShirtColor);
+      local iColor = Send(self,@GetDefaultShirtColor);
       Send(self,@SetDefaultClothes,#shirt_color = iColor);
       for i in plUsing
       {
          Send(i,@DoPlayerArt);
       }
 
-      oRoom = Send(self,@GetOwner);
+      local oRoom = Send(self,@GetOwner);
       if oRoom <> $
       {    
          Send(oRoom,@SomethingChanged,#what=self);
@@ -12353,9 +12345,7 @@ messages:
    "When multiple sources are active, their colors are mixed."
    "Steady (non-flickering) light is preferred over wavering when present."
    {
-      local i, iFlags, iIntensity, iColor, bHasLight,
-            iTorchColor, iTorchIntensity, iGlowColor, iGlowIntensity,
-            bHasSteady;
+      local i;
 
       if poIllusion_set <> $
       {
@@ -12369,10 +12359,10 @@ messages:
       }
 
       % Query equipped items for their light properties.
-      iTorchColor = 0;
-      iTorchIntensity = 0;
-      iGlowColor = 0;
-      iGlowIntensity = 0;
+      local iTorchColor = 0;
+      local iTorchIntensity = 0;
+      local iGlowColor = 0;
+      local iGlowIntensity = 0;
 
       for i in plUsing
       {
@@ -12390,11 +12380,11 @@ messages:
       }
 
       % Accumulate light from active sources, mixing colors.
-      iFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
-      iIntensity = 0;
-      iColor = 0;
-      bHasLight = FALSE;
-      bHasSteady = FALSE;
+      local iFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+      local iIntensity = 0;
+      local iColor = 0;
+      local bHasLight = FALSE;
+      local bHasSteady = FALSE;
 
       if iGlowColor <> 0
       {

@@ -1519,15 +1519,13 @@ messages:
 
    GetAge()
    {
-      local age;
-
-      age = Send(SYS,@GetYear) - Send(self,@GetBirthYear);
+      local iAge = Send(SYS,@GetYear) - Send(self,@GetBirthYear);
 
       % No more tutorial messages and bonuses if you've been around for about 2 months.
       % Clear the newbie string, too.
       % Do a bit flag check instead of a function call since this is called EVERY time
       %  someone gets looked at.
-      if age >= 2
+      if iAge >= 2
          AND NOT (piFlags & PFLAG_TUTORIAL)
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
@@ -1537,7 +1535,7 @@ messages:
          }
       }      
 
-      return age;
+      return iAge;
    }
 
    SetAge(age = 0)
@@ -1572,7 +1570,7 @@ messages:
 
    ShowExtraInfo()
    {
-      local i, j, obj, year;
+      local i, j;
 
       ClearTempString();
 
@@ -1691,7 +1689,7 @@ messages:
          AppendTempString(player_nl);
       }
 
-      obj = Send(SYS,@GetCaramo);
+      local obj = Send(SYS,@GetCaramo);
       if obj <> $ and Send(obj,@GetJusticar) = self
       {
          AppendTempString(player_is_justicar);
@@ -1780,8 +1778,9 @@ messages:
       if plDonationYears <> $
       {
          % Example: Benefactor of Meridian in 2010, 2011
-	      AppendTempString(player_donation_title);
-	      i = 0;
+	     AppendTempString(player_donation_title);
+	     i = 0;
+         local year;
          for year in plDonationYears
          {
 	         if i <> 0
@@ -1801,7 +1800,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oCaramo, oRoom;
+      local i;
       
       for i in plPassive
       {
@@ -1834,7 +1833,7 @@ messages:
          }
       }
 
-      oGame = Send(SYS,@GetAssassinGame);
+      local oGame = Send(SYS,@GetAssassinGame);
       if oGame <> $
          AND Send(oGame,@InAcceptMode)
          AND (NOT Send(oGame,@IsCombatant,#who=self))
@@ -1843,7 +1842,7 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=player_assgame_soon);
       }
 
-      oCaramo = Send(SYS,@GetCaramo);
+      local oCaramo = Send(SYS,@GetCaramo);
       if oCaramo <> $
       {
          Send(oCaramo,@UserLogon,#who=self);
@@ -1873,7 +1872,7 @@ messages:
       Send(self,@ComputeMaxMana);
 
       % Tell others that we're here
-      oRoom = Send(self, @GetOwner);
+      local oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND NOT IsClass(self, &DM) 
       {
          Send(oRoom, @SomethingWaveRoom, #what=self, 
@@ -1885,7 +1884,7 @@ messages:
 
    UserLogoffHook()
    {
-      local i, oRoom;
+      local i;
    
       for i in plPassive
       {
@@ -1921,7 +1920,7 @@ messages:
       Send(self,@CancelRescue);
 
       % Tell others that we're leaving
-      oRoom = Send(self, @GetOwner);
+      local oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND NOT IsClass(self, &DM) 
       {
          Send(oRoom, @SomethingWaveRoom, #what=self, 
@@ -2427,17 +2426,17 @@ messages:
    AddReagentsForSpells(iNumCasts=5)
    "Add reagents to the player for the spells they have.  Enough reagents for iNumCasts casts."
    {
-      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
+      local iInfo, lItems;
 
       for iInfo in plSpells
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=iInfo));
-         lReagents = Send(oSpell,@GetReagents);
+         local oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=iInfo));
+         local lReagents = Send(oSpell,@GetReagents);
 
          for lItems in lReagents
          {
-            cReagent = first(lItems);
-            iNumber = Nth(lItems,2);
+            local cReagent = first(lItems);
+            local iNumber = Nth(lItems,2);
 
             Send(self,@NewHOld,#what=Create(cReagent,#number=(iNumber*iNumCasts)));
          }
@@ -2460,7 +2459,7 @@ messages:
    % If this behavior changes, review all code that loops over inventory and calls DropItem,
    % as it may result in infinite loops or other unintended consequences.
    {
-      local oItem, oDropRoom, iDropRow, iDropCol, oItemAtt;
+      local oItem, oDropRoom, iDropRow, iDropCol;
       
       if droppedItem <> $
       {
@@ -2510,7 +2509,7 @@ messages:
                {
                   % Put the PK pointer attribute on the item to prevent mules from
                   %  grabbing penalty drops from ghosts.
-                  oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
+                  local oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
                   Send(oItemAtt,@AddToItem,#oItem=oItem,#timer_duration=PKPOINTER_TIME,
                        #state1=self);
                }
@@ -2554,8 +2553,7 @@ messages:
    GetGuildHall()
    "Return this player's guild hall, or NIL if none"
    {
-      local oGuild;
-      oGuild = Send(self, @GetGuild);
+      local oGuild = Send(self, @GetGuild);
       
       if oGuild = $
       {
@@ -3142,9 +3140,7 @@ messages:
    SquelchPlayer(value=$)
    "Sets if a player can broadcast or not.  Toggles condition by default."
    {
-      local bSquelched;
-
-      bSquelched = value;
+      local bSquelched = value;
       
       if bSquelched = $
       {
@@ -3209,14 +3205,14 @@ messages:
 
    CheckPosition(what=$,type=$,space=0)
    {
-      local i, iSpace, bAllowCombination;
+      local i;
 
       if space = 0 OR type = $ OR what = $
       {
          return FALSE;
       }
       
-      iSpace = space;
+      local iSpace = space;
       for i in plUsing
       {
          if Send(i,@GetItemUseType) & type
@@ -3256,7 +3252,7 @@ messages:
          else
          {
             % Check if items can be worn in the same slot despite conflicts
-            bAllowCombination = FALSE;
+            local bAllowCombination = FALSE;
             
             for i in plUsing
             {
@@ -3288,7 +3284,7 @@ messages:
 
    TryUseItem(what = $)
    {
-      local i, iUse_type;
+      local i;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
@@ -3305,7 +3301,7 @@ messages:
          return FALSE;
       }
 
-      iUse_type = Send(what,@GetItemUseType);
+      local iUse_type = Send(what,@GetItemUseType);
 
       if iUse_type & ITEM_SINGLE_USE
       {
@@ -3427,14 +3423,14 @@ messages:
    "Prefers to yield items of the same kind (weapon vs. non-weapon) as `what`, "
    "so e.g. swapping one weapon for another does not drop an equipped shield."
    {
-      local i, iHandUsed, iNeeded, lSameKind, lOtherKind, bWantWeapon;
+      local i;
 
-      iNeeded = Send(what,@GetItemUseAmount);
-      bWantWeapon = IsClass(what,&Weapon);
+      local iNeeded = Send(what,@GetItemUseAmount);
+      local bWantWeapon = IsClass(what,&Weapon);
 
-      iHandUsed = 0;
-      lSameKind = $;
-      lOtherKind = $;
+      local iHandUsed = 0;
+      local lSameKind = $;
+      local lOtherKind = $;
       for i in plUsing
       {
          if Send(i,@GetItemUseType) & ITEM_USE_HAND
@@ -3487,9 +3483,9 @@ messages:
 
    TryUnuseItem(what = $)
    {
-      local bFound, i;
+      local i;
 
-      bFound = FALSE;
+      local bFound = FALSE;
 
       %check and see if item disallows
       for i in plUsing
@@ -3548,8 +3544,6 @@ messages:
 
    TryApplyItem(what = $,apply_on = $)
    {
-      local iUse_type;
-      
       if NOT Send(self,@IsHolding,#what=what)
       {
          Send(self,@MsgSendUser,#message_rsc=player_not_holding,#parm1=Send(what,@GetName));
@@ -3557,7 +3551,7 @@ messages:
          return FALSE;
       }
 
-      iUse_type = Send(what,@GetItemUseType);
+      local iUse_type = Send(what,@GetItemUseType);
       if iUse_type <> ITEM_SINGLE_USE
       {
          if iUse_type = ITEM_BROKEN
@@ -5926,73 +5920,41 @@ messages:
    {
       return 15 + Send(self,@GetMysticism)/5;
    }
- 
-   StripNodeList(number=$)
-   {
-      local nodelist, count;
-      
-      nodelist = Send(self,@GetNodelist);
-
-      if number = $
-      {
-         number = length(nodelist);
-      }
-
-      count = 1;
-
-      while nodelist >=1
-      {
-         if ((nodelist/2)*2) <> nodelist  %we do an "# was odd" operator
-         {
-            Send(Send(SYS,@FindNodeByNum,#num=count),@UnMeld,#who=self);
-         }
-         
-         count = count*2;
-         nodelist = nodelist/2;
-      }
-      
-      Send(self,@ResetNodeList);
-      Send(self,@NewMana);
-      
-      return;
-   }
 
    StripOneNode(report=TRUE)
    {
-      local lNodes, index, bFaerieNode, bQNode, oNode;
-
       if piNodeList = 0
       {
          return;
       }
 
-      lNodes = $;
-      index = 1;
-      bFaerieNode = FALSE;
-      bQNode = FALSE;
+      local lNodes = $;
+      local iNodeFlag = 1;
+      local bFaerieNode = FALSE;
+      local bQNode = FALSE;
 
-      while index <= NODE_MAX_VALUE
+      while iNodeFlag <= NODE_MAX_VALUE
       {
-         if piNodelist & index
+         if piNodelist & iNodeFlag
          {
-            if index = NODE_FAERIE
+            if iNodeFlag = NODE_FAERIE
             {
                bFaerieNode = TRUE;
             }
             else
             {
-               if index = NODE_Q
+               if iNodeFlag = NODE_Q
                {
                   bQNode = TRUE;
                }
                else
                {
-                  lNodes = cons(index,lNodes);
+                  lNodes = cons(iNodeFlag,lNodes);
                }
             }
          }
 
-         index = index * 2;
+         iNodeFlag = iNodeFlag * 2;
       }
 
       if lNodes = $
@@ -6011,8 +5973,8 @@ messages:
 
       if lNodes
       {
-         index = Nth(lNodes,random(1,length(lNodes)));
-         oNode = Send(SYS,@FindNodeByNum,#num=index);
+         iNodeFlag = Nth(lNodes,random(1,length(lNodes)));
+         local oNode = Send(SYS,@FindNodeByNum,#num=iNodeFlag);
          Send(oNode,@UnMeld,#who=self);
          
          if report
@@ -6030,13 +5992,6 @@ messages:
    RemoveNodeFromList(node_num=0)
    {
       piNodelist=piNodelist & ~node_num ;
-      
-      return;
-   }
-
-   ResetNodeList()
-   {
-      piNodelist = 0;
       
       return;
    }
@@ -8782,10 +8737,10 @@ messages:
     "equipped it delegates arm setup to that shirt so shirt-specific arm graphics (e.g. tanktop) "
     "are restored correctly."
    {
-      local iShirt_xlat, i, bFound;
+      local i;
       poArms_set = $;
 
-      bFound = FALSE;
+      local bFound = FALSE;
       for i in plUsing
       { 
          if Send(i,@OverrideArms)
@@ -8825,7 +8780,7 @@ messages:
          }
       }
       
-      iShirt_xlat = Send(self,@GetCurrentShirtColor);
+      local iShirt_xlat = Send(self,@GetCurrentShirtColor);
       piBody_translations2 = piBody_translations2 & ~PLAYER_TRANSLATION2_ARMS_MASK;
       piBody_translations2 = piBody_translations2 | (iShirt_xlat * PLAYER_TRANSLATION2_ARMS_MUL);
 
@@ -8866,9 +8821,8 @@ messages:
    ResetPlayerLegs()
    "Sets our player's legs to show their robes, pants (equipped or un-panted state)."
    {
-      local robes_in_use, pants_in_use, translation;
-      robes_in_use = Send(self,@FindUsing,#class=&Robe);
-      if robes_in_use <> $
+      local oRobesInUse = Send(self,@FindUsing,#class=&Robe);
+      if oRobesInUse <> $
       {
          % Player is wearing robes (regardless of what's changed beneath).
          return;
@@ -8876,10 +8830,11 @@ messages:
 
       poLegs_set = $;
 
-      pants_in_use = Send(self,@FindUsing,#class=&Pants);
-      if pants_in_use = $
+      local iTranslation;
+      local oPantsInUse = Send(self,@FindUsing,#class=&Pants);
+      if oPantsInUse = $
       {
-         translation = Send(self,@GetDefaultPantsTranslation);
+         iTranslation = Send(self,@GetDefaultPantsTranslation);
          if piGender = GENDER_MALE
          {
             prLegs = player_legs_a_rsc;
@@ -8891,13 +8846,13 @@ messages:
       }
       else
       {
-         prLegs = Send(pants_in_use,@GetLegs,#who=self);
-         translation = Send(pants_in_use,@GetPaletteTranslation);
+         prLegs = Send(oPantsInUse,@GetLegs,#who=self);
+         iTranslation = Send(oPantsInUse,@GetPaletteTranslation);
       }
 
       piBody_translations = piBody_translations & ~PLAYER_TRANSLATION_LEGS_MASK;
       piBody_translations = piBody_translations | 
-                           (translation * PLAYER_TRANSLATION_LEGS_MUL); 
+                           (iTranslation * PLAYER_TRANSLATION_LEGS_MUL); 
 
       if poOwner <> $
       {      
@@ -8909,10 +8864,10 @@ messages:
 
    SetDefaultClothes(pants_color = -1,shirt_color = -1, rand=FALSE, increment = TRUE)
    {   
-      local shirt_color_xlat, pants_color_xlat, skin_color, i, bShirt, bLegs, bArms;
+      local iShirtColorXlat, iPantsColorXlat, i;
 
-      skin_color = Send(self,@GetSkinColor);      
-      skin_color = Send(self,@convertskincolortoXLAT,#skin_color = skin_color);
+      local iSkinXlat = Send(self,@GetSkinColor);      
+      iSkinXlat = Send(self,@convertskincolortoXLAT,#skin_color = iSkinXlat);
 
       if rand
       {
@@ -8923,37 +8878,37 @@ messages:
             shirt_color = XLAT_TO_RED;
          }
          
-         shirt_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=skin_color);
-         pants_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=skin_color);
+         iShirtColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=iSkinXlat);
+         iPantsColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=iSkinXlat);
       }
 
       else
       {
          if shirt_color = -1
          {
-            shirt_color_xlat = Send(self,@GetDefaultShirtTranslation);
+            iShirtColorXlat = Send(self,@GetDefaultShirtTranslation);
          } 
          else
          {
-            shirt_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=skin_color);
+            iShirtColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=iSkinXlat);
          }
       
          if pants_color = -1
          {
-            pants_color_xlat = Send(self,@GetDefaultPantsTranslation);
+            iPantsColorXlat = Send(self,@GetDefaultPantsTranslation);
          } 
          else
          {
-            pants_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=skin_color);
+            iPantsColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=iSkinXlat);
          }
       }
 
-      piDefault_clothes = (shirt_color_xlat*SHIRT_MUL) | (pants_color_xlat*PANTS_MUL);
-      
-      bShirt = FALSE;
-      bLegs = FALSE;
-      bArms = FALSE;
-      
+      piDefault_clothes = (iShirtColorXlat * SHIRT_MUL) | (iPantsColorXlat * PANTS_MUL);
+
+      local bShirt = FALSE;
+      local bLegs = FALSE;
+      local bArms = FALSE;
+
       for i in plUsing
       {     
          if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
@@ -9231,8 +9186,7 @@ messages:
 
    SendMoveOverlays(iAnimation = $)
    {
-      local i, iOverlays, hotspot, iLeft_group, iRight_group, iSkin_xlat,
-            iArms_xlat;
+      local i;
 
       if iAnimation = $
       {
@@ -9255,7 +9209,7 @@ messages:
 
       % Player has 7 standard overlays:
       %  right arm, left arm, legs, head, eyes, mouth, nose      
-      iOverlays = 7;
+      local iOverlays = 7;
       
       if poHair_remove = $
       {
@@ -9263,22 +9217,22 @@ messages:
       }
 
       % Which group of arm images do we use?
-      iLeft_group = 1;
-      iRight_group = 1;
+      local iLeft_group = 1;
+      local iRight_group = 1;
 
       for i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays);
-         hotspot = Send(i,@GetOverlayHotspot);
-         if hotspot = HS_RIGHT_WEAPON
+         local iHotspot = Send(i,@GetOverlayHotspot);
+         if iHotspot = HS_RIGHT_WEAPON
          {
             iRight_group = 17;
          }
          else
          {
             % Bend the arm if we have a shield, a bow, or a token.
-            if hotspot = HS_LEFT_WEAPON 
-               OR hotspot = HS_BOTTOM_BOW
+            if iHotspot = HS_LEFT_WEAPON 
+               OR iHotspot = HS_BOTTOM_BOW
                OR IsClass(i,&Token)
             {
                iLeft_group = 7;
@@ -9289,7 +9243,7 @@ messages:
       AddPacket(1,iOverlays);
 
       AddPacket(4,prLeft_arm, 1,HS_LEFT_HAND);
-      iArms_xlat = Send(self,@GetArmsTranslation);
+      local iArms_xlat = Send(self,@GetArmsTranslation);
       if iArms_xlat <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION, 1,iArms_xlat);
@@ -9348,7 +9302,7 @@ messages:
          AddPacket(1,ANIMATE_CYCLE, 4,100, 2,2, 2,5);
       }
 
-      iSkin_xlat = Send(self,@GetSkinColor);
+      local iSkin_xlat = Send(self,@GetSkinColor);
 
       AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                 1,ANIMATE_NONE, 2,1);
@@ -9384,8 +9338,7 @@ messages:
 
    SendOverlays(iAnimation=$)
    {
-      local i, iOverlays, hotspot, iLeft_group, iRight_group, iSkin_xlat,
-            iArms_xlat;
+      local i;
 
       if iAnimation = $
       {
@@ -9412,7 +9365,7 @@ messages:
 
       % Player has 7 standard overlays:
       %  right arm, left arm, legs, head, eyes, mouth, nose
-      iOverlays = 7;
+      local iOverlays = 7;
       
       if poHair_remove = $
       {
@@ -9421,20 +9374,20 @@ messages:
       
       % Overlay info -- display correct group for animation & action
 
-      iLeft_group = 1;
-      iRight_group = 1;
+      local iLeft_group = 1;
+      local iRight_group = 1;
       for i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays,#iAnimation=iAnimation);
-         hotspot = Send(i,@GetOverlayHotspot);
-         if hotspot = HS_RIGHT_WEAPON
+         local iHotspot = Send(i,@GetOverlayHotspot);
+         if iHotspot = HS_RIGHT_WEAPON
          {
             iRight_group = 17;
          }
          else
          {
-            if hotspot = HS_LEFT_WEAPON
-               OR hotspot = HS_BOTTOM_BOW
+            if iHotspot = HS_LEFT_WEAPON
+               OR iHotspot = HS_BOTTOM_BOW
                OR IsClass(i,&Token)
             {
                iLeft_group = 7;
@@ -9443,7 +9396,7 @@ messages:
       }
 
       AddPacket(1, iOverlays);
-      iArms_xlat = Send(self,@GetArmsTranslation);
+      local iArms_xlat = Send(self,@GetArmsTranslation);
 
       AddPacket(4,prLeft_arm, 1,HS_LEFT_HAND);
       if iArms_Xlat <> 0
@@ -9570,7 +9523,7 @@ messages:
          }
       }
 
-      iSkin_xlat = Send(self,@GetSkinColor);
+      local iSkin_xlat = Send(self,@GetSkinColor);
       AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                 1,ANIMATE_NONE, 2,1);
       % Don't send information about face elements if we're wearing the
@@ -9783,9 +9736,7 @@ messages:
    "Returns signed change to might (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigMight;
-
-      iOrigMight = piMightMod;
+      local iOrigMight = piMightMod;
       piMightMod = piMightMod + points;
       
       if NOT bAbsolute
@@ -9802,9 +9753,7 @@ messages:
    "Returns signed change to intellect (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigIntellect;
-
-      iOrigIntellect = piIntellectMod;
+      local iOrigIntellect = piIntellectMod;
       piIntellectMod = piIntellectMod + points;
       
       if NOT bAbsolute
@@ -9821,9 +9770,7 @@ messages:
    "Returns signed change to aim (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigAim;
-
-      iOrigAim = piAimMod;
+      local iOrigAim = piAimMod;
       piAimMod = piAimMod + points;
       
       if NOT bAbsolute
@@ -9840,9 +9787,7 @@ messages:
    "Returns signed change to stamina (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigStamina;
-
-      iOrigStamina = piStaminaMod;
+      local iOrigStamina = piStaminaMod;
       piStaminaMod = piStaminaMod + points;
       
       if NOT bAbsolute
@@ -9859,9 +9804,7 @@ messages:
    "Returns signed change to agility (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigAgility;
-
-      iOrigAgility = piAgilityMod;
+      local iOrigAgility = piAgilityMod;
       piAgilityMod = piAgilityMod + points;
       
       if NOT bAbsolute
@@ -9878,9 +9821,7 @@ messages:
    "Returns signed change to agility (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigMysticism;
-
-      iOrigMysticism = piMysticismMod;
+      local iOrigMysticism = piMysticismMod;
       piMysticismMod = piMysticismMod + points;
       
       if NOT bAbsolute
@@ -10041,10 +9982,10 @@ messages:
    "Recalculates flicker flag by querying equipped items."
    "Glow (steady light) suppresses torch flicker on the character sprite."
    {
-      local i, bIsFlickering, bIsGlowing;
+      local i;
 
-      bIsFlickering = FALSE;
-      bIsGlowing = FALSE;
+      local bIsFlickering = FALSE;
+      local bIsGlowing = FALSE;
 
       for i in plUsing
       {
@@ -10075,22 +10016,20 @@ messages:
    MixLightColors(iColor1 = 0, iColor2 = 0)
    "Mixes two RGB 5-5-5 light colors by averaging their R, G, B components."
    {
-      local iR1, iG1, iB1, iR2, iG2, iB2, iR, iG, iB;
-
       % Extract RGB components from 5-5-5 packed format.
       % Bits 14-10 = Red, Bits 9-5 = Green, Bits 4-0 = Blue.
-      iR1 = (iColor1 / 1024) & 0x1F;
-      iG1 = (iColor1 / 32) & 0x1F;
-      iB1 = iColor1 & 0x1F;
+      local iR1 = (iColor1 / 1024) & 0x1F;
+      local iG1 = (iColor1 / 32) & 0x1F;
+      local iB1 = iColor1 & 0x1F;
 
-      iR2 = (iColor2 / 1024) & 0x1F;
-      iG2 = (iColor2 / 32) & 0x1F;
-      iB2 = iColor2 & 0x1F;
+      local iR2 = (iColor2 / 1024) & 0x1F;
+      local iG2 = (iColor2 / 32) & 0x1F;
+      local iB2 = iColor2 & 0x1F;
 
       % Average each component.
-      iR = (iR1 + iR2) / 2;
-      iG = (iG1 + iG2) / 2;
-      iB = (iB1 + iB2) / 2;
+      local iR = (iR1 + iR2) / 2;
+      local iG = (iG1 + iG2) / 2;
+      local iB = (iB1 + iB2) / 2;
 
       % Repack into RGB 5-5-5.
       return (iR * 1024) + (iG * 32) + iB;
@@ -10166,12 +10105,12 @@ messages:
 
    RecalcLight()
    {
-      local i, iLight, iState, oWeapon;
+      local i;
 
       % TODO: Make this into a general check.
 
       % Default base value
-      iLight = 5;       
+      local iLight = 5;       
 
       % Torch, Amulet
       for i in plUsing
@@ -10187,7 +10126,7 @@ messages:
          }
       }
       
-      iState = Send(self,@GetEnchantedState,
+      local iState = Send(self,@GetEnchantedState,
                     #what=Send(SYS,@FindSpellByNum,#num=SID_NIGHT_VISION));
       if iState <> $
       {
@@ -10195,7 +10134,7 @@ messages:
       }
 
       % Glowing weapons?
-      oWeapon = Send(self,@LookupPlayerWeapon);
+      local oWeapon = Send(self,@LookupPlayerWeapon);
       if oWeapon <> $
       {
          iState = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_GLOWING);
@@ -10243,9 +10182,9 @@ messages:
 
    RecalibratePlayer()
    {
-      local i, bSoldier;
+      local i;
 
-      bSoldier = FALSE;
+      local bSoldier = FALSE;
       if Send(self,@FindUsing,#class=&SoldierShield) <> $
       {
          bSoldier = TRUE;
@@ -11056,14 +10995,12 @@ messages:
 
    ResetFaction(faction = FACTION_NEUTRAL)
    {
-      local oSoldierShield;
-      
       if faction < FACTION_NEUTRAL OR faction > FACTION_MAX
       {
          return FALSE;
       }
 
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
 
       if oSoldierShield <> $
          AND faction <> Send(oSoldierShield,@GetFaction)
@@ -11087,21 +11024,19 @@ messages:
    
    UpdateFactionService(full=False, middle=False, front=False, adjust=True)
    {
-      local tyme, oSoldierShield;
-      
       if piFaction = FACTION_NEUTRAL
       {
          return;
       }
 
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
 
-      tyme = GetTime();
+      local iNow = GetTime();
 
       % Don't require new service if the player has been an active soldier.
       if oSoldierShield = $
       {
-         piFactionServiceUpdate = piFactionServiceUpdate + tyme - piFactionTimeUpdated;
+         piFactionServiceUpdate = piFactionServiceUpdate + iNow - piFactionTimeUpdated;
       }
       else
       {
@@ -11112,7 +11047,7 @@ messages:
          }
       }
       
-      piFactionTimeUpdated = tyme;
+      piFactionTimeUpdated = iNow;
 
       if NOT adjust
       {
@@ -11222,17 +11157,17 @@ messages:
    PlayerIsIntriguing()
    "Evaluates player and sets the PFLAG_INTRIGUING"
    {
-      local bIntrigue,wasint,i,oParl;
+      local i;
       
-      bIntrigue=0;
+      local bIntrigue = 0;
 
-      oParl=Send(SYS,@GetParliament); 
+      local oParl=Send(SYS,@GetParliament); 
       if oParl = $
       {
          return FALSE;
       }
       
-      wasint = Send(self,@CheckPlayerFlag,#flag=PFLAG_INTRIGUING);
+      local wasint = Send(self,@CheckPlayerFlag,#flag=PFLAG_INTRIGUING);
 
       if wasint AND Send(oParl,@IsShutdown)
       {
@@ -11312,7 +11247,7 @@ messages:
    JoinFaction(new_faction=FACTION_NEUTRAL)
    "Returns true if the joining was a success"
    {
-      local factliege,oQuestEngine;
+      local oFactionLiege;
       if NOT Send(Self,@PlayerIsIntriguing)
       {
          return FALSE;
@@ -11330,7 +11265,7 @@ messages:
 
       piFaction = new_faction;
       %increase the max number of loyalty quests by one, and schedule one.
-      oQuestEngine = Send(SYS,@GetQuestEngine);
+      local oQuestEngine = Send(SYS,@GetQuestEngine);
       
       if piFaction = FACTION_PRINCESS
       {
@@ -11360,25 +11295,23 @@ messages:
       piFactionServiceUpdate = 0;
       if piFaction <> FACTION_NEUTRAL
       {
-         factliege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
+         oFactionLiege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
       }
                           
       Send(Self,@FactionServiceRoutine);
       Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=piFaction);
       Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self);
       Send(self,@MsgSendUser,#message_rsc=player_join_faction,
-           #parm1=Send(factliege,@GetDef),#parm2=Send(factliege,@GetName));
+           #parm1=Send(oFactionLiege,@GetDef),#parm2=Send(oFactionLiege,@GetName));
            
       return TRUE;
    }
 
    ResignFaction()
    {
-      local numMembers, oQuestEngine, oQuest, oFlagPole, iServiceQuestIndex;
+      local iServiceQuestIndex = 0;
 
-      iServiceQuestIndex = 0;
-
-      oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
+      local oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
       if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
       {
          if Send(oFlagPole,@GetClaimer) = self
@@ -11387,7 +11320,7 @@ messages:
          }
       }
 
-      oQuestEngine = Send(SYS,@GetQuestEngine);
+      local oQuestEngine = Send(SYS,@GetQuestEngine);
       if (oQuestEngine = $)
       {
          return;
@@ -11417,7 +11350,7 @@ messages:
 
       if iServiceQuestIndex > 0
       {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+         local lQuest = Send(oQuestEngine,@GetQuestTemplate,
                      #index=iServiceQuestIndex);
          
          % If the player is on a service quest for the faction they're losing, 
@@ -11426,12 +11359,12 @@ messages:
                #report=FALSE);
 
          % Decrease the max number of loyalty quests by one
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-         if numMembers > 0
+         local iNumMembers = Nth(lQuest,QT_MAX_NUM_ACTIVE);
+         if iNumMembers > 0
          {
             Send(oQuestEngine,@SetQuestMaxActive,
                   #index=iServiceQuestIndex,
-                  #new_max=(numMembers-1));
+                  #new_max=(iNumMembers-1));
          }
          else
          {
@@ -11536,10 +11469,8 @@ messages:
 
    TokenDeliveryReward(mob=$)
    {
-      local tobj,classes;
-
-      classes = Send(Send(SYS,@GetLibrary),@GetQuestRewardList);
-      if classes = $
+      local lRewardClasses = Send(Send(SYS,@GetLibrary),@GetQuestRewardList);
+      if lRewardClasses = $
       {
          return;
       }
@@ -11548,20 +11479,20 @@ messages:
          OR (IsClass(mob,&Factions) AND Send(mob,@GetFaction) = piFaction)
          OR (IsClass(mob,&ShalillePriestess) AND piFaction = FACTION_NEUTRAL)
       {
-         tobj = Create(Nth(classes,Random(1,Length(classes))));
-         if Send(self,@ReqNewHold,#what=tobj)
+         local oReward = Create(Nth(lRewardClasses,Random(1,Length(lRewardClasses))));
+         if Send(self,@ReqNewHold,#what=oReward)
          {
-            Send(self,@NewHold,#what=tobj);
+            Send(self,@NewHold,#what=oReward);
             Post(poOwner,@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
-                 #string=player_token_reward,#parm1=Send(tobj,@GetDef),
-                 #parm2=Send(tobj,@GetName));
+                 #string=player_token_reward,#parm1=Send(oReward,@GetDef),
+                 #parm2=Send(oReward,@GetName));
          } 
          else
          {
-            Send(poOwner,@NewHold,#what=tobj,#new_row=piRow,#new_col=piCol);
+            Send(poOwner,@NewHold,#what=oReward,#new_row=piRow,#new_col=piCol);
             Post(poOwner,@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
-                 #string=player_token_reward_heavy,#parm1=Send(tobj,@GetDef),
-                 #parm2=Send(tobj,@GetName));
+                 #string=player_token_reward_heavy,#parm1=Send(oReward,@GetDef),
+                 #parm2=Send(oReward,@GetName));
          }
       }
       
@@ -11903,9 +11834,7 @@ messages:
    GetDefaultShirtColor()
    "This does not include skin tones."
    {
-      local iXlat;
-      
-      iXlat = Send(self,@GetDefaultShirtTranslation);
+      local iXlat = Send(self,@GetDefaultShirtTranslation);
       
       return Send(SYS,@DecodePrimaryColor,#Xlat=iXlat);
    }
@@ -11934,30 +11863,28 @@ messages:
    GetDefaultPantsColor()
    "This does not include skin tones."
    {
-      local iXlat;
-      
-      iXlat = Send(self,@GetDefaultPantsTranslation);
+      local iXlat = Send(self,@GetDefaultPantsTranslation);
       
       return Send(SYS,@DecodePrimaryColor,#Xlat=iXlat);
    }
 
    SetSkinColor(color = 1)
    {
-      local iColor, i, oRoom;
+      local i;
 
       % Arms (hands) and face are the only default things that need to
       %  have skin colors associated with it.  Other items in use
       %  may need to, though (low cut dress).
       
       Send(self,@SetSkinTranslation,#translation=color);
-      iColor = Send(self,@GetDefaultShirtColor);
+      local iColor = Send(self,@GetDefaultShirtColor);
       Send(self,@SetDefaultClothes,#shirt_color = iColor);
       for i in plUsing
       {
          Send(i,@DoPlayerArt);
       }
 
-      oRoom = Send(self,@GetOwner);
+      local oRoom = Send(self,@GetOwner);
       if oRoom <> $
       {    
          Send(oRoom,@SomethingChanged,#what=self);
@@ -12152,11 +12079,9 @@ messages:
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,parm4 = $,
                                             parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      local oSnoop;
-
       if type = SAY_NORMAL and what <> self and IsClass(what,&Player)
       {
-         oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
+         local oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
          if oSnoop <> $
          {
             Send(oSnoop,@SomeoneOverheard,#from=what,#to=self,#string=string);
@@ -12327,8 +12252,6 @@ messages:
    "Sets all time variables to the current time.  Useful for when changing "
    "server time."
    {
-      local time;
-
       % Reset our attack timer, a traditional use of this function when attack
       %  time was a timestamp instead of a timer.
       if ptAttackTimer <> $
@@ -12337,13 +12260,13 @@ messages:
          ptAttackTimer = $;
       }
 
-      time = GetTime();
+      local iNow = GetTime();
    
-      piLastDeathTime = time;
-      piGuildRejoinTimestamp = time;
-      piLast_restart_time = time;
-      piTimeLastStomachUpdate = time;
-      piTimeAttackedPlayer = time;
+      piLastDeathTime = iNow;
+      piGuildRejoinTimestamp = iNow;
+      piLast_restart_time = iNow;
+      piTimeLastStomachUpdate = iNow;
+      piTimeAttackedPlayer = iNow;
 
       return;
    }
@@ -12353,9 +12276,7 @@ messages:
    "When multiple sources are active, their colors are mixed."
    "Steady (non-flickering) light is preferred over wavering when present."
    {
-      local i, iFlags, iIntensity, iColor, bHasLight,
-            iTorchColor, iTorchIntensity, iGlowColor, iGlowIntensity,
-            bHasSteady;
+      local i;
 
       if poIllusion_set <> $
       {
@@ -12369,10 +12290,10 @@ messages:
       }
 
       % Query equipped items for their light properties.
-      iTorchColor = 0;
-      iTorchIntensity = 0;
-      iGlowColor = 0;
-      iGlowIntensity = 0;
+      local iTorchColor = 0;
+      local iTorchIntensity = 0;
+      local iGlowColor = 0;
+      local iGlowIntensity = 0;
 
       for i in plUsing
       {
@@ -12390,11 +12311,11 @@ messages:
       }
 
       % Accumulate light from active sources, mixing colors.
-      iFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
-      iIntensity = 0;
-      iColor = 0;
-      bHasLight = FALSE;
-      bHasSteady = FALSE;
+      local iFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+      local iIntensity = 0;
+      local iColor = 0;
+      local bHasLight = FALSE;
+      local bHasSteady = FALSE;
 
       if iGlowColor <> 0
       {
@@ -12446,25 +12367,23 @@ messages:
    IsInSameRoom(what = $)
    "Determine if given object is in same room as we are."
    {
-      local what_owner, found;
-
       if poOwner = $ OR what = $
       {
          return FALSE;
       }
 
-      found = FALSE;
-      what_owner = Send(what, @GetOwner);
-      while what_owner <> $
+      local bFound = FALSE;
+      local oWhatOwner = Send(what, @GetOwner);
+      while oWhatOwner <> $
       {
-         if what_owner = poOwner
+         if oWhatOwner = poOwner
          {
-            found = TRUE;
+            bFound = TRUE;
             break;
          }
-         what_owner = Send(what_owner, @GetOwner);
+         oWhatOwner = Send(oWhatOwner, @GetOwner);
       }
-      return found;
+      return bFound;
    }
 
    AddDonationYear(year = $)

@@ -5920,34 +5920,6 @@ messages:
    {
       return 15 + Send(self,@GetMysticism)/5;
    }
- 
-   StripNodeList(number=$)
-   {
-      local iNodeList = Send(self,@GetNodelist);
-
-      if number = $
-      {
-         number = length(iNodeList);
-      }
-
-      local iNodeFlag = 1;
-
-      while iNodeList >= 1
-      {
-         if ((iNodeList/2) * 2) <> iNodeList  %we do an "# was odd" operator
-         {
-            Send(Send(SYS,@FindNodeByNum,#num=iNodeFlag),@UnMeld,#who=self);
-         }
-         
-         iNodeFlag = iNodeFlag * 2;
-         iNodeList = iNodeList / 2;
-      }
-      
-      Send(self,@ResetNodeList);
-      Send(self,@NewMana);
-      
-      return;
-   }
 
    StripOneNode(report=TRUE)
    {

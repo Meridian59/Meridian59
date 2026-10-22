@@ -1519,15 +1519,13 @@ messages:
 
    GetAge()
    {
-      local age;
-
-      age = Send(SYS,@GetYear) - Send(self,@GetBirthYear);
+      local iAge = Send(SYS,@GetYear) - Send(self,@GetBirthYear);
 
       % No more tutorial messages and bonuses if you've been around for about 2 months.
       % Clear the newbie string, too.
       % Do a bit flag check instead of a function call since this is called EVERY time
       %  someone gets looked at.
-      if age >= 2
+      if iAge >= 2
          AND NOT (piFlags & PFLAG_TUTORIAL)
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
@@ -1537,7 +1535,7 @@ messages:
          }
       }      
 
-      return age;
+      return iAge;
    }
 
    SetAge(age = 0)
@@ -1572,7 +1570,7 @@ messages:
 
    ShowExtraInfo()
    {
-      local i, j, obj, year;
+      local i, j;
 
       ClearTempString();
 
@@ -1691,7 +1689,7 @@ messages:
          AppendTempString(player_nl);
       }
 
-      obj = Send(SYS,@GetCaramo);
+      local obj = Send(SYS,@GetCaramo);
       if obj <> $ and Send(obj,@GetJusticar) = self
       {
          AppendTempString(player_is_justicar);
@@ -1780,8 +1778,9 @@ messages:
       if plDonationYears <> $
       {
          % Example: Benefactor of Meridian in 2010, 2011
-	      AppendTempString(player_donation_title);
-	      i = 0;
+	     AppendTempString(player_donation_title);
+	     i = 0;
+         local year;
          for year in plDonationYears
          {
 	         if i <> 0

@@ -5996,13 +5996,6 @@ messages:
       return;
    }
 
-   ResetNodeList()
-   {
-      piNodelist = 0;
-      
-      return;
-   }
-
    NewMaxMana(amount=0,node_num=-1)
    "This is called from the mana node.  Unlike newMaxHealth, the amount is "
    "checked here.  Returns actual amount changed"

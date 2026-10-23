@@ -746,10 +746,6 @@ properties:
    poSession
    pbLogged_on = FALSE
 
-   % TRUE while the player is logged off: plEnchantments then holds the
-   %  remaining time of each enchantment instead of a timer.
-   pbEnchantments_frozen = TRUE
-
    % This is used to determine raises in hit points only.
    poKill_target = $
    piGain_chance = 0
@@ -2745,10 +2741,11 @@ messages:
       }
       else 
       {
-         if pbEnchantments_frozen
+         if poSession = $
          {
-            % Logged off: store the time left, as FreezeAllEnchantments
-            %  does.  ReactivateAllEnchantments starts the timer at logon.
+            % Logged off: keep the time left instead of a timer, as
+            %  FreezeAllEnchantments does.  ReactivateAllEnchantments
+            %  starts the timer at logon.
             oTimer = time;
          }
          else
@@ -2915,8 +2912,6 @@ messages:
          }
       }
 
-      pbEnchantments_frozen = TRUE;
-
       return;
    }
 
@@ -2924,8 +2919,6 @@ messages:
    "Called when a player logs on."
    {
       local i;
-
-      pbEnchantments_frozen = FALSE;
 
       for i in plEnchantments
       {
@@ -2958,9 +2951,9 @@ messages:
          if First(i) = $
          {
             % CreateTimer takes only a time of zero or more.  A save from
-            %  before pbEnchantments_frozen can hold the enchantment's own
-            %  timer here, still running: keep it.  Anything else ends the
-            %  enchantment now.
+            %  before this fix can hold the enchantment's own timer here,
+            %  still running: keep it.  Anything else ends the enchantment
+            %  now.
             if GetTimeRemaining(iTime) <> $
             {
                SetNth(i,1,iTime);

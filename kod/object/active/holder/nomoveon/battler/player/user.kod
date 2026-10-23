@@ -3755,13 +3755,12 @@ messages:
    "Returns the message for a failed UserGet of what (number is the amount "
    "requested, if any).  Names the carrying limits that stopped it."
    {
-      local iWeight_can_hold, iBulk_can_hold, bNo_weight, bNo_bulk;
+      local iWeight_can_hold, iBulk_can_hold, bTooHeavy, bTooBulky;
 
       if IsClass(what,&NumberItem)
       {
-         % A zero or negative amount is bad input, not a capacity failure.
-         if (number <> $ AND number <= 0)
-            OR Send(self,@GetWeightMax) = $
+         % Match GetNumberCanHold's unlimited-capacity case.
+         if Send(self,@GetWeightMax) = $
             OR Send(self,@GetBulkMax) = $
          {
             return user_disallow_get;
@@ -3773,31 +3772,30 @@ messages:
                                  #weight=Bound(Send(self,@GetWeightMax)-piWeight_hold,0,$));
          iBulk_can_hold = Send(what,@GetNumberCanHoldBulk,
                                #bulk=Bound(Send(self,@GetBulkMax)-piBulk_hold,0,$));
-         bNo_weight = (iWeight_can_hold <> INFINITE_COUNT
-                       AND iWeight_can_hold <= 0);
-         bNo_bulk = (iBulk_can_hold <> INFINITE_COUNT
-                     AND iBulk_can_hold <= 0);
+         bTooHeavy = (iWeight_can_hold <> INFINITE_COUNT
+                      AND iWeight_can_hold <= 0);
+         bTooBulky = (iBulk_can_hold <> INFINITE_COUNT
+                      AND iBulk_can_hold <= 0);
       }
       else
       {
-         % ReqNewHold failed; a held object may have refused it instead.
-         bNo_weight = NOT Send(self,@CanHoldWeightAndBulk,
-                               #weight=Send(what,@GetWeight));
-         bNo_bulk = NOT Send(self,@CanHoldWeightAndBulk,
-                             #bulk=Send(what,@GetBulk));
+         bTooHeavy = NOT Send(self,@CanHoldWeightAndBulk,
+                              #weight=Send(what,@GetWeight));
+         bTooBulky = NOT Send(self,@CanHoldWeightAndBulk,
+                              #bulk=Send(what,@GetBulk));
       }
 
-      if bNo_weight AND bNo_bulk
+      if bTooHeavy AND bTooBulky
       {
          return user_disallow_get_weight_bulk;
       }
 
-      if bNo_weight
+      if bTooHeavy
       {
          return user_disallow_get_weight;
       }
 
-      if bNo_bulk
+      if bTooBulky
       {
          return user_disallow_get_bulk;
       }

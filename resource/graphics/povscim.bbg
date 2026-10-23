@@ -3,11 +3,11 @@
 # 1-4 attacking
 # 5 carrying
 5
-scipovA.bmp  
-scipovB.bmp 
-scipovC.bmp
-scipovD.bmp  
-scipovH.bmp 
+scipovA.bmp   [0, 0] :1    -21 [47, 77]
+scipovB.bmp   [0, 0] :1    -21 [53, 57]
+scipovC.bmp   [0, 0] :1    -21 [18, 239]
+scipovD.bmp   [0, 0]
+scipovH.bmp   [0, 0]
 5
  1      1
  1      2

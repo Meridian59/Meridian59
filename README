@@ -85,6 +85,33 @@ make -f makefile.linux
 The blakserv.cfg file requires some manual changes to run on Linux.
 
 
+RUNNING THE CLIENT ON LINUX OR MAC
+
+The client and its modules build unchanged against win32/, a subset of
+the Windows API on GTK 4 (Linux) or AppKit (macOS).  It needs CMake,
+Python 3, bison 3, flex, FreeType, OpenAL Soft, libarchive, and on Linux
+GTK 4.18 or later, libcurl and the Liberation fonts.  On Debian 13:
+
+apt-get install build-essential cmake pkgconf python3 libgtk-4-dev \
+  libcurl4-openssl-dev libfreetype-dev libopenal-dev libarchive-dev \
+  bison flex fonts-liberation
+
+On macOS, with Homebrew:
+
+brew install cmake bison flex freetype openal-soft libarchive
+
+Then:
+
+cd clientd3d
+make -f makefile.linux
+
+builds debug versions ("make -f makefile.linux RELEASE=1" for release
+versions) and copies the client to run/localclient, as on Windows.
+"make -f makefile.linux test" also runs win32/'s tests.  The build
+downloads Wine 10.0's source release (32 MB); to build offline, unpack
+it and pass CMAKEFLAGS=-DFETCHCONTENT_SOURCE_DIR_WINE=<its directory>.
+
+
 THIRD-PARTY CODE
 
 Meridian uses zlib, libpng, libarchive, and OpenAL Soft.  zlib, libpng,
@@ -95,6 +122,10 @@ variables set to use zlib:
 
 ZLIB_INCLUDE_DIR points to the include directory
 ZLIB_LIBRARY points to lib/zlib.lib
+
+On Linux and macOS, the client also uses Wine (LGPL 2.1 or later):
+the build downloads Wine 10.0's source release for its common controls,
+Windows headers, tools and raster fonts.
 
 
 CONTACT INFORMATION

@@ -1,0 +1,29 @@
+// cc_propsheet.rc:  Property sheet pages for cc_propsheet.c, like the client's
+// preferences tabs: a trackbar and a check box, a label, an empty page.
+#include <windows.h>
+#include <commctrl.h>
+
+101 DIALOG 0, 0, 200, 100
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "General"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CONTROL "", 1001, "msctls_trackbar32", TBS_BOTH | TBS_NOTICKS | WS_TABSTOP, 10, 10, 150, 15
+    CONTROL "Check", 1002, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 10, 30, 80, 10
+END
+
+102 DIALOG 0, 0, 200, 100
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Second"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT "Page two", 1003, 10, 10, 100, 10
+    CONTROL "", 1004, "msctls_progress32", WS_BORDER, 10, 30, 150, 10
+END
+
+103 DIALOG 0, 0, 200, 100
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Third"
+FONT 8, "MS Shell Dlg"
+BEGIN
+END

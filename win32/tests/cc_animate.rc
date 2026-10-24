@@ -1,0 +1,2 @@
+// cc_animate.rc:  The client's download animation (an RLE8 AVI), under its id.
+170 AVI "..\\..\\clientd3d\\bitmap\\download.avi"

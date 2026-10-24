@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 
       result = FloatToFix(cos(radians));
       
-      fprintf(tablefile, "(long)0x%8.8x, ", result);
+      fprintf(tablefile, "%ld, ", (long) result);   // signed: long may be 64-bit
 
       if (angle % 4 == 3)
 	 fprintf(tablefile, "\n");
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 
       result = FloatToFix(sin(radians));
       
-      fprintf(tablefile, "(long)0x%8.8x, ", result);
+      fprintf(tablefile, "%ld, ", (long) result);   // signed: long may be 64-bit
 
       if (angle % 4 == 3)
 	 fprintf(tablefile, "\n");

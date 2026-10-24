@@ -640,7 +640,8 @@ void SetDescParams(HWND hParent, int flags)
 void DisplayDescription(object_node *obj, BYTE flags, char *description, 
                         char *fixed_string, char *url, item_rarity_grade rarity)
 {
-	DescDialogStruct info;
+	// Value-initialized: it holds a std::string, which zeroing its bytes would break.
+	DescDialogStruct info{};
 	int template_id;
 	
 	if (hDescDialog != NULL)
@@ -649,7 +650,6 @@ void DisplayDescription(object_node *obj, BYTE flags, char *description,
 		return;
 	}
 	
-	ZeroMemory(&info,sizeof(info));
 	info.obj          = obj;
 	info.flags        = flags;
     char* nameCStr    = LookupNameRsc(obj->name_res);

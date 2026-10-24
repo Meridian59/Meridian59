@@ -328,7 +328,7 @@ int class_compare(void *info1, void *info2);
 int add_identifier(id_type id, int type);
 int get_statement_line(stmt_type s, int curline);
 
-void codegen(char *current_fname, char *bof_fname);
+bool codegen(char *current_fname, char *bof_fname);  /* Returns true iff code was generated */
 void set_kodbase_filename(char *filename);
 bool load_kodbase(void);
 bool save_kodbase(void);

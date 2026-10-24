@@ -187,16 +187,26 @@ void CmdAliasInit(void)
     {
       if (pSection)
         SafeFree(pSection);
-      pSection = strdup(_szDefaultVerbAliases);
+      // The defaults are a "verb=command\0...\0\0" list; strdup would stop at
+      // the first entry.
+      int length = 0;
+      while (_szDefaultVerbAliases[length] != 0)
+         length += (int) strlen(_szDefaultVerbAliases + length) + 1;
+      pSection = (char *) SafeMalloc(length + 1);
+      memcpy(pSection, _szDefaultVerbAliases, length + 1);
     }
 
     char *pVerb = pSection;
     while (*pVerb)
     {
-       pCommand = strtok(pVerb, "=");
-       pCommand = strtok(NULL, "");
-       AddVerbAlias(pVerb, pCommand);
-       pVerb = pCommand+strlen(pCommand)+1;
+       char *pNext = pVerb + strlen(pVerb) + 1;
+       pCommand = strchr(pVerb, '=');
+       if (pCommand != NULL)
+       {
+          *pCommand++ = 0;
+          AddVerbAlias(pVerb, pCommand);
+       }
+       pVerb = pNext;
     }
     
     if (pSection)

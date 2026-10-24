@@ -38,6 +38,8 @@
 #define A_CAST          (A_MODULE + 200)
 #define A_CASTSPELL     (A_MODULE + 201)
 #define A_LOOKINVENTORY (A_MODULE + 202)    // Examine item in inventory
+#define A_REST          (A_MODULE + 203)
+#define A_STAND         (A_MODULE + 204)
 
 // Window messages
 #define BK_CREATED      (WM_USER + 100)

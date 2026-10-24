@@ -75,6 +75,10 @@ resources:
    user_err_get_unk = "You can't pick up %s%s; it is no longer accessible."
    user_err_get_dist = "You can't pick up %s%s; it's too far away."
    user_disallow_get = "You're unable to pick up %s%s."
+   user_disallow_get_weight = "You're carrying too much weight to pick up %s%s."
+   user_disallow_get_bulk = "You don't have enough room to carry %s%s."
+   user_disallow_get_weight_bulk = \
+      "You're carrying too much weight and don't have enough room for %s%s."
    user_got_some = "You can't pick up all the %s."
    user_cant_pickup_item_wav_rsc = player_cannot_carry.wav
    user_disallow_drop = "You are unable to drop %s%s."
@@ -3715,7 +3719,9 @@ messages:
             }
             else
             {
-               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               Send(self,@MsgSendUser,
+                    #message_rsc=Send(self,@GetPickupFailRsc,#what=what,
+                                      #number=number),
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);
@@ -3729,7 +3735,8 @@ messages:
             %  KLUDGE!!  -Asif
             if not IsClass(what,&HunterSword)
             {
-               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               Send(self,@MsgSendUser,
+                    #message_rsc=Send(self,@GetPickupFailRsc,#what=what),
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);
@@ -3742,6 +3749,58 @@ messages:
       Send(self,@NewHold,#what=what);
       
       return;
+   }
+
+   GetPickupFailRsc(what = $, number = $)
+   "Returns the message for a failed UserGet of what (number is the amount "
+   "requested, if any).  Names the carrying limits that stopped it."
+   {
+      local iWeight_can_hold, iBulk_can_hold, bTooHeavy, bTooBulky;
+
+      if IsClass(what,&NumberItem)
+      {
+         % Match GetNumberCanHold's unlimited-capacity case.
+         if Send(self,@GetWeightMax) = $
+            OR Send(self,@GetBulkMax) = $
+         {
+            return user_disallow_get;
+         }
+
+         % Not even one item fit, so check each limit the way
+         % GetNumberCanHold does.
+         iWeight_can_hold = Send(what,@GetNumberCanHoldWeight,
+                                 #weight=Bound(Send(self,@GetWeightMax)-piWeight_hold,0,$));
+         iBulk_can_hold = Send(what,@GetNumberCanHoldBulk,
+                               #bulk=Bound(Send(self,@GetBulkMax)-piBulk_hold,0,$));
+         bTooHeavy = (iWeight_can_hold <> INFINITE_COUNT
+                      AND iWeight_can_hold <= 0);
+         bTooBulky = (iBulk_can_hold <> INFINITE_COUNT
+                      AND iBulk_can_hold <= 0);
+      }
+      else
+      {
+         bTooHeavy = NOT Send(self,@CanHoldWeightAndBulk,
+                              #weight=Send(what,@GetWeight));
+         bTooBulky = NOT Send(self,@CanHoldWeightAndBulk,
+                              #bulk=Send(what,@GetBulk));
+      }
+
+      if bTooHeavy AND bTooBulky
+      {
+         return user_disallow_get_weight_bulk;
+      }
+
+      if bTooHeavy
+      {
+         return user_disallow_get_weight;
+      }
+
+      if bTooBulky
+      {
+         return user_disallow_get_bulk;
+      }
+
+      return user_disallow_get;
    }
 
    UserBlockedSend(what = $)

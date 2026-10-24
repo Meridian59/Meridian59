@@ -886,8 +886,11 @@ messages:
       % Getting hit revitalizes my will to walk.
       piWalkingEffort = 0;
 
-      Send(poBrain,@SomethingAttacked,#mob=self,#state=piState,
-           #what=what,#victim=victim,#use_weapon=use_weapon);
+      if poBrain <> $
+      {
+         Send(poBrain,@SomethingAttacked,#mob=self,#state=piState,
+              #what=what,#victim=victim,#use_weapon=use_weapon);
+      }
 
       propagate;
    }

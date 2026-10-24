@@ -37,7 +37,7 @@ classvars:
    viSchool = SS_QOR
    viSpell_level = 3
    viMana = 5
-   viSpell_Exertion = 4
+   viSpellExertion = 4
 
    viOutlaw = TRUE
    viHarmful = TRUE

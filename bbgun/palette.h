@@ -17,6 +17,7 @@ typedef struct {
 HPALETTE InitializePalette(void);
 void     SetDIBPalette(HDC gdc);
 COLORREF GetNearestPaletteColor(COLORREF c);
+void     DibRemapToBasePalette(PDIB pdib);
 
 extern HPALETTE hPal;                       /* our standard drawing palette */
 

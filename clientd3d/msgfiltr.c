@@ -19,6 +19,25 @@ static HWND hWhoDialog = NULL;        /* Non-null if Who dialog is up */
 extern player_info player;
 
 #define WHOM_UPDATE (WM_APP+5)
+#define WHOM_RESET  (WM_APP+6)
+
+/*****************************************************************************/
+/*
+ * IsAdmin:  Returns true when the player flags are an admin class.
+ */
+static bool IsAdmin(int flags)
+{
+  switch (GetPlayerFlags(flags))
+  {
+  case PF_DM:
+  case PF_CREATOR:
+  case PF_SUPER:
+  case PF_EVENTCHAR:
+    return true;
+  default:
+    return false;
+  }
+}
 
 bool AddUserToIgnoreList(ID name)
 {
@@ -63,11 +82,27 @@ bool IsUserInIgnoreList(ID name)
   return false;
 }
 
+/*****************************************************************************/
+/*
+ * ShouldHighlight:  Returns true when the who list should highlight this user.
+ *   An admin is always highlighted.
+ */
+static bool ShouldHighlight(object_node *user)
+{
+  return IsAdmin(user->flags) || !IsUserInIgnoreList(user->name_res);
+}
+
 void UpdateWho(object_node* pUser, BOOL bAdded)
 {
    debug(("UpdateWho\n"));
    if (hWhoDialog)
       SendMessage(hWhoDialog, WHOM_UPDATE, (WPARAM)bAdded, (LPARAM)pUser);
+}
+
+void ResetWhoList(list_type users)
+{
+   if (hWhoDialog)
+      SendMessage(hWhoDialog, WHOM_RESET, 0, (LPARAM)users);
 }
 
 /*****************************************************************************/
@@ -101,7 +136,7 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
           debug(("WhoDialogProc got NULL user entry\n"));
           continue;
         }
-        if (!IsUserInIgnoreList(obj->name_res))
+        if (ShouldHighlight(obj))
           ListBox_SetSel(hList, TRUE, i);
       }
       
@@ -131,7 +166,7 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
      if (bAdded)
      {
        i = ItemListAddItem(hList, pUser, -1, false);
-       if (i != LB_ERR && !IsUserInIgnoreList(pUser->name_res))
+       if (i != LB_ERR && ShouldHighlight(pUser))
 	       ListBox_SetSel(hList, TRUE, i);
      }
      else
@@ -140,6 +175,22 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
      }
      
      num = ListBox_GetCount(hList);
+     SetDlgItemInt(hDlg, IDC_NUMPLAYERS, num, FALSE);
+   }
+   return TRUE;
+
+   case WHOM_RESET:
+   {
+     list_type users = (list_type)lParam;
+     hList = GetDlgItem(hDlg, IDC_USERLIST);
+     ItemListSetContents(hList, users, false);
+     num = ListBox_GetCount(hList);
+     for (i = 0; i < num; i++)
+     {
+       object_node *obj = (object_node *) ListBox_GetItemData(hList, i);
+       if (obj != NULL && ShouldHighlight(obj))
+         ListBox_SetSel(hList, TRUE, i);
+     }
      SetDlgItemInt(hDlg, IDC_NUMPLAYERS, num, FALSE);
    }
    return TRUE;
@@ -185,6 +236,10 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             continue;
           }
           
+          // An admin is never added to the list
+          if (IsAdmin(obj->flags))
+            continue;
+
           selected = (ListBox_GetSel(hList, i) > 0);
           ignored = IsUserInIgnoreList(obj->name_res);
           
@@ -219,14 +274,21 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
  */
 void MessageSaid(ID sender_id, ID sender_name, BYTE say_type, char *message)
 {
+  // The ignore list holds true names, which a message does not always carry.
+  // A sender that is not a logged on user keeps the name in the message.
+  object_node *sender = CurrentUser(sender_id);
+  ID ignore_name = (sender == NULL) ? sender_name : sender->name_res;
+  bool from_admin = (sender != NULL) && IsAdmin(sender->flags);
+
    // Always let non-player says through; check others for blocking
   if (say_type != SAY_RESOURCE && sender_id != player.id && 
-      (config.ignore_all || IsUserInIgnoreList(sender_name) ||
+      !from_admin &&
+      (config.ignore_all || IsUserInIgnoreList(ignore_name) ||
        (say_type == SAY_EVERYONE && config.no_broadcast)))
   {
     // If we blocked a "send" to us, tell server so
     if (say_type == SAY_GROUP && 
-        (IsUserInIgnoreList(sender_name) || config.ignore_all))
+        (IsUserInIgnoreList(ignore_name) || config.ignore_all))
       SendSayBlocked(sender_id);
     return;
   }

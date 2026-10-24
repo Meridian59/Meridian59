@@ -52,7 +52,6 @@ static char INIBrowser[]     = "Browser";
 static char INIDefaultBrowser[] = "DefaultBrowser";
 static char INIVersion[]     = "INIVersion";
 static char INILastPass[]    = "Sentinel";
-static char INISoundLibrary[] = "SoundLibrary";
 static char INICacheBalance[] = "CacheBalance";
 static char INIObjectCacheMin[] = "ObjectCacheMin";
 static char INIGridCacheMin[] = "GridCacheMin";
@@ -78,7 +77,9 @@ static char INILagbox[]      = "LatencyMeter";
 static char INISpinningCube[]= "SpinningCube";
 static char INIHaloColor[]   = "HaloColor";
 static char INIColorCodes[]  = "ColorCodes";
+static char INITheme[]       = "Theme";
 static char INIMapAnnotations[] = "MapAnnotations";
+static char INIMapTextZoomLimit[] = "MapTextZoomLimit";
 
 static char window_section[] = "Window";         /* Section in INI file for window info */
 static char INILeft[]        = "NormalLeft";
@@ -112,7 +113,6 @@ static char INITechnical[]    = "Technical";
 /* config.ini file entries (preferences) */
 static char config_section[] = "config";  /* Section for configuration stuff */
 static char INIGpuEfficiency[] = "gpuefficiency";
-static char INIGpuEfficiencyOneTimeFlip[] = "gpuefficiencyonetimeflip";
 
 static char INITextAreaSize[] = "TextAreaSize";
 
@@ -143,9 +143,9 @@ static int   DefaultTimeout       = 20;
 void LoadSettings(void)
 {
    FontsCreate(false);
-   ColorsCreate(false);
    CommLoadSettings();
    ConfigLoad();
+   ColorsCreate(false);
    LoadProfaneTerms();
 
    // Restore defaults if they've changed from previous version
@@ -251,7 +251,10 @@ void ConfigLoad(void)
    config.spinning_cube= GetConfigInt(interface_section, INISpinningCube, false, ini_file);
    config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 0, ini_file);
    config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, true, ini_file);
+   config.theme        = static_cast<Theme>(GetConfigInt(interface_section, INITheme,
+                            static_cast<int>(Theme::Default), ini_file));
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, true, ini_file);
+   config.map_text_zoom_limit = GetConfigInt(interface_section, INIMapTextZoomLimit, 50, ini_file);
 
    config.lastPasswordChange = GetConfigInt(misc_section, INILastPass, 0, ini_file);
 
@@ -265,11 +268,10 @@ void ConfigLoad(void)
    config.CacheBalance   = GetConfigInt(misc_section, INICacheBalance,        70, ini_file);
    config.ObjectCacheMin = GetConfigInt(misc_section, INIObjectCacheMin, 6000000, ini_file);
    config.GridCacheMin = GetConfigInt(misc_section, INIGridCacheMin,   4000000, ini_file);
+   config.soundLibrary = 0; /* Reserved for struct layout compatibility */
 
    if( config.CacheBalance < 10 ) config.CacheBalance = 10 ;
    if( config.CacheBalance > 90 ) config.CacheBalance = 90 ;
-
-   config.soundLibrary = GetConfigInt(misc_section, INISoundLibrary, LIBRARY_MSS, ini_file);
 
 #ifdef NODPRINTFS
    config.debug    = false;
@@ -300,7 +302,7 @@ void ConfigLoad(void)
    config.showUnseenWalls = FALSE;
    config.showUnseenMonsters = FALSE;
    config.avoidDownloadAskDialog = FALSE;
-   config.maxFPS = FALSE;
+   config.maxFPS = 120;
    config.clearCache = FALSE;
 #endif // NODPRINTFS
 
@@ -374,7 +376,9 @@ void ConfigSave(void)
    WriteConfigInt(interface_section, INISpinningCube, config.spinning_cube, ini_file);
    WriteConfigInt(interface_section, INIHaloColor, config.halocolor, ini_file);
    WriteConfigInt(interface_section, INIColorCodes, config.colorcodes, ini_file);
+   WriteConfigInt(interface_section, INITheme, static_cast<int>(config.theme), ini_file);
    WriteConfigInt(interface_section, INIMapAnnotations, config.map_annotations, ini_file);
+   WriteConfigInt(interface_section, INIMapTextZoomLimit, config.map_text_zoom_limit, ini_file);
    
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
 
@@ -471,8 +475,8 @@ void WindowSettingsSave(void)
 
    r = &w.rcNormalPosition;
 
-   w.ptMaxPosition.x = min(w.ptMaxPosition.x, - GetSystemMetrics(SM_CXFRAME));
-   w.ptMaxPosition.y = min(w.ptMaxPosition.y, - GetSystemMetrics(SM_CYFRAME));
+   w.ptMaxPosition.x = std::min(w.ptMaxPosition.x, (LONG)(- GetSystemMetrics(SM_CXFRAME)));
+   w.ptMaxPosition.y = std::min(w.ptMaxPosition.y, (LONG)(- GetSystemMetrics(SM_CYFRAME)));
 
    WriteConfigInt(window_section, INILeft, r->left, ini_file);
    WriteConfigInt(window_section, INIRight, r->right, ini_file);
@@ -495,8 +499,8 @@ void WindowSettingsLoad(WINDOWPLACEMENT *w)
    def_y = - GetSystemMetrics(SM_CYFRAME);
 
    // Try to make client window optimally sized, but also fit to screen
-   def_width  = min(MAIN_DEF_WIDTH, GetSystemMetrics(SM_CXSCREEN));
-   def_height = min(MAIN_DEF_HEIGHT, GetSystemMetrics(SM_CYSCREEN));
+   def_width  = std::min(MAIN_DEF_WIDTH, GetSystemMetrics(SM_CXSCREEN));
+   def_height = std::min(MAIN_DEF_HEIGHT, GetSystemMetrics(SM_CYSCREEN));
 
    r->left   = GetConfigInt(window_section, INILeft, MAIN_DEF_LEFT, ini_file);
    r->right  = GetConfigInt(window_section, INIRight, MAIN_DEF_LEFT + def_width, ini_file);

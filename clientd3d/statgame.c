@@ -212,7 +212,7 @@ void GameMouseButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFla
 
    SetFocus(hMain);
 
-   if (text_area_resize_zone) {
+   if (text_area_resize_zone && keyFlags & MK_LBUTTON) {
        // Start text area resize.
        text_area_resize_inprogress = true;
        previous_mouse_position = { x,y };
@@ -277,8 +277,8 @@ void GameMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
         new_text_area_height_cumulative += current_delta_y;
 
         // Define limits of the text area size as a perecentage of the client size.  
-        new_text_area_height_cumulative = max(window_height * TEXT_AREA_HEIGHT_MIN, new_text_area_height_cumulative);
-        new_text_area_height_cumulative = min(window_height * TEXT_AREA_HEIGHT_MAX, new_text_area_height_cumulative);
+        new_text_area_height_cumulative = std::max((int)(window_height * TEXT_AREA_HEIGHT_MIN), new_text_area_height_cumulative);
+        new_text_area_height_cumulative = std::min((int)(window_height * TEXT_AREA_HEIGHT_MAX), new_text_area_height_cumulative);
 
         // Save updated text area size and apply changes.
         int text_area_height_percentage = ((float)new_text_area_height_cumulative / (float)window_height) * 100.0;

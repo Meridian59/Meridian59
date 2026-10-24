@@ -45,6 +45,19 @@ PDIB DibOpenFile(LPSTR szFile)
     if (!pdib)
         return NULL;
 
+    /* Some BMPs store a biSizeImage smaller than the actual DWORD-aligned
+     * pixel data (e.g. saved as width*height with no row padding).  Trusting
+     * it under-allocates the buffer, and the row-flip below - which steps by
+     * the DWORD-aligned row size - then reads and writes past the end of the
+     * allocation, corrupting the heap and crashing later.  Recompute the
+     * aligned size for uncompressed bitmaps and use the larger value. */
+    if (pdib->biCompression == BI_RGB)
+    {
+       DWORD aligned = (DWORD) WIDTHBYTES(DibWidth(pdib)) * (DWORD) abs(DibHeight(pdib));
+       if (pdib->biSizeImage < aligned)
+          pdib->biSizeImage = aligned;
+    }
+
     /* How much memory do we need to hold the DIB */
 
     dwBits = pdib->biSizeImage;
@@ -83,6 +96,10 @@ PDIB DibOpenFile(LPSTR szFile)
 	  memcpy(row2, temp, (size_t) width);
        }
        free(temp);
+
+       /* Normalize pixels to the standard palette so colors display correctly
+	* regardless of the source bitmap's palette ordering. */
+       DibRemapToBasePalette(pdib);
     }
 
     close(fh);

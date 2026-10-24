@@ -55,6 +55,10 @@ void ResetObject()
    objects = (object_node *)
       ResizeMemory(MALLOC_ID_OBJECT,objects,old_objects*sizeof(object_node),
 		   max_objects*sizeof(object_node));
+   if (objects == NULL)
+   {
+      FatalError("Object array allocation failed");
+   }
 }
 
 /* ClearObject
@@ -72,6 +76,10 @@ void ClearObject()
    objects = (object_node *)
       ResizeMemory(MALLOC_ID_OBJECT,objects,old_objects*sizeof(object_node),
 		   max_objects*sizeof(object_node));
+   if (objects == NULL)
+   {
+      FatalError("Object array allocation failed");
+   }
 }
 
 int GetObjectsUsed()
@@ -98,6 +106,10 @@ int AllocateObject(int class_id)
       objects = (object_node *)
 	 ResizeMemory(MALLOC_ID_OBJECT,objects,old_objects*sizeof(object_node),
 		      max_objects*sizeof(object_node));
+      if (objects == NULL)
+      {
+	 FatalError("Object array allocation failed");
+      }
       lprintf("AllocateObject resized to %i objects\n",max_objects);
    }
 

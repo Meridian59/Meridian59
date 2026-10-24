@@ -88,6 +88,9 @@ void table_destroy(Table *t, TableDestroyProc destructor)
    DWORD i;
    list_type l;
 
+   if (t == nullptr)
+      return;
+
    for (i=0; i < t->size; i++)
    {
       for (l = t->entries[i]; l != NULL; l = l->next)
@@ -107,6 +110,9 @@ void table_destroy(Table *t, TableDestroyProc destructor)
 void table_delete(Table *t)
 {
    DWORD i;
+
+   if (t == nullptr)
+      return;
 
    for (i=0; i < t->size; i++)
       t->entries[i] = list_delete(t->entries[i]);

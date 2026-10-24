@@ -40,7 +40,7 @@ classvars:
    viSchool = SS_QOR
    viMana = 15          
    viCast_Time = 5000   
-   viSpell_Exetion = 15
+   viSpellExertion = 15
    viSpell_level = 6
 
    viChance_To_Increase = 10
@@ -83,7 +83,7 @@ messages:
       return iSpellpower * 1000;
    }
 
-   GetStateValue(who = $, iSpellPower = 0)      
+   InitializeEnchantmentState(who = $, iSpellPower = 0)      
    {      
       Send(who,@AddDefenseModifier,#what=self);      
 

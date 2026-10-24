@@ -128,6 +128,7 @@ static bool InventoryDropCurrentItem(room_contents_node *container);
 static bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
+static void InventoryReloadBackground(void);
 
 /************************************************************************/
 /*
@@ -152,7 +153,6 @@ static COLORREF GetItemRarityColor(item_rarity_grade rarity)
 void InventoryBoxCreate(HWND hParent)
 {
    BITMAPINFOHEADER *ptr;
-	LOGBRUSH logbrush;
 
    hwndInvDialog = CreateDialog(hInst, MAKEINTRESOURCE(IDD_INVENTORY), 
 				hParent, InventoryDialogProc);
@@ -191,24 +191,13 @@ void InventoryBoxCreate(HWND hParent)
       selftrgt_bits = NULL;
    else selftrgt_bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 
-   if (!GetBitmapResourceInfo(hInst, IDB_INVBKGND, &inventory_bkgnd))
-     debug(("InventoryBoxCreate couldn't load inventory background bitmap\n"));
-
-	if( !( ptr = GetBitmapResource( hInst, IDB_INVBKGND ) ) )
-		debug(("InventoryBoxCreate couldn't load inventory scroll bar texture bitmap\n"));
-
-	logbrush.lbStyle = BS_DIBPATTERNPT;
-	logbrush.lbColor = DIB_RGB_COLORS;
-	logbrush.lbHatch = (ULONG_PTR) ptr;
-	
-	hbrushScrollBack = CreateBrushIndirect( &logbrush );
-	//	ajw end...
+   InventoryReloadBackground();
 
    // Compute background palette index
    inventory_bg_index = GetClosestPaletteIndex(RGB(84, 40, 0));
 
    InventoryResetFont();
-   InventoryChangeColor();
+   InventoryChangeColor(COLOR_ID_ALL);
 }
 /************************************************************************/
 /*
@@ -287,9 +276,13 @@ void InventoryDisplayScrollbar(void)
 	      inventory_area.cx, inventory_area.cy,
 	      FALSE);
 
-   MoveWindow(hwndInv, 0, 0, 
-	      inventory_area.cx - inventory_scrollbar_width, inventory_area.cy,
-	      FALSE);
+   /* When no scrollbar, hwndInv fills the full dialog width so no uncovered
+      strip shows the parent window background on the right edge. */
+   int inv_width = has_scrollbar
+      ? inventory_area.cx - inventory_scrollbar_width
+      : inventory_area.cx;
+
+   MoveWindow(hwndInv, 0, 0, inv_width, inventory_area.cy, FALSE);
 
    MoveWindow(hwndInvScroll, inventory_area.cx - inventory_scrollbar_width,
 	      0, inventory_scrollbar_width,
@@ -318,7 +311,7 @@ void InventoryComputeRowsCols(void)
    if (has_scrollbar)
       width -= inventory_scrollbar_width;
 
-   cols = max(width / INVENTORY_BOX_WIDTH, 1);
+   cols = std::max(width / INVENTORY_BOX_WIDTH, 1);
 }
 /************************************************************************/
 /*
@@ -328,7 +321,15 @@ void InventoryScrollRange(void)
 {
    /* Max is when last item is on bottom of list */
    if (cols != 0)
-      SetScrollRange(hwndInvScroll, SB_CTL, 0, (num_items + cols - 1) / cols - rows, TRUE);
+   {
+      int total_rows = (num_items + cols - 1) / cols;
+      SCROLLINFO si = { sizeof(si), SIF_RANGE | SIF_PAGE | SIF_POS };
+      si.nMin  = 0;
+      si.nMax  = total_rows - 1;
+      si.nPage = rows;
+      si.nPos  = top_row;
+      SetScrollInfo(hwndInvScroll, SB_CTL, &si, TRUE);
+   }
 }
 /************************************************************************/
 /*
@@ -376,8 +377,8 @@ void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos)
       // Pointless "SB_ENDSCROLL" added recently
       return;
    }
-   new_top = max(new_top, 0);
-   new_top = min(new_top, (num_items + cols - 1) / cols - rows);
+   new_top = std::max(new_top, 0);
+   new_top = std::min(new_top, (num_items + cols - 1) / cols - rows);
 
    if (new_top != top_row)
    {
@@ -395,10 +396,13 @@ void InventoryResetFont(void)
 }
 /************************************************************************/
 /*
- * InventoryChangeColor:  Called when a color has changed.
+ * InventoryChangeColor:  Refresh inventory state for a color change.
+ *   Reloads themed resources when color_id is COLOR_ID_ALL.
  */
-void InventoryChangeColor(void)
+void InventoryChangeColor(WORD color_id)
 {
+   if (color_id == COLOR_ID_ALL)
+      InventoryReloadBackground();
 }
 /************************************************************************/
 void InventorySetFocus(bool forward)
@@ -418,7 +422,17 @@ INT_PTR CALLBACK InventoryDialogProc(HWND hwnd, UINT message, WPARAM wParam, LPA
       return FALSE;
 
    case WM_ERASEBKGND:
+   {
+      /* Fill the entire dialog area with the inventory background texture.
+         Without this, empty cells in the last partial row and gaps between
+         the item grid and the dialog edge show the wrong background. */
+      HDC hdc = (HDC)wParam;
+      RECT rc;
+      GetClientRect(hwnd, &rc);
+      DrawWindowBackgroundColor(&inventory_bkgnd, hdc, &rc,
+         inventory_area.x, inventory_area.y, -1);
       return 1;
+   }
 
       HANDLE_MSG(hwnd, WM_VSCROLL, InventoryVScroll);
 
@@ -694,9 +708,9 @@ void InventoryDrawSingleItem(InvItem *item, int row, int col)
          DeleteObject(hPenLight);
 
          COLORREF shadow = RGB(
-            max(GetRValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
-            max(GetGValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
-            max(GetBValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0)
+            std::max(GetRValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
+            std::max(GetGValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0),
+            std::max(GetBValue(rarityColor) - INVENTORY_OBJECT_RARITY_SHADOW_AMOUNT, 0)
          );
          HPEN hPenShadow = CreatePen(PS_SOLID, 1, shadow);
          oldPen = SelectObject(hdc, hPenShadow);
@@ -1033,7 +1047,7 @@ void InventoryCursorMove(int action)
    if (new_col < 0)
       new_col += cols;
 
-   new_row = max(0, cursor_row + dy);
+   new_row = std::max(0, cursor_row + dy);
    
    // See if we're going off end of inventory
    if (new_row * cols + new_col >= num_items)
@@ -1161,7 +1175,11 @@ bool InventoryDropCurrentItem(room_contents_node *container)
       return false;
 
    if (container == NULL)
-      RequestDrop(item->obj);
+   {
+      list_type drop_list = list_add_item(NULL, item->obj);
+      RequestDrop(drop_list);
+      list_delete(drop_list);
+   }
    else RequestPut(item->obj, container->obj.id);
    return true;
 }
@@ -1238,9 +1256,9 @@ void DisplayInventory(list_type inventory)
    }
 
    InventoryScrollRange();
-   if (num_items > rows * cols)
-      InventoryDisplayScrollbar();
    WindowEndUpdate(hwndInv);
+
+   InventoryDisplayScrollbar();
 }
 /************************************************************************/
 /*
@@ -1397,9 +1415,39 @@ HWND GetHwndInv()
 {
 	return hwndInv;
 }
+/************************************************************************/
+HWND GetHwndInvDialog()
+{
+	return hwndInvDialog;
+}
 
 /************************************************************************/
 RawBitmap* pinventory_bkgnd()
 {
 	return &inventory_bkgnd;
+}
+/************************************************************************/
+/*
+ * InventoryReloadBackground:  Reload the inventory background bitmap
+ *   for the active theme and rebuild the scrollbar pattern brush.
+ */
+static void InventoryReloadBackground(void)
+{
+	BITMAPINFOHEADER *ptr;
+	LOGBRUSH logbrush;
+	int inv_bkgnd_id = InterfaceThemeResourceId(IDB_INVBKGND);
+
+	if (!GetBitmapResourceInfo(hInst, inv_bkgnd_id, &inventory_bkgnd))
+		debug(("InventoryReloadBackground couldn't load inventory background bitmap\n"));
+
+	if (!(ptr = GetBitmapResource(hInst, inv_bkgnd_id)))
+		debug(("InventoryReloadBackground couldn't load scroll bar texture bitmap\n"));
+
+	if (hbrushScrollBack)
+		DeleteObject(hbrushScrollBack);
+
+	logbrush.lbStyle = BS_DIBPATTERNPT;
+	logbrush.lbColor = DIB_RGB_COLORS;
+	logbrush.lbHatch = (ULONG_PTR) ptr;
+	hbrushScrollBack = CreateBrushIndirect(&logbrush);
 }

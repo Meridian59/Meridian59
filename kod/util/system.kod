@@ -57,8 +57,7 @@ resources:
    system_user_killed_outlaw = \
       "### The feared outlaw, %q, has just met justice at %s%q's hands."
    system_killed_self = "### %q was just slain by %s own folly."
-   system_user_killed_room = \
-      "### %s have laid claim to yet another poor soul, %q."
+   system_user_killed_room = "### %q met an untimely end."
    system_user_killed_token = "### %q lost a token to %s%q."
    system_user_killed_shield = "### %q was bested by faction rival %s%q."
    system_user_killed_guild = \
@@ -1279,6 +1278,29 @@ messages:
       return GetTableEntry(phRooms,num);
    }
 
+   FindRoomNumByResource(rsc = $)
+   "Returns the room number (RID) of the first room object whose room "
+   "resource matches rsc, or $ if none.  This magic function name is "
+	"looked up in the server to find rooms based on their resource ID."
+   {
+      local i;
+
+      if rsc = $
+      {
+         return $;
+      }
+
+      for i in plRooms
+      {
+         if Send(i,@GetRoomResource) = rsc
+         {
+            return Send(i,@GetRoomNum);
+         }
+      }
+
+      return $;
+   }
+
    FindSpellByNum(num = 0)
    {
       return GetTableEntry(phSpells,num);
@@ -1543,10 +1565,9 @@ messages:
 
       if IsClass(killer,&Room)
       {
+         % Room-blamed death (e.g. environmental earthquake).
          rMessage = system_user_killed_room;
-         param2 = Send(what,@GetTrueName);
-
-         % Eliminate param3 that was set by default
+         param2 = $;
          param3 = $;
       }
 
@@ -1568,16 +1589,20 @@ messages:
          else
          {
             % Outlaw or murderer was killed?
-            if Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+            % Skip these overrides for Room deaths - room message takes priority.
+            if NOT IsClass(killer,&Room)
             {
-               rMessage = system_user_killed_outlaw;
-               % Parameters set by default
-            }
+               if Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               {
+                  rMessage = system_user_killed_outlaw;
+                  % Parameters set by default
+               }
 
-            if Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-            {
-               rMessage = system_user_killed_pker;
-               % Parameters set by default
+               if Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+               {
+                  rMessage = system_user_killed_pker;
+                  % Parameters set by default
+               }
             }
 
             if IsClass(killer,&User)
@@ -1649,7 +1674,7 @@ messages:
                %  mysterious murder message!
                if rMessage = $
                   AND Send(killer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-                  AND NOT Send(Send(killer,@GetOwner),@SafePlayerAttack)
+                  AND Send(killer,@IsOutsideSafeAttackRoom)
                {
                   rMessage = system_user_killed_by_pker;
                   poLastMurderer = killer;
@@ -3364,7 +3389,7 @@ messages:
    "Admin supported\n"
    "Deletes all spells and then calls CreateAllSpellsIfNew."
    "Figure_totals decides whether or not to recount the number of spells for "
-   "the advacnement object.  If in doubt, call it."
+   "the advancement object.  If in doubt, call it."
    {
       local i;
 
@@ -6689,7 +6714,19 @@ messages:
    PostPatchUpdates()
    "Runs one-time update functions after a patch. Call via 'send object 0 PostPatchUpdates'"
    {
-      Send(&Statue, @UpgradeStatue);
+      % Ensure existing dynamic lights function as they did prior to the patch (without flickering visually)
+      % Remove this along with Flickerer::StopFlickering after PostPatchUpdates has been applied.
+      Send(&DynamicLight, @StopFlickering);
+
+      % Applies update to Joguer's sell list to include blue mushrooms.
+      % Remove this line after PostPatchUpdates has been successfully applied. -- Aesica
+      Send(&BarloqueApothecary, @SetForSale);
+
+      % Rebuild OutdoorsKA0 so the corrected plVentItems1 list (SimpleHelm in place of Helm)
+      % takes effect. Constructed only runs when the room is created, so an existing room
+      % keeps the old list until recreated. Remove after PostPatchUpdates has been applied.
+      Send(Send(self, @FindRoomByNum, #num=RID_KA0), @Recreate);
+
       return;
    }
 

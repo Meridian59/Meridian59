@@ -18,8 +18,8 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new* pChunk);
  */
 bool D3DMaterialWorldPool(d3d_render_pool_new *pPool)
 {
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetColorStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
                                          D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
@@ -42,7 +42,7 @@ bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sys
     if (pPacket->pTexture)
       pTexture = pPacket->pTexture;
     else if (pPacket->pDib)
-      pTexture = D3DCacheTextureLookupSwizzled(&pCacheSystem->textureCache, pPacket, 0);
+      pTexture = D3DCacheTextureLookupSwizzled(&pCacheSystem->textureCache, pPacket, pPacket->effect);
   }
   else
   {
@@ -78,14 +78,14 @@ bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 		if (pChunk->pSector)
 		{
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-				SetZBias(gpD3DDevice, 0);
+				SetZBias(0);
 			else
-            SetZBias(gpD3DDevice, ZBIAS_WORLD);
+            SetZBias(ZBIAS_WORLD);
 		}
 	}
 	else
 	{
-		SetZBias(gpD3DDevice, ZBIAS_WORLD);
+		SetZBias(ZBIAS_WORLD);
 	}
 
 	// Clamp texture V axis if vertical tiling is disabled 
@@ -144,14 +144,14 @@ bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 		if (pChunk->pSector)
 		{
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-				SetZBias(gpD3DDevice, 0);
+				SetZBias(0);
 			else
-				SetZBias(gpD3DDevice, ZBIAS_WORLD);
+				SetZBias(ZBIAS_WORLD);
 		}
 	}
 	else
 	{
-		SetZBias(gpD3DDevice, ZBIAS_WORLD);
+		SetZBias(ZBIAS_WORLD);
 	}
 
 	// Clamp texture V axis if vertical tiling is disabled 
@@ -177,8 +177,8 @@ bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
  */
 bool D3DMaterialWallMaskPool(d3d_render_pool_new *pPool)
 {
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetColorStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
                                          D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
@@ -197,7 +197,7 @@ bool D3DMaterialMaskChunk(d3d_render_chunk_new *pChunk)
 	else
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_CW);
 
-	SetZBias(gpD3DDevice, pChunk->zBias);
+	SetZBias(pChunk->zBias);
 
 	return true;
 }
@@ -215,25 +215,24 @@ bool D3DMaterialNone(d3d_render_chunk_new *pPool)
  */
 bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool)
 {
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-                                         D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0,
-                                         D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+   // Sampler 0 is the Lightmap. Border mode prevents streaking at edges.
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_BORDERCOLOR, 0x00000000);  // Transparent Black
 
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
-                                         D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
-                                         D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+   // Sampler 1 is the Base Texture. Wrap mode checks out for tiling walls/floors.
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+   IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
-	const auto& whiteLightTexture = getWhiteLightTexture();
-	IDirect3DDevice9_SetTexture(gpD3DDevice, 0, (IDirect3DBaseTexture9 *) whiteLightTexture);
+   const auto &whiteLightTexture = D3DRenderLightsGetWhite();
+   IDirect3DDevice9_SetTexture(gpD3DDevice, 0, (IDirect3DBaseTexture9 *) whiteLightTexture);
 
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, 0);
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_MODULATE, D3DTA_CURRENT, D3DTA_TEXTURE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_SELECTARG2, D3DTA_CURRENT, D3DTA_TEXTURE);
+   D3DRender_SetColorStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+   D3DRender_SetAlphaStage(0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, 0);
+   D3DRender_SetColorStage(1, D3DTOP_MODULATE, D3DTA_CURRENT, D3DTA_TEXTURE);
+   D3DRender_SetAlphaStage(1, D3DTOP_SELECTARG2, D3DTA_CURRENT, D3DTA_TEXTURE);
 
-	return true;
+   return true;
 }
 
 /**
@@ -246,7 +245,7 @@ bool D3DMaterialLMapDynamicPacket(d3d_render_packet_new *pPacket, d3d_render_cac
 	if (pPacket->pTexture)
 		pTexture = pPacket->pTexture;
 	else if (pPacket->pDib)
-		pTexture = D3DCacheTextureLookupSwizzled(&pCacheSystem->textureCache, pPacket, 0);
+		pTexture = D3DCacheTextureLookupSwizzled(&pCacheSystem->textureCache, pPacket, pPacket->effect);
 
 	if (pTexture)
 		IDirect3DDevice9_SetTexture(gpD3DDevice, 1, (IDirect3DBaseTexture9 *) pTexture);
@@ -264,13 +263,13 @@ bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk)
 		{
 			const auto& current_room = getCurrentRoom();
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-				SetZBias(gpD3DDevice, 0);
+				SetZBias(0);
 			else
-				SetZBias(gpD3DDevice, ZBIAS_WORLD);
+				SetZBias(ZBIAS_WORLD);
 		}
 	}
 	else
-		SetZBias(gpD3DDevice, ZBIAS_WORLD);
+		SetZBias(ZBIAS_WORLD);
 
 	return true;
 }
@@ -287,13 +286,13 @@ bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
 		{
 			const auto& current_room = getCurrentRoom();
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-				SetZBias(gpD3DDevice, 0);
+				SetZBias(0);
 			else
-				SetZBias(gpD3DDevice, ZBIAS_WORLD);
+				SetZBias(ZBIAS_WORLD);
 		}
 	}
 	else
-      SetZBias(gpD3DDevice, ZBIAS_WORLD);
+      SetZBias(ZBIAS_WORLD);
 
 	if (pChunk->pSector)
 		if (pChunk->pSector->flags & SF_HAS_ANIMATED)
@@ -319,10 +318,10 @@ bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
  */
 bool D3DMaterialObjectPool(d3d_render_pool_new *pPool)
 {
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetColorStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetColorStage(1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, 0, 0);
 
 	return true;
 }
@@ -353,7 +352,7 @@ bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
 
-	SetZBias(gpD3DDevice, pChunk->zBias);
+	SetZBias(pChunk->zBias);
 
 	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
@@ -374,13 +373,20 @@ bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 
 	if (pChunk->isTargeted)
 	{
-		D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_DIFFUSE, 0);
-		D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+		D3DRender_SetColorStage(0, D3DTOP_SELECTARG1, D3DTA_DIFFUSE, 0);
+		D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	}
+	else if (pChunk->isGlowing)
+	{
+		// Doubling lets the vertex color brighten the sprite beyond the texture's own colors,
+		// which is what makes an object's light visible on it in an already bright sector.
+		D3DRender_SetColorStage(0, D3DTOP_MODULATE2X, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+		D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	}
 	else
 	{
-		D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-		D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+		D3DRender_SetColorStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+		D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	}
 
 	if (isFogEnabled())
@@ -409,10 +415,10 @@ bool D3DMaterialObjectInvisiblePool(d3d_render_pool_new *pPool)
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
                                          D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
 
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG2, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_SELECTARG2, 0, D3DTA_TEXTURE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_SELECTARG1, D3DTA_CURRENT, 0);
+	D3DRender_SetColorStage(0, D3DTOP_SELECTARG2, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetAlphaStage(0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetColorStage(1, D3DTOP_SELECTARG2, 0, D3DTA_TEXTURE);
+	D3DRender_SetAlphaStage(1, D3DTOP_SELECTARG1, D3DTA_CURRENT, 0);
 
 	IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
                                          D3DSAMP_MAGFILTER, D3DTEXF_POINT);
@@ -453,7 +459,7 @@ bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 {
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &pChunk->xForm);
 
-	SetZBias(gpD3DDevice, pChunk->zBias);
+	SetZBias(pChunk->zBias);
 
 	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
@@ -484,10 +490,10 @@ bool D3DMaterialEffectPool(d3d_render_pool_new *pPool)
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_DIFFUSE, 0);
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_DIFFUSE, 0);
+	D3DRender_SetColorStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetAlphaStage(0, D3DTOP_SELECTARG1, D3DTA_DIFFUSE, 0);
+	D3DRender_SetColorStage(1, D3DTOP_DISABLE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, D3DTA_DIFFUSE, 0);
 
 	return true;
 }
@@ -514,10 +520,10 @@ bool D3DMaterialEffectPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sy
  */
 bool D3DMaterialBlurPool(d3d_render_pool_new *pPool)
 {
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG2, D3DTA_TEXTURE, D3DTA_DIFFUSE);
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetColorStage(0, D3DTOP_SELECTARG1, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetAlphaStage(0, D3DTOP_SELECTARG2, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	D3DRender_SetColorStage(1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, 0, 0);
 
 	return true;
 }
@@ -557,10 +563,10 @@ bool D3DMaterialParticlePool(d3d_render_pool_new *pPool)
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG2, 0, D3DTA_DIFFUSE);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 0, D3DTOP_SELECTARG2, 0, D3DTA_DIFFUSE);
-	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
-	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetColorStage(0, D3DTOP_SELECTARG2, 0, D3DTA_DIFFUSE);
+	D3DRender_SetAlphaStage(0, D3DTOP_SELECTARG2, 0, D3DTA_DIFFUSE);
+	D3DRender_SetColorStage(1, D3DTOP_DISABLE, 0, 0);
+	D3DRender_SetAlphaStage(1, D3DTOP_DISABLE, 0, 0);
 
 	return true;
 }
@@ -630,7 +636,7 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)
 	if (pChunk->flags & D3DRENDER_NOAMBIENT)
 		end = (16384 + (light * FINENESS) + (drawParams.viewer_light * 64));
 	else
-		end = (32768 + (max(0, light - LIGHT_NEUTRAL) * FINENESS) + (drawParams.viewer_light * 64) +
+		end = (32768 + (std::max(0.0f, light - LIGHT_NEUTRAL) * FINENESS) + (drawParams.viewer_light * 64) +
 		(current_room.ambient_light * FINENESS));
 
 	return end;

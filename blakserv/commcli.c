@@ -167,7 +167,7 @@ void SecurePacketBufferList(int session_id, buffer_node *bl)
 	  s->sliding_token > pRedbook+strlen(pRedbook))
       {
 	 lprintf("SecurePacketBufferList lost redbook on session %i account %i (%s), may break session\n",
-	    session_id, s->account->account_id, s->account->name);
+           session_id, s->account->account_id, s->account->name.c_str());
 	 s->sliding_token = pRedbook;
       }
 

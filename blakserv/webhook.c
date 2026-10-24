@@ -63,7 +63,7 @@ bool InitWebhooks(void)
 
 void ShutdownWebhooks(void)
 {
-    if (!webhook_initialized) {
+    if (!IsWebhookEnabled()) {
         return;
     }
 
@@ -79,14 +79,14 @@ void ShutdownWebhooks(void)
     webhook_initialized = false;
 }
 
+bool IsWebhookEnabled(void)
+{
+    return webhook_initialized;
+}
+
 bool SendWebhookMessage(const char* message, int len)
 {
-    if (!webhook_initialized || !message || len <= 0) {
-        return false;
-    }
-    
-    // Double-check config setting (in case it was changed dynamically)
-    if (!ConfigBool(WEBHOOK_ENABLED)) {
+    if (!IsWebhookEnabled() || !message || len <= 0) {
         return false;
     }
 

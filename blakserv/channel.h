@@ -29,6 +29,7 @@ enum
 void OpenDefaultChannels(void);
 void CloseDefaultChannels(void);
 void FlushDefaultChannels(void);
+void WriteStrChannel(int channel_id,char *s);
 
 // Give warnings on these functions if arguments don't match format (gcc only)
 #if defined(__GNUC__)

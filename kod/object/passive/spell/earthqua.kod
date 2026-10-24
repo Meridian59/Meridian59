@@ -28,6 +28,8 @@ resources:
       "You raise your arms to the sky and invoke the fury of Faren!"
    earthquake_third_rsc = \
       "%s%s raises %s arms to the sky and invokes the fury of Faren!"
+   earthquake_death_rsc = \
+      "As %s%s collapses, the earth shudders with its dying fury!"
 
    earthquake_killed_someone = \
       "The tremors knock %s%s to the ground - %s doesn't get up!"     
@@ -119,69 +121,81 @@ messages:
       propagate;
    }
    
-   DoEarthQuake(who=$, where=$, lTargets=$, severity=1, bItemCast=FALSE)
-   "Does an earthquake spell in any room, if 'room' is given, but no 'who', "
-   "it is done in 'room' and blame for death is unprovided.  "
-   "If 'who' is given, but not 'room', it is done in the who's room and "
-   "damage is blamed on 'who'.  "
-   "If both are given, it is done in 'room', and any damage is blamed on "
-   "'who'."
+   DoEarthQuake(who=$, where=$, lTargets=$, severity=1, bItemCast=FALSE,
+                rDeathSourceDef=$, rDeathSourceName=$)
+   "Deals damage to all battlers in a room with earthquake effects.  Caster "
+   "mode (#who) applies distance-based damage falloff; environmental mode "
+   "(#where) applies flat damage.  rDeathSourceDef (article) and "
+   "rDeathSourceName (name) display a room message naming the creature "
+   "whose death triggered the earthquake."
    {
-      local i, iDamage, oRoom, lActive, each_obj, AssessWhat, lFinalTargets,
-            lBossMonsters;
+      local i, iDamage, oRoom, lActive, each_obj, oBlameTarget, lFinalTargets,
+            lBossMonsters, bEnvironmental;
       
-      if where <> $
+      % Determine room and whether this is environmental (room-caused)
+      if who <> $ AND where <> $
       {
-         oRoom = where;
+         Debug("DoEarthQuake called with both 'who' and 'where' - use only one");
+      }
+
+      if who <> $
+      {
+         oRoom = Send(who,@GetOwner);
+         oBlameTarget = who;
+         bEnvironmental = FALSE;
       }
       else
       {
-         if who <> $
+         if where <> $
          {
-            oRoom = Send(who,@GetOwner);
+            oRoom = where;
+            bEnvironmental = TRUE;
+            
+            % For environmental earthquakes, blame the room for kills.
+            oBlameTarget = where;
          }
          else
          {
+            Debug("DoEarthQuake called with no 'who' or 'where' parameter");
+
             return;
          }
       }
-      
-      if who <> $
+
+      if oRoom = $
       {
-         AssessWhat = who;
-
-         if IsClass(who,&Player)
-         {
-            % Special consideration:  how badly the player hurt himself and
-            %  did the player kill himself?
-
-            if NOT bItemCast
-            {
-               iDamage = Send(self,@ComputeDamage,#who=who,#target=who,
-                              #severity=severity);
-            }
-            else
-            {
-               % Full damage if cast from an item (that is, a scroll).
-               % This is to punish people that spam Earthquake scrolls.
-               iDamage = viMax_damage * severity;
-            }
-
-            if Send(who,@AssessDamage,#what=who,#damage=iDamage,#atype=0,
-                    #aspell=viAttack_spell,#report=FALSE) = $
-            {
-               Send(who,@MsgSendUser,#message_rsc=earthquake_killed_self);
-               Post(who,@KilledSomething,#what=AssessWhat,#use_weapon=self);
-            }
-            else
-            {
-               Send(who,@MsgSendUser,#message_rsc=earthquake_cast_rsc);
-            }
-         }
+         return;
       }
-      else 
+
+      % Player caster takes self-damage (only applies to caster-based earthquake)
+      if NOT bEnvironmental
+         AND IsClass(who,&Player)
       {
-         AssessWhat = oRoom;
+         % Special consideration:  how badly the player hurt himself and
+         %  did the player kill himself?
+
+         if NOT bItemCast
+         {
+            iDamage = Send(self,@ComputeDamage,#who=who,#target=who,
+                           #severity=severity);
+         }
+         else
+         {
+            % Full damage if cast from an item (that is, a scroll).
+            % This is to punish people that spam Earthquake scrolls.
+            iDamage = viMax_damage * severity;
+         }
+
+         if Send(who,@AssessDamage,#what=who,#damage=iDamage,#atype=0,
+                 #aspell=viAttack_spell,#report=FALSE) = $
+         {
+            Send(who,@MsgSendUser,#message_rsc=earthquake_killed_self);
+            Post(who,@KilledSomething,#what=oBlameTarget,#use_weapon=self);
+         }
+         else
+         {
+            Send(who,@MsgSendUser,#message_rsc=earthquake_cast_rsc);
+         }
       }
    
       lFinalTargets = lTargets;
@@ -198,18 +212,35 @@ messages:
          
          if isClass(each_obj,&Player)
          {
-            if who <> $
+            if rDeathSourceName <> $
             {
-               if each_obj = who
+               % Death-triggered earthquake - show collapse message.
+               Send(each_obj,@MsgSendUser,#message_rsc=earthquake_death_rsc,
+                    #parm1=rDeathSourceDef,
+                    #parm2=rDeathSourceName);
+            }
+            else
+            {
+               if bEnvironmental
                {
-                  Send(each_obj,@MsgSendUser,
-                       #message_rsc=earthquake_first_rsc);
+                  % Environmental earthquake - just the rumble message
+                  Send(each_obj,@MsgSendUser,#message_rsc=earthquake_cast_rsc);
                }
                else
                {
-                  Send(each_obj,@MsgSendUser,#message_rsc=earthquake_third_rsc,
-                       #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
-                       #parm3=Send(who,@GetHisHer));
+                  if IsClass(who,&Player) AND each_obj = who
+                  {
+                     % Player cast the earthquake - first person message
+                     Send(each_obj,@MsgSendUser,
+                          #message_rsc=earthquake_first_rsc);
+                  }
+                  else
+                  {
+                     % Third person message (player or monster casting spell)
+                     Send(each_obj,@MsgSendUser,#message_rsc=earthquake_third_rsc,
+                          #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+                          #parm3=Send(who,@GetHisHer));
+                  }
                }
             }
          }
@@ -229,7 +260,8 @@ messages:
       for each_obj in lFinalTargets
       {
          % In guildhalls, only hurt players in the same zone as the caster.
-         if who <> $
+         % (Only applies to caster-based earthquake)
+         if NOT bEnvironmental
             AND IsClass(oRoom,&GuildHall)   
             AND Send(oRoom,@InFoyer,#who=each_obj)
                 <> Send(oRoom,@InFoyer,#who=who)
@@ -237,35 +269,47 @@ messages:
             continue;
          }
 
+         % Calculate damage - flat for environmental, distance-based for caster
+         if bEnvironmental
+         {
+            iDamage = Random(viMin_damage,viMax_damage) * severity;
+         }
+         else
+         {
+            iDamage = Send(self,@ComputeDamage,#who=who,#target=each_obj,
+                           #severity=severity);
+         }
+
          if IsClass(each_obj,&Player)
          {
-            if Send(each_obj,@AssessDamage,#what=AssessWhat,
-                    #damage=Send(self, @ComputeDamage, 
- 	       	       	         #who=who, #target=each_obj, #severity=severity),
+            if Send(each_obj,@AssessDamage,#what=oBlameTarget,
+                    #damage=iDamage,
                     #atype=0,#aspell=viAttack_spell,#report=FALSE) = $
             {
                % Earthquake killed someone.
-               if who <> $
+               if bEnvironmental
                {
-                  Send(who,@KilledSomething,#what=each_obj,#use_weapon=self);
-                  Send(who,@MsgSendUser,#message_rsc=earthquake_killed_someone,
-                       #parm1=Send(each_obj,@GetDef),
-                       #parm2=Send(each_obj,@GetName),
-                       #parm3=Send(each_obj,@GetHeShe));
+                  Send(oRoom,@SomethingKilled,#what=oBlameTarget,#victim=each_obj);
+                  Send(each_obj,@Killed,#what=oBlameTarget);
                }
                else
                {
-                  Send(oRoom,@SomethingKilled,#what=oRoom,#victim=each_obj);
-                  Send(each_obj,@Killed,#what=oRoom);
-                  Send(each_obj,@MsgSendUser,
-                       #message_rsc=earthquake_killed_self);
+                  Send(who,@KilledSomething,#what=each_obj,#use_weapon=self);
+                  if IsClass(who,&Player)
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=earthquake_killed_someone,
+                          #parm1=Send(each_obj,@GetDef),
+                          #parm2=Send(each_obj,@GetName),
+                          #parm3=Send(each_obj,@GetHeShe));
+                  }
                }
             }      
             else
             {
                % Earthquake just did some amount of damage.
                Send(each_obj,@MsgSendUser,#message_rsc=earthquake_cast_rsc);
-               if who <> $
+               if NOT bEnvironmental
+                  AND IsClass(who,&Player)
                {
                   Send(who,@MsgSendUser,#message_rsc=earthquake_hit_rsc,
                        #parm1=Send(each_obj,@GetCapdef),
@@ -283,27 +327,26 @@ messages:
                               &XeoAir, &XeoFire, &XeoWater, &XeoEarth
                             ];
             if (Send(each_obj,@GetObjectFlags) & BATTLER_YES)
-               AND ((who <> $ AND IsClass(who,&Player))
+               AND (NOT bEnvironmental
+                    AND IsClass(who,&Player)
                     OR FindListElem(lBossMonsters,GetClass(each_obj)) = 0)
             {
-               if Send(each_obj,@AssessDamage,#what=AssessWhat,
-                       #damage=Send(self, @ComputeDamage, 
- 	       	       	            #who=who, #target=each_obj, #severity=severity),
+               if Send(each_obj,@AssessDamage,#what=oBlameTarget,
+                       #damage=iDamage,
                        #atype=0,#aspell=viAttack_spell) = $
                {
-                  if who <> $
+                  if bEnvironmental
                   {
-                     Send(who,@KilledSomething,#what=each_obj,
-                          #use_weapon=self);
+                     Send(oRoom,@SomethingKilled,#what=oBlameTarget,#victim=each_obj);
+                     Send(each_obj,@Killed,#what=oBlameTarget);
                   }
                   else
                   {
-                     Send(oRoom,@SomethingKilled,#what=oRoom,#victim=each_obj);
-                     Send(each_obj,@Killed,#what=oRoom);
+                     Send(who,@KilledSomething,#what=each_obj,#use_weapon=self);
                   }
                }
                   
-               if who <> $
+               if NOT bEnvironmental
                {
                   Send(oRoom,@SomethingAttacked,#what=who,#victim=each_obj,
                        #use_weapon=self);

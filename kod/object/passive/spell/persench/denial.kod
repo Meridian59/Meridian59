@@ -94,7 +94,7 @@ messages:
    }
 
 
-   GetStateValue(who = $, Target = $, iSpellPower = 1)
+   InitializeEnchantmentState(who = $, Target = $, iSpellPower = 1)
    {
       local iHPGain, iSpellpowerBonus;
       

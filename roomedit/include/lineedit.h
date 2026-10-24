@@ -61,6 +61,10 @@
 	class _OWLCLASS TCheckBox;
 #endif
 
+#ifndef OWL_COMBOBOX_H
+	class _OWLCLASS TComboBox;
+#endif
+
 #ifndef __objects_h
 	#include "objects.h"	// SelPtr
 #endif
@@ -77,10 +81,6 @@
 	#include "cnflddlg.h"
 #endif
 
-#ifndef __viewbmp_h
-	class TDisplayWallTextureDialog;
-#endif
-
 #include "lineedit.rh"
 
 
@@ -95,7 +95,6 @@ protected:
 	SideDef CurSD[2];
 	char TextureName[MAX_BITMAPNAME + 1];
 	int  TextureNum;
-	TDisplayWallTextureDialog *pWTextureDialog;
 	TConfirmLineDefDialogXfer ConfirmData;
 
 protected:
@@ -245,6 +244,9 @@ protected:
 	TRadioButton *pScrollSlowRadio[2];
 	TRadioButton *pScrollMediumRadio[2];
 	TRadioButton *pScrollFastRadio[2];
+
+	TComboBox *pTranslucencyPos;
+	TComboBox *pTranslucencyNeg;
 };    //{{TLineDefEditDialog}}
 
 

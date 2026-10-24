@@ -127,7 +127,7 @@ void StatsMainChange(Statistic *s)
 
    SendMessage(s->hControl, GRPH_RANGESET, s->numeric.min, s->numeric.max);
    SendMessage(s->hControl, GRPH_POSSET, 0, s->numeric.value);
-   SendMessage(s->hControl, GRPH_LIMITSET, 0, s->numeric.current_max);	 
+   SendMessage(s->hControl, GRPH_LIMITSET, 0, s->numeric.current_max);
 
    if (s->num == STAT_VIGOR)
    {
@@ -136,10 +136,10 @@ void StatsMainChange(Statistic *s)
 
       // Set color of graph if vigor is very low
       if (pinfo.vigor < MIN_VIGOR && old_vigor >= MIN_VIGOR)
-	 SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, STAT_EMERGENCY_COLOR);
+         SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, STAT_EMERGENCY_COLOR);
 
       if (pinfo.vigor >= MIN_VIGOR && old_vigor < MIN_VIGOR)
-	 SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));	 
+         SendMessage(s->hControl, GRPH_COLORSET, GRAPHCOLOR_BAR, GetColor(COLOR_BAR1));
    }
 }
 
@@ -170,15 +170,15 @@ void StatsMainRedraw(void)
 
       obj->icon_res = s->name_res;
 
-      OffscreenWindowBackground(NULL, a.x, a.y, a.cx, a.cy);
-      DrawStretchedObjectDefault(hdc, obj, &a, NULL); 
+      RawBitmap *bg = OffscreenSidebarBackground(a.x, a.y, a.cx, a.cy);
+      DrawStretchedObjectDefault(hdc, obj, &a, NULL);
       GdiFlush();
 
       b.x  = stat_bar_x;
       b.cx = stat_width;
       b.y  = a.y + STATS_MAIN_SPACING;
       b.cy = s->cy - 4 * STATS_MAIN_SPACING;
-      InterfaceDrawBarBorder(NULL, hdc, &b);
+      InterfaceDrawBarBorder(bg, hdc, &b);
    }
 
    ObjectDestroyAndFree(obj);

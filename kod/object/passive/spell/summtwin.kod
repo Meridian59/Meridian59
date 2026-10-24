@@ -91,6 +91,12 @@ messages:
       }
       else
       {
+         % The target may have left the room, or logged off, since it was picked.
+         if Send(oTarget,@GetOwner) <> Send(who,@GetOwner)
+         {
+            return FALSE;
+         }
+
          % Is a player.  Check for valid attack.
          if NOT Send(who,@AllowPlayerAttack,#victim=oTarget)
          {
@@ -116,6 +122,12 @@ messages:
    CastSpell(who = $, lTargets = $, iSpellPower = 1)
    {
       local oTwin, oRoom, iRow, iCol, iFine_Row, iFine_Col, oTarget;
+
+      % The target may have left during the casting trance.
+      if lTargets = $
+      {
+         return;
+      }
 
       oTarget = First(lTargets);
       oTwin = Create(&EvilTwin,#iSpellpower=iSpellpower,#oMaster=who,

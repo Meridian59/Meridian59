@@ -62,5 +62,6 @@ bool GetObjectSize(ID icon_res, int group, int angle, list_type overlays, int *w
 void DrawObjectDecorations(DrawnObject *object);
 bool FindOverlayArea(PDIB pdib_ov, int angle, char hotspot, PDIB pdib_obj, 
 		     list_type overlays, int overlay_depth, AREA *overlay_area);
+int FindHotspotPdib(PDIB pdib, char hotspot, POINT* point);
 
 #endif /* #ifndef _OBJECT3D_H */

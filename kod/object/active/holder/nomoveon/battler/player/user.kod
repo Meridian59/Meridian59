@@ -72,6 +72,10 @@ resources:
    user_err_get_unk = "You can't pick up %s%s; it is no longer accessible."
    user_err_get_dist = "You can't pick up %s%s; it's too far away."
    user_disallow_get = "You're unable to pick up %s%s."
+   user_disallow_get_weight = "You're carrying too much weight to pick up %s%s."
+   user_disallow_get_bulk = "You don't have enough room to carry %s%s."
+   user_disallow_get_weight_bulk = \
+      "You're carrying too much weight and don't have enough room for %s%s."
    user_got_some = "You can't pick up all the %s."
    user_cant_pickup_item_wav_rsc = player_cannot_carry.wav
    user_disallow_drop = "You are unable to drop %s%s."
@@ -257,7 +261,7 @@ resources:
    user_doesnt_know_spell = "You have not yet learned the spell '%s'!"
 
    user_wave_welcome = welcome.wav
-   user_wave_killed = killed.wav
+   user_wave_killed = killed_voice.wav
 
    user_midi_killed = killed.mid
 
@@ -989,13 +993,8 @@ messages:
       
       if liClient_cmd = BP_REQ_DROP
       {
-         if bSpam AND NOT Send(self,@PlayerIsImmortal)
-         {
-            return;
-         }
-
-         oWhat = Nth(client_msg,2);
-         Send(self,@UserDrop,#what=oWhat,#number=number_stuff);
+         lItems = Nth(client_msg,2);
+         Send(self,@UserDropItems,#item_list=lItems,#number_list=number_stuff);
          
          return;
       }
@@ -3326,7 +3325,7 @@ messages:
       return;
    }
 
-   WaveSendUser(wave_rsc = $, source_obj = 0, flags = 0, row = 0, col = 0,
+   WaveSendUser(wave_rsc = $, source_obj = $, flags = 0, row = 0, col = 0,
                 cutoff_radius = 0, max_volume = 0)
    %  If source_obj defined, use its location for source of sound
    %  if not, check row & col, and use that location if either or both are
@@ -3339,6 +3338,11 @@ messages:
    {
       if (wave_rsc <> $) and (pbLogged_on)
       {
+         % Convert since AddPacket expects a number.
+         if source_obj = $
+         {
+            source_obj = 0;
+         }
          AddPacket(1,BP_PLAY_WAVE, 4,wave_rsc, 4,source_obj, 1,flags,
                    4,row, 4,col, 4,cutoff_radius, 4,max_volume);
          SendPacket(poSession);
@@ -3729,7 +3733,9 @@ messages:
             }
             else
             {
-               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               Send(self,@MsgSendUser,
+                    #message_rsc=Send(self,@GetPickupFailRsc,#what=what,
+                                      #number=number),
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);
@@ -3743,7 +3749,8 @@ messages:
             %  KLUDGE!!  -Asif
             if not IsClass(what,&HunterSword)
             {
-               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               Send(self,@MsgSendUser,
+                    #message_rsc=Send(self,@GetPickupFailRsc,#what=what),
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);
@@ -3758,6 +3765,58 @@ messages:
       return;
    }
 
+   GetPickupFailRsc(what = $, number = $)
+   "Returns the message for a failed UserGet of what (number is the amount "
+   "requested, if any).  Names the carrying limits that stopped it."
+   {
+      local iWeight_can_hold, iBulk_can_hold, bTooHeavy, bTooBulky;
+
+      if IsClass(what,&NumberItem)
+      {
+         % Match GetNumberCanHold's unlimited-capacity case.
+         if Send(self,@GetWeightMax) = $
+            OR Send(self,@GetBulkMax) = $
+         {
+            return user_disallow_get;
+         }
+
+         % Not even one item fit, so check each limit the way
+         % GetNumberCanHold does.
+         iWeight_can_hold = Send(what,@GetNumberCanHoldWeight,
+                                 #weight=Bound(Send(self,@GetWeightMax)-piWeight_hold,0,$));
+         iBulk_can_hold = Send(what,@GetNumberCanHoldBulk,
+                               #bulk=Bound(Send(self,@GetBulkMax)-piBulk_hold,0,$));
+         bTooHeavy = (iWeight_can_hold <> INFINITE_COUNT
+                      AND iWeight_can_hold <= 0);
+         bTooBulky = (iBulk_can_hold <> INFINITE_COUNT
+                      AND iBulk_can_hold <= 0);
+      }
+      else
+      {
+         bTooHeavy = NOT Send(self,@CanHoldWeightAndBulk,
+                              #weight=Send(what,@GetWeight));
+         bTooBulky = NOT Send(self,@CanHoldWeightAndBulk,
+                              #bulk=Send(what,@GetBulk));
+      }
+
+      if bTooHeavy AND bTooBulky
+      {
+         return user_disallow_get_weight_bulk;
+      }
+
+      if bTooHeavy
+      {
+         return user_disallow_get_weight;
+      }
+
+      if bTooBulky
+      {
+         return user_disallow_get_bulk;
+      }
+
+      return user_disallow_get;
+   }
+
    UserBlockedSend(what = $)
    "Sent by client when they're blocking messages from a user, and that "
    "user Sends a message."
@@ -3766,16 +3825,38 @@ messages:
       return;
    }
 
-   UserDrop(what = $,number = $)
+   UserDropItems(item_list=$, number_list=$)
+   "Iterates item_list and calls UserDrop for each item.  Extracts the "
+   "appropriate amount from number_list for NumberItems."
    {
-      local oNumber;
+      local i, oItem, iNumber;
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
-      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)  
+      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
       {
          Send(self,@NotifyMonstersOfPresence);
       }
+
+      for i in item_list
+      {
+         oItem = i;
+         iNumber = $;
+
+         if IsClass(oItem,&NumberItem)
+         {
+            iNumber = First(number_list);
+            number_list = Rest(number_list);
+         }
+
+         Send(self,@UserDrop,#what=oItem,#number=iNumber);
+      }
+      return;
+   }
+
+   UserDrop(what = $,number = $)
+   {
+      local oNumber;
 
       if NOT Send(self,@IsHolding,#what=what)
       {
@@ -4976,7 +5057,7 @@ messages:
 
    UserDeposit(what = $,item_list = $,number_list = $)
    {
-      local i, lNumbers, oOffer_num, iNumber;
+      local i, lNumbers, lObjects, oOffer_num, iNumber;
 
       % Only deposit to NPCs.
       if NOT IsClass(what,&Monster)
@@ -4995,12 +5076,25 @@ messages:
       }
 
       % must be holding things you're offering
+      lObjects = $;
       for i in item_list
       {
+         % The list may not name the same item more than once.
+         if lObjects <> $
+            AND FindListElem(lObjects,i) <> 0
+         {
+            Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to deposit "
+                  "the same item twice to",Send(what,@GetTrueName),what,".");
+
+            return FALSE;
+         }
+
          if Send(i,@GetOwner) <> self
          {
             return;
          }
+
+         lObjects = Cons(i,lObjects);
       }
 
       if poOffer_who <> $
@@ -5209,6 +5303,7 @@ messages:
       }
 
       plOffer_items = $;
+      pbOffer_OtherAccepted = FALSE;
 
       return;
    }
@@ -5287,6 +5382,14 @@ messages:
 
          if Send(i,@GetOwner) <> self
          {
+            % plOffer_items has already been cleared above, so the offer must
+            % not be left open: accepting it now would hand over nothing in
+            % exchange for the other side's items.
+            Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to "
+                  "counter-offer an item it doesn't hold to",
+                  Send(poOffer_who,@GetTrueName),poOffer_who,".");
+            Send(self,@CancelIfOffer);
+
             return FALSE;
          }
 

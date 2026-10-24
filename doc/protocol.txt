@@ -150,7 +150,7 @@ Get
 <BP_REQ_GET> <object>
 ----------------------------------------------------------
 Drop
-<BP_REQ_DROP> <object> 
+<BP_REQ_DROP> <object_list>
 ----------------------------------------------------------
 Put
 <BP_REQ_PUT> <object1> <object2>

@@ -92,6 +92,9 @@ static ReturnMessage return_table[] = {
 static char line[MAX_PROPERTYLEN];  // Buffer used to build up a line of a server response
 static int  num_lines;         // # of properties we've gotten for object so far
 
+// Properties of the object we're displaying, in the order the server sent them
+static std::vector<std::string> property_rows;
+
 /* local function prototypes */
 static void AdminStartResponse(int type);
 static void AdminEndResponse(int type);
@@ -199,7 +202,7 @@ void AdminStartResponse(int type)
    switch (type)
    {
    case ADMIN_OBJECT:
-      WindowBeginUpdate(hObjectList);
+      AdminClearProperties();
       ListBox_ResetContent(hObjectList);
       break;
    }
@@ -214,9 +217,9 @@ void AdminEndResponse(int type)
    switch (type)
    {
    case ADMIN_OBJECT:
-      // Add last property of object to list box
+      // Save last property of object, then show them all
       AdminAddProperty(line);
-      WindowEndUpdate(hObjectList);
+      AdminFillPropertyList();
       break;
 
    case ADMIN_RETURN:
@@ -226,7 +229,9 @@ void AdminEndResponse(int type)
 }
 /****************************************************************************/
 /*
- * AdminAddProperty:  Add the given property string to the object list box.
+ * AdminAddProperty:  Save the given property string for the object list box.
+ *   The first property line of a response names the object and its class, and
+ *   sets those instead.
  */
 void AdminAddProperty(char *str)
 {
@@ -251,8 +256,8 @@ void AdminAddProperty(char *str)
    }
    else
    {
-      // Otherwise add property to list box
-      ListBox_AddString(hObjectList, str);
+      // Otherwise save property for the list box
+      property_rows.push_back(str);
 
       prop = AdminNthToken(str, 1);
 
@@ -265,6 +270,55 @@ void AdminAddProperty(char *str)
       }      
    }
    num_lines++;
+}
+/****************************************************************************/
+/*
+ * AdminClearProperties:  Remove all saved properties.
+ */
+void AdminClearProperties(void)
+{
+   property_rows.clear();
+}
+/****************************************************************************/
+/*
+ * AdminFillPropertyList:  Refill the object list box from the saved properties.
+ *   Rows appear in alphabetical order when the sort box is checked, and in the
+ *   order the server sent them otherwise.  Each row's item data is its position
+ *   in the server's order.
+ */
+void AdminFillPropertyList(void)
+{
+   std::vector<int> order(property_rows.size());
+   for (size_t i = 0; i < order.size(); i++)
+      order[i] = (int) i;
+
+   if (IsDlgButtonChecked(hAdminDlg, IDC_SORTPROPS) == BST_CHECKED)
+      std::sort(order.begin(), order.end(), [](int a, int b)
+      {
+         return _stricmp(property_rows[a].c_str(), property_rows[b].c_str()) < 0;
+      });
+
+   // Keep the same property selected across a reorder
+   int selected = -1;
+   int index = ListBox_GetCurSel(hObjectList);
+   if (index != LB_ERR)
+      selected = (int) ListBox_GetItemData(hObjectList, index);
+
+   WindowBeginUpdate(hObjectList);
+   ListBox_ResetContent(hObjectList);
+
+   for (size_t i = 0; i < order.size(); i++)
+   {
+      int pos = ListBox_AddString(hObjectList, property_rows[order[i]].c_str());
+      if (pos < 0)
+         continue;
+
+      ListBox_SetItemData(hObjectList, pos, order[i]);
+      if (order[i] == selected)
+         ListBox_SetCurSel(hObjectList, pos);
+   }
+
+   WindowEndUpdate(hObjectList);
 }
 /****************************************************************************/
 /*
@@ -511,11 +565,16 @@ INT_PTR CALLBACK AdminValueDialogProc(HWND hDlg, UINT message, WPARAM wParam, LP
           
           SendMessage(hAdminDlg, BK_SENDCMD, 0, (LPARAM) command);
           
-          // Change value in object list box
+          // Change value in object list box and in the saved properties
           sprintf(command, "%s = %s %s", property, str, line);
+          int row = (int) ListBox_GetItemData(hObjectList, index);
+          if (row >= 0 && row < (int) property_rows.size())
+            property_rows[row] = command;
+
           WindowBeginUpdate(hObjectList);
           ListBox_DeleteString(hObjectList, index);
           ListBox_InsertString(hObjectList, index, command);
+          ListBox_SetItemData(hObjectList, index, row);
           WindowEndUpdate(hObjectList);
         }
 	    

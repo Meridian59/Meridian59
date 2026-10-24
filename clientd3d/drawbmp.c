@@ -117,6 +117,79 @@ void DrawStretchedObjectGroup(HDC hdc, object_node *obj, int group, AREA *area, 
 	else
 		DrawObject(hdc, obj, group, true, area, brush, 0, 0, 0, true);
 }
+/************************************************************************/
+/*
+* DrawStretchedObjectGroupTransparent:  Like DrawStretchedObjectGroup, but
+*   the background is painted directly on hdc with the given brush and only
+*   the object's opaque pixels are composited on top.  Because the background
+*   is drawn in true color (rather than filled into the 8-bit palettised
+*   offscreen buffer and then copied), it matches the surrounding window/dialog
+*   color exactly instead of snapping to the nearest game-palette entry.  Used
+*   for the object/avatar bitmap in the description dialogs so the backdrop
+*   blends seamlessly into the dialog face.
+*/
+void DrawStretchedObjectGroupTransparent(HDC hdc, object_node *obj, int group, AREA *area, HBRUSH brush)
+{
+	int angle = (obj->flags & OF_PLAYER) ? 7 * MAX_ANGLE / 8 : 0;
+	int draw_size = std::min(OFFSCREEN_BITMAP_SIZE, std::max(area->cx, area->cy));
+	RECT bgRect;
+	HDC memDC, maskDC;
+	HBITMAP memBmp, maskBmp, oldMemBmp, oldMaskBmp;
+	PALETTEENTRY pe;
+	COLORREF keyColor, oldDestBk, oldDestText;
+
+	// Paint the background straight onto the destination DC in true color, so
+	// it matches the dialog window exactly.
+	bgRect.left = area->x;
+	bgRect.top = area->y;
+	bgRect.right = area->x + area->cx;
+	bgRect.bottom = area->y + area->cy;
+	FillRect(hdc, &bgRect, brush);
+
+	// Render the object into the offscreen buffer over a transparent background.
+	// Filling with TRANSPARENT_INDEX makes every pixel the sprite doesn't cover
+	// the chroma key; the NULL brush stops DrawObject from overwriting it, and
+	// copy == false leaves the result in the offscreen buffer for us to mask.
+	memset(gOffscreenBits, TRANSPARENT_INDEX, OFFSCREEN_BITMAP_SIZE * OFFSCREEN_BITMAP_SIZE);
+	DrawObject(hdc, obj, group, true, area, NULL, 0, 0, angle, false);
+
+	// The chroma key is the RGB the offscreen's transparent index resolves to.
+	GetPaletteEntries(hPal, TRANSPARENT_INDEX, 1, &pe);
+	keyColor = RGB(pe.peRed, pe.peGreen, pe.peBlue);
+
+	// Make a true-color copy of the rendered square.
+	memDC = CreateCompatibleDC(hdc);
+	memBmp = CreateCompatibleBitmap(hdc, draw_size, draw_size);
+	oldMemBmp = (HBITMAP) SelectObject(memDC, memBmp);
+	BitBlt(memDC, 0, 0, draw_size, draw_size, gOffscreenDC, 0, 0, SRCCOPY);
+
+	// Build a 1-bpp mask: white where the chroma key shows, black on the object.
+	maskDC = CreateCompatibleDC(hdc);
+	maskBmp = CreateBitmap(draw_size, draw_size, 1, 1, NULL);
+	oldMaskBmp = (HBITMAP) SelectObject(maskDC, maskBmp);
+	SetBkColor(memDC, keyColor);
+	BitBlt(maskDC, 0, 0, draw_size, draw_size, memDC, 0, 0, SRCCOPY);
+
+	// Knock the background out of the color copy, leaving the object on black.
+	SetBkColor(memDC, RGB(0, 0, 0));
+	SetTextColor(memDC, RGB(255, 255, 255));
+	BitBlt(memDC, 0, 0, draw_size, draw_size, maskDC, 0, 0, SRCAND);
+
+	// Punch the object's silhouette out of the destination, then OR it in.
+	oldDestBk = SetBkColor(hdc, RGB(255, 255, 255));
+	oldDestText = SetTextColor(hdc, RGB(0, 0, 0));
+	BitBlt(hdc, area->x, area->y, draw_size, draw_size, maskDC, 0, 0, SRCAND);
+	BitBlt(hdc, area->x, area->y, draw_size, draw_size, memDC, 0, 0, SRCPAINT);
+	SetBkColor(hdc, oldDestBk);
+	SetTextColor(hdc, oldDestText);
+
+	SelectObject(memDC, oldMemBmp);
+	SelectObject(maskDC, oldMaskBmp);
+	DeleteObject(memBmp);
+	DeleteObject(maskBmp);
+	DeleteDC(memDC);
+	DeleteDC(maskDC);
+}
 /*
 */
 void DrawObjectIcon(HDC hdc, ID icon, int group, bool draw_obj, AREA *area, HBRUSH brush,
@@ -132,12 +205,12 @@ void DrawObjectIcon(HDC hdc, ID icon, int group, bool draw_obj, AREA *area, HBRU
 		return;
 	
 	// If object larger than offscreen buffer, we'll have to stretch it down
-	draw_size = min(max(OFFSCREEN_BITMAP_SIZE - x, OFFSCREEN_BITMAP_SIZE - y), 
-		max(area->cx, area->cy));
-	
+	draw_size = std::min(std::max(OFFSCREEN_BITMAP_SIZE - x, OFFSCREEN_BITMAP_SIZE - y),
+		std::max(area->cx, area->cy));
+
 	SelectPalette(hdc, hPal, FALSE);
 	RealizePalette(hdc);
-	
+
 	pdib = GetObjectPdib(icon, 0, group);
 	if (pdib == NULL)
 		return;
@@ -174,24 +247,24 @@ void DrawObjectIcon(HDC hdc, ID icon, int group, bool draw_obj, AREA *area, HBRU
 	height = max_rect.bottom - max_rect.top;
 	
 	/* Stretch object to just fit in square */
-	inc = (max(width, height) << FIX_DECIMAL) / draw_size;
-	
+	inc = (std::max(width, height) << FIX_DECIMAL) / draw_size;
+
 	if (draw_obj || has_overlay)
 	{
 		// Center object in drawing square
 		temp = draw_size - (width << FIX_DECIMAL) / inc;
 		obj_rect.left  = x + temp / 2 - DIVUP((max_rect.left << FIX_DECIMAL), inc);
 		obj_rect.right = obj_rect.left + DIVUP((DibWidth(pdib) << FIX_DECIMAL), inc);
-		
+
 		temp = draw_size - (height << FIX_DECIMAL) / inc;
 		obj_rect.top    = y + temp / 2 - DIVUP((max_rect.top << FIX_DECIMAL), inc);
 		obj_rect.bottom = obj_rect.top + DIVUP((DibHeight(pdib) << FIX_DECIMAL), inc);
 	}
-	
+
 	// Draw underlays
 	//if (obj->overlays != NULL)
 	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, true, obj->secondtranslation, obj->flags);
-	
+
 	if (draw_obj)
 		DrawStretchedBitmap(pdib, obj_rect, inc, 0, 0, 0);
 	
@@ -231,12 +304,12 @@ void DrawObject(HDC hdc, object_node *obj, int group, bool draw_obj, AREA *area,
 		return;
 	
 	// If object larger than offscreen buffer, we'll have to stretch it down
-	draw_size = min(max(OFFSCREEN_BITMAP_SIZE - x, OFFSCREEN_BITMAP_SIZE - y), 
-		max(area->cx, area->cy));
-	
+	draw_size = std::min(std::max(OFFSCREEN_BITMAP_SIZE - x, OFFSCREEN_BITMAP_SIZE - y),
+		std::max(area->cx, area->cy));
+
 	SelectPalette(hdc, hPal, FALSE);
 	RealizePalette(hdc);
-	
+
 	pdib = GetObjectPdib(obj->icon_res, angle, group);
 	if (pdib == NULL)
 		return;
@@ -263,24 +336,24 @@ void DrawObject(HDC hdc, object_node *obj, int group, bool draw_obj, AREA *area,
 	height = max_rect.bottom - max_rect.top;
 	
 	/* Stretch object to just fit in square */
-	inc = (max(width, height) << FIX_DECIMAL) / draw_size;
-	
+	inc = (std::max(width, height) << FIX_DECIMAL) / draw_size;
+
 	if (draw_obj || has_overlay)
 	{
 		// Center object in drawing square
 		temp = draw_size - (width << FIX_DECIMAL) / inc;
 		obj_rect.left  = x + temp / 2 - DIVUP((max_rect.left << FIX_DECIMAL), inc);
 		obj_rect.right = obj_rect.left + DIVUP((DibWidth(pdib) << FIX_DECIMAL), inc);
-		
+
 		temp = draw_size - (height << FIX_DECIMAL) / inc;
 		obj_rect.top    = y + temp / 2 - DIVUP((max_rect.top << FIX_DECIMAL), inc);
 		obj_rect.bottom = obj_rect.top + DIVUP((DibHeight(pdib) << FIX_DECIMAL), inc);
 	}
-	
+
 	// Draw underlays
 	if (obj->overlays != NULL)
 		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, true, obj->secondtranslation, obj->flags, angle);
-	
+
 	if (draw_obj)
 		DrawStretchedBitmap(pdib, obj_rect, inc, obj->translation, obj->secondtranslation, obj->flags);
 	
@@ -411,10 +484,10 @@ void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE s
 	ObjectRowData d;
 	
 	// Bring rectangle into range to prevent crashes
-	rect.left   = max(rect.left, 0);
-	rect.right  = min(rect.right, OFFSCREEN_BITMAP_SIZE - 1);
-	rect.top    = max(rect.top, 0);
-	rect.bottom = min(rect.bottom, OFFSCREEN_BITMAP_SIZE - 1);
+	rect.left   = std::max(rect.left, 0L);
+	rect.right  = std::min(rect.right, (long)(OFFSCREEN_BITMAP_SIZE - 1));
+	rect.top    = std::max(rect.top, 0L);
+	rect.bottom = std::min(rect.bottom, (long)(OFFSCREEN_BITMAP_SIZE - 1));
 	
 	bitmap_width = DibWidth(pdib);
 	obj_bits = DibPtr(pdib);
@@ -533,12 +606,12 @@ bool ComputeObjectBoundingBox(PDIB pdib, list_type overlays, bool include_object
 		}
 		else
 		{
-			max_rect->left = min(max_rect->left, x);
-			max_rect->top  = min(max_rect->top, y);
+			max_rect->left = std::min((int)max_rect->left, x);
+			max_rect->top  = std::min((int)max_rect->top, y);
 		}
-		
-		max_rect->right  = max(max_rect->right, x + DibWidth(pdib_ov) * obj_shrink / shrink);
-		max_rect->bottom = max(max_rect->bottom, y + DibHeight(pdib_ov) * obj_shrink / shrink);
+
+		max_rect->right  = std::max((int)max_rect->right, x + DibWidth(pdib_ov) * obj_shrink / shrink);
+		max_rect->bottom = std::max((int)max_rect->bottom, y + DibHeight(pdib_ov) * obj_shrink / shrink);
 		
 		has_overlay = true;
 	}
@@ -554,13 +627,13 @@ void CreateWindowBackground(void)
 {
 	BITMAPINFOHEADER *ptr;
 	
-	ptr = (BITMAPINFOHEADER *) GetBitmapResource(hInst, IDB_BACKGROUND);
+	ptr = (BITMAPINFOHEADER *) GetBitmapResource(hInst, MainThemeResourceId(IDB_BACKGROUND));
 	if (ptr == NULL)
 		debug(("Couldn't lock resource!\n"));      
 	bkgnd.bits = ((BYTE *) ptr) + sizeof(BITMAPINFOHEADER) + NUM_COLORS * sizeof(RGBQUAD);
 	
-	bkgnd.height = min(ptr->biHeight, OFFSCREEN_BITMAP_SIZE);
-	bkgnd.width  = min(ptr->biWidth, OFFSCREEN_BITMAP_SIZE);
+	bkgnd.height = std::min((int)ptr->biHeight, OFFSCREEN_BITMAP_SIZE);
+	bkgnd.width  = std::min((int)ptr->biWidth, OFFSCREEN_BITMAP_SIZE);
 }
 /************************************************************************/
 /*
@@ -608,10 +681,10 @@ void DrawWindowBackgroundColor(RawBitmap *bg, HDC hdc, RECT *rect, int xin, int 
 				{
 					x = rect->left;
 					xoffset = xin % bg->width;
-					height = min(bg->height - yoffset, rect->bottom - y);
+					height = std::min((LONG)(bg->height - yoffset), rect->bottom - y);
 					while (x < rect->right)
 					{
-						width = min(bg->width - xoffset, rect->right - x);
+						width = std::min((LONG)(bg->width - xoffset), rect->right - x);
 						BitBlt(hdc, x, y, width, height, gOffscreenDC, xoffset, yoffset, SRCCOPY);
 						x += bg->width - xoffset;
 						xoffset = 0;
@@ -648,10 +721,10 @@ void DrawWindowBackgroundMem(RawBitmap *bg, BYTE *ptr, RECT *r, int block_width,
 	{
 		x = r->left;
 		xoffset = xin % bg->width;
-		height = min(bg->height - yoffset, r->bottom - y);
+		height = std::min(bg->height - yoffset, (int)(r->bottom - y));
 		while (x < r->right)
 		{
-			width = min(bg->width - xoffset, r->right - x);
+			width = std::min(bg->width - xoffset, (int)(r->right - x));
 			
 			gptr = ptr + x + y * block_width;
 			bkgnd_ptr = bg->bits + xoffset + yoffset * bg->width;

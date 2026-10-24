@@ -41,7 +41,7 @@ classvars:
    viManaDrain = 8      % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
 
-   viSpell_Exertion = 6
+   viSpellExertion = 6
 
    vbCanNewbieSing = FALSE     % Newbies cannot use this song
    viHarmful = TRUE

@@ -1058,6 +1058,7 @@ messages:
       }
       
       plUsing = $;
+      plOverlays = $;
 
       % Don't propagate.  We do everything here.
       return;

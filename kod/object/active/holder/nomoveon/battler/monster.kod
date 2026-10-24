@@ -886,8 +886,11 @@ messages:
       % Getting hit revitalizes my will to walk.
       piWalkingEffort = 0;
 
-      Send(poBrain,@SomethingAttacked,#mob=self,#state=piState,
-           #what=what,#victim=victim,#use_weapon=use_weapon);
+      if poBrain <> $
+      {
+         Send(poBrain,@SomethingAttacked,#mob=self,#state=piState,
+              #what=what,#victim=victim,#use_weapon=use_weapon);
+      }
 
       propagate;
    }
@@ -904,7 +907,7 @@ messages:
    "If we're not fighting, and the person is right near us, lets reset our "
    "timers so we dont attack unless we're attacked for the first few seconds "
    "This means that chasing mobs will get reset too, but we dont want em to "
-   "hit someome in a room transition."
+   "hit someone in a room transition."
    {
       local oQuestNode;
 
@@ -1274,7 +1277,7 @@ messages:
       local oSpell;
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_ANTIMAGIC_AURA);
-      if Send(poOwner,@CheckRoomFlag,#flag=ROOM_ANTI_MAGIC)
+      if Send(poOwner,@CheckRoomFlag,#flag=ROOM_SPELL_POWER_MODIFIED)
          AND (Send(poOwner,@GetEnchantmentState,#what=oSpell) <> $)
       {
          % Reduce chance to 2/3 by multiplying base by 3/2
@@ -1616,7 +1619,7 @@ messages:
    {
       if vrSound_miss <> $
       {
-         Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=vrSound_miss,
+         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_miss,
               #flags=SOUND_RANDOM_PITCH);
          if (IsClass(what,&Player))
          {
@@ -1630,11 +1633,11 @@ messages:
 
    AssessMiss(what = $, stroke_obj = $)
    "This does the fallout of a miss, gives appropriate message, etc.  "
-   "Called on target when missing."
+   "Called on self when missing."
    {
       if vrSound_miss <> $
       {
-         Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=vrSound_miss,
+         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_miss,
               #flags=SOUND_RANDOM_PITCH);
       }
 
@@ -2916,6 +2919,12 @@ messages:
    "Handle a random timer, and set up the next one."
    {
       local lAction, iNum, oTarget, i, oLibrary;
+
+      % Clear timer, as function has some early exits
+      if NOT test
+      {
+         ptRandom = $;
+      }
 
       % Clear spam list
       plSpamList = $;
@@ -5781,6 +5790,12 @@ messages:
    }
 
    DMCanArmageddon()
+   {
+      return TRUE;
+   }
+
+   DMCanPlace()
+   "Can an admin spawn extra copies of this monster?"
    {
       return TRUE;
    }

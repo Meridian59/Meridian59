@@ -7,15 +7,53 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
-// Variables
+///////////////
+// Variables //
+///////////////
+static particle_system sandParticleSystem;
 
-static particle_system particleSystem;
+/////////////////////////////
+// Internal Implementation //
+/////////////////////////////
 
-// Interfaces
+/**
+* Initializes the sandstorm particle emitters with predefined positions, energy, and colors for the
+* particle system.
+*/
+static void SandstormInit(void)
+{
+	static constexpr int SAND_EMITTER_COUNT = 8;
+	static constexpr int SAND_LIFETIME = 40;
+	static constexpr float SAND_EMITTER_RADIUS = 10000.0f;
+	static constexpr float SAND_Z_VARIANCE = 1000.0f;
+	static constexpr float SAND_VELOCITY = 400.0f;
+	static constexpr float SAND_TIMER = 1;
+	static constexpr float SAND_RAND_ROT = PI / 1000.0f;
+	static constexpr custom_bgra SANDSTORM_COLOR = {6,153,226,255};
 
-static void SandstormInit(void);
+	D3DParticleSystemClear(&sandParticleSystem);
+	for (int i = 0; i < SAND_EMITTER_COUNT; i++)
+	{
+		emitter* newEmitter = D3DParticleEmitterInit(&sandParticleSystem, SAND_TIMER);
+		newEmitter->particleLifetime = SAND_LIFETIME;
+		newEmitter->positionVarianceMin = {-SAND_EMITTER_RADIUS, -SAND_EMITTER_RADIUS, -SAND_Z_VARIANCE};
+		newEmitter->positionVarianceMax = {SAND_EMITTER_RADIUS, SAND_EMITTER_RADIUS, SAND_Z_VARIANCE * 2.0f};
+		newEmitter->rotationVarianceMin = {-SAND_RAND_ROT, -SAND_RAND_ROT, -SAND_RAND_ROT};
+		newEmitter->rotationVarianceMax = {SAND_RAND_ROT, SAND_RAND_ROT, SAND_RAND_ROT};
 
-// Implementations
+		// Each emitters fire sand particles at 22.5 degrees in a full circle.
+		float angle = (static_cast<float>(i) * 2.0f * PI) / static_cast<float>(SAND_EMITTER_COUNT);
+		float directionX = cosf(angle);
+		float directionY = sinf(angle);
+		newEmitter->velocity.x = directionX * SAND_VELOCITY;
+		newEmitter->velocity.y = directionY * SAND_VELOCITY;
+		newEmitter->bgra = SANDSTORM_COLOR;
+	}
+}
+
+////////////////////////////
+// Public Implementations //
+////////////////////////////
 
 /**
 * Initializes the particle effects, specifically the sandstorm particle emitters.
@@ -25,232 +63,41 @@ void D3DFxInit()
 	SandstormInit();
 }
 
+void D3DFxShutdown()
+{
+	D3DParticleSystemClear(&sandParticleSystem);
+}
+
 /**
-* Updates and renders all active particle emitters, including the sandstorm effect, 
+* Updates and renders all active particle emitters, including the sandstorm effect,
 * in the current frame.
 */
 void D3DRenderParticles(const ParticleSystemStructure& pss)
 {
-	list_type	list;
-	emitter		*pEmitter;
+	gpD3DDevice->SetVertexShader(nullptr);
+	gpD3DDevice->SetVertexDeclaration(pss.vertexDeclaration);
 
-	for (list = particleSystem.emitterList; list != NULL; list = list->next)
+	// Update world position of each emitter in the particle system.
+	for (emitter* pEmitter : sandParticleSystem.emitterList)
 	{
-		pEmitter = (emitter *)list->data;
-
-		if (pEmitter)
-			D3DParticleEmitterUpdate(pEmitter, pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z);
+		D3DParticleEmitterUpdate(pEmitter, {pss.playerDeltaPos.x, pss.playerDeltaPos.y, pss.playerDeltaPos.z});
 	}
 
+	// If the particle system is active, update its particles.
 	if (effects.sand)
 	{
-		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, pss.vertexDeclaration);
-
-		D3DParticleSystemUpdate(&particleSystem, pss.particlePool, pss.particleCacheSystem);
+		D3DParticleSystemUpdate(&sandParticleSystem, pss.particlePool, pss.particleCacheSystem);
 	}
 }
 
 /**
-* Initializes the sandstorm particle emitters with predefined positions, energy, and colors for the 
-* particle system.
-*/
-void SandstormInit(void)
-{
-	static const int EMITTER_RADIUS = 12;
-	static const int EMITTER_ENERGY = 40;
-	static const int EMITTER_HEIGHT = 0;
-
-	D3DParticleSystemReset(&particleSystem);
-	// four corners, blowing around the perimeter
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		500.0f, 0, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-
-	// four corners, blowing towards player
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		353.55f, -353.55f, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		-353.55f, -353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-
-	// forward, left, right, and back, blowing towards player
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
-		500.0f, 0.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-
-	// four corners, blowing around the perimeter
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		500.0f, 0, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-
-	// four corners, blowing towards player
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		353.55f, -353.55f, 0,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
-		-353.55f, -353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
-		-353.55f, 353.55f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-
-	// forward, left, right, and back, blowing towards player
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * -1024.0f, 0, EMITTER_HEIGHT,
-		500.0f, 0.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
-		-500.0f, 0, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
-		0, -500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-	D3DParticleEmitterInit(&particleSystem,
-		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
-		0, 500.0f, 0.0f,
-		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
-		EMITTER_ENERGY, 1,
-		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
-}
-
-/**
-* Applies post-render overlay effects such as alpha blending, screen flashes, and pain effects, 
+* Applies post-render overlay effects such as alpha blending, screen flashes, and pain effects,
 * and resets the rendering cache.
 */
 void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 {
-	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, 1, D3DCMP_GREATEREQUAL);
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaTestState(TRUE, 1, D3DCMP_GREATEREQUAL);
+	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
 	D3DCacheSystemReset(fxrss.objectCacheSystem);
@@ -575,10 +422,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	// whiteout
 	if (effects.whiteout)
 	{
-		int	whiteout = min(effects.whiteout, 500);
+		int whiteout = std::min(effects.whiteout, 500);
 
 		whiteout = whiteout * COLOR_MAX / 500;
-		whiteout = max(whiteout, 200);
+		whiteout = std::max(whiteout, 200);
 
 		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)
@@ -617,7 +464,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	{
 		if (effects.pain)
 		{
-			int	pain = min(effects.pain, 2000);
+			int	pain = std::min(effects.pain, 2000);
 
 			pain = pain * 204 / 2000;
 
@@ -660,7 +507,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 }
 
 /**
-* Creates a blur and wave distortion effects using frame buffers, applying it to the current screen 
+* Creates a blur and wave distortion effects using frame buffers, applying it to the current screen
 * using a series of textures.
 */
 void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
@@ -684,14 +531,13 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 		}
 	}
 
-	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, 1, D3DCMP_GREATEREQUAL);
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaTestState(FALSE, 1, D3DCMP_GREATEREQUAL);
+	D3DRender_SetAlphaBlendState(FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, fxRss.vertexDeclaration);
 
-	D3DRenderFramebufferTextureCreate(fxRss.backBufferTexFull, fxRss.backBufferTex[t],
-		fxRss.smallTextureSize, fxRss.smallTextureSize);
+	D3DRender_CaptureEffect(fxRss.backBufferTexFull, fxRss.backBufferTex[t]);
 
 	D3DCacheSystemReset(fxRss.effectCacheSystem);
 	D3DRenderPoolReset(fxRss.effectPool, &D3DMaterialBlurPool);
@@ -739,8 +585,8 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &fxRss.transformMatrix);
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
 
-	D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, 1, D3DCMP_GREATEREQUAL);
-	D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+	D3DRender_SetAlphaTestState(FALSE, 1, D3DCMP_GREATEREQUAL);
+	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
 	D3DCacheFill(fxRss.effectCacheSystem, fxRss.effectPool, 1);
 	D3DCacheFlush(fxRss.effectCacheSystem, fxRss.effectPool, 1, D3DPT_TRIANGLESTRIP);

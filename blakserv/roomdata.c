@@ -22,7 +22,8 @@ roomdata_node *roomdata;
 blak_int num_roomdata;
 
 /* local function prototypes */
-bool LoadRoomFile(char *fname,room_type *file_info);
+static bool LoadRoomFile(char *fname,room_type *file_info);
+static std::string tolower(std::string s);
 
 #define signum(a) ((a)<0 ? -1 : ((a) > 0 ? 1 : 0))
 
@@ -53,7 +54,11 @@ void ResetRoomData()
    {
       temp = room->next;
       BSPRoomFreeServer(&(room->file_info));
-      FreeMemory(MALLOC_ID_ROOM,room,sizeof(roomdata_node));
+
+      // Manually subtract memory for room_type structure
+      AddMemoryCount(MALLOC_ID_ROOM, -(int64_t)room->GetSize());
+
+      delete room;
       room = temp;
    }
    roomdata = NULL;
@@ -65,32 +70,30 @@ blak_int LoadRoomData(int resource_id)
    val_type ret_val;
    resource_node *r;
    roomdata_node *room;
-   room_type file_info;
 
    r = GetResourceByID(resource_id);
    if (r == NULL)
    {
-      bprintf("LoadRoomData can't find resource %i\n",resource_id);
+      eprintf("LoadRoomData can't find resource %i\n",resource_id);
       return NIL;
    }
 
-   if (!LoadRoomFile(r->resource_val,&file_info))
+   room = new roomdata_node();
+   if (!LoadRoomFile(r->resource_val,&room->file_info))
    {
-      bprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
+      eprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
+      delete room;
       return NIL;
    }
 
-   room = (roomdata_node *)AllocateMemory(MALLOC_ID_ROOM,sizeof(roomdata_node));
-   room->roomdata_id = num_roomdata++;
-   room->file_info = file_info;
+   AddMemoryCount(MALLOC_ID_ROOM, (int64_t)room->GetSize());
 
+   room->roomdata_id = num_roomdata++;
+   room->resource_id = resource_id;
+   std::filesystem::path path(r->resource_val);
+   room->room_filename = tolower(path.stem().string());
    room->next = roomdata;
    roomdata = room;
-
-/*
-   dprintf("LoadRoomData read room %i [%i,%i]\n",
-	   room->roomdata_id,room->file_info.rows,room->file_info.cols);
-*/
 
    ret_val.v.tag = TAG_ROOM_DATA;
    ret_val.v.data = room->roomdata_id;
@@ -109,6 +112,22 @@ roomdata_node * GetRoomDataByID(int id)
       room = room->next;
    }
    return NULL;
+}
+
+roomdata_node *GetRoomDataByFilename(const std::string &name)
+{
+   roomdata_node *room;
+   // Accept names with or without an extension, in any case
+   auto lowername = tolower(std::filesystem::path(name).stem().string());
+   
+   room = roomdata;
+   while (room != NULL)
+   {
+     if (room->room_filename == lowername)
+       return room;
+     room = room->next;
+   }
+   return nullptr;
 }
 
 bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_col)
@@ -370,3 +389,8 @@ bool LoadRoomFile(char *fname,room_type *file_info)
    return BSPRooFileLoadServer(s,file_info);
 }
 
+std::string tolower(std::string s) {
+  std::transform(s.begin(), s.end(), s.begin(),
+                 [](unsigned char c){ return std::tolower(c); });
+  return s;
+}

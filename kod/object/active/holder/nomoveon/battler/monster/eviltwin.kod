@@ -295,6 +295,12 @@ messages:
    {
       local iFlags;
       
+      if poOriginal = $
+      {
+         % Without an original, return this twin's own flags.
+         propagate;
+      }
+
       iFlags = send(poOriginal,@GetObjectFlags);
       if (iFlags & USER_YES) {  iFlags = (iFlags | FALSEPLAYER_YES);  }
       

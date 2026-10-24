@@ -1,0 +1,41 @@
+# Source lists read from the Windows nmake makefiles, so a file upstream adds
+# there is built on Linux and macOS without a CMake change.
+
+# m59_nmake_objects(<makefile> <out-var>): base names of the $(OUTDIR)\<name>.obj
+# entries in a makefile, in order, without duplicates.
+function(m59_nmake_objects makefile out)
+  file(READ "${makefile}" text)
+  string(REGEX MATCHALL "\\$\\(OUTDIR\\)[\\\\/][A-Za-z0-9_]+\\.obj" hits "${text}")
+  set(names "")
+  foreach(hit IN LISTS hits)
+    string(REGEX REPLACE ".*[\\\\/]([A-Za-z0-9_]+)\\.obj" "\\1" name "${hit}")
+    list(APPEND names "${name}")
+  endforeach()
+  list(REMOVE_DUPLICATES names)
+  set(${out} "${names}" PARENT_SCOPE)
+endfunction()
+
+# m59_resolve_sources(<out-var> <names> DIRS <dir>...): <dir>/<name>.c (or .cpp)
+# for each name, from the first directory that has it; names in SKIP are left out.
+function(m59_resolve_sources out names)
+  cmake_parse_arguments(ARG "" "" "DIRS;SKIP" ${ARGN})
+  set(sources "")
+  foreach(name IN LISTS names)
+    if (name IN_LIST ARG_SKIP)
+      continue()
+    endif()
+    set(found "")
+    foreach(dir IN LISTS ARG_DIRS)
+      foreach(ext c cpp)
+        if (NOT found AND EXISTS "${dir}/${name}.${ext}")
+          set(found "${dir}/${name}.${ext}")
+        endif()
+      endforeach()
+    endforeach()
+    if (NOT found)
+      message(FATAL_ERROR "No source for ${name}.obj in ${ARG_DIRS}")
+    endif()
+    list(APPEND sources "${found}")
+  endforeach()
+  set(${out} "${sources}" PARENT_SCOPE)
+endfunction()

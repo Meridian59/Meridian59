@@ -1,0 +1,46 @@
+#
+# makefile for the client on Linux and macOS
+#
+# The client, its modules and the Win32 layer they run on (win32/) build with
+# CMake (CMakeLists.txt at the top); this drives it as the other makefiles
+# build: into debug/ (RELEASE=1: release/), then the client to run/localclient.
+#
+#   make -f makefile.linux [RELEASE=1]        build, copy to run/localclient
+#   make -f makefile.linux test [RELEASE=1]   also build and run the layer's tests
+#   make -f makefile.linux clean
+#
+# JOBS: parallel compiles (default: the cores, as nproc counts them).
+#
+
+TOPDIR=..
+
+include $(TOPDIR)/common.mak.linux
+
+ifdef RELEASE
+BUILDTYPE = Release
+else
+BUILDTYPE = Debug
+endif
+
+CMAKE = cmake
+JOBS ?= $(shell nproc 2>/dev/null || sysctl -n hw.ncpu)
+RUNDIR = $(OUTDIR)/run
+
+all : build
+	-@mkdir -p $(CLIENTRUNDIR)/resource $(CLIENTRUNDIR)/fonts
+	$(CP) $(RUNDIR)/meridian $(RUNDIR)/libm59win32.* $(CLIENTRUNDIR)
+	$(CP) $(RUNDIR)/resource/*.dll $(CLIENTRUNDIR)/resource
+	$(CP) $(RUNDIR)/fonts/* $(CLIENTRUNDIR)/fonts
+
+build :
+	$(CMAKE) -S $(TOPDIR) -B $(OUTDIR) -DCMAKE_BUILD_TYPE=$(BUILDTYPE) $(CMAKEFLAGS)
+	$(CMAKE) --build $(OUTDIR) --parallel $(JOBS)
+
+test : override CMAKEFLAGS += -DM59_WIN32_TESTS=ON
+test : all
+	ctest --test-dir $(OUTDIR) --output-on-failure
+
+clean :
+	$(RM) -r $(OUTDIR)
+
+.PHONY : all build test clean

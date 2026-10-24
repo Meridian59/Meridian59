@@ -1,0 +1,14 @@
+What builds Wine 10.0 (its source release, which the build downloads; LGPL 2.1
+or later: COPYING.LIB) into libm59win32 on Linux and macOS.  Wine's files are
+used unchanged: dlls/comctl32's sources, include/, tools/widl (the headers
+Wine makes from its IDL files), tools/wrc (the resource scripts) and
+tools/sfnt2fon with fonts/ (the raster fonts).
+
+wine_prelude.h: included first in Wine's sources (16-bit wide C runtime, TEB).
+m59_guids.c, m59_weak.c: what comctl32 gets elsewhere in Wine.
+include/wine/exception.h: Wine's structured exception macros, as plain C.
+
+The raster fonts, built into fonts/ next to the layer as Wine builds them:
+the Windows raster faces (MS Sans Serif, System, Small Fonts, Courier,
+Fixedsys) with Windows' sizes, metrics and character widths, drawn from their
+bitmaps (core/rasterfont.cpp).

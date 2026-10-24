@@ -1,0 +1,8 @@
+/* user32's system icons (LoadIcon(NULL, IDI_*)): Wine's, as its user32.rc has them. */
+32512 ICON "@ICONS@/oic_sample.ico"
+32513 ICON "@ICONS@/oic_hand.ico"
+32514 ICON "@ICONS@/oic_ques.ico"
+32515 ICON "@ICONS@/oic_bang.ico"
+32516 ICON "@ICONS@/oic_note.ico"
+32517 ICON "@ICONS@/oic_winlogo.ico"
+32518 ICON "@ICONS@/oic_shield.ico"

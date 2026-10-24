@@ -1,0 +1,58 @@
+/*
+ * m59_weak.c (M59):  The controls commctrl.c's DllMain registers, as no-ops until
+ *   their Wine sources are built in; each real one replaces its stub at link time.
+ */
+
+#include "windef.h"
+#include "comctl32.h"
+
+#define STUB(name) __attribute__((weak)) void name(void) {}
+
+STUB(ANIMATE_Register)
+STUB(ANIMATE_Unregister)
+STUB(BUTTON_Register)
+STUB(COMBOEX_Register)
+STUB(COMBOEX_Unregister)
+STUB(COMBOLBOX_Register)
+STUB(COMBO_Register)
+STUB(DATETIME_Register)
+STUB(DATETIME_Unregister)
+STUB(EDIT_Register)
+STUB(FLATSB_Register)
+STUB(FLATSB_Unregister)
+STUB(HEADER_Register)
+STUB(HEADER_Unregister)
+STUB(HOTKEY_Register)
+STUB(HOTKEY_Unregister)
+STUB(IPADDRESS_Register)
+STUB(IPADDRESS_Unregister)
+STUB(LISTBOX_Register)
+STUB(LISTVIEW_Register)
+STUB(LISTVIEW_Unregister)
+STUB(MONTHCAL_Register)
+STUB(MONTHCAL_Unregister)
+STUB(NATIVEFONT_Register)
+STUB(NATIVEFONT_Unregister)
+STUB(PAGER_Register)
+STUB(PAGER_Unregister)
+STUB(PROGRESS_Register)
+STUB(PROGRESS_Unregister)
+STUB(REBAR_Register)
+STUB(REBAR_Unregister)
+STUB(STATIC_Register)
+STUB(STATUS_Register)
+STUB(STATUS_Unregister)
+STUB(SYSLINK_Register)
+STUB(SYSLINK_Unregister)
+STUB(TAB_Register)
+STUB(TAB_Unregister)
+STUB(TOOLBAR_Register)
+STUB(TOOLBAR_Unregister)
+STUB(TOOLTIPS_Register)
+STUB(TOOLTIPS_Unregister)
+STUB(TRACKBAR_Register)
+STUB(TRACKBAR_Unregister)
+STUB(TREEVIEW_Register)
+STUB(TREEVIEW_Unregister)
+STUB(UPDOWN_Register)
+STUB(UPDOWN_Unregister)

@@ -364,7 +364,7 @@ void GraphCtlPaint(HWND hwnd)
       else
 	 x = value_pos - size.cx - 1;
 
-      TextOut(hdc, x, std::max(0L, (rect.bottom - size.cy) / 2), temp, (int) strlen(temp));
+      TextOut(hdc, x, std::max((LONG) 0, (rect.bottom - size.cy) / 2), temp, (int) strlen(temp));
    }
    
    /* Draw slider if appropriate */

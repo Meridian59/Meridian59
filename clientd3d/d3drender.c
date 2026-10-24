@@ -1030,12 +1030,12 @@ d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket)
 	return &pPacket->renderChunks[pPacket->curChunk - 1];
 }
 
-void D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc)
+void D3DRenderPoolReset(d3d_render_pool_new *pPool, MaterialFctn pMaterialFunc)
 {
 	pPool->curPacket = 0;
 	pPool->numLists = 0;
 	pPool->curPacketList = pPool->renderPacketList;
-	pPool->pMaterialFctn = reinterpret_cast<MaterialFctn>(pMaterialFunc);
+	pPool->pMaterialFctn = pMaterialFunc;
 }
 
 void D3DRenderFontInit(font_3d *pFont, HFONT hFont)

@@ -115,13 +115,13 @@ void OfflineExpose(HWND hwnd)
 /****************************************************************************/
 void OfflineResize(int xsize, int ysize)
 {
-   bm_origin.x = std::max(0L, (LONG)(xsize - bm_width) / 2);
-   bm_origin.y = std::max(0L, (LONG)(ysize - button_height - bm_height) / 2);
+   bm_origin.x = std::max((LONG) 0, (LONG)(xsize - bm_width) / 2);
+   bm_origin.y = std::max((LONG) 0, (LONG)(ysize - button_height - bm_height) / 2);
 
    button_width = std::min(bm_width, xsize);
 
-   button_origin.x = std::max(0L, (LONG)(xsize - button_width) / 2);
-   button_origin.y = std::max(0L, std::min(bm_origin.y + bm_height, (LONG)(ysize - button_height)));
+   button_origin.x = std::max((LONG) 0, (LONG)(xsize - button_width) / 2);
+   button_origin.y = std::max((LONG) 0, std::min(bm_origin.y + bm_height, (LONG)(ysize - button_height)));
 
    if (hwndDialButton != NULL)
      MoveWindow(hwndDialButton, button_origin.x, button_origin.y, 

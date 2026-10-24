@@ -9,8 +9,8 @@
  * move.h:  Header file for move.c
  */
 
-#ifndef _MOVE_H
-#define _MOVE_H
+#ifndef _CLIENT_MOVE_H
+#define _CLIENT_MOVE_H
 
 // Initial velocities when climbing and falling, in FINENESS units per second
 #define CLIMB_VELOCITY_0   (FINENESS * 9 / 2)	// climb velocity set to be 3x faster than fall, to keep people from seeing through the floor
@@ -40,4 +40,4 @@ void UserTurnPlayer(int action);
 void UserTurnPlayerMouse(int delta);
 void UserFlipPlayer(void);
 
-#endif /* #ifndef _MOVE_H */
+#endif /* #ifndef _CLIENT_MOVE_H */

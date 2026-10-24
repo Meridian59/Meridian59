@@ -172,10 +172,10 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 		}
 
 		/* Record boundaries of drawing area */
-		range->left_col   = std::min(range->left_col, orect.left);
-		range->right_col  = std::max(range->right_col, orect.right);
-		range->top_row    = std::min(range->top_row, orect.top);
-		range->bottom_row = std::max(range->bottom_row, orect.bottom);
+		range->left_col   = std::min<long>(range->left_col, orect.left);
+		range->right_col  = std::max<long>(range->right_col, orect.right);
+		range->top_row    = std::min<long>(range->top_row, orect.top);
+		range->bottom_row = std::max<long>(range->bottom_row, orect.bottom);
 	}
 
 	return TRUE;

@@ -31,7 +31,7 @@
 #include <fcntl.h>
 #include <io.h>
 #include <direct.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <dlgs.h>
 #include <mmsystem.h>
 #include <winsock.h>

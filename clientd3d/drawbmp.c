@@ -484,10 +484,10 @@ void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE s
 	ObjectRowData d;
 	
 	// Bring rectangle into range to prevent crashes
-	rect.left   = std::max(rect.left, 0L);
-	rect.right  = std::min(rect.right, (long)(OFFSCREEN_BITMAP_SIZE - 1));
-	rect.top    = std::max(rect.top, 0L);
-	rect.bottom = std::min(rect.bottom, (long)(OFFSCREEN_BITMAP_SIZE - 1));
+	rect.left   = std::max(rect.left, (LONG) 0);
+	rect.right  = std::min(rect.right, (LONG)(OFFSCREEN_BITMAP_SIZE - 1));
+	rect.top    = std::max(rect.top, (LONG) 0);
+	rect.bottom = std::min(rect.bottom, (LONG)(OFFSCREEN_BITMAP_SIZE - 1));
 	
 	bitmap_width = DibWidth(pdib);
 	obj_bits = DibPtr(pdib);

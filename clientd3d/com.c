@@ -57,7 +57,7 @@ bool OpenSocketConnection(char *host, int sock_port)
 	SOCKADDR_IN dest_sin;
 	PHOSTENT phe;
 	bool success = false;
-	long addr;
+	ULONG addr;
 	
 	if (WSAStartup(MAKEWORD(1,1), &WSAData) != 0) 
 	{
@@ -75,7 +75,7 @@ bool OpenSocketConnection(char *host, int sock_port)
 	
 	// Try to interpret host as an address with "." notation
 	addr = inet_addr(host);
-	if (addr != -1)
+	if (addr != INADDR_NONE)
 	{
 		dest_sin.sin_addr.s_addr = addr;
 		success = true;

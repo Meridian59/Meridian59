@@ -163,7 +163,7 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
 d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);
-void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);
+void				D3DRenderPoolReset(d3d_render_pool_new *pPool, MaterialFctn pMaterialFunc);
 void				D3DRenderFontInit(font_3d *pFont, HFONT hFont);
 IDirect3DTexture9*  D3DRender_CaptureEffect(IDirect3DTexture9* pTex0, IDirect3DTexture9* pTex1);
 

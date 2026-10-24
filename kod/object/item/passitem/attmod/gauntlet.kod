@@ -42,6 +42,11 @@ resources:
    barearm_leftarm_gauntlet_male = bli.bgf
    barearm_leftarm_gauntlet_female = blj.bgf
 
+   robe_rightarm_gauntlet_male = brk.bgf
+   robe_rightarm_gauntlet_female = brl.bgf
+   robe_leftarm_gauntlet_male = blk.bgf
+   robe_leftarm_gauntlet_female = bll.bgf
+
 classvars:
 
    vrName = gauntlet_name_rsc
@@ -194,6 +199,20 @@ messages:
    GetOverrideRightArm(who=$)
    {  
       local i, bFound;
+
+      % Robes have their own gauntlets
+
+      for i in send(who,@GetPlayerUsing)
+      {
+         if IsClass(i,&Robe) AND NOT IsClass(i,&LightRobe) 
+         {
+            if send(who,@GetGender) = GENDER_MALE
+            {
+               return robe_rightarm_gauntlet_male;
+            }
+            return robe_rightarm_gauntlet_female;
+         }
+      }
       
       bFound = FALSE;
       for i in send(who,@GetPlayerUsing)
@@ -227,6 +246,21 @@ messages:
    GetOverrideLeftArm(who=$)
    {
       local i, bFound;
+
+      % Robes have their own gauntlets
+
+      for i in send(who,@GetPlayerUsing)
+      {
+         if IsClass(i,&Robe) AND NOT IsClass(i,&LightRobe)
+         {
+            if send(who,@GetGender) = GENDER_MALE
+            {
+               return robe_leftarm_gauntlet_male; 
+            }
+            return robe_leftarm_gauntlet_female;
+         }
+      }
+
 
       bFound = FALSE;
       for i in send(who,@GetPlayerUsing)

@@ -722,7 +722,7 @@ void SetDialogFixedString(char* fixed_string)
 	}
 }/************************************************************************/
 /*
-* AbortGameDialogs:  Close modal dialogs, for example when we lose the server
+* AbortGameDialogs:  Close open game dialogs, for example when we lose the server
 *   connection.
 */
 void AbortGameDialogs(void)

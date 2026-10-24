@@ -124,7 +124,7 @@ static bool D3DRenderBackgroundSet(ID background)
 
 	// Otherwise, check if the file exists before attempting to load the PNG.
 	auto fullPath = std::filesystem::path(RESOURCE_DIRECTORY) / hwFilename;
-	if (!std::filesystem::exists(fullPath))
+	if (!FileExists(fullPath.string().c_str()))
 	{
 		debug(("Skybox Error: File missing at %s\n", fullPath.string().c_str()));
 		return false;

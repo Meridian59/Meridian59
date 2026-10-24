@@ -373,7 +373,7 @@ static ALuint ParseOGGFile(const char* filename)
    ALenum format;
 
    // Check if file exists
-   if (!std::filesystem::exists(filename))
+   if (!FileExists(filename))
    {
       debug(("ParseOGGFile: File not found: %s\n", filename));
       return 0;
@@ -487,7 +487,7 @@ bool MusicPlay(const std::string& filename, bool loop)
       return false;
    }
 
-   if (!std::filesystem::exists(filename))
+   if (!FileExists(filename.c_str()))
    {
       debug(("MusicPlay: File not found: %s\n", filename.c_str()));
       return false;
@@ -932,7 +932,7 @@ static ALuint LoadAudioBuffer(const char* filename)
       std::filesystem::path oggPath = filepath;
       oggPath.replace_extension(".ogg");
       
-      if (std::filesystem::exists(oggPath))
+      if (FileExists(oggPath.string().c_str()))
       {
          filepath = oggPath;
          ext = ".ogg";

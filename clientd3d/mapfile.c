@@ -26,7 +26,6 @@
  */
 
 #include "client.h"
-#include <filesystem>
 
 static const int MAPFILE_VERSION_1 = 1;
 static const int MAPFILE_VERSION = 2;
@@ -66,7 +65,7 @@ void MapFileInitialize(void)
    if (!MakeDirectory(map_directory))
       return;
 
-   bool file_exists = std::filesystem::exists(map_filename);
+   bool file_exists = FileExists(map_filename);
    if (file_exists)
    {
      mapfile = fopen(map_filename, "r+b");

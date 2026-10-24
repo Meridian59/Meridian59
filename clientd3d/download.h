@@ -49,4 +49,8 @@ bool DownloadBferHandleMessage(char *ptr, long len);
 
 void DownloadNewClient(char *hostname, char *filename);
 
+// Whether filename exists; by stat, which on Linux and macOS resolves Windows
+// names (any case, backslashes) as fopen does there.  std::filesystem doesn't.
+bool FileExists(const char *filename);
+
 #endif /* #ifndef _DOWNLOAD_H */

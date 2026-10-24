@@ -44,6 +44,44 @@ jobs:
         make -f makefile.linux
 
   
+  build-linux-client:
+
+    # Debian 13 for GTK 4.18 (Ubuntu's runners have 4.14); the layer's tests run
+    # under Xvfb with Mesa's software OpenGL.
+    runs-on: ubuntu-latest
+    container: debian:trixie
+
+    steps:
+    - name: install packages
+      run: |
+        apt-get update -qq
+        apt-get install -y -qq git build-essential cmake pkgconf python3 libgtk-4-dev libcurl4-openssl-dev \
+          libfreetype-dev libopenal-dev libarchive-dev bison flex fonts-liberation xvfb xauth libgl1-mesa-dri libegl-mesa0
+
+    - uses: actions/checkout@v4
+
+    - name: make client, test the Win32 layer
+      working-directory: clientd3d
+      env:
+        GDK_BACKEND: x11
+        LIBGL_ALWAYS_SOFTWARE: 1
+      run: xvfb-run -a -s "-screen 0 1280x1024x24" make -f makefile.linux test
+
+  build-mac-client:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: install packages
+      run: brew install bison flex freetype openal-soft libarchive
+
+    - name: make client, test the Win32 layer
+      working-directory: clientd3d
+      run: make -f makefile.linux test
+
+
   build-windows-32:
   
     runs-on: windows-latest

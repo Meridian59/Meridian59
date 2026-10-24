@@ -419,7 +419,7 @@ bool DateFromSeconds(long seconds, char *str)
    if (t == NULL)
       return false;
 
-   snprintf(str, MAXDATE, "%s %s %.2ld, %.4ld %.2ld:%.2ld",
+   snprintf(str, MAXDATE, "%s %s %.2d, %.4d %.2d:%.2d",
             GetString(hInst, weekdays[t->tm_wday]), GetString(hInst, months[t->tm_mon]),
             t->tm_mday, t->tm_year + 1900, t->tm_hour, t->tm_min);
    return true;
@@ -468,14 +468,14 @@ int CALLBACK CompareNewsListItems(LPARAM lParam1, LPARAM lParam2, LPARAM lParamS
 
    // `ListView_SortItems` is unstable, so we append the article index for stability
    char title1[MAX_SUBJECT + 10];
-   snprintf(title1, sizeof(title1), "%s %d", article1->title, article1->num);
+   snprintf(title1, sizeof(title1), "%s %ld", article1->title, article1->num);
    char title2[MAX_SUBJECT + 10];
-   snprintf(title2, sizeof(title2), "%s %d", article2->title, article2->num);
+   snprintf(title2, sizeof(title2), "%s %ld", article2->title, article2->num);
 
    char poster1[MAXUSERNAME + 10];
-   snprintf(poster1, sizeof(poster1), "%s %d", article1->poster, article1->num);
+   snprintf(poster1, sizeof(poster1), "%s %ld", article1->poster, article1->num);
    char poster2[MAXUSERNAME + 10];
-   snprintf(poster2, sizeof(poster2), "%s %d", article2->poster, article2->num);
+   snprintf(poster2, sizeof(poster2), "%s %ld", article2->poster, article2->num);
 
    switch (nColumn)
    {

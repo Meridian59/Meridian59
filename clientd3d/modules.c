@@ -503,7 +503,7 @@ bool ModuleEventMouseClick(ModuleInfo *info, EventHandlerProc module_proc, va_li
 /******************************************************************************/
 bool ModuleEventFontChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
-   WORD font_id  = va_arg(v_list, WORD);
+   WORD font_id  = (WORD) va_arg(v_list, int);
    LOGFONT *font = va_arg(v_list, LOGFONT *);
 
    return (*((EventHandlerFontChangedProc) module_proc))(font_id, font);
@@ -511,7 +511,7 @@ bool ModuleEventFontChanged(ModuleInfo *info, EventHandlerProc module_proc, va_l
 /******************************************************************************/
 bool ModuleEventColorChanged(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
-   WORD color_id  = va_arg(v_list, WORD);
+   WORD color_id  = (WORD) va_arg(v_list, int);
    COLORREF color = va_arg(v_list, COLORREF);
 
    return (*((EventHandlerColorChangedProc) module_proc))(color_id, color);
@@ -527,7 +527,8 @@ bool ModuleEventMenuItem(ModuleInfo *info, EventHandlerProc module_proc, va_list
 bool ModuleEventModuleMsg(ModuleInfo *info, EventHandlerProc module_proc, va_list v_list)
 {
    int module_id  = va_arg(v_list, int);
-   va_list params = va_arg(v_list, va_list);
+   // A va_list travels through ... by address: it is an array on some ABIs.
+   va_list &params = *va_arg(v_list, va_list *);
 
    // Only send message to target module
    if (module_id != info->module_id)

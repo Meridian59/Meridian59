@@ -173,14 +173,14 @@ void _cdecl ToServer(BYTE type, ClientMsgTable table, ...)
    {
       *ptr = BP_SYSTEM;
       ptr++;
-      type = va_arg(marker, BYTE);
+      type = (BYTE) va_arg(marker, int);
    }
    else if (type == BP_USERCOMMAND)
    {
       // Same method with user commands
       *ptr = (BYTE) BP_USERCOMMAND;
       ptr++;
-      type = va_arg(marker, BYTE);
+      type = (BYTE) va_arg(marker, int);
    }
 
    /* Find message type in table */
@@ -226,7 +226,7 @@ void _cdecl ToServer(BYTE type, ClientMsgTable table, ...)
       case PARAM_NEWSID:
       case PARAM_COORD:
       case PARAM_WORD:
-	 temp = va_arg(marker, WORD);
+	 temp = (WORD) va_arg(marker, int);
 	 Insert(&ptr, &temp, 2);
 	 break;
 
@@ -239,7 +239,7 @@ void _cdecl ToServer(BYTE type, ClientMsgTable table, ...)
       case PARAM_GROUP:
       case PARAM_ATTACK_INFO:
       case PARAM_SAY_INFO:
-	 temp = va_arg(marker, BYTE);
+	 temp = (BYTE) va_arg(marker, int);
 	 Insert(&ptr, &temp, 1);
 	 break;
 

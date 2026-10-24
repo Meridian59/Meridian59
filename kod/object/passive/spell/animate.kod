@@ -63,7 +63,7 @@ messages:
 
    CanPayCosts(who = $,lTargets=$)
    {
-      local oRoom, oTarget, oCorpseRoom;
+      local oRoom, oTarget;
 
       oRoom = send(who,@GetOwner);
       oTarget = First(lTargets);
@@ -75,7 +75,7 @@ messages:
          return FALSE;
       }
 
-      oCorpseRoom = Send(oTarget,@GetOwner);
+      local oCorpseRoom = Send(oTarget,@GetOwner);
 
       if oCorpseRoom = $ OR Send(oCorpseRoom,@SafePlayerAttack)
       {

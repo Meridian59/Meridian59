@@ -1463,26 +1463,23 @@ messages:
       
       % TODO: Should arrange in decreasing order of frequency
 
+      % These are idempotent state changes; dropping either can desync the client.
       if iClient_cmd = UC_REST
       {
-         if bSpam
+         if NOT Send(self,@IsResting)
          {
-            return;
+            Send(self,@StartResting);
          }
-
-         Send(self,@StartResting);
          
          return;
       }
       
       if iClient_cmd = UC_STAND
       {
-         if bSpam
+         if Send(self,@IsResting)
          {
-            return;
+            Send(self,@StopResting);
          }
-
-         Send(self,@StopResting);
          
          return;
       }

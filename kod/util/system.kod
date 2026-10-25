@@ -481,6 +481,8 @@ messages:
 
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
 
+      Send(self,@InitializeServerConfigValues);
+
       return;
    }
 

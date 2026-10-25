@@ -53,6 +53,20 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#name=");
+      AppendTempLiteral(vrName);
+      AppendTempString(",#icon=");
+      AppendTempLiteral(vrIcon);
+      AppendTempString(",#desc=");
+      AppendTempLiteral(vrDesc);
+      AppendTempString(",#insc=");
+      AppendTempLiteral(vrInsc);
+
+      propagate;
+   }
+
    HasInscription()
    {
       if vrInsc <> sign_insc_rsc { return TRUE; }

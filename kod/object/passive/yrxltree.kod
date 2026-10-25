@@ -47,6 +47,14 @@ messages:
    propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#bottom=");
+      AppendTempLiteral(piBottom);
+
+      propagate;
+   }
+
    CheckUserNear()
    {
    local oRoom, each_obj, i;

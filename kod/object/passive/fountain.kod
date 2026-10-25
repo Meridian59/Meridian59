@@ -48,6 +48,18 @@ messages:
 
       propagate;
    }
+
+   AppendCreateSettings()
+   {
+      AppendTempString(",#iSoundRadius=");
+      AppendTempLiteral(piSoundRadius);
+      AppendTempString(",#iSoundIntensity=");
+      AppendTempLiteral(piSoundIntensity);
+      AppendTempString(",#bIsLit=");
+      AppendTempLiteral(pbIsLit);
+
+      propagate;
+   }
    
    Delete()
    {

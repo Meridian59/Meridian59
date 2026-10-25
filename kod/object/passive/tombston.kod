@@ -58,6 +58,21 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#tombstone_type=");
+      if vrIcon = tombstone_icon_cross_rsc
+      {
+         AppendTempLiteral(TOMBSTONE_CROSS);
+      }
+      else
+      {
+         AppendTempLiteral(TOMBSTONE_NORMAL);
+      }
+
+      propagate;
+   }
+
    ShowDesc()
    {
       if prPlayer_name <> $

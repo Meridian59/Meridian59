@@ -43,6 +43,14 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#bottom=");
+      AppendTempLiteral(piBottom);
+
+      propagate;
+   }
+
    SendAnimation()
    {
       AddPacket(1,ANIMATE_NONE);

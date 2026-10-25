@@ -69,6 +69,14 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#pair=");
+      AppendTempLiteral(vbPair);
+
+      propagate;
+   }
+
    TryActivate(who=$)
    "Return False only if you want user.kod to send its own error message to user."
    {

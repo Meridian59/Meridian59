@@ -44,6 +44,16 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#iSoundRadius=");
+      AppendTempLiteral(piSoundRadius);
+      AppendTempString(",#iSoundIntensity=");
+      AppendTempLiteral(piSoundIntensity);
+
+      propagate;
+   }
+
    Delete()
    {
       if poOwner <> $ AND IsClass(poOwner,&Room)

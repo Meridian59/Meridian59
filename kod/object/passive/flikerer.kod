@@ -64,6 +64,14 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#iIntensity=");
+      AppendTempLiteral(piLightIntensity);
+
+      propagate;
+   }
+
    SetAnimationSpeed()
    {
       piAnim_speed = random(50,100);

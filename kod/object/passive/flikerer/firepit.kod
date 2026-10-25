@@ -58,6 +58,14 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#iSoundRadius=");
+      AppendTempLiteral(piSoundRadius);
+
+      propagate;
+   }
+
    Constructed()
    {
       piFlame_animation = Random(1,4);

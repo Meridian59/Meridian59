@@ -3907,6 +3907,26 @@ messages:
       return plPassive;
    }
 
+   HasPassiveAt(class = $, row = $, col = $, fine_row = $, fine_col = $)
+   "TRUE if a passive object of <class> is at exactly that spot (system's "
+   "DumpPassiveObjects puts back only the ones that aren't)."
+   {
+      local i, oObject;
+
+      for i in plPassive
+      {
+         oObject = First(i);
+         if GetClass(oObject) = class
+            AND Send(oObject,@GetRow) = row AND Send(oObject,@GetCol) = col
+            AND Send(oObject,@GetFineRow) = fine_row AND Send(oObject,@GetFineCol) = fine_col
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
    GetplActive()
    {
       return plActive;

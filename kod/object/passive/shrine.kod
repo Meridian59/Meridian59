@@ -95,6 +95,16 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#shrine_num=");
+      AppendTempLiteral(piShrine_Num);
+      AppendTempString(",#name_rsc=");
+      AppendTempLiteral(vrName);
+
+      propagate;
+   }
+
    ShowDesc()
    {
       local oSpell;

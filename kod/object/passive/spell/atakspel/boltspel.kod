@@ -143,11 +143,48 @@ messages:
          return;
       }
 
-      % Made a timer on self called @SoundEffectTimer if iTravelTime length
+      % Made a timer on self that calls @SoundEffectTimer in iTravelTime time
       tTimer = CreateTimer(self,@SoundEffectTimer,iTravelTime);
 
       % Big list of this to hit, when, and where
       plHitSoundTimers = Cons([tTimer,target,castRoom],plHitSoundTimers );
+
+      return;
+   }
+
+   SoundEffectTimer(timer = $)
+   {
+      local hitDetails, oCastTarget, oCastRoom;
+
+      % This list should be tiny, so this is fine, even though I think it is sorted 
+      for hitDetails in plHitSoundTimers 
+      {
+         % We got the right timer
+         if First(hitDetails) = timer
+         {
+            oCastTarget = Nth(hitDetails,2);
+            oCastRoom = Nth(hitDetails,3); 
+           
+            % Cleanup
+            plHitSoundTimers = DelListElem(plHitSoundTimers,hitDetails);
+
+            % Still in the room and target still exists
+            if NOT IsObject(oCastTarget)
+            {
+               return;
+            }
+
+            if Send(oCastTarget,@GetOwner) <> oCastRoom
+            {
+               return;
+            }
+
+            Send(oCastRoom,@SomethingWaveRoom,#what=oCastTarget,#wave_rsc=vrHitSound_wav);
+
+            return;
+           
+         }
+      }
 
       return;
    }

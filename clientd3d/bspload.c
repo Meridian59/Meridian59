@@ -232,6 +232,19 @@ bool BSPRooFileLoad(char *fname, room_type *room)
    room->num_sectors = num_sectors;
    room->num_sidedefs = num_sidedefs;
 
+   // Resolve per-wall translucency levels from sidedef flags (bits 15-16).
+   // Must run after RoomSwizzle() since that is what sets up the sidedef pointers.
+   // Uses the positive sidedef's level; falls back to negative if positive is zero.
+   for (int i = 0; i < num_walls; i++)
+   {
+      WallTranslucency level = WALL_TRANSLUCENCY_OPAQUE;
+      if (room->walls[i].pos_sidedef != NULL)
+         level = WallTranslucencyLevel(room->walls[i].pos_sidedef->flags);
+      if (level == WALL_TRANSLUCENCY_OPAQUE && room->walls[i].neg_sidedef != NULL)
+         level = WallTranslucencyLevel(room->walls[i].neg_sidedef->flags);
+      room->walls[i].translucency_level = level;
+   }
+
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
    D3DFxInit();
 

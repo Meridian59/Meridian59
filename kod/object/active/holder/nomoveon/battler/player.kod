@@ -1,4 +1,4 @@
-% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
 % This software is distributed under a license that is described in
@@ -321,8 +321,10 @@ resources:
    player_desc_enchanted_none = "%q"
    player_desc_enchanted = "%s has %s%s.\n\n%s"
    
-   player_too_full = "You are too full to eat."
-   player_too_full_drink = "You are too full to drink."
+   player_half_full = "You feel fairly satiated."
+   player_almost_full = "Your stomach feels stuffed and nearly filled to the brim."
+   player_too_full = "You are too full to eat that right now."
+   player_too_full_drink = "You are too full to drink that right now."
 
    player_to_hunters = "You detect that %s%s could be found somewhere around %s"
 
@@ -1045,8 +1047,6 @@ messages:
    SetPlayerFlag(flag=0,value=FALSE,flagset=1)
    "This always requires the POSITIVE flag name."
    {
-      local ccond;
-      
       if flagset = 1 AND (flag & PFLAG_PKILL_ENABLE) AND value
       {
          if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
@@ -1055,21 +1055,21 @@ messages:
          }
          else
          {
-            ccond = player_safety_off_mail;
+            local rSafetyMail = player_safety_off_mail;
             if Send(self,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
             {
-               ccond = player_safety_on_mail;
+               rSafetyMail = player_safety_on_mail;
             }
 
             if Send(SYS,@IsPKAllowed)
             {
                Send(self,@ReceiveNestedMail,#from=player_angel,
-                    #dest_list=[self],#nest_list=[4,player_ready_to_kill,4,ccond]);
+                    #dest_list=[self],#nest_list=[4,player_ready_to_kill,4,rSafetyMail]);
             }
             else
             {
                Send(self,@ReceiveNestedMail,#from=player_angel,
-                    #dest_list=[self],#nest_list=[4,player_ready_to_guild,4,ccond]);
+                    #dest_list=[self],#nest_list=[4,player_ready_to_guild,4,rSafetyMail]);
             }
          }
       }
@@ -1242,9 +1242,7 @@ messages:
 
    AddExertion(amount = 0, SetToThreshold = FALSE)
    {
-      local iExertionAdded, iPercentReduced, iVigorLost;
-      
-      iExertionAdded = amount;
+      local iExertionAdded = amount;
 
       % If we cannot gain vigor due to Second Wind, return out if trying
       %  to take away exertion
@@ -1257,7 +1255,7 @@ messages:
       if iExertionAdded > 0
       {
          % Parliament adjustment for exertion reduction.  Remove a % from the amount added.
-         iPercentReduced = Send(Send(SYS,@GetParliament),@GetFactionVigorBonus,#who=self);
+         local iPercentReduced = Send(Send(SYS,@GetParliament),@GetFactionVigorBonus,#who=self);
          iExertionAdded = (iExertionAdded * (100 - iPercentReduced))/100;
       }
 
@@ -1272,7 +1270,7 @@ messages:
          }
          else
          {
-            iVigorLost = piExertion / 10000;
+            local iVigorLost = piExertion / 10000;
             piVigor = piVigor - iVigorLost;
             piExertion = piExertion - (iVigorLost * 10000);
          }
@@ -1294,9 +1292,7 @@ messages:
    RestAddExertion(amount = 0)
    "Gives inns a bonus as resting places."
    {        
-      local iAmount;
-
-      iAmount = amount;
+      local iAmount = amount;
 
       % Return if extertion is being added but second wind skill is active
       if Send(self,@IsEnchanted,#byClass=&SecondWind)
@@ -1309,17 +1305,17 @@ messages:
       {
          return;
       }
-      
+
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_SANCTUARY) AND amount < 0
       {
          iAmount = 2 * Amount;
       }
-      
+
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_TRIPLE_HEAL) AND amount < 0
       {
          iAmount = 3 * Amount;
       }    
-            
+
       piExertion = piExertion + iAmount;
       if abs(piExertion) > MIN_VIGOR_CHANGE
       {    
@@ -1332,20 +1328,18 @@ messages:
          piExertion = 0;
          Send(self,@NewVigor);
       }
-      
+
       return;
    }
 
    UpdateStomach()
    "Removes consumed food from stomach"
    {
-      local now;
-
-      now = GetTime();
-      piStomach = piStomach - (now - piTimeLastStomachUpdate) * FOOD_USE_RATE / 100;
+      local iNow = GetTime();
+      piStomach = piStomach - (iNow - piTimeLastStomachUpdate) * FOOD_USE_RATE / 100;
       piStomach = bound(piStomach,1,100);
-      piTimeLastStomachUpdate = now;
-      
+      piTimeLastStomachUpdate = iNow;
+
       return;
    }
 
@@ -1417,9 +1411,7 @@ messages:
 
    TryDeflect(what = $,caster=$)
    {
-      local oDeflect;
-      
-      oDeflect = Send(SYS,@FindSpellByNum,#Num=SID_DEFLECT);
+      local oDeflect = Send(SYS,@FindSpellByNum,#Num=SID_DEFLECT);
       if Send(self,@IsEnchanted,#what=oDeflect)
       {
          return Send(oDeflect,@TryDeflect,#caster=caster,#victim=self,
@@ -1467,17 +1459,17 @@ messages:
 
    InformHunters()
    {
-      local i, j, oSpell, state, oSpellCloak, rLocation, oRoom;
+      local i, j;
 
-      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_HUNT);
-      oSpellCloak = Send(SYS,@FindSpellByNum,#Num=SID_CLOAK);
-      rLocation = Send(poOwner,@GetName);
+      local oSpell = Send(SYS,@FindSpellByNum,#Num=SID_HUNT);
+      local oSpellCloak = Send(SYS,@FindSpellByNum,#Num=SID_CLOAK);
+      local rLocation = Send(poOwner,@GetName);
 
       if Send(self,@IsEnchanted,#what=oSpellCloak)
          AND (Random(1,100) < Send(self,@GetEnchantedState,#what=oSpellCloak))
       {
          % Will mislead hunters with random room if Cloak is on and passes state check.
-         oRoom = Send(oSpellCloak,@GetWrongRoom);
+         local oRoom = Send(oSpellCloak,@GetWrongRoom);
          rLocation = Send(oRoom,@GetName);
       }
       
@@ -1485,7 +1477,7 @@ messages:
       {
          if Nth(i,2) = oSpell
          {
-            state = Nth(i,3);
+            local state = Nth(i,3);
             if not IsClass(first(state),&Prism)
             {
                for j in state
@@ -1504,14 +1496,12 @@ messages:
 
    ShowDesc()
    {
-      local HitPoint_Percent;
-
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND poIllusion_set <> $
       {
-         HitPoint_Percent = piHealth * 100 / piMax_Health;
+         local iHitPoint_Percent = piHealth * 100 / piMax_Health;
          Send(poIllusion_set,@IllusionShowDesc,#who=self,
-              #iHitPoint_Percent=HitPoint_Percent);
+              #iHitPoint_Percent=iHitPoint_Percent);
 
          return;
       }
@@ -1529,15 +1519,13 @@ messages:
 
    GetAge()
    {
-      local age;
-
-      age = Send(SYS,@GetYear) - Send(self,@GetBirthYear);
+      local iAge = Send(SYS,@GetYear) - Send(self,@GetBirthYear);
 
       % No more tutorial messages and bonuses if you've been around for about 2 months.
       % Clear the newbie string, too.
       % Do a bit flag check instead of a function call since this is called EVERY time
       %  someone gets looked at.
-      if age >= 2
+      if iAge >= 2
          AND NOT (piFlags & PFLAG_TUTORIAL)
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
@@ -1547,7 +1535,7 @@ messages:
          }
       }      
 
-      return age;
+      return iAge;
    }
 
    SetAge(age = 0)
@@ -1582,7 +1570,7 @@ messages:
 
    ShowExtraInfo()
    {
-      local i, j, obj, year;
+      local i, j;
 
       ClearTempString();
 
@@ -1701,7 +1689,7 @@ messages:
          AppendTempString(player_nl);
       }
 
-      obj = Send(SYS,@GetCaramo);
+      local obj = Send(SYS,@GetCaramo);
       if obj <> $ and Send(obj,@GetJusticar) = self
       {
          AppendTempString(player_is_justicar);
@@ -1790,8 +1778,9 @@ messages:
       if plDonationYears <> $
       {
          % Example: Benefactor of Meridian in 2010, 2011
-	      AppendTempString(player_donation_title);
-	      i = 0;
+	     AppendTempString(player_donation_title);
+	     i = 0;
+         local year;
          for year in plDonationYears
          {
 	         if i <> 0
@@ -1811,7 +1800,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oCaramo, oRoom;
+      local i;
       
       for i in plPassive
       {
@@ -1844,7 +1833,7 @@ messages:
          }
       }
 
-      oGame = Send(SYS,@GetAssassinGame);
+      local oGame = Send(SYS,@GetAssassinGame);
       if oGame <> $
          AND Send(oGame,@InAcceptMode)
          AND (NOT Send(oGame,@IsCombatant,#who=self))
@@ -1853,7 +1842,7 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=player_assgame_soon);
       }
 
-      oCaramo = Send(SYS,@GetCaramo);
+      local oCaramo = Send(SYS,@GetCaramo);
       if oCaramo <> $
       {
          Send(oCaramo,@UserLogon,#who=self);
@@ -1883,7 +1872,7 @@ messages:
       Send(self,@ComputeMaxMana);
 
       % Tell others that we're here
-      oRoom = Send(self, @GetOwner);
+      local oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND NOT IsClass(self, &DM) 
       {
          Send(oRoom, @SomethingWaveRoom, #what=self, 
@@ -1895,7 +1884,7 @@ messages:
 
    UserLogoffHook()
    {
-      local i, oRoom;
+      local i;
    
       for i in plPassive
       {
@@ -1931,7 +1920,7 @@ messages:
       Send(self,@CancelRescue);
 
       % Tell others that we're leaving
-      oRoom = Send(self, @GetOwner);
+      local oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND NOT IsClass(self, &DM) 
       {
          Send(oRoom, @SomethingWaveRoom, #what=self, 
@@ -1972,11 +1961,10 @@ messages:
    "of values selected.  See system.kod, SendCharInfo(), for what these "
    "values mean."
    {
-      local i,lFaceparts,lStats,lSpells,lSkills,iPoints,iLevel,iHair_translation,
-            iSkin_translation, bQor, bShalille, oSpell, oSkill;
+      local i;
      
-      bQor = FALSE;
-      bShalille = FALSE;
+      local bQor = FALSE;
+      local bShalille = FALSE;
 
       psPlayerDescription = desc;
 
@@ -1993,7 +1981,7 @@ messages:
       % list of initial spells
       % list of initial skills
 
-      lFaceparts = Nth(charinfo,1);
+      local lFaceparts = Nth(charinfo,1);
       if (Length(lFaceparts) <> 5)
       {
          % Hacking the protocol -> default char
@@ -2018,8 +2006,8 @@ messages:
       prMouth = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,5), 
           #res_list = Send(SYS, @GetAllowedMouthIcons, #iGender = gender));
 
-      iHair_translation = Nth(charinfo,2);
-      iSkin_translation = Nth(charinfo,3);
+      local iHair_translation = Nth(charinfo,2);
+      local iSkin_translation = Nth(charinfo,3);
 
       if iHair_translation <> 0
          AND iHair_translation <> PT_GRAY_TO_ORANGE
@@ -2058,14 +2046,14 @@ messages:
       Send(self,@ResetPlayerArms);
       Send(self,@ResetPlayerLegs);
 
-      lStats = Nth(charinfo,4);
+      local lStats = Nth(charinfo,4);
       if (Length(lStats) <> 6)
       {
          % Hacking the protocol -> junk char for you
          lStats = [1, 1, 1, 1, 1, 1];
       }
 
-      iPoints = Nth(lStats,1) + Nth(lStats,2) + Nth(lStats,3);
+      local iPoints = Nth(lStats,1) + Nth(lStats,2) + Nth(lStats,3);
       iPoints = iPoints + Nth(lStats,4) + Nth(lStats,5) + Nth(lStats,6);
 
       if Nth(lStats,1) < 1 OR Nth(lStats,1) > 50
@@ -2136,13 +2124,13 @@ messages:
       Send(self,@AddDefaultSpells);
       Send(self,@AddDefaultSkills);
 
-      lSpells = Nth(charinfo,5);
-      lSkills = Nth(charinfo,6);
+      local lSpells = Nth(charinfo,5);
+      local lSkills = Nth(charinfo,6);
 
       iPoints = 0;
       for i in lSpells
       {
-         iLevel = Send(Send(SYS,@FindSpellByNum,#num=i),@GetLevel);
+         local iLevel = Send(Send(SYS,@FindSpellByNum,#num=i),@GetLevel);
 
          if iLevel >= 2
          {
@@ -2156,7 +2144,7 @@ messages:
       
       for i in lSkills
       {
-         iLevel = Send(Send(SYS,@FindSkillByNum,#num=i),@GetLevel);
+         local iLevel = Send(Send(SYS,@FindSkillByNum,#num=i),@GetLevel);
 
          if iLevel >= 2
          {
@@ -2178,11 +2166,11 @@ messages:
          {
             for i in lSpells
             {
-               oSpell = Send(SYS, @FindSpellByNum, #num=i);
+               local oSpell = Send(SYS, @FindSpellByNum, #num=i);
                % Not offered to new characters -> cheating, skip spell
                if (oSpell <> $ AND Send(oSpell, @OfferToNewCharacters)) 
                {
-                  iLevel = Send(oSpell,@GetLevel);
+                  local iLevel = Send(oSpell,@GetLevel);
                   if (iLevel <= 2)
                   {
                      Send(self,@AddSpell,#num=i,#initial=TRUE);
@@ -2200,10 +2188,10 @@ messages:
             
             for i in lSkills
             {
-               oSkill = Send(SYS,@FindSkillByNum,#num=i);
+               local oSkill = Send(SYS,@FindSkillByNum,#num=i);
                if (oSkill <> $)
                {
-                  iLevel = Send(oSkill,@GetLevel);
+                  local iLevel = Send(oSkill,@GetLevel);
                   if (iLevel <= 2)
                   {
                      Send(self,@AddSkill,#num=i,#initial=TRUE);
@@ -2438,17 +2426,17 @@ messages:
    AddReagentsForSpells(iNumCasts=5)
    "Add reagents to the player for the spells they have.  Enough reagents for iNumCasts casts."
    {
-      local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
+      local iInfo, lItems;
 
       for iInfo in plSpells
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=iInfo));
-         lReagents = Send(oSpell,@GetReagents);
+         local oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=iInfo));
+         local lReagents = Send(oSpell,@GetReagents);
 
          for lItems in lReagents
          {
-            cReagent = first(lItems);
-            iNumber = Nth(lItems,2);
+            local cReagent = first(lItems);
+            local iNumber = Nth(lItems,2);
 
             Send(self,@NewHOld,#what=Create(cReagent,#number=(iNumber*iNumCasts)));
          }
@@ -2471,7 +2459,7 @@ messages:
    % If this behavior changes, review all code that loops over inventory and calls DropItem,
    % as it may result in infinite loops or other unintended consequences.
    {
-      local oItem, oDropRoom, iDropRow, iDropCol, oItemAtt;
+      local oItem, oDropRoom, iDropRow, iDropCol;
       
       if droppedItem <> $
       {
@@ -2521,7 +2509,7 @@ messages:
                {
                   % Put the PK pointer attribute on the item to prevent mules from
                   %  grabbing penalty drops from ghosts.
-                  oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
+                  local oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
                   Send(oItemAtt,@AddToItem,#oItem=oItem,#timer_duration=PKPOINTER_TIME,
                        #state1=self);
                }
@@ -2565,8 +2553,7 @@ messages:
    GetGuildHall()
    "Return this player's guild hall, or NIL if none"
    {
-      local oGuild;
-      oGuild = Send(self, @GetGuild);
+      local oGuild = Send(self, @GetGuild);
       
       if oGuild = $
       {
@@ -2789,18 +2776,18 @@ messages:
    GetEnchantmentsByClass(enchClass=&Spell)
    "returns a subset of plEnchantments whose elements are of the given class"
    {
-      local i, returnList;
-      returnList = $;
+      local i;
+      local lEnchantmentMatches = $;
 
       for i in plEnchantments
       {
          if IsClass(Nth(i,2),enchClass)
          {
-            returnList = cons(i,returnList);
+            lEnchantmentMatches = cons(i,lEnchantmentMatches);
          }
       }
       
-      return returnList;
+      return lEnchantmentMatches;
    }
 
    IsEnchanted(what = $, byClass = &Spell)
@@ -2865,18 +2852,18 @@ messages:
    RemoveAllPersonalEnchantments(report=TRUE,override=FALSE)
    "Remove all current *personal* enchantments."
    {
-      local i, oSpell, removedSomething;
+      local i;
 
-      removedSomething = FALSE;
+      local bRemovedSomething = FALSE;
 
       for i in plEnchantments
       {
-        oSpell = Nth(i,2);
+        local oSpell = Nth(i,2);
         if Send(oSpell,@IsPersonalEnchantment)
            AND ((NOT IsClass(oSpell,&DMSpell)) OR override)
         {
            Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
-           removedSomething = TRUE;
+           bRemovedSomething = TRUE;
         }
       }
       
@@ -2885,19 +2872,19 @@ messages:
       Send(self,@ResetPlayerFlagList);
       Send(self,@ResetPlayerDrawfx,#SendSomethingChanged=TRUE);
       
-      return removedSomething;
+      return bRemovedSomething;
    }
 
    FreezeAllEnchantments()
    "Called when a player logs off."
    {
-      local i, iTime;
+      local i;
 
       for i in plEnchantments
       {
          if First(i) <> $
          {
-            iTime = GetTimeRemaining(First(i));
+            local iTime = GetTimeRemaining(First(i));
             DeleteTimer(First(i));
 
             % If it's a negative enchantment, add a bit to the time in
@@ -2919,17 +2906,17 @@ messages:
    ReactivateAllEnchantments()
    "Called when a player logs on."
    {
-      local i, iTime, state;
+      local i;
 
       for i in plEnchantments
       {
-         state = $;
+         local state = $;
          if length(i) > 2
          {
             state = Nth(i,3);
          }
 
-         iTime = first(i);
+         local iTime = first(i);
          
          if iTime = $ OR iTime < 1
          {
@@ -2956,11 +2943,11 @@ messages:
 
    DispelIllusionEnchantments(report = TRUE, iChance = 100)
    {
-      local i, oSpell, each_obj;
+      local i;
 
       for i in plEnchantments 
       {                       
-         oSpell = Nth(i,2);
+         local oSpell = Nth(i,2);
          if Send(oSpell,@IsIllusion)
             AND Random(1,100) <= iChance
          {
@@ -2972,10 +2959,10 @@ messages:
       %  exactly well-engineered or even "good", really.
       for i in plActive
       {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&NecromancerAmulet)
+         local oItem = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(oItem,&NecromancerAmulet)
          {
-            Send(each_obj,@DispelIllusions);
+            Send(oItem,@DispelIllusions);
          }
       }
       
@@ -2984,11 +2971,11 @@ messages:
 
    RemoveSchoolEnchantments(school = $,report=TRUE)
    {
-      local i, oSpell;
+      local i;
 
       for i in plEnchantments 
       {                       
-         oSpell = Nth(i,2);
+         local oSpell = Nth(i,2);
          if Send(oSpell,@GetSchool) = school
          {
             Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
@@ -3001,9 +2988,9 @@ messages:
    RemoveEnchantment(what = $, report=TRUE)
    "If have a current enchantment set by <what>, end it."
    {
-      local i,state;
+      local i;
 
-      state = $ ;
+      local state = $ ;
 
       for i in plEnchantments
       {
@@ -3038,15 +3025,15 @@ messages:
    RemoveEnchantmentClass(class = &Object)
    "If have a current enchantment set by anything in class, end it."
    {
-      local i,state,removedSomething;
+      local i,state;
       
-      removedSomething = FALSE;
+      local bRemovedSomething = FALSE;
 
       for i in plEnchantments
       {
          if IsClass(Nth(i,2),class)
          {
-            removedSomething = TRUE;
+            bRemovedSomething = TRUE;
             if First(i) <> $
             {
                DeleteTimer(First(i));
@@ -3067,20 +3054,20 @@ messages:
          }
       }
       
-      return removedSomething;
+      return bRemovedSomething;
    }
 
    SendEnchantmentIcons()
    "Users do this after GC to redisplay their enchantments"
    {
-      local i,each_obj;
+      local i;
       
       for i in plEnchantments
       {
-         each_obj = Nth(i,2);
-         if NOT (IsClass(each_obj,&Seance) OR IsClass(each_obj,&IllusionaryWounds))
+         local oSpell = Nth(i,2);
+         if NOT (IsClass(oSpell,&Seance) OR IsClass(oSpell,&IllusionaryWounds))
          {
-            Send(self,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_PLAYER);
+            Send(self,@ShowAddEnchantment,#what=oSpell,#type=ENCHANTMENT_PLAYER);
          }
       }
 
@@ -3129,9 +3116,9 @@ messages:
    RemoveDefenseModifier(what = $)
    "Removes <what> from plDefense_modifiers."
    {
-      local i, bFound;
+      local i;
 
-      bFound = FALSE ;
+      local bFound = FALSE;
       for i in plDefense_modifiers
       {
          if i = what
@@ -3153,9 +3140,7 @@ messages:
    SquelchPlayer(value=$)
    "Sets if a player can broadcast or not.  Toggles condition by default."
    {
-      local bSquelched;
-
-      bSquelched = value;
+      local bSquelched = value;
       
       if bSquelched = $
       {
@@ -3172,8 +3157,6 @@ messages:
    "Called when the user wants to broadcast a string.  Return True/False, "
    "and use some mana too."
    {
-      local iCost, iBroadcastPenaltyPercent;
-      
       if piFlags & PFLAG_SQUELCHED
       {
          Send(self,@MsgSendUser,#message_rsc=player_squelched);
@@ -3183,14 +3166,14 @@ messages:
 
       if NOT Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
       {
-         iBroadcastPenaltyPercent = Send(Send(SYS,@GetSettings),@GetBroadcastManaCostPercent);
+         local iBroadcastPenaltyPercent = Send(Send(SYS,@GetSettings),@GetBroadcastManaCostPercent);
 
          if iBroadcastPenaltyPercent = 0
          {
             return TRUE;
          }
             
-         iCost = Bound((piMax_Mana * iBroadcastPenaltyPercent / 100 + 1),1,$);
+         local iCost = Bound((piMax_Mana * iBroadcastPenaltyPercent / 100 + 1),1,$);
 
          if piMana < iCost
          {
@@ -3222,14 +3205,14 @@ messages:
 
    CheckPosition(what=$,type=$,space=0)
    {
-      local i, iSpace, bAllowCombination;
+      local i;
 
       if space = 0 OR type = $ OR what = $
       {
          return FALSE;
       }
       
-      iSpace = space;
+      local iSpace = space;
       for i in plUsing
       {
          if Send(i,@GetItemUseType) & type
@@ -3269,7 +3252,7 @@ messages:
          else
          {
             % Check if items can be worn in the same slot despite conflicts
-            bAllowCombination = FALSE;
+            local bAllowCombination = FALSE;
             
             for i in plUsing
             {
@@ -3301,7 +3284,7 @@ messages:
 
    TryUseItem(what = $)
    {
-      local i, iUse_type;
+      local i;
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
@@ -3318,7 +3301,7 @@ messages:
          return FALSE;
       }
 
-      iUse_type = Send(what,@GetItemUseType);
+      local iUse_type = Send(what,@GetItemUseType);
 
       if iUse_type & ITEM_SINGLE_USE
       {
@@ -3349,6 +3332,11 @@ messages:
       if poOwner <> $ AND NOT Send(poOwner,@ReqSomethingUse,#what=self,#use_item=what)
       {
          return FALSE;
+      }
+
+      if iUse_type & ITEM_USE_HAND
+      {
+         Send(self,@FreeHandSlotsFor,#what=what);
       }
 
       % make sure not already using or something using disallows
@@ -3429,11 +3417,75 @@ messages:
       return TRUE;
    }
 
+   FreeHandSlotsFor(what = $)
+   "Unequips currently-held hand items until there is enough free hand space "
+   "to equip `what`, or until no more held hand items are willing to yield. "
+   "Prefers to yield items of the same kind (weapon vs. non-weapon) as `what`, "
+   "so e.g. swapping one weapon for another does not drop an equipped shield."
+   {
+      local i;
+
+      local iNeeded = Send(what,@GetItemUseAmount);
+      local bWantWeapon = IsClass(what,&Weapon);
+
+      local iHandUsed = 0;
+      local lSameKind = $;
+      local lOtherKind = $;
+      for i in plUsing
+      {
+         if Send(i,@GetItemUseType) & ITEM_USE_HAND
+         {
+            iHandUsed = iHandUsed + Send(i,@GetItemUseAmount);
+            if IsClass(i,&Weapon) = bWantWeapon
+            {
+               lSameKind = Cons(i,lSameKind);
+            }
+            else
+            {
+               lOtherKind = Cons(i,lOtherKind);
+            }
+         }
+      }
+
+      if iHandUsed + iNeeded <= viHand_space
+      {
+         return;
+      }
+
+      % Yield same-kind items first (e.g. swap weapon for weapon), only
+      % giving up the other kind (e.g. a shield) if still short on space.
+      for i in lSameKind
+      {
+         if Send(self,@TryUnuseItem,#what=i)
+         {
+            iHandUsed = iHandUsed - Send(i,@GetItemUseAmount);
+            if iHandUsed + iNeeded <= viHand_space
+            {
+               return;
+            }
+         }
+      }
+
+      for i in lOtherKind
+      {
+         if Send(self,@TryUnuseItem,#what=i)
+         {
+            iHandUsed = iHandUsed - Send(i,@GetItemUseAmount);
+            if iHandUsed + iNeeded <= viHand_space
+            {
+               return;
+            }
+         }
+      }
+
+      return;
+   }
+
    TryUnuseItem(what = $)
    {
-      local bFound, i;
+      local i;
 
-      bFound = FALSE;
+      local bFound = FALSE;
 
       %check and see if item disallows
       for i in plUsing
@@ -3492,8 +3544,6 @@ messages:
 
    TryApplyItem(what = $,apply_on = $)
    {
-      local iUse_type;
-      
       if NOT Send(self,@IsHolding,#what=what)
       {
          Send(self,@MsgSendUser,#message_rsc=player_not_holding,#parm1=Send(what,@GetName));
@@ -3501,7 +3551,7 @@ messages:
          return FALSE;
       }
 
-      iUse_type = Send(what,@GetItemUseType);
+      local iUse_type = Send(what,@GetItemUseType);
       if iUse_type <> ITEM_SINGLE_USE
       {
          if iUse_type = ITEM_BROKEN
@@ -3545,10 +3595,8 @@ messages:
    "Will not let a person attack someone who isn't pkill_enabled."
    "Will not let a person who isn't pkill_enabled attack another person."
    {
-      local oRoom;
-      
       % Default location to check is where we are.
-      oRoom = poOwner;
+      local oRoom = poOwner;
 
       % If the victim is in a room, then check that location instead.  This allows
       %  distance attacks (like wall spells) to work properly.
@@ -3697,8 +3745,6 @@ messages:
    "PFLAG_SAFETY prevents accidental attacks. You can always successfully "
    "hit a murderer or outlaw, though."     
    {
-      local oEnemyGuild, oSoldierShield;
-
       % Don't care about monsters.
       % And, free attacks on token holders.
       if IsClass(victim,&Monster)
@@ -3723,8 +3769,8 @@ messages:
          return TRUE;
       }
 
-      oEnemyGuild = Send(victim,@GetGuild);
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oEnemyGuild = Send(victim,@GetGuild);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
 
       % Check for enemy guild or faction soldier fighting - If attacking a (mutual)
       %  enemy, then they can whack on each other freely, without outlaw penalty
@@ -3796,7 +3842,7 @@ messages:
    "of your faction if you attack an innocent or a monster.  Safety will catch a bad "
    "attack, however."
    {
-      local bBooted, rMessage;
+      local rMessage;
 
       % If attacking nothing, or faction is neutral, or attacking self
       %   or in the Arena, or during a Frenzy, don't go any further.
@@ -3809,7 +3855,7 @@ messages:
          return TRUE;
       }
 
-      bBooted = FALSE;
+      local bBooted = FALSE;
 
       % If faction loss is disabled, then attacking a user never boots you
       if Send(SYS, @GetServerFlag, #flag = SERVER_FLAG_DISABLE_FACTION_LOSS)
@@ -3888,8 +3934,6 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local iRange, oWinds, oSandstorm;
-
       % Can't target self.
       if what = self
       {
@@ -3925,7 +3969,7 @@ messages:
       }
 
       % Send to the STROKE to get the range, so unarmed attacks have ranges, too
-      iRange = Send(stroke_obj,@GetRange,#weapon_used=use_weapon);
+      local iRange = Send(stroke_obj,@GetRange,#weapon_used=use_weapon);
 
       % A little fudge factor to account for lag drift, etc.
       %  Don't fudge for ranged weapons.
@@ -4005,8 +4049,8 @@ messages:
       %  Do this after paying the costs so that the arrow is used.
       if use_weapon <> $ AND IsClass(use_weapon,&RangedWeapon)
       {
-         oWinds = Send(SYS,@FindSpellByNum,#num=SID_WINDS);
-         oSandstorm = Send(SYS,@FindSpellByNum,#num=SID_SANDSTORM);
+         local oWinds = Send(SYS,@FindSpellByNum,#num=SID_WINDS);
+         local oSandstorm = Send(SYS,@FindSpellByNum,#num=SID_SANDSTORM);
          
          if Send(poOwner,@IsEnchanted,#what=oWinds)
             AND Send(oWinds,@WindsRuinShot,#who=self)
@@ -4043,10 +4087,7 @@ messages:
    %  iRange=$ means there's no range check.
    TargetWithinSightAndRange(oTarget=$,iRange=$,use_weapon=$,stroke_obj=$)
    {
-      local iSquareRange, iDist, oTargetOwner, oFinalTarget, iAngle, iRow, iCol,
-            iTargetRow, iTargetCol;
-
-      oTargetOwner = Send(oTarget,@GetOwner);
+      local oTargetOwner = Send(oTarget,@GetOwner);
 
       % We are always in range of ourselves or anything we carry.
       if oTarget = self
@@ -4055,7 +4096,7 @@ messages:
          return TRUE;
       }
 
-      oFinalTarget = oTarget;
+      local oFinalTarget = oTarget;
 
       % Strange case of us targeting something that someone else is holding.
       %  This cannot be owned by us, since we already checked that.
@@ -4066,7 +4107,7 @@ messages:
          oTargetOwner = Send(oFinalTarget,@GetOwner);
       }
 
-      iDist = Send(self,@SquaredDistanceTo,#what=oFinalTarget);
+      local iDist = Send(self,@SquaredDistanceTo,#what=oFinalTarget);
 
       % If we don't share the same owner, then we're not in range.
       if poOwner <> oTargetOwner
@@ -4077,7 +4118,7 @@ messages:
       % See if target is within range, if we provided a range.
       if iRange <> $
       {
-         iSquareRange = iRange;
+         local iSquareRange = iRange;
          iSquareRange = iSquareRange * iSquareRange;
 
          if iDist > iSquareRange
@@ -4096,11 +4137,11 @@ messages:
          AND (IsClass(stroke_obj,&Stroke)
               OR (IsClass(stroke_obj,&Spell) AND Send(stroke_obj,@GetNumSpellTargets) = 1))
       {
-         iAngle = Send(self,@GetAngle);
-         iRow = Send(self,@GetRow);
-         iCol = Send(self,@GetCol);
-         iTargetRow = Send(oTarget,@GetRow);
-         iTargetCol = Send(oTarget,@GetCol);
+         local iAngle = Send(self,@GetAngle);
+         local iRow = Send(self,@GetRow);
+         local iCol = Send(self,@GetCol);
+         local iTargetRow = Send(oTarget,@GetRow);
+         local iTargetCol = Send(oTarget,@GetCol);
 
          % What this does:
          % Basically, it finds your direction and makes sure you aren't trying to target
@@ -4155,12 +4196,12 @@ messages:
    % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
+      local i, iStroke, iProficiency, iOffense;
 
-      oWeapon = $;
+      local oWeapon = $;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if (oMonster <> $) and Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          iOffense = Send(oMonster,@GetOffense,#what=what,#stroke_obj=stroke_obj);
@@ -4183,7 +4224,7 @@ messages:
             iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING);
          }
 
-         iAim = Send(self,@GetAim);
+         local iAim = Send(self,@GetAim);
          iOffense = (iStroke*3) + (iProficiency*2) + (iAim*4) + (piBase_Max_Health*3/2);
 
          if oWeapon <> $
@@ -4222,10 +4263,10 @@ messages:
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
    GetDefense(what = $, stroke_obj=$)
    {
-      local i, iParry, iDodge, iBlock, iAgility, iDefense, oMonster;
+      local i, iDefense;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if (oMonster <> $) and Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          iDefense = Send(oMonster,@GetDefense,#what=what,#stroke_obj=stroke_obj);
@@ -4233,9 +4274,9 @@ messages:
       else
       {
          % A player's defense is based on his dodge, parry, block skills, agility, and max hps.
-         iParry = 0;
-         iDodge = 0;
-         iBlock = 0;
+         local iParry = 0;
+         local iDodge = 0;
+         local iBlock = 0;
 
          % Ask the weapon, it might give a bonus to parrying.
          iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
@@ -4245,7 +4286,7 @@ messages:
          
          iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
-         iAgility = Send(self,@GetAgility);
+         local iAgility = Send(self,@GetAgility);
          iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*4) + (piBase_Max_Health*3/2);
       }
 
@@ -4266,16 +4307,14 @@ messages:
    % skills.  Used in player for defense, used in battler for defense messages.
    GetParryAbility(stroke_obj=$)
    {
-      local oWeapon, oMonster;
-
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          return Send(oMonster,@GetParryAbility,#stroke_obj=stroke_obj);
       }
       
-      oWeapon = Send(self,@GetWeapon);
+      local oWeapon = Send(self,@GetWeapon);
       if oWeapon = $
          OR NOT Send(Send(sys,@FindSkillByNum,#num=SKID_PARRY),@CanPayCosts,#who=self)
          OR (stroke_obj <> $ AND NOT Send(stroke_obj,@CanParry))
@@ -4288,17 +4327,15 @@ messages:
 
    GetBlockAbility(stroke_obj=$)
    {
-      local oShield, oMonster;
-
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          % Should only be one morph enchantment on the player.
          return Send(oMonster,@GetBlockAbility,#stroke_obj=stroke_obj);
       }
 
-      oShield = Send(self,@LookupPlayerShield);
+      local oShield = Send(self,@LookupPlayerShield);
       if oShield = $
          OR NOT Send(Send(sys,@FindSkillByNum,#num=SKID_BLOCK),@CanPayCosts,#who=self)
          OR ((stroke_obj <> $) AND NOT Send(stroke_obj,@CanBlock))
@@ -4311,15 +4348,13 @@ messages:
 
    GetDodgeAbility(stroke_obj=$)
    {
-      local oMonster;
-      
       if stroke_obj <> $ AND NOT Send(stroke_obj,@CanDodge)
       {
          return 0;
       }
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MOVE)
       {
@@ -4337,10 +4372,10 @@ messages:
    % This returns the damage done to target "what" before resistances.
    GetDamage(what = $, stroke_obj=$)
    {
-      local i, iDamage, oStroke, oWeapon, iModBonus, iDamageBonus, oMonster;
+      local i, iDamage, oStroke;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          iDamage = Send(oMonster,@GetDamage,#what=what,#stroke_obj=stroke_obj);
@@ -4350,7 +4385,7 @@ messages:
          oStroke = stroke_obj;
          if stroke_obj = $
          {
-            oWeapon = Send(self,@GetWeapon);
+            local oWeapon = Send(self,@GetWeapon);
             if oWeapon = $
             {
                oStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
@@ -4376,12 +4411,12 @@ messages:
       }
 
       % Spells and attmods that modify damage
-      iDamageBonus = 0;
+      local iDamageBonus = 0;
       for i in plAttack_modifiers
       {
          % Attack modifiers return the total damage, subtract out the original
          %  damage to get the damage bonus.
-         iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
+         local iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
                           #stroke_obj=oStroke);
          iDamageBonus = iDamageBonus + (iModBonus - iDamage);
 
@@ -4402,10 +4437,10 @@ messages:
    % This is the type of damage done.
    GetDamageType(what = $, use_weapon = $)
    {
-      local oWeapon, oMonster;
+      local oWeapon;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          return Send(oMonster,@GetDamageType,#what=what);
@@ -4431,10 +4466,10 @@ messages:
 
    GetSpellType(what = $, use_weapon = $)
    {
-      local oWeapon, oMonster;
+      local oWeapon;
 
       % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          return Send(oMonster,@GetSpellType,#what=what);
@@ -4460,8 +4495,6 @@ messages:
 
    AssessHit(what = $, stroke_obj = $, damage = $)
    {
-      local oMonster;
-      
       if stroke_obj <> $
          AND Send(self,@GetWeaponSwingBonus) > 0
       {
@@ -4470,7 +4503,7 @@ messages:
       }      
 
       % Morphed?  Also apply the morphed monster's hit side effects, if any.
-      oMonster = Send(self,@GetIllusionForm);
+      local oMonster = Send(self,@GetIllusionForm);
       if (oMonster <> $ AND Send(self, @CheckPlayerFlag, #flag=PFLAG_MORPHED))
       {
          Send(oMonster,@HitSideEffect,#what=what);
@@ -4485,13 +4518,13 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, color_rsc, iDuration, iLimit;
+      local i, iResistance;
 
-      color_rsc = player_hit_color_none;
+      local rHitTextColor = player_hit_color_none;
       
       if what <> $ AND IsClass(what,&monster)
       {
-         color_rsc = player_hit_color_blue;
+         rHitTextColor = player_hit_color_blue;
       }
 
       if NOT absolute
@@ -4510,7 +4543,7 @@ messages:
          damage = damage + bonus;               
       }
       
-      iDuration = 800;
+      local iDuration = 800;
       if damage <= 6
       {
          iDuration = 600;
@@ -4538,7 +4571,7 @@ messages:
                OR Send(Send(SYS, @GetSettings),@DamageCapProtectionMurderersEnabled))
          {
             % Cap damage to 1/3 of max health (+2 so we "round up")
-            iLimit = (piBase_Max_Health + (MAX_HEALTH_DAMAGE_FRACTION-1)) / MAX_HEALTH_DAMAGE_FRACTION;
+            local iLimit = (piBase_Max_Health + (MAX_HEALTH_DAMAGE_FRACTION-1)) / MAX_HEALTH_DAMAGE_FRACTION;
             damage = bound(damage,$,iLimit);
          }
 
@@ -4549,7 +4582,7 @@ messages:
       % Faction enemies an extra 15% damage to each other, above caps.
       if what <> $ AND IsClass(what,&Player)
       {
-         oSoldierShield = Send(what,@FindUsing,#class=&SoldierShield,#damage=TRUE);
+         local oSoldierShield = Send(what,@FindUsing,#class=&SoldierShield,#damage=TRUE);
          if oSoldierShield <> $
             AND Send(oSoldierShield,@IsEnemyAttack,#what=self,#damage=TRUE)
          {
@@ -4568,7 +4601,7 @@ messages:
             {
                Send(self,@MsgSendUser,
                     #message_rsc=Send(self,@PlayerWasHit,#atype=atype,#aspell=aspell),
-                    #parm1=color_rsc,#parm2=Send(what,@GetCapDef),
+                    #parm1=rHitTextColor,#parm2=Send(what,@GetCapDef),
                     #parm3=Send(what,@GetName));
             }
          }
@@ -4596,7 +4629,7 @@ messages:
          }
          
          Post(self,@MsgPlayerResistsHit,#what=what,#resistance=iResistance,#target=self,
-              #color_rsc=color_rsc);
+              #color_rsc=rHitTextColor);
       }
       
       return damage;
@@ -4605,9 +4638,9 @@ messages:
    % This function handles when is damage done to opponent.
    DidDamage(what = $, amount = 0)
    {
-      local oWeapon, i;
+      local i;
 
-      oWeapon = Send(self,@GetWeapon);
+      local oWeapon = Send(self,@GetWeapon);
       
       if oWeapon <> $
       {
@@ -4641,9 +4674,7 @@ messages:
    % Returns weapon used.
    GetWeapon()
    {
-      local oWeapon;
-      
-      oWeapon = Send(self,@LookupPlayerWeapon);
+      local oWeapon = Send(self,@LookupPlayerWeapon);
       % If there is no wielded melee weapon, then see if we have a touch attack active.
       if oWeapon = $
       {
@@ -4664,9 +4695,9 @@ messages:
    % This keeps track of the weapon swings.
    SwingWeapon(times=1)
    {
-      local oWeapon, iProfNum;
+      local iProfNum;
 
-      oWeapon = Send(self,@LookupPlayerWeapon);
+      local oWeapon = Send(self,@LookupPlayerWeapon);
 
       if oWeapon <> $
       {
@@ -4721,11 +4752,22 @@ messages:
       return piWeaponInfo/1000;
    }
 
+   IsOutsideSafeAttackRoom()
+   "Returns TRUE unless this player is in a room where players may attack "
+   "each other without penalty."
+   {
+      % A player who has logged off is in no room.
+      if poOwner = $
+      {
+         return TRUE;
+      }
+
+      return NOT Send(poOwner,@SafePlayerAttack);
+   }
+
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local oSoldierShield, iChance, oEnemyGuild;
-
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
 
@@ -4757,13 +4799,13 @@ messages:
       }
 
       % Let our shield know we killed something.
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
       if oSoldierShield <> $
       {
          Send(oSoldierShield,@KilledSomething,#what=what);
       }
 
-      if IsClass(what,&User) AND NOT Send(poOwner,@SafePlayerAttack)
+      if IsClass(what,&User) AND Send(self,@IsOutsideSafeAttackRoom)
          AND what <> self
       {
          Send(Send(SYS, @GetStatistics), @PlayerKillsCounter);
@@ -4791,7 +4833,7 @@ messages:
 
             % Check for enemy guild - If both guilds are enemies, then they can whack on each other
             %   freely, without murderer or faction penalty.
-            oEnemyGuild = Send(what,@GetGuild);
+            local oEnemyGuild = Send(what,@GetGuild);
 
             % Check for various murderer things if any are true:
             %  We're not in a guild, opponent wasn't in a guild, we're not in a mutual war
@@ -4831,7 +4873,7 @@ messages:
                   % it was competitive (or the victim at least had a shot)
                   % If were twice as strong as them, we get haunted.
                   % If the victim was good, we get haunted.
-                  iChance = Send(self,@RevenantChance,#target=what);
+                  local iChance = Send(self,@RevenantChance,#target=what);
                   if (random(1,100) < iChance) AND NOT Send(SYS,@GetChaosNight)
                   {       
                      Send(self,@SetPlayerFlag,#flag=PFLAG_HAUNTED,#value=TRUE);
@@ -4957,9 +4999,7 @@ messages:
 
    RevenantChance(who=$,target=$)
    {
-      local oChance, oGuild, iFaction, oSpell;
-
-      if IsClass(poOwner,&Guildhall)
+      if poOwner <> $ AND IsClass(poOwner,&Guildhall)
       {
          return 0;
       }
@@ -4973,14 +5013,14 @@ messages:
          return 0;
       }
 
-      oChance = 10;
-      oGuild = Send(target,@GetGuild);
+      local iChance = 10;
+      local oGuild = Send(target,@GetGuild);
       
       if poGuild <> $ AND oGuild <> $ 
       {
          if poGuild = oGuild
          {
-            oChance = oChance + 20;
+            iChance = iChance + 20;
          }
          else
          {
@@ -4991,60 +5031,60 @@ messages:
             
             if Send(poGuild,@IsAlly,#otherguild=oGuild)
             {
-               oChance = oChance + 10;
+               iChance = iChance + 10;
             }
             
             if Send(oGuild,@IsAlly,#otherguild=poGuild)
             {
-               oChance = oChance + 10;
+               iChance = iChance + 10;
             }
             
             if Send(poGuild,@IsEnemy,#otherguild=oGuild)
             {
-               oChance = oChance - 10;
+               iChance = iChance - 10;
             }
             
             if Send(oGuild,@IsEnemy,#otherguild=poGuild)
             {
-               oChance = oChance - 10;
+               iChance = iChance - 10;
             }
          }
 
       }
 
-      iFaction = Send(target,@GetFaction);
+      local iFaction = Send(target,@GetFaction);
       if piFaction <> FACTION_NEUTRAL AND iFaction <> FACTION_NEUTRAL
       {
          if piFaction <> iFaction
          {
-            oChance = oChance - 5;
+            iChance = iChance - 5;
          }
          else
          {
-            oChance = oChance + 15;
+            iChance = iChance + 15;
          }
       }
 
       % Punish them more if they beat up someone weaker than they are.
-      oChance = oChance + ((10*piBase_Max_Health)/Send(target,@GetBaseMaxHealth));
+      iChance = iChance + ((10*piBase_Max_Health)/Send(target,@GetBaseMaxHealth));
 
       % People with greater absolute Karma have a greater chance to produce a revenant.  Being a good
       %  person, in general, decreases your chance.  Even if you are murderous scum.
-      oChance = oChance + (abs(Send(target,@GetKarma)-piKarma/100))/20;
+      iChance = iChance + (abs(Send(target,@GetKarma)-piKarma/100))/20;
 
       % Punish them more if they walked away with more health.
-      oChance = oChance + bound(20*piHealth/piBase_Max_health,0,20);
+      iChance = iChance + bound(20*piHealth/piBase_Max_health,0,20);
 
       % Bind the number to a reasonable amount, then add in the penalty for being a repeat killer.
-      oChance = (bound(oChance,2,30) + (5*piKill_count_decay));
+      iChance = (bound(iChance,2,30) + (5*piKill_count_decay));
 
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
-      if Send(poOwner,@IsEnchanted,#what=oSpell)
+      local oSpell = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
+      if poOwner <> $ AND Send(poOwner,@IsEnchanted,#what=oSpell)
       {
-         oChance = oChance + (oChance * Send(poOwner,@GetEnchantmentState,#what=oSpell) / 100);
+         iChance = iChance + (iChance * Send(poOwner,@GetEnchantmentState,#what=oSpell) / 100);
       }
-      
-      return oChance;
+
+      return iChance;
    }
 
    DoHitMessageSound(what = $,damage = 0,stroke_obj = $)
@@ -5339,6 +5379,22 @@ messages:
 
       return $;
    }
+
+   LookupPlayerInstrument()
+   "Returns the instrument currently in use."
+   {
+      local i;
+
+      for i in plUsing
+      {
+         if IsClass(i,&Instrument)
+         {
+            return i;
+         }      
+      } 
+
+      return $;
+   }
    
    LeaveHold(what = $)
    {
@@ -5433,30 +5489,27 @@ messages:
 
    ChooseArmorPosition()
    "Defense now chooses a body place at random, and checks to see if the "
-   "defender has any defense value there.  Much better than rendom pattern "
+   "defender has any defense value there.  Much better than random pattern "
    "of previous combat."
    {
-      local rand, armor_pos;
+      local iRand = random(1,12);
 
-      rand = random(1,12);
-      armor_pos = 0;
-
-      if rand < 6
+      if iRand < 6
       {
          return ITEM_USE_BODY;
       }
            
-      if rand < 8
+      if iRand < 8
       {
          return ITEM_USE_LEGS;
       }
            
-      if rand < 9
+      if iRand < 9
       {
          return ITEM_USE_HEAD;
       }
                    
-      if rand < 10
+      if iRand < 10
       {
          return ITEM_USE_GAUNTLET;
       }
@@ -5468,12 +5521,10 @@ messages:
    GetDefenseModifier()
    "Returns a number from 0-100."
    {
-      local armor_mod, armor_pos, i, shirt;
-
-      armor_mod = 0;
-      armor_pos = Send(self,@ChooseArmorPosition);
+      local i;
+      local iArmorPosition = Send(self,@ChooseArmorPosition);
       
-      if armor_pos = -1
+      if iArmorPosition = -1
       {
          for i in plUsing
          {
@@ -5487,28 +5538,28 @@ messages:
       }
       else
       {
-         if armor_pos & ITEM_USE_BODY
+         if iArmorPosition & ITEM_USE_BODY
          {
-            shirt = $;
+            local oShirt = $;
             for i in plUsing
             {
-               if Send(i,@GetItemUseType) & armor_pos
+               if Send(i,@GetItemUseType) & iArmorPosition
                {
                   return i;
                }
                if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
                {
-                  shirt = i;
+                  oShirt = i;
                }
             }
 
-            return shirt;
+            return oShirt;
          }
          else
          {
             for i in plUsing
             {
-               if Send(i,@GetItemUseType) = armor_pos
+               if Send(i,@GetItemUseType) = iArmorPosition
                {
                   return i;
                }
@@ -5524,28 +5575,26 @@ messages:
    CalculateHealthTime()
    "Calculate # of milliseconds until user will gain a health point"
    {
-      local iTime, iMaxHealth, lJalaInfo, oJalaSpell, iJalaPower;
-      
       % Faster regen with higher vigor
-      iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
-      
+      local iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
+
       iTime = ((125-Send(self,@GetStamina)) * iTime)/100;
-      iMaxHealth = bound(piMax_health,40,100);
+      local iMaxHealth = bound(piMax_health,40,100);
       iTime = (iTime *100)/iMaxHealth;
 
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                            #who=self,#hpregen=TRUE);
-      
+
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
+         local lJalaInfo = Send(poOwner,@GetJalaInfo);
 
          if lJalaInfo <> $
          {
-            oJalaSpell = Nth(lJalaInfo,2);
+            local oJalaSpell = Nth(lJalaInfo,2);
             if IsClass(oJalaSpell,&Restorate)
             {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
+               local iJalaPower = Nth(Nth(lJalaInfo,3),3);
                return Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
                             #iSpellPower=iJalaPower);
             }
@@ -5558,7 +5607,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell, iSpellPower;
+      local iTime;
 
       if piMana > piMax_mana
       {
@@ -5577,27 +5626,27 @@ messages:
 
          if poOwner <> $
          {
-            lJalaInfo = Send(poOwner,@GetJalaInfo);
+            local lJalaInfo = Send(poOwner,@GetJalaInfo);
 
             if lJalaInfo <> $
             {
-               oJalaSpell = Nth(lJalaInfo,2);
+               local oJalaSpell = Nth(lJalaInfo,2);
                if IsClass(oJalaSpell,&Rejuvenate)
                {
-                  iJalaPower = Nth(Nth(lJalaInfo,3),3);
+                  local iJalaPower = Nth(Nth(lJalaInfo,3),3);
                   iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
                                #iSpellPower=iJalaPower);
                }
             }
-         
+
             iTime = bound(iTime,500,60000);
          }
 
          % Mana Focus will adjust mana regen time based on its spellpower.
-         oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
+         local oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
          if Send(self,@IsEnchanted,#what=oSpell)
          {
-            iSpellPower = send(oSpell,@GetSpellPower,#who=self);
+            local iSpellPower = send(oSpell,@GetSpellPower,#who=self);
             iTime = Send(oSpell,@AdjustManaTime,#time=iTime,#iSpellPower=iSpellPower);
          }
       }
@@ -5608,19 +5657,22 @@ messages:
    ReqEatSomething(filling = 0, what = $)
    {
       local i;
+	  
       % This is the only place we need piStomach to be correct
       Send(self,@UpdateStomach);
 
       % Are we too full to eat and drink?
       if (piStomach + filling) > 100
       {
-         if what = $ OR NOT Send(what,@IsBeverage)
+		 % Display the "too full to eat" message if the item isn't a beverage.
+		 % This is also used by default in case 'what' is undefined.
+		 if what = $ OR NOT Send(what,@IsBeverage)
          {
             Send(self,@MsgSendUser,#message_rsc=player_too_full);
          }
          else
          {
-            Send(self,@MsgSendUser,#message_rsc=player_too_full_drink);
+			Send(self,@MsgSendUser,#message_rsc=player_too_full_drink);
          }
          
          return FALSE;
@@ -5643,9 +5695,26 @@ messages:
 
    EatSomething(nutrition = 0, filling = 0)
    {
-      Send(self,@AddExertion,#amount=-10000*nutrition);
+	  Send(self,@AddExertion,#amount=-10000*nutrition);
+
+      % Track the last 'piStomach' value to help prevent spamming
+      %  fullness messages on every food or drink consumption.	  
+	  local iLastStomachValue = piStomach;
+
       piStomach = piStomach + filling;
-      
+
+      % Display fullness messages only if the player's stomach value passed the 50% or 75% thresholds.
+      % This helps avoid spamming the messages on every bite or drink.
+      if (piStomach >= 50 AND piStomach < 75) AND iLastStomachValue < 50
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_half_full);
+      }
+
+      if piStomach >= 75 AND iLastStomachValue < 75
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_almost_full);
+      }
+
       return;
    }
 
@@ -5686,15 +5755,13 @@ messages:
    GainHealthNormal(amount = $)
    "Don't add beyond piMax_health"
    {
-      local oldhealth;
+      local iOldHealth = piHealth;
 
-      oldhealth = piHealth;
-      
       if amount < 0
       {
          return;
       }
-      
+
       if piHealth > piMax_health
       {
          return 0;
@@ -5707,8 +5774,8 @@ messages:
       }
 
       Send(self,@NewHealth);
-      
-      return (piHealth - OldHealth);
+
+      return (piHealth - iOldHealth);
     }
   
    NewHealth()
@@ -5787,9 +5854,7 @@ messages:
 
    GainBaseMaxHealth(amount = 0)
    {
-      local iPrev_max;
-
-      iPrev_max = piBase_max_health;
+      local iPrev_max = piBase_max_health;
 
       piBase_max_health = bound(piBase_max_health + amount, 20, (100 + Send(self,@GetStamina)));
       % Bound ourselves at the top end to 150.
@@ -5804,10 +5869,10 @@ messages:
          Send(self,@ReceiveNestedMail,#from=player_angel,
               #dest_list=[self],#nest_list=[4,player_tutorial_mail]);           
       }
-      
+
       Send(self,@PlayerIsIntriguing);
       Send(self,@GainMaxhealth,#amount=amount);
-      
+
       return;
    }
 
@@ -5815,9 +5880,7 @@ messages:
    "Call this any time you modify piMax_health, to set stuff on the user's display, "
    "and make sure the value doesn't get too high.  Returns actual amount changed"
    {
-      local iPrev_max;
-
-      iPrev_max = piMax_health;
+      local iPrev_max = piMax_health;
       piMax_health = bound(piMax_health + amount, 20, $);
 
       %  no longer reset health to max - will need to test for abusability
@@ -5849,7 +5912,7 @@ messages:
       %else { piHealth = bound(piHealth, $, piMax_health); }
 
       Send(self,@NewHealth); % in case need heal timer
-      
+
       return piMax_health - iPrev_max;
    }
 
@@ -5857,73 +5920,41 @@ messages:
    {
       return 15 + Send(self,@GetMysticism)/5;
    }
- 
-   StripNodeList(number=$)
-   {
-      local nodelist, count;
-      
-      nodelist = Send(self,@GetNodelist);
-
-      if number = $
-      {
-         number = length(nodelist);
-      }
-
-      count = 1;
-
-      while nodelist >=1
-      {
-         if ((nodelist/2)*2) <> nodelist  %we do an "# was odd" operator
-         {
-            Send(Send(SYS,@FindNodeByNum,#num=count),@UnMeld,#who=self);
-         }
-         
-         count = count*2;
-         nodelist = nodelist/2;
-      }
-      
-      Send(self,@ResetNodeList);
-      Send(self,@NewMana);
-      
-      return;
-   }
 
    StripOneNode(report=TRUE)
    {
-      local lNodes, index, bFaerieNode, bQNode, oNode;
-
       if piNodeList = 0
       {
          return;
       }
 
-      lNodes = $;
-      index = 1;
-      bFaerieNode = FALSE;
-      bQNode = FALSE;
+      local lNodes = $;
+      local iNodeFlag = 1;
+      local bFaerieNode = FALSE;
+      local bQNode = FALSE;
 
-      while index <= NODE_MAX_VALUE
+      while iNodeFlag <= NODE_MAX_VALUE
       {
-         if piNodelist & index
+         if piNodelist & iNodeFlag
          {
-            if index = NODE_FAERIE
+            if iNodeFlag = NODE_FAERIE
             {
                bFaerieNode = TRUE;
             }
             else
             {
-               if index = NODE_Q
+               if iNodeFlag = NODE_Q
                {
                   bQNode = TRUE;
                }
                else
                {
-                  lNodes = cons(index,lNodes);
+                  lNodes = cons(iNodeFlag,lNodes);
                }
             }
          }
 
-         index = index * 2;
+         iNodeFlag = iNodeFlag * 2;
       }
 
       if lNodes = $
@@ -5942,8 +5973,8 @@ messages:
 
       if lNodes
       {
-         index = Nth(lNodes,random(1,length(lNodes)));
-         oNode = Send(SYS,@FindNodeByNum,#num=index);
+         iNodeFlag = Nth(lNodes,random(1,length(lNodes)));
+         local oNode = Send(SYS,@FindNodeByNum,#num=iNodeFlag);
          Send(oNode,@UnMeld,#who=self);
          
          if report
@@ -5965,25 +5996,16 @@ messages:
       return;
    }
 
-   ResetNodeList()
-   {
-      piNodelist = 0;
-      
-      return;
-   }
-
    NewMaxMana(amount=0,node_num=-1)
    "This is called from the mana node.  Unlike newMaxHealth, the amount is "
    "checked here.  Returns actual amount changed"
    {
-      local iPrev_max;
-
-      iPrev_max = piMax_mana;
+      local iPrev_max = piMax_mana;
       if amount > 0 AND node_num <> -1
       {
          piNodelist = piNodelist | node_num;
       }
-      
+
       if amount < 0 AND node_num <> -1
       {
          if piNodelist & node_num
@@ -5995,35 +6017,35 @@ messages:
             Debug("BAD: missing node_num from nodelist in mana adjust.",self);
          }
       }
-      
+
       piMax_Mana = piMax_mana+amount;      
 
       Send(self,@NewMana);
-      
+
       return (piMax_mana - iPrev_max);
    }
 
    ComputeMaxMana()
    {
-      local index, iNodeList, oNode, i;
+      local i;
 
-      index = 1;
-      iNodelist = piNodelist;
-      
+      local iNodeFlag = 1;
+      local iNodeList = piNodelist;
+
       piMax_mana = Send(self, @GetInitialMaxMana);
-      
-      while iNodeList > 0 AND index <= NODE_MAX_VALUE
-      {          
-         if (iNodeList & index)   
-         {      
-            oNode = Send(SYS,@FindNodeByNum,#num=index);      
+
+      while iNodeList > 0 AND iNodeFlag <= NODE_MAX_VALUE
+      {
+         if (iNodeList & iNodeFlag)
+         {
+            local oNode = Send(SYS,@FindNodeByNum,#num=iNodeFlag);
             piMax_mana = piMax_mana + Send(oNode,@GetManaAdjust,#who=self);
-            iNodelist = iNodelist & ~index;
+            iNodeList = iNodeList & ~iNodeFlag;
          }
-         
-         index=index*2;
+
+         iNodeFlag = iNodeFlag * 2;
       }
-      
+
       % account for any items that may affect max mana
       for i in plUsing
       {
@@ -6032,7 +6054,7 @@ messages:
             piMax_mana = piMax_mana + Send(i,@GetManaChange);
          }
       }
-      
+
       for i in plEnchantments
       {
          if Send(Nth(i,2),@AffectsMaxMana)
@@ -6040,30 +6062,28 @@ messages:
             piMax_mana = piMax_mana + Send(Nth(i,2),@getManaBonus,#state=Nth(i,3));
          }
       }
-      
+
       Send(self,@NewMana);
-      
+
       return;
    }
 
    NumManaNodes()
    {
-      local i, n;
-      
-      n = 0;
-      i = 1;
+      local iNodeCount = 0;
+      local iNodeFlag = 1;
 
-      while i <= NODE_MAX_VALUE
+      while iNodeFlag <= NODE_MAX_VALUE
       {
-         if piNodelist & i
+         if piNodelist & iNodeFlag
          {
-            n = n + 1;
+            iNodeCount = iNodeCount + 1;
          }
-         
-         i = 2 * i;
+
+         iNodeFlag = 2 * iNodeFlag;
       }
-      
-      return n;
+
+      return iNodeCount;
    }
 
    GetNodeList()
@@ -6089,9 +6109,7 @@ messages:
 
    GainMana(amount=0, bCapped=FALSE)
    {
-      local iManaGained;
-   
-      iManaGained = amount;
+      local iManaGained = amount;
       piMana = piMana + amount;
 
       if bCapped AND piMana > piMax_Mana
@@ -6140,8 +6158,6 @@ messages:
    % This message handles adding a weighted cast to the school casts list.
    AddSchoolCast(school=$, amount=$)
    {
-      local iToAdd;
-      
       if plSchoolCasts = $
       {
          % 11 elements for now
@@ -6156,7 +6172,7 @@ messages:
          return;
       }
 
-      iToAdd = amount;
+      local iToAdd = amount;
 
       % Give a penalty for sitting at the botting imp cap.
       if NOT Send(self,@CheckAdvancementPoints)
@@ -6227,19 +6243,19 @@ messages:
    GetNumSpellsInSchool(school = 0)
    "Used by the advancement checker to see the odds of a player advancing."
    {
-      local num, i, oSpell;
+      local i;
       
-      num = 0;
+      local iNumSpells = 0;
       for i in plSpells
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=i));
+         local oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=i));
          if school = Send(oSpell,@GetSchool)
          {
-            num = num + 1;
+            iNumSpells = iNumSpells + 1;
          }
       }
       
-      return num;
+      return iNumSpells;
    }
      
    GetSkillList()
@@ -6381,8 +6397,6 @@ messages:
 
    CalculateKarmaChangeFromAct( karma_doer=$, karma_act=$, Swing_factor = 1)
    {
-      local iBase, iChange;
-
       if karma_doer = $ OR karma_act = $
       {
          return 0;
@@ -6402,9 +6416,9 @@ messages:
          return 0;
       }
 
-      iBase = karma_doer  - karma_act;
+      local iBase = karma_doer  - karma_act;
     
-      iChange = - ((iBase*iBase*ibase)/2500 + (5*iBase));
+      local iChange = - ((iBase*iBase*ibase)/2500 + (5*iBase));
     
       % Swing factor must be a number from 1 to 10
       swing_factor = bound(swing_factor,1,10);
@@ -6414,7 +6428,7 @@ messages:
 
    CalculateKarmaChangeFromKill( karma_killer = 0, karma_victim = 0, bIsMob = FALSE )
    {
-      local iChange, iSwing, oRoom;
+      local iSwing;
 
       % No karma changes from killing players during Frenzies.
       % Also, no Karma change from event monsters: Xeos and admin-spawned.
@@ -6426,7 +6440,7 @@ messages:
 
       % No karma changes in the newbie area.  Otherwise e.g. killing a negative
       % karma monster may make your spell inoperable.
-      oRoom = Send(self, @GetOwner);
+      local oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND Send(oRoom, @GetRegion) = RID_NEWB_BASE
       {
          return 0;
@@ -6471,7 +6485,7 @@ messages:
          }
       }
 
-      iChange = Send(self,@CalculateKarmaChangeFromAct,#karma_doer = karma_killer,
+      local iChange = Send(self,@CalculateKarmaChangeFromAct,#karma_doer = karma_killer,
                      #karma_act = -(karma_victim),#swing_factor = iSwing);
         
       if bIsMob 
@@ -6613,26 +6627,25 @@ messages:
    ChangeSpellAbility(spell_num = 0, amount = 0, report = FALSE,
                       refigureschools = TRUE)
    {
-      local i, bFound, elemnum, iability, bUsed, spellname, iChange,
-            newability, oSpell, oRoom;
+      local i;
 
-      oSpell = Send(sys,@FindSpellByNum,#num=spell_num);
+      local oSpell = Send(sys,@FindSpellByNum,#num=spell_num);
       if oSpell = $
       {
          return FALSE;
       }
 
       % Make sure user has this spell (should always have it if this is being called)
-      bFound = FALSE;
-      elemnum = 0;
-      spellname = Send(oSpell,@GetName);
-      iChange = 0;
+      local bFound = FALSE;
+      local iElemNum = 0;
+      local rSpellName = Send(oSpell,@GetName);
+      local iChange = 0;
 
       % Do _not_ replace with HasSpell.  
       % This also finds the spell/ability pair and puts it in 'i' for later use.
       for i in plSpells
       {
-         elemnum = elemnum + 1;
+         iElemNum = iElemNum + 1;
          if spell_num = Send(self,@DecodeSpellNum,#compound=i)
          {
             bFound = TRUE;
@@ -6646,23 +6659,17 @@ messages:
          % Can't advance a spell you don't have.
          return FALSE;
       }
-
-      bUsed = Send(self,@WasSpellUsed,#compound=i);
-      if NOT bUsed
-      {
-         bUsed = -1;
-      }
         
-      iability = Send(self,@DecodeSpellAbility,#compound=i);
-      newability = bound(iability+amount,1,99);
-      iChange = newability-iability;
+      local iAbility = Send(self,@DecodeSpellAbility,#compound=i);
+      local iNewAbility = bound(iAbility+amount,1,99);
+      iChange = iNewAbility-iAbility;
 
-      SetNth(plSpells,elemnum,Send(self,@EncodeSpell,#num=spell_num,#iability=newability));
-      Send(self,@DrawStatSpell,#index=elemnum);
+      SetNth(plSpells,iElemNum,Send(self,@EncodeSpell,#num=spell_num,#iability=iNewAbility));
+      Send(self,@DrawStatSpell,#index=iElemNum);
       if report AND iChange > 0
       {
-         oRoom = Send(self, @GetOwner);
-         Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=spellName);   
+         local oRoom = Send(self, @GetOwner);
+         Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=rSpellName);   
          
          if NOT (isClass(self,&Admin) AND Send(self,@IsHidden))
          {
@@ -6685,7 +6692,7 @@ messages:
 
       if Send(self,@CheckLog)
       {
-         Debug("LOG:  ",vrName," changed in spell ability of ",spellname,
+         Debug("LOG:  ",vrName," changed in spell ability of ",rSpellName,
                " by ",iChange," to ",abs(i));
       }
 
@@ -6694,8 +6701,6 @@ messages:
    
    AddToSchools(school=0, change=0)
    {
-      local iOldValue, oLore;
-
       if school = $
          OR school < 1
          OR change = $
@@ -6715,10 +6720,10 @@ messages:
          plSchools = cons(0, plSchools);
       }
 
-      iOldValue = Nth(plSchools,school);
+      local iOldValue = Nth(plSchools,school);
       SetNth(plSchools,school,(iOldValue+change));
 
-      oLore = Send(SYS,@GetLore);
+      local oLore = Send(SYS,@GetLore);
       Send(oLore,@PlayerAdvanced,#who=self,#school = school);
 
       return TRUE;
@@ -6726,10 +6731,9 @@ messages:
 
    RefigureSchoolsLists(informlore=FALSE)
    {
-      local i, lOldList, oAbility, iSchool, iAbility, iValue, oLore, bChanged,
-            index, iNum;
+      local i, oAbility, iSchool, iAbility, iValue, oLore;
 
-      lOldList = plSchools;
+      local lOldList = plSchools;
 
       % 11 elements right now.
       plSchools = [ 0,0,0,0,0,0,0,0,0,0,0 ];  
@@ -6737,7 +6741,7 @@ messages:
       for i in plSpells
       {
          iAbility = Send(self,@DecodeSpellAbility,#compound=i);
-         iNum = Send(self,@DecodeSpellNum,#compound=i);
+         local iNum = Send(self,@DecodeSpellNum,#compound=i);
          oAbility=Send(SYS,@FindSpellByNum,#num=iNum);    
          if IsClass(oAbility,&spell)
          {
@@ -6766,12 +6770,12 @@ messages:
       }
 
       % We want to know if something has changed.
-      bChanged = FALSE;
-      index = 0;
+      local bChanged = FALSE;
+      local iSchoolIndex = 0;
       for i in lOldList
       {
-         index = index + 1;
-         if Nth(lOldList,index) <> Nth(plSchools,index)
+         iSchoolIndex = iSchoolIndex + 1;
+         if Nth(lOldList,iSchoolIndex) <> Nth(plSchools,iSchoolIndex)
          {
             bChanged = TRUE;
          }
@@ -6791,23 +6795,21 @@ messages:
    "Admin supported.\n"
    "Adds, removes or changes a spell by an additional or absolute value."
    {
-      local oSpell, oldAbility;
-
       if num = $ OR num = 0
       {
          return Send(SYS,@GetFailureRsc);
       }
 
-      oSpell = Send(SYS,@FindSpellByNum,#num=num);
+      local oSpell = Send(SYS,@FindSpellByNum,#num=num);
       if oSpell = $
       {
          return Send(SYS,@GetFailureRsc);
       }
 
-      oldAbility = Send(self,@GetSpellAbility,#spell_num=num);
+      local iOldAbility = Send(self,@GetSpellAbility,#spell_num=num);
 
       % Add?
-      if oldAbility = 0
+      if iOldAbility = 0
       {
          if Send(self,@AddSpell,#num=num,#iability=ability)
          {
@@ -6818,7 +6820,7 @@ messages:
       }
 
       % Remove?
-      if ability = 0 and add <= -oldAbility
+      if ability = 0 and add <= -iOldAbility
       {
          if Send(self,@RemoveSpell,#num=num)
          {
@@ -6836,7 +6838,7 @@ messages:
 
       if add = 0
       {
-         add = ability - oldAbility;
+         add = ability - iOldAbility;
       }
       
       if Send(self,@ChangeSpellAbility,#spell_num=num,#amount=add)
@@ -6851,7 +6853,7 @@ messages:
    "Admin supported\n"
    "Adds a spell by spell ID to the user's castable list of spells"
    {
-      local i, oSpell, lPrereqs, iBoundAbility, lEncode;
+      local i;
       
       if Send(self,@HasSpell,#num=num)
       {
@@ -6878,13 +6880,13 @@ messages:
 %         return FALSE;
 %      }
       
-      oSpell = Send(SYS,@FindSpellByNum,#num=num);
+      local oSpell = Send(SYS,@FindSpellByNum,#num=num);
       if oSpell = $
       {
          return FALSE;
       }
       
-      lPrereqs = Send(oSpell,@GetPrerequisites);
+      local lPrereqs = Send(oSpell,@GetPrerequisites);
       
       for i in lPrereqs
       {
@@ -6897,14 +6899,14 @@ messages:
       
       % Spell format: [ num * 100 + ability ]
 
-      iBoundAbility = bound(iAbility,0,99);
+      local iBoundAbility = bound(iAbility,0,99);
       
       if iBoundAbility = 0
       {
          iBoundAbility = Send(oSpell,@InitialAbility,#who=self);
       }
       
-      lEncode = Send(self,@EncodeSpell,#num=num,#iability=iBoundAbility);
+      local lEncode = Send(self,@EncodeSpell,#num=num,#iability=iBoundAbility);
       plSpells = Cons(lEncode,plSpells);
 
       if Send(self,@CheckLog)
@@ -6975,9 +6977,9 @@ messages:
    "Admin supported\n"
    "Removes a spell by spell ID from the user's castable list of spells"
    {
-      local oSpell, i, j, bFound;
+      local i, j;
       
-      oSpell = Send(SYS,@FindSpellbyNum,#num=num);
+      local oSpell = Send(SYS,@FindSpellbyNum,#num=num);
       if oSpell = $
       {
          Debug("Trying to delete a spell that doesn't exist in system.");
@@ -6985,7 +6987,6 @@ messages:
          return FALSE;
       }
     
-      bFound = FALSE;
       for i in plSpells
       {
          if num = Send(self,@DecodeSpellNum,#compound=i)
@@ -6999,7 +7000,6 @@ messages:
             Send(self,@ToCliRemoveSpell,#oSpell=oSpell);
             Send(self,@PlayerIsIntriguing);
 
-            bFound = TRUE;
             for j in plUsing
             {
                if IsClass(j,&DiscipleRobe)
@@ -7037,16 +7037,15 @@ messages:
    % to see if they have forgotten the skill/spell (what)
    HasForgetEnchantment(what = $)
    {
-      local oSpell, lState, iStateMember;
-
-      lState = $;
+      local iStateMember;
+      local lState = $;
 
       if NOT piFlags & PFLAG_FORGOTTEN
       {
          return FALSE;
       }
 
-      oSpell = Send(SYS,@FindSpellbyNum,#num=SID_FORGET);
+      local oSpell = Send(SYS,@FindSpellbyNum,#num=SID_FORGET);
       lState = Send(self,@GetEnchantedState,#what=oSpell);
       if lState = $
       {
@@ -7067,15 +7066,15 @@ messages:
    FlipSpellAtrophyFlag(SID=0)
    "This spell was used recently, meaning it will NOT atrophy."
    {
-      local i, elemnum;
+      local i;
       
-      elemnum = 0;
+      local iElemNum = 0;
       for i in plSpells
       {       
-         elemnum = elemnum + 1;      
+         iElemNum = iElemNum + 1;      
          if Send(self,@DecodeSpellNum,#compound=i) = SID
          {
-            SetNth(plspells,elemnum,abs(i));
+            SetNth(plspells,iElemNum,abs(i));
             
             break;
          }
@@ -7086,36 +7085,35 @@ messages:
 
    ActivateSpellAtrophy()
    {
-      local i, j, iability, aSpell, bSpell, bFound, highmark, iAmount;
+      local i, j;
 
       % Must get below highmark for atrophy to activate
-      iAmount = -2;
+      local iAmount = -2;
 
-      highmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))
+      local iHighmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))
                  * piAdvancement_Points)/20; 
 
       for i in plSpells
       {
-         if i < 0 AND Random(1,200) < highmark               
+         if i < 0 AND Random(1,200) < iHighmark               
          {
-            iAbility = Send(self,@DecodeSpellAbility,#compound=i);
+            local iAbility = Send(self,@DecodeSpellAbility,#compound=i);
             if iAbility > 2                                                         
             {
-               aSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=i));
-               bFound = FALSE;
+               local oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=i));
                
                for j in plSpells
                {
-                  bSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=j));
-                  if j > 0 AND Send(aSpell,@GetSchool) = Send(bSpell,@GetSchool)
+                  local oOtherSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=j));
+                  if j > 0 AND Send(oSpell,@GetSchool) = Send(oOtherSpell,@GetSchool)
                   {
                      iAmount = -1;
                      
                      break;
                   }                                 
                }
-               Send(self,@ChangeSpellAbility,#spell_num=Send(aSpell,@GetSpellNum),
-                    #amount=iamount);
+               Send(self,@ChangeSpellAbility,#spell_num=Send(oSpell,@GetSpellNum),
+                    #amount=iAmount);
             }
          }
       }
@@ -7180,26 +7178,25 @@ messages:
 
    ChangeSkillAbility(Skill_num = 0, amount = 0, report = FALSE, refigureschools = TRUE, bDM = FALSE)
    {
-      local i, bFound, elemnum, iability, bUsed, iChange, skillname, 
-            newability, oSkill, oRoom;
+      local i;
  
-      oSkill = Send(SYS,@FindSkillByNum,#num=skill_num);
+      local oSkill = Send(SYS,@FindSkillByNum,#num=skill_num);
       if oSkill = $
       {
          return FALSE;
       }
 
       % Make sure user has this Skill (should always have it if this is being called)
-      bFound = FALSE;
-      elemnum = 0;
-      skillname = Send(oSkill,@GetName);
-      iChange = 0;
+      local bFound = FALSE;
+      local iElemNum = 0;
+      local rSkillName = Send(oSkill,@GetName);
+      local iChange = 0;
  
       % Do _not_ replace with HasSkill.  
       % This also finds the Skill/ability pair and puts it in 'i' for later use.
       for i in plSkills
       {
-         elemnum = elemnum + 1;
+         iElemNum = iElemNum + 1;
          if Skill_num = Send(self, @DecodeSkillNum, #compound=i)
          {
             bFound = TRUE;
@@ -7214,15 +7211,9 @@ messages:
          return FALSE;
       }
 
-      bUsed = Send(self,@WasSpellUsed,#compound=i);
-      if bUsed = 0
-      {
-         bUsed = -1;
-      }
-
-      iability = Send(self,@DecodeSkillAbility,#compound=i);
-      newability = bound(iability+amount,1,99);
-      iChange = newability - iability;
+      local iAbility = Send(self,@DecodeSkillAbility,#compound=i);
+      local iNewAbility = bound(iAbility+amount,1,99);
+      iChange = iNewAbility - iAbility;
 
       % If we advance a stroke or a proficiency, then reset our stroke count (and bonuses)
       if IsClass(oSkill,&Stroke) OR IsClass(oSkill,&Proficiency)
@@ -7230,12 +7221,12 @@ messages:
          Send(self,@ResetWeaponSwings);
       }
 
-      SetNth(plSkills, elemnum, Send(self,@EncodeSpell,#num=skill_num,#iability=newability));
-      Send(self,@DrawStatSkill,#index=elemnum);
+      SetNth(plSkills, iElemNum, Send(self,@EncodeSpell,#num=skill_num,#iability=iNewAbility));
+      Send(self,@DrawStatSkill,#index=iElemNum);
       if report AND (iChange > 0)
       {
-         oRoom = Send(self, @GetOwner);
-         Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=skillName);
+         local oRoom = Send(self, @GetOwner);
+         Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=rSkillName);
 
          if NOT (isClass(self,&DM) AND Send(self,@IsHidden))
          {
@@ -7258,7 +7249,7 @@ messages:
    
       if Send(self,@CheckLog)
       {           
-         Debug("LOG:  ",vrName," changed skill ",skillname,"by ",iChange,
+         Debug("LOG:  ",vrName," changed skill ",rSkillName,"by ",iChange,
                " to ",abs(i)); 
       }
 
@@ -7269,23 +7260,21 @@ messages:
    "Admin supported.\n"
    "Adds, removes or changes a skill by an additional or absolute value."
    {
-      local oSkill, oldAbility;
-
       if num = $ OR num = 0
       {
          return Send(SYS,@GetFailureRsc);
       }
 
-      oSkill = Send(SYS,@FindSkillByNum,#num=num);
+      local oSkill = Send(SYS,@FindSkillByNum,#num=num);
       if oSkill = $
       {
          return Send(SYS,@GetFailureRsc);
       }
 
-      oldAbility = Send(self,@GetSkillAbility,#skill_num=num);
+      local iOldAbility = Send(self,@GetSkillAbility,#skill_num=num);
 
       % Add?
-      if oldAbility = 0
+      if iOldAbility = 0
       {
          if Send(self,@AddSkill,#num=num,#iability=ability)
          {
@@ -7296,7 +7285,7 @@ messages:
       }
 
       % Remove?
-      if ability = 0 AND add <= -oldAbility
+      if ability = 0 AND add <= -iOldAbility
       {
          if Send(self,@RemoveSkill,#num=num)
          {
@@ -7314,7 +7303,7 @@ messages:
 
       if add = 0
       {
-         add = ability - oldAbility;
+         add = ability - iOldAbility;
       }
       
       if Send(self,@ChangeSkillAbility,#skill_num=num,#amount=add)
@@ -7329,8 +7318,6 @@ messages:
    "Admin supported\n"
    "Adds a Skill by Skill ID to the user's castable list of Skills"
    {
-      local oSkill, iBoundAbility;
-      
       if Send(self,@HasSkill,#num=num)              
       {
          % Already has it.
@@ -7344,7 +7331,7 @@ messages:
          return FALSE;
       }
       
-      oSkill = Send(SYS,@FindSkillByNum,#num=num);    % system has no info on this skill.
+      local oSkill = Send(SYS,@FindSkillByNum,#num=num);    % system has no info on this skill.
       if (oSkill = $)
       {
          return False;
@@ -7352,7 +7339,7 @@ messages:
            
       % Skill format: [ num * 100 + ability ]
 
-      iBoundAbility = bound(iAbility,0,99);
+      local iBoundAbility = bound(iAbility,0,99);
       
       if iBoundAbility = 0
       {
@@ -7399,9 +7386,9 @@ messages:
    "Admin supported\n"
    "Removes a Skill by Skill ID from the user's castable list of Skills"
    {
-      local oSkill,i;
+      local i;
       
-      oSkill = Send(SYS, @FindSkillbyNum, #num=num);
+      local oSkill = Send(SYS, @FindSkillbyNum, #num=num);
       if oSkill = $
       {
          Debug("Trying to delete a skill the system doesn't recognize.");
@@ -7439,15 +7426,15 @@ messages:
    FlipSkillAtrophyFlag(SKID=0)
    "This Skill was used recently, meaning it will NOT atrophy."
    {
-      local i, elemnum;
+      local i;
 
-      elemnum = 0;
+      local iElemNum = 0;
       for i in plSkills
       {       
-         elemnum = elemnum + 1;      
+         iElemNum = iElemNum + 1;      
          if Send(self,@decodeSkillNum,#compound=i) = SKID
          {
-            SetNth(plSkills,elemnum,abs(i));
+            SetNth(plSkills,iElemNum,abs(i));
             
             break;
          }
@@ -7458,37 +7445,36 @@ messages:
 
    ActivateSkillAtrophy()
    {
-      local i, j, iability, aSkill, bSkill, bFound, highmark, iAmount;
+      local i, j;
 
-      iAmount = -2;
-      highmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))*piAdvancement_Points)/20;
+      local iAmount = -2;
+      local iHighmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))*piAdvancement_Points)/20;
 
       for i in plSkills
       {
-         if i < 0 AND Random(1,200) < highmark           
+         if i < 0 AND Random(1,200) < iHighmark
          {
-            iAbility = Send(self,@decodeSkillability,#compound=i);
-            if iAbility > 2                                                         
+            local iAbility = Send(self,@decodeSkillability,#compound=i);
+            if iAbility > 2
             {
-               aSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=i));
-               bFound = FALSE;
+               local oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=i));
                for j in plSkills
                {
-                  bSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=j));
-                  if j > 0 AND Send(aSkill,@GetSchool) = Send(bSkill,@GetSchool)
-                     AND aSkill <> bSkill
+                  local oOtherSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=j));
+                  if j > 0 AND Send(oSkill,@GetSchool) = Send(oOtherSkill,@GetSchool)
+                     AND oSkill <> oOtherSkill
                   {
                      iAmount=-1;
                      break;
-                  }                                 
+                  }
                }
-               
-               Send(self,@ChangeSkillAbility,#skill_num=Send(aSkill,@GetSkillNum),
+
+               Send(self,@ChangeSkillAbility,#skill_num=Send(oSkill,@GetSkillNum),
                     #amount=iAmount);
             }
          }
       }
-      
+
       return;
    }
 
@@ -7499,20 +7485,20 @@ messages:
    "This means that the player has not used these spells in a while."
    "Meaning they have a chance to atrophy when ptAdvancement goes off."
    {
-      local i, elemnum;
+      local i;
 
-      elemnum = 0;
+      local iElemNum = 0;
       for i in plSpells
       {
-         elemnum = elemnum+1;
-         SetNth(plSpells,elemnum,-(abs(i)));
+         iElemNum = iElemNum + 1;
+         SetNth(plSpells,iElemNum,-(abs(i)));
       }
       
-      elemnum = 0;
+      iElemNum = 0;
       for i in plSkills
       {
-         elemnum = elemnum+1;
-         SetNth(plSkills,elemnum,-(abs(i)));
+         iElemNum = iElemNum + 1;
+         SetNth(plSkills,iElemNum,-(abs(i)));
       }
       
       return;
@@ -7522,11 +7508,9 @@ messages:
    "A player can only gain so many advancement points per hour, in spells"
    "And skills combined."
    {
-      local iTime;
-      
       if ptAdvancement = $
       {
-         iTime = random(ADVANCE_TIMER_MIN,ADVANCE_TIMER_MAX);
+         local iTime = random(ADVANCE_TIMER_MIN,ADVANCE_TIMER_MAX);
          ptAdvancement = CreateTimer(self,@AdvancementTimer,iTime);
       }
       
@@ -7538,8 +7522,6 @@ messages:
    CheckAdvancementPoints()
    "Checks to be sure a player isn't at the limit yet."
    {
-      local iMessage;
-
       if piAdvancement_points < ADVANCEMENT_LIMIT
       {
          return TRUE;
@@ -7549,7 +7531,7 @@ messages:
       % about moving to different rooms to continue practicing (12.5% chance).
       if Random(1,8) = 1
       {
-         iMessage = Random(1,3);
+         local iMessage = Random(1,3);
          
          if iMessage = 1
          {
@@ -7629,10 +7611,10 @@ messages:
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon;
-            
-      gain = 0;
-      roll = FALSE;
+      local iMonsterLevel;
+
+      local iGain = 0;
+      local bRoll = FALSE;
 
       % Some things just never allow advancement.
       % Can advance in arena if realdeath is on in an arena.
@@ -7645,41 +7627,41 @@ messages:
 
       if IsClass(what,&User)
       {
-         monster_level = Send(what,@GetBaseMaxHealth);
+         iMonsterLevel = Send(what,@GetBaseMaxHealth);
       }
       else
       {
-         monster_level = Send(what,@GetLevel);
+         iMonsterLevel = Send(what,@GetLevel);
       }
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_DID_DAMAGE)
          AND poKill_target = what
       {
-         if monster_level > piBase_Max_health
+         if iMonsterLevel > piBase_Max_health
          {
             if killing_blow AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                % Player took damage and landed killing blow
-               gain = 3;
-               roll = TRUE;
+               iGain = 3;
+               bRoll = TRUE;
             }
             else
             {
                % Player either did not take damage, but did killing blow (mage),
                %  or did take damage, did not land killing blow.
-               gain = 2;
-               roll = TRUE;
+               iGain = 2;
+               bRoll = TRUE;
             }
          }
          else
          {
             % Monster was equal or close to player level.  Small bonus,
             %  no roll chance.
-            if (monster_level + 5) > piBase_Max_health
+            if (iMonsterLevel + 5) > piBase_Max_health
                AND IsClass(what,&monster) AND killing_blow 
                AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
-               gain = 1;
+               iGain = 1;
             }
             else
             {
@@ -7694,30 +7676,30 @@ messages:
          % Give newbies a little bonus.
          if piBase_Max_health < PKILL_ENABLE_HP
          {
-            gain = gain + 1;
+            iGain = iGain + 1;
          }
 
          % If they're cheesing the situation by fighting wussy monsters in an altered form,
          %  penalize the gain amount.
          if piMax_health > piBase_Max_health * 2
-            AND monster_level < piMax_health
+            AND iMonsterLevel < piMax_health
          {
-            gain = gain / 2;
-            roll = FALSE;
+            iGain = iGain / 2;
+            bRoll = FALSE;
          }
 
-         gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,100);
-         gain = gain * gainmult;
+         local iGainMult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,100);
+         iGain = iGain * iGainMult;
 
-         piGain_chance = piGain_chance + gain;
+         piGain_chance = piGain_chance + iGain;
 
-         if roll
+         if bRoll
          {
-            highmark = Send(self,@GetHighMark);
-            rand = random(1,highmark);
-            iNumber = Send(self,@GetGainChance) + bound((monster_level-piBase_Max_health)/5,0,10);
+            local iHighmark = Send(self,@GetHighMark);
+            local iRand = random(1,iHighmark);
+            local iGainThreshold = Send(self,@GetGainChance) + bound((iMonsterLevel-piBase_Max_health)/5,0,10);
                   
-            if rand < iNumber
+            if iRand < iGainThreshold
                AND piBase_Max_health < (101 + Send(self,@GetStamina))
             {
                Send(self,@GainBaseMaxHealth,#amount = 1);
@@ -7750,29 +7732,29 @@ messages:
       
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED)
       {
-         dodgeskill = SKID_DODGE;
-         oWeapon = Send(self,@LookupPlayerWeapon);
+         local iDefenseSkill = SKID_DODGE;
+         local oWeapon = Send(self,@LookupPlayerWeapon);
          if oWeapon <> $
             AND (not IsClass(oWeapon,&RangedWeapon))
             AND Send(self,@HasSkill,#num=SKID_PARRY)
          {
             if random(1,100) < 30
             {
-               dodgeskill=SKID_PARRY;
+               iDefenseSkill=SKID_PARRY;
             }
          }
-         
-         if dodgeskill = SKID_DODGE
+
+         if iDefenseSkill = SKID_DODGE
             AND (Send(self,@LookupPlayerShield) <> $)
             AND Send(self,@HasSkill,#num=SKID_BLOCK)
          {
             if random(1,100) < 30
             {
-               dodgeskill=SKID_BLOCK;
+               iDefenseSkill=SKID_BLOCK;
             }
          }
-         
-         oSkill=Send(sys,@FindSkillByNum,#num=dodgeskill);
+
+         local oSkill = Send(sys,@FindSkillByNum,#num=iDefenseSkill);
          Send(oSkill,@ImproveAbility,#who=self,#target=poKill_Target);
       }
 
@@ -7785,21 +7767,18 @@ messages:
    }
 
    GetHighMark()
-   {
-      local index, highmark;
-      
-      index = (piBase_Max_health*(100-Send(self,@GetStamina)))/100;
-      highmark = (index+1)*index;
-      
-      return highmark;
+   {  
+      local iAdjustedHealth = (piBase_Max_health * (100-Send(self,@GetStamina))) / 100;
+      local iHighmark = (iAdjustedHealth + 1) * iAdjustedHealth;
+
+      return iHighmark;
    }
 
    %%% Player Killed %
 
    Killed(what = $)
    {
-      local lItems,i, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
-            oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom;
+      local lItems, i, oItemAtt, oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem;
 
       % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
       %  is called from LeaveHold() in the Underworld.  This is to allow time
@@ -7862,6 +7841,10 @@ messages:
       {
          piHealth = 1;
          Send(self,@NewHealth);
+
+         % Break any trances that are still being upheld.
+         Send(self,@BreakTrance);
+         
          %Currently, the following block is only for Necromancer Amulets and Hunter Swords.
          for i in plActive
          {
@@ -7878,9 +7861,9 @@ messages:
       % Now we need to determine if it's a 'cheap' death where we don't lose stuff.
 
       Send(self,@RemoveAllEnchantments,#report=FALSE);
-      bNo_drop_death = FALSE;
+      local bNo_drop_death = FALSE;
 
-      iRoom = Send(poOwner,@GetRoomNum);
+      local iRoom = Send(poOwner,@GetRoomNum);
 
       % Reign of Blood Frenzy death?  Newbie death?
       % Don't drop anything or take any penalties.
@@ -7926,7 +7909,7 @@ messages:
       }
 
       % Create the corpse.
-      oBody = Send(self,@CreateCorpse);
+      local oBody = Send(self,@CreateCorpse);
       Send(oRoom,@NewHold,#what=oBody,#new_row=iRow,#new_col=iCol,#fine_row=16,#fine_col=16, #new_angle=iAngle);
 
       % Start losing stuff if applicable.
@@ -7983,7 +7966,7 @@ messages:
          Post(self,@EvaluatePKStatus);
 
          % Let SoldierShields know we died.  It handles itself as appropriate.
-         oSoldierShield = Send(self,@FindUsing,#what=&SoldierShield);
+         local oSoldierShield = Send(self,@FindUsing,#what=&SoldierShield);
          if oSoldierShield <> $
          {
             Send(oSoldierShield,@OwnerDied,#what=what);
@@ -8093,7 +8076,7 @@ messages:
 
    ApplyDeathPenalties()
    {
-      local iAmount, bLostHealth, i;
+      local iAmount, i;
       
       if Send(SYS,@GetChaosNight)
       {
@@ -8104,7 +8087,7 @@ messages:
          return;
       }
 
-      bLostHealth = FALSE;
+      local bLostHealth = FALSE;
 
       % Lose your revenant, satisfied if you took a real death.
       if piDeathCost >= Send(Send(SYS, @GetSettings), @GetDefaultDeathCost)
@@ -8233,23 +8216,21 @@ messages:
 
    CreateCorpse(Assassinated=FALSE)
    {
-      local inKocatan;
-
       %  Send current pant/shirt color to body only if they both use the new two-color xlats
       %        otherwise, Send default colors
-      inKocatan = FALSE;
+      local bInKocatan = FALSE;
       if pbLogged_on
       {
          if Send(poOwner,@GetRegion) = RID_KOCATAN
          {
-            inKocatan = TRUE;
+            bInKocatan = TRUE;
          }
       }
       else
       {
          if Send(Send(SYS,@FindRoomByNum,#num=Send(self,@GetSaveRoom)),@GetRegion) = RID_KOCATAN
          {
-            inKocatan = TRUE;
+            bInKocatan = TRUE;
          }
       }
 
@@ -8267,7 +8248,7 @@ messages:
                           #PlayerBodyOverlay=player_dead_male_iconb_rsc,
                           #BodyTranslation=Send(self,@GetBodyTranslation),
                           #LegsTranslation=Send(self,@GetLegsTranslation),
-                          #inKocatan = inKocatan,#DearlyDeparted=self);
+                          #inKocatan = bInKocatan,#DearlyDeparted=self);
          }
          else
          {
@@ -8280,7 +8261,7 @@ messages:
                           #PlayerBodyOverlay=player_dead_female_iconb_rsc,
                           #BodyTranslation=Send(self,@GetBodyTranslation),
                           #LegsTranslation=Send(self,@GetLegsTranslation),
-                          #inKocatan = inKocatan,#DearlyDeparted=self);
+                          #inKocatan = bInKocatan,#DearlyDeparted=self);
          }
       }
       
@@ -8292,7 +8273,7 @@ messages:
                        #karma=Send(self,@GetKarma),#PlayerBodyOverlay=player_dead_male_iconb_rsc,
                        #BodyTranslation=Send(self,@GetDefaultShirtTranslation),
                        #LegsTranslation=Send(self,@GetDefaultPantsTranslation),
-                       #inKocatan = inKocatan,#DearlyDeparted=self);
+                       #inKocatan = bInKocatan,#DearlyDeparted=self);
       }
       % female, default colors
       return Create(&DeadBody,#icon=player_dead_female_icona_rsc,
@@ -8300,7 +8281,7 @@ messages:
                     #karma=Send(self,@GetKarma),#PlayerBodyOverlay=player_dead_female_iconb_rsc,
                     #BodyTranslation=Send(self,@GetDefaultShirtTranslation),
                     #LegsTranslation=Send(self,@GetDefaultPantsTranslation),
-                    #inKocatan = inKocatan,#DearlyDeparted=self);
+                    #inKocatan = bInKocatan,#DearlyDeparted=self);
    }
 
    FreeHands()
@@ -8752,12 +8733,14 @@ messages:
    }
 
    ResetPlayerArms(alldone = TRUE)
-   "Sets our icon to its natural, default-shirted state."
+    "Sets our icon to its current shirted state (or default if no shirt worn). If a shirt is "
+    "equipped it delegates arm setup to that shirt so shirt-specific arm graphics (e.g. tanktop) "
+    "are restored correctly."
    {
-      local iShirt_xlat, i, bFound;
+      local i;
       poArms_set = $;
 
-      bFound = FALSE;
+      local bFound = FALSE;
       for i in plUsing
       { 
          if Send(i,@OverrideArms)
@@ -8771,6 +8754,20 @@ messages:
       
       if NOT bFound
       {
+         for i in plUsing
+         {
+            if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
+            {
+               Send(i,@SetArms);
+               
+               if poOwner <> $ AND alldone
+               {      
+                  Send(poOwner,@SomethingChanged,#what=self);
+               }
+               return;
+            }
+         }
+
          if piGender = GENDER_MALE
          {
             prRight_arm = player_Rightarm_a_rsc;
@@ -8783,7 +8780,7 @@ messages:
          }
       }
       
-      iShirt_xlat = Send(self,@GetDefaultShirtTranslation);         
+      local iShirt_xlat = Send(self,@GetCurrentShirtColor);
       piBody_translations2 = piBody_translations2 & ~PLAYER_TRANSLATION2_ARMS_MASK;
       piBody_translations2 = piBody_translations2 | (iShirt_xlat * PLAYER_TRANSLATION2_ARMS_MUL);
 
@@ -8824,9 +8821,8 @@ messages:
    ResetPlayerLegs()
    "Sets our player's legs to show their robes, pants (equipped or un-panted state)."
    {
-      local robes_in_use, pants_in_use, translation;
-      robes_in_use = Send(self,@FindUsing,#class=&Robe);
-      if robes_in_use <> $
+      local oRobesInUse = Send(self,@FindUsing,#class=&Robe);
+      if oRobesInUse <> $
       {
          % Player is wearing robes (regardless of what's changed beneath).
          return;
@@ -8834,10 +8830,11 @@ messages:
 
       poLegs_set = $;
 
-      pants_in_use = Send(self,@FindUsing,#class=&Pants);
-      if pants_in_use = $
+      local iTranslation;
+      local oPantsInUse = Send(self,@FindUsing,#class=&Pants);
+      if oPantsInUse = $
       {
-         translation = Send(self,@GetDefaultPantsTranslation);
+         iTranslation = Send(self,@GetDefaultPantsTranslation);
          if piGender = GENDER_MALE
          {
             prLegs = player_legs_a_rsc;
@@ -8849,13 +8846,13 @@ messages:
       }
       else
       {
-         prLegs = Send(pants_in_use,@GetLegs,#who=self);
-         translation = Send(pants_in_use,@GetPaletteTranslation);
+         prLegs = Send(oPantsInUse,@GetLegs,#who=self);
+         iTranslation = Send(oPantsInUse,@GetPaletteTranslation);
       }
 
       piBody_translations = piBody_translations & ~PLAYER_TRANSLATION_LEGS_MASK;
       piBody_translations = piBody_translations | 
-                           (translation * PLAYER_TRANSLATION_LEGS_MUL); 
+                           (iTranslation * PLAYER_TRANSLATION_LEGS_MUL); 
 
       if poOwner <> $
       {      
@@ -8867,10 +8864,10 @@ messages:
 
    SetDefaultClothes(pants_color = -1,shirt_color = -1, rand=FALSE, increment = TRUE)
    {   
-      local shirt_color_xlat, pants_color_xlat, skin_color, i, bShirt, bLegs, bArms;
+      local iShirtColorXlat, iPantsColorXlat, i;
 
-      skin_color = Send(self,@GetSkinColor);      
-      skin_color = Send(self,@convertskincolortoXLAT,#skin_color = skin_color);
+      local iSkinXlat = Send(self,@GetSkinColor);      
+      iSkinXlat = Send(self,@convertskincolortoXLAT,#skin_color = iSkinXlat);
 
       if rand
       {
@@ -8881,37 +8878,37 @@ messages:
             shirt_color = XLAT_TO_RED;
          }
          
-         shirt_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=skin_color);
-         pants_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=skin_color);
+         iShirtColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=iSkinXlat);
+         iPantsColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=iSkinXlat);
       }
 
       else
       {
          if shirt_color = -1
          {
-            shirt_color_xlat = Send(self,@GetDefaultShirtTranslation);
+            iShirtColorXlat = Send(self,@GetDefaultShirtTranslation);
          } 
          else
          {
-            shirt_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=skin_color);
+            iShirtColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=iSkinXlat);
          }
       
          if pants_color = -1
          {
-            pants_color_xlat = Send(self,@GetDefaultPantsTranslation);
+            iPantsColorXlat = Send(self,@GetDefaultPantsTranslation);
          } 
          else
          {
-            pants_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=skin_color);
+            iPantsColorXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=iSkinXlat);
          }
       }
 
-      piDefault_clothes = (shirt_color_xlat*SHIRT_MUL) | (pants_color_xlat*PANTS_MUL);
-      
-      bShirt = FALSE;
-      bLegs = FALSE;
-      bArms = FALSE;
-      
+      piDefault_clothes = (iShirtColorXlat * SHIRT_MUL) | (iPantsColorXlat * PANTS_MUL);
+
+      local bShirt = FALSE;
+      local bLegs = FALSE;
+      local bArms = FALSE;
+
       for i in plUsing
       {     
          if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
@@ -9060,8 +9057,8 @@ messages:
    {
       poIllusion_set = $;
 
-      % Recalculate the flicker flag.
-      Send(self,@RecalcFlickerFlag);
+      % Recalculate the flicker and glow draw effects.
+      Send(self,@RecalcDrawFXFlags);
 
       % Reset our drawFX.  Also does the SomethingChanged bit if appropriate.
       Send(self,@ResetPlayerDrawFX);
@@ -9189,8 +9186,7 @@ messages:
 
    SendMoveOverlays(iAnimation = $)
    {
-      local i, iOverlays, hotspot, iLeft_group, iRight_group, iSkin_xlat,
-            iArms_xlat;
+      local i;
 
       if iAnimation = $
       {
@@ -9213,7 +9209,7 @@ messages:
 
       % Player has 7 standard overlays:
       %  right arm, left arm, legs, head, eyes, mouth, nose      
-      iOverlays = 7;
+      local iOverlays = 7;
       
       if poHair_remove = $
       {
@@ -9221,22 +9217,22 @@ messages:
       }
 
       % Which group of arm images do we use?
-      iLeft_group = 1;
-      iRight_group = 1;
+      local iLeft_group = 1;
+      local iRight_group = 1;
 
       for i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays);
-         hotspot = Send(i,@GetOverlayHotspot);
-         if hotspot = HS_RIGHT_WEAPON
+         local iHotspot = Send(i,@GetOverlayHotspot);
+         if iHotspot = HS_RIGHT_WEAPON
          {
             iRight_group = 17;
          }
          else
          {
             % Bend the arm if we have a shield, a bow, or a token.
-            if hotspot = HS_LEFT_WEAPON 
-               OR hotspot = HS_BOTTOM_BOW
+            if iHotspot = HS_LEFT_WEAPON 
+               OR iHotspot = HS_BOTTOM_BOW
                OR IsClass(i,&Token)
             {
                iLeft_group = 7;
@@ -9247,7 +9243,7 @@ messages:
       AddPacket(1,iOverlays);
 
       AddPacket(4,prLeft_arm, 1,HS_LEFT_HAND);
-      iArms_xlat = Send(self,@GetArmsTranslation);
+      local iArms_xlat = Send(self,@GetArmsTranslation);
       if iArms_xlat <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION, 1,iArms_xlat);
@@ -9306,7 +9302,7 @@ messages:
          AddPacket(1,ANIMATE_CYCLE, 4,100, 2,2, 2,5);
       }
 
-      iSkin_xlat = Send(self,@GetSkinColor);
+      local iSkin_xlat = Send(self,@GetSkinColor);
 
       AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                 1,ANIMATE_NONE, 2,1);
@@ -9342,8 +9338,7 @@ messages:
 
    SendOverlays(iAnimation=$)
    {
-      local i, iOverlays, hotspot, iLeft_group, iRight_group, iSkin_xlat,
-            iArms_xlat;
+      local i;
 
       if iAnimation = $
       {
@@ -9370,7 +9365,7 @@ messages:
 
       % Player has 7 standard overlays:
       %  right arm, left arm, legs, head, eyes, mouth, nose
-      iOverlays = 7;
+      local iOverlays = 7;
       
       if poHair_remove = $
       {
@@ -9379,20 +9374,20 @@ messages:
       
       % Overlay info -- display correct group for animation & action
 
-      iLeft_group = 1;
-      iRight_group = 1;
+      local iLeft_group = 1;
+      local iRight_group = 1;
       for i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays,#iAnimation=iAnimation);
-         hotspot = Send(i,@GetOverlayHotspot);
-         if hotspot = HS_RIGHT_WEAPON
+         local iHotspot = Send(i,@GetOverlayHotspot);
+         if iHotspot = HS_RIGHT_WEAPON
          {
             iRight_group = 17;
          }
          else
          {
-            if hotspot = HS_LEFT_WEAPON
-               OR hotspot = HS_BOTTOM_BOW
+            if iHotspot = HS_LEFT_WEAPON
+               OR iHotspot = HS_BOTTOM_BOW
                OR IsClass(i,&Token)
             {
                iLeft_group = 7;
@@ -9401,7 +9396,7 @@ messages:
       }
 
       AddPacket(1, iOverlays);
-      iArms_xlat = Send(self,@GetArmsTranslation);
+      local iArms_xlat = Send(self,@GetArmsTranslation);
 
       AddPacket(4,prLeft_arm, 1,HS_LEFT_HAND);
       if iArms_Xlat <> 0
@@ -9528,7 +9523,7 @@ messages:
          }
       }
 
-      iSkin_xlat = Send(self,@GetSkinColor);
+      local iSkin_xlat = Send(self,@GetSkinColor);
       AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                 1,ANIMATE_NONE, 2,1);
       % Don't send information about face elements if we're wearing the
@@ -9562,14 +9557,12 @@ messages:
    "Send a message to the player if the person hit has a resistance"
    "select a message to Send the player if the person hit has a resistance"
    {
-      local rMessage;
-
       if resistance = $
       {
          return;
       }
 
-      rMessage = $;
+      local rMessage = $;
 
       if resistance > (MAX_RESISTANCE/5)
       {
@@ -9607,14 +9600,12 @@ messages:
    MsgPlayerResistsHit(what = $, resistance= $, color_rsc = player_hit_color_none)
    "Send a message to the player if they have a resistance"
    {
-      local rMessage;
-
       if resistance = $
       {
          return;
       }
 
-      rMessage = $;
+      local rMessage = $;
 
       if resistance > (MAX_RESISTANCE/5) 
       {
@@ -9745,9 +9736,7 @@ messages:
    "Returns signed change to might (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigMight;
-
-      iOrigMight = piMightMod;
+      local iOrigMight = piMightMod;
       piMightMod = piMightMod + points;
       
       if NOT bAbsolute
@@ -9764,9 +9753,7 @@ messages:
    "Returns signed change to intellect (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigIntellect;
-
-      iOrigIntellect = piIntellectMod;
+      local iOrigIntellect = piIntellectMod;
       piIntellectMod = piIntellectMod + points;
       
       if NOT bAbsolute
@@ -9783,9 +9770,7 @@ messages:
    "Returns signed change to aim (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigAim;
-
-      iOrigAim = piAimMod;
+      local iOrigAim = piAimMod;
       piAimMod = piAimMod + points;
       
       if NOT bAbsolute
@@ -9802,9 +9787,7 @@ messages:
    "Returns signed change to stamina (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigStamina;
-
-      iOrigStamina = piStaminaMod;
+      local iOrigStamina = piStaminaMod;
       piStaminaMod = piStaminaMod + points;
       
       if NOT bAbsolute
@@ -9821,9 +9804,7 @@ messages:
    "Returns signed change to agility (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigAgility;
-
-      iOrigAgility = piAgilityMod;
+      local iOrigAgility = piAgilityMod;
       piAgilityMod = piAgilityMod + points;
       
       if NOT bAbsolute
@@ -9840,9 +9821,7 @@ messages:
    "Returns signed change to agility (negative means decrease)"
    "If restore = TRUE, ignore the bounds check and add the amount anyway."
    {
-      local iOrigMysticism;
-
-      iOrigMysticism = piMysticismMod;
+      local iOrigMysticism = piMysticismMod;
       piMysticismMod = piMysticismMod + points;
       
       if NOT bAbsolute
@@ -9883,20 +9862,18 @@ messages:
 
    GetRestTime()
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
-
-      iTime = 1000 + (30* (51-Send(self,@getStamina))); 
+      local iTime = 1000 + (30 * (51 - Send(self,@getStamina))); 
 
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
+         local lJalaInfo = Send(poOwner,@GetJalaInfo);
 
          if lJalaInfo <> $
          {
-            oJalaSpell = Nth(lJalaInfo,2);
+            local oJalaSpell = Nth(lJalaInfo,2);
             if IsClass(oJalaSpell,&Invigorate)
             {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
+               local iJalaPower = Nth(Nth(lJalaInfo,3),3);
                iTime = Send(oJalaSpell,@AdjustVigorTime,#time=iTime,#iSpellPower=iJalaPower);
             }
          }
@@ -9951,9 +9928,9 @@ messages:
    RemoveCurseAllItems()
    "Returns TRUE if the player has a cursed item stripped away, FALSE if not."
    {
-      local i, bFound;
+      local i;
 
-      bFound = FALSE;
+      local bFound = FALSE;
       for i in plUsing
       {
          if Send(i,@IsCursed)
@@ -10001,37 +9978,61 @@ messages:
       return;
    }
 
-   SetFlickerFlag()
+   RecalcDrawFXFlags()
+   "Recalculates flicker flag by querying equipped items."
+   "Glow (steady light) suppresses torch flicker on the character sprite."
    {
-      piDrawfx = piDrawfx | FLICKERING_YES;
-      
-      return;
-   }
-
-   ClearFlickerFlag()
-   {
-      piDrawfx = piDrawfx & (~FLICKERING_YES);
-      
-      return;
-   }
-
-   RecalcFlickerFlag()
-   { 
       local i;
-      
-      piDrawfx = piDrawfx & (~FLICKERING_YES);
+
+      local bIsFlickering = FALSE;
+      local bIsGlowing = FALSE;
+
       for i in plUsing
       {
-         if IsClass(i,&Torch)
-            OR (IsClass(i,&Weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING))
+         if Send(i,@IsFlickering)
          {
-            piDrawfx = piDrawfx | FLICKERING_YES;
-            
-            return;
+            bIsFlickering = TRUE;
+         }
+
+         if Send(i,@IsGlowing)
+         {
+            bIsGlowing = TRUE;
          }
       }
-      
+
+      % Glow suppresses visual flickering -- steady light looks better.
+      if bIsFlickering AND NOT bIsGlowing
+      {
+         piDrawfx = piDrawfx | FLICKERING_YES;
+      }
+      else
+      {
+         piDrawfx = piDrawfx & (~FLICKERING_YES);
+      }
+
       return;
+   }
+
+   MixLightColors(iColor1 = 0, iColor2 = 0)
+   "Mixes two RGB 5-5-5 light colors by averaging their R, G, B components."
+   {
+      % Extract RGB components from 5-5-5 packed format.
+      % Bits 14-10 = Red, Bits 9-5 = Green, Bits 4-0 = Blue.
+      local iR1 = (iColor1 / 1024) & 0x1F;
+      local iG1 = (iColor1 / 32) & 0x1F;
+      local iB1 = iColor1 & 0x1F;
+
+      local iR2 = (iColor2 / 1024) & 0x1F;
+      local iG2 = (iColor2 / 32) & 0x1F;
+      local iB2 = iColor2 & 0x1F;
+
+      % Average each component.
+      local iR = (iR1 + iR2) / 2;
+      local iG = (iG1 + iG2) / 2;
+      local iB = (iB1 + iB2) / 2;
+
+      % Repack into RGB 5-5-5.
+      return (iR * 1024) + (iG * 32) + iB;
    }
 
    BreakTrance(event = 0, castwhat = $, usewhat = $)
@@ -10040,15 +10041,15 @@ messages:
    "If the event is the player casting a spell then castwhat is that spell object."
    "If the event is the player using an item than usewhat is that item object."
    {
-      local i, oEnch,state, bFound, oYellNum, oYellRoom;
+      local i, oYellNum;
 
-      bFound = FALSE;
+      local bFound = FALSE;
       for i in plEnchantments
       {
-         oEnch = Nth(i,2);
+         local oEnch = Nth(i,2);
          if IsClass(oEnch,&Spell) OR IsClass(oEnch,&Trance)
          {
-            state = $;
+            local state = $;
             if Length(i) >= 3
             {
                state = Nth(i,3);
@@ -10062,7 +10063,7 @@ messages:
       {
          for oYellNum in Send(poOwner,@GetYellZone)
          {
-            oYellRoom = Send(SYS,@FindRoomByNum,#num=oYellNum);
+            local oYellRoom = Send(SYS,@FindRoomByNum,#num=oYellNum);
             if Send(oYellRoom,@BreakTrance,#who=self)
             {
                bFound = TRUE;
@@ -10104,12 +10105,12 @@ messages:
 
    RecalcLight()
    {
-      local i, iLight, iState, oWeapon;
+      local i;
 
       % TODO: Make this into a general check.
 
       % Default base value
-      iLight = 5;       
+      local iLight = 5;       
 
       % Torch, Amulet
       for i in plUsing
@@ -10125,7 +10126,7 @@ messages:
          }
       }
       
-      iState = Send(self,@GetEnchantedState,
+      local iState = Send(self,@GetEnchantedState,
                     #what=Send(SYS,@FindSpellByNum,#num=SID_NIGHT_VISION));
       if iState <> $
       {
@@ -10133,7 +10134,7 @@ messages:
       }
 
       % Glowing weapons?
-      oWeapon = Send(self,@LookupPlayerWeapon);
+      local oWeapon = Send(self,@LookupPlayerWeapon);
       if oWeapon <> $
       {
          iState = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_GLOWING);
@@ -10181,9 +10182,9 @@ messages:
 
    RecalibratePlayer()
    {
-      local i, bSoldier;
+      local i;
 
-      bSoldier = FALSE;
+      local bSoldier = FALSE;
       if Send(self,@FindUsing,#class=&SoldierShield) <> $
       {
          bSoldier = TRUE;
@@ -10314,45 +10315,45 @@ messages:
 
    CountKnownAtLevel(school=$,level=$)
    {
-      local i, count, nSID, nObj;
+      local i, iKnownNum, oKnown;
 
-      count = 0;
+      local iCount = 0;
       for i in plSkills
       {
-         nSID = Send(self,@DecodeSkillNum,#compound=i);
-         nObj = Send(SYS,@FindSkillByNum,#num=nSID);
+         iKnownNum = Send(self,@DecodeSkillNum,#compound=i);
+         oKnown = Send(SYS,@FindSkillByNum,#num=iKnownNum);
          
-         if nObj = $
+         if oKnown = $
          {
             continue;
          }
          
          % Is this in the same school?
-         if Send(nObj,@GetSchool) = school
-            AND Send(nobj,@GetLevel) = level
+         if Send(oKnown,@GetSchool) = school
+            AND Send(oKnown,@GetLevel) = level
          {
-            count = count + 1;
+            iCount = iCount + 1;
          }
       }
       for i in plSpells
       {
-         nSID = Send(self,@DecodeSpellNum,#compound=i);
-         nObj = Send(SYS,@FindSpellByNum,#num=nSID);
+         iKnownNum = Send(self,@DecodeSpellNum,#compound=i);
+         oKnown = Send(SYS,@FindSpellByNum,#num=iKnownNum);
          
-         if nObj = $
+         if oKnown = $
          {
             continue;
          }
          
          % Is this in the same school?
-         if (Send(nObj,@GetSchool) = school)
-            and (Send(nobj,@GetLevel)) = level
+         if (Send(oKnown,@GetSchool) = school)
+            and (Send(oKnown,@GetLevel)) = level
          {
-            count = count + 1;
+            iCount = iCount + 1;
          }
       }
 
-      return count;
+      return iCount;
    }
 
    PlayerCanLearn(spell_num=0,skill_num=0,scryer=$)
@@ -10361,10 +10362,7 @@ messages:
    "The proverbial trick is that players have to know WHY they aren't learning.  For example, "
    "if a player can't learn because he has too many competing schools, he needs to know that."    
    {      
-      local bSkill, obj, level, school, division, iHave, prev_level,
-            aHigh, bHigh, cHigh, i, temp,
-            nObj, nSID, index, iNeed, nSchool, nLevel, bKnowOne,
-            iWeapon, iKraanan, iShalille, iQor, iFaren, iRiija, iJala, iPoints;
+      local bSkill, obj, prev_level, i, temp, nObj, nSID, index, nSchool, nLevel;
 
       % Phase one.  Assert our data.  Be sure we have been fed a valid spell
       %  and skill num for a spell item that actually exists.
@@ -10452,20 +10450,19 @@ messages:
       }
 
       % Phase three:  get the hard data.
-      level = Send(obj,@GetLevel);
-      school = Send(obj,@GetSchool);
-      division = Send(obj,@GetDivision);      
+      local level = Send(obj,@GetLevel);
+      local school = Send(obj,@GetSchool);
                   
       % Phase four.  We begin to find our need.  Start by finding out how many
       %  spells exist at ALL at that level.  While we are going through the spell
       %  skill list, count the spells/skills that count towards our total.  Note
       %  that we only want the top three spells/skills at that school and level.
 
-      bKnowOne = FALSE;
+      local bKnowOne = FALSE;
 
       % Check to see if they have any spells of the next level.
       %  If so, let them buy any spells they want.
-      iHave = Send(self,@CountKnownAtLevel,#school=school,#level=level+1);
+      local iHave = Send(self,@CountKnownAtLevel,#school=school,#level=level+1);
       if iHave > 0
       {
          return PLAYER_LEARN_SUCCESS;
@@ -10498,15 +10495,17 @@ messages:
          prev_level = 0;
       }
 
-      aHigh = 0; bHigh = 0; cHigh = 0;
+      local aHigh = 0;
+      local bHigh = 0;
+      local cHigh = 0;
 
-      iWeapon = 0;
-      iKraanan = 0;
-      iShalille = 0;
-      iQor = 0;
-      iFaren = 0;
-      iRiija = 0;
-      iJala = 0;
+      local iWeapon = 0;
+      local iKraanan = 0;
+      local iShalille = 0;
+      local iQor = 0;
+      local iFaren = 0;
+      local iRiija = 0;
+      local iJala = 0;
       
       for i in plSkills
       {
@@ -10659,7 +10658,7 @@ messages:
 
       % We have done all the information gathering, so now, lets compute:
 
-      iPoints =  Send(SYS,@GetLevelLearnPoints,#level=iWeapon)
+      local iPoints =  Send(SYS,@GetLevelLearnPoints,#level=iWeapon)
                + Send(SYS,@GetLevelLearnPoints,#level=iKraanan)
                + Send(SYS,@GetLevelLearnPoints,#level=iShalille)
                + Send(SYS,@GetLevelLearnPoints,#level=iQor)
@@ -10683,7 +10682,7 @@ messages:
       %  (3*99), so when your points equals max points, you've maxxed out.  
       %  Intellect gives you a bonus to learning, currently about 20 points
       %  for 50 Intellect (approximately mastering 2 extra schools)
-      iNeed =   (iPoints * POINTS_SLOPE)
+      local iNeed =   (iPoints * POINTS_SLOPE)
               + (297 - (Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) * POINTS_SLOPE))
               - ((Send(self,@GetRawIntellect) * 2 * POINTS_SLOPE) / 5);
 
@@ -10804,26 +10803,25 @@ messages:
 
    GetTotalLearnPoints(except = $)
    {
-      local iSpell, iSID, oSpellObj, iSchool, iLevel, iKraanan, iShalille, iQor, iFaren,
-            iRiija, iJala, iWeapon, iTotalLearnPoints;
+      local i, iKnownNum, oKnown, iLevel;
 
-      iKraanan = 0;
-      iShalille = 0;
-      iQor = 0;
-      iFaren = 0;
-      iRiija = 0;
-      iJala = 0;
-      iWeapon = 0;
+      local iKraanan = 0;
+      local iShalille = 0;
+      local iQor = 0;
+      local iFaren = 0;
+      local iRiija = 0;
+      local iJala = 0;
+      local iWeapon = 0;
             
-      for iSpell in plSpells
+      for i in plSpells
       {
-         iSID = Send(self,@DecodeSpellNum,#compound=iSpell);
-         oSpellObj = Send(SYS,@FindSpellByNum,#num=iSID);
+         iKnownNum = Send(self,@DecodeSpellNum,#compound=i);
+         oKnown = Send(SYS,@FindSpellByNum,#num=iKnownNum);
 
-         iSchool = Send(oSpellObj,@GetSchool);
-         iLevel = Send(oSpellObj,@GetLevel);
+         local iSchool = Send(oKnown,@GetSchool);
+         iLevel = Send(oKnown,@GetLevel);
 
-         if NOT IsClass(oSpellObj,&Blink)  % DON'T COUNT BLINK!
+         if NOT IsClass(oKnown,&Blink)  % DON'T COUNT BLINK!
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {
@@ -10867,12 +10865,12 @@ messages:
 
       if except <> SKS_FENCING
       {
-         for iSpell in plSkills
+         for i in plSkills
          {
-            iSID = Send(self,@DecodeSkillNum,#compound=iSpell);
-            oSpellObj = Send(SYS,@FindSkillByNum,#num=iSID);
+            iKnownNum = Send(self,@DecodeSkillNum,#compound=i);
+            oKnown = Send(SYS,@FindSkillByNum,#num=iKnownNum);
 
-            iLevel = Send(oSpellObj,@GetLevel);
+            iLevel = Send(oKnown,@GetLevel);
 
             if iLevel > iWeapon
                AND iLevel < 50       % Catch DM only skills
@@ -10882,7 +10880,7 @@ messages:
          }
       }
 
-      iTotalLearnPoints =  Send(SYS,@GetLevelLearnPoints,#level=iWeapon)
+      local iTotalLearnPoints =  Send(SYS,@GetLevelLearnPoints,#level=iWeapon)
                          + Send(SYS,@GetLevelLearnPoints,#level=iKraanan)
                          + Send(SYS,@GetLevelLearnPoints,#level=iShalille)
                          + Send(SYS,@GetLevelLearnPoints,#level=iQor)
@@ -10898,8 +10896,6 @@ messages:
    "(i.e. quits a guild or drops below 30 health).  Also, take steps to ensure "
    "it is not run immediately prior to death."
    {
-      local ass_game;
-
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_LOCK)
       {
          return FALSE;
@@ -10911,11 +10907,11 @@ messages:
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
-            ass_game = Send(SYS,@GetAssassinGame);
-            if Send(ass_game,@IsCombatant,#who=self)
+            local oAssassinGame = Send(SYS,@GetAssassinGame);
+            if Send(oAssassinGame,@IsCombatant,#who=self)
             {
                Send(self,@MsgSendUser,#message_rsc=Player_dagger_shatters);
-               Send(ass_game,@RemoveFromGame,#who=self,#RemoveFromRecords = FALSE);
+               Send(oAssassinGame,@RemoveFromGame,#who=self,#RemoveFromRecords = FALSE);
             }
 
             Send(self,@MsgSendUser,#message_rsc=player_regain_angel);
@@ -10999,14 +10995,12 @@ messages:
 
    ResetFaction(faction = FACTION_NEUTRAL)
    {
-      local oSoldierShield;
-      
       if faction < FACTION_NEUTRAL OR faction > FACTION_MAX
       {
          return FALSE;
       }
 
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
 
       if oSoldierShield <> $
          AND faction <> Send(oSoldierShield,@GetFaction)
@@ -11030,21 +11024,19 @@ messages:
    
    UpdateFactionService(full=False, middle=False, front=False, adjust=True)
    {
-      local tyme, oSoldierShield;
-      
       if piFaction = FACTION_NEUTRAL
       {
          return;
       }
 
-      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      local oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
 
-      tyme = GetTime();
+      local iNow = GetTime();
 
       % Don't require new service if the player has been an active soldier.
       if oSoldierShield = $
       {
-         piFactionServiceUpdate = piFactionServiceUpdate + tyme - piFactionTimeUpdated;
+         piFactionServiceUpdate = piFactionServiceUpdate + iNow - piFactionTimeUpdated;
       }
       else
       {
@@ -11055,7 +11047,7 @@ messages:
          }
       }
       
-      piFactionTimeUpdated = tyme;
+      piFactionTimeUpdated = iNow;
 
       if NOT adjust
       {
@@ -11165,17 +11157,17 @@ messages:
    PlayerIsIntriguing()
    "Evaluates player and sets the PFLAG_INTRIGUING"
    {
-      local bIntrigue,wasint,i,oParl;
+      local i;
       
-      bIntrigue=0;
+      local bIntrigue = 0;
 
-      oParl=Send(SYS,@GetParliament); 
+      local oParl=Send(SYS,@GetParliament); 
       if oParl = $
       {
          return FALSE;
       }
       
-      wasint = Send(self,@CheckPlayerFlag,#flag=PFLAG_INTRIGUING);
+      local wasint = Send(self,@CheckPlayerFlag,#flag=PFLAG_INTRIGUING);
 
       if wasint AND Send(oParl,@IsShutdown)
       {
@@ -11255,7 +11247,7 @@ messages:
    JoinFaction(new_faction=FACTION_NEUTRAL)
    "Returns true if the joining was a success"
    {
-      local factliege,oQuestEngine;
+      local oFactionLiege;
       if NOT Send(Self,@PlayerIsIntriguing)
       {
          return FALSE;
@@ -11273,7 +11265,7 @@ messages:
 
       piFaction = new_faction;
       %increase the max number of loyalty quests by one, and schedule one.
-      oQuestEngine = Send(SYS,@GetQuestEngine);
+      local oQuestEngine = Send(SYS,@GetQuestEngine);
       
       if piFaction = FACTION_PRINCESS
       {
@@ -11303,25 +11295,23 @@ messages:
       piFactionServiceUpdate = 0;
       if piFaction <> FACTION_NEUTRAL
       {
-         factliege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
+         oFactionLiege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
       }
                           
       Send(Self,@FactionServiceRoutine);
       Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=piFaction);
       Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self);
       Send(self,@MsgSendUser,#message_rsc=player_join_faction,
-           #parm1=Send(factliege,@GetDef),#parm2=Send(factliege,@GetName));
+           #parm1=Send(oFactionLiege,@GetDef),#parm2=Send(oFactionLiege,@GetName));
            
       return TRUE;
    }
 
    ResignFaction()
    {
-      local numMembers, oQuestEngine, oQuest, oFlagPole, iServiceQuestIndex;
+      local iServiceQuestIndex = 0;
 
-      iServiceQuestIndex = 0;
-
-      oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
+      local oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
       if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
       {
          if Send(oFlagPole,@GetClaimer) = self
@@ -11330,7 +11320,7 @@ messages:
          }
       }
 
-      oQuestEngine = Send(SYS,@GetQuestEngine);
+      local oQuestEngine = Send(SYS,@GetQuestEngine);
       if (oQuestEngine = $)
       {
          return;
@@ -11360,7 +11350,7 @@ messages:
 
       if iServiceQuestIndex > 0
       {
-         oQuest = Send(oQuestEngine,@GetQuestTemplate,
+         local lQuest = Send(oQuestEngine,@GetQuestTemplate,
                      #index=iServiceQuestIndex);
          
          % If the player is on a service quest for the faction they're losing, 
@@ -11369,12 +11359,12 @@ messages:
                #report=FALSE);
 
          % Decrease the max number of loyalty quests by one
-         numMembers = Nth(oQuest,QT_MAX_NUM_ACTIVE);
-         if numMembers > 0
+         local iNumMembers = Nth(lQuest,QT_MAX_NUM_ACTIVE);
+         if iNumMembers > 0
          {
             Send(oQuestEngine,@SetQuestMaxActive,
                   #index=iServiceQuestIndex,
-                  #new_max=(numMembers-1));
+                  #new_max=(iNumMembers-1));
          }
          else
          {
@@ -11419,13 +11409,13 @@ messages:
    PlayerIsAdept()
    "If player has 5th level spell over the enabling percent, then true"
    {
-      local i, sid, ospell;
+      local i;
 
       for i in plSpells
       {
-         sid = abs(i/100);
-         ospell = Send(SYS,@FindSpellByNum,#num=sid);
-         if IsClass(ospell,&Spell) AND Send(ospell,@GetLevel) = 5
+         local iSpellNum = abs(i/100);
+         local oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+         if IsClass(oSpell,&Spell) AND Send(oSpell,@GetLevel) = 5
             AND (i mod 100) >= INTRIGUE_ENABLE_SPELL
          {
             return TRUE;
@@ -11479,10 +11469,8 @@ messages:
 
    TokenDeliveryReward(mob=$)
    {
-      local tobj,classes;
-
-      classes = Send(Send(SYS,@GetLibrary),@GetQuestRewardList);
-      if classes = $
+      local lRewardClasses = Send(Send(SYS,@GetLibrary),@GetQuestRewardList);
+      if lRewardClasses = $
       {
          return;
       }
@@ -11491,20 +11479,20 @@ messages:
          OR (IsClass(mob,&Factions) AND Send(mob,@GetFaction) = piFaction)
          OR (IsClass(mob,&ShalillePriestess) AND piFaction = FACTION_NEUTRAL)
       {
-         tobj = Create(Nth(classes,Random(1,Length(classes))));
-         if Send(self,@ReqNewHold,#what=tobj)
+         local oReward = Create(Nth(lRewardClasses,Random(1,Length(lRewardClasses))));
+         if Send(self,@ReqNewHold,#what=oReward)
          {
-            Send(self,@NewHold,#what=tobj);
+            Send(self,@NewHold,#what=oReward);
             Post(poOwner,@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
-                 #string=player_token_reward,#parm1=Send(tobj,@GetDef),
-                 #parm2=Send(tobj,@GetName));
+                 #string=player_token_reward,#parm1=Send(oReward,@GetDef),
+                 #parm2=Send(oReward,@GetName));
          } 
          else
          {
-            Send(poOwner,@NewHold,#what=tobj,#new_row=piRow,#new_col=piCol);
+            Send(poOwner,@NewHold,#what=oReward,#new_row=piRow,#new_col=piCol);
             Post(poOwner,@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
-                 #string=player_token_reward_heavy,#parm1=Send(tobj,@GetDef),
-                 #parm2=Send(tobj,@GetName));
+                 #string=player_token_reward_heavy,#parm1=Send(oReward,@GetDef),
+                 #parm2=Send(oReward,@GetName));
          }
       }
       
@@ -11514,9 +11502,9 @@ messages:
    GetInstrumentLevel()
    "Returns the power of the instrument we are holding."
    {
-      local i, iPower;
+      local i;
 
-      iPower = 0;
+      local iPower = 0;
 
       % Search through for the instrument of the highest power.
       %  We could have a necklace and a lute.  Let the lute contribute
@@ -11583,14 +11571,12 @@ messages:
    
    UserReqNewOwner(RID=0)
    {
-      local oRoom;
-      
       if RID = 0
       {
          return;
       }
       
-      oRoom = Send(SYS,@FindRoomByNum,#num=RID);
+      local oRoom = Send(SYS,@FindRoomByNum,#num=RID);
       if oRoom = $
       {
          Debug("Got an invalid room!");
@@ -11612,7 +11598,7 @@ messages:
                        override = FALSE)
    "Used only for testing."
    {
-      local i, iStartingLearnPoints, iTotalLearnPoints, iMaxLevel, iMaxLearnPoints;
+      local i, iMaxLevel;
 
       if level = -1 OR level > 6
       {
@@ -11624,11 +11610,11 @@ messages:
       if NOT (IsClass(self,&DM) OR override)
       {
          iMaxLevel = 0;
-         iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
+         local iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
             (Send(self,@GetRawIntellect) * 2) / 5;
 
-         iStartingLearnPoints = Send(self,@GetTotalLearnPoints,#except=school);
-         iTotalLearnPoints = iStartingLearnPoints;
+         local iStartingLearnPoints = Send(self,@GetTotalLearnPoints,#except=school);
+         local iTotalLearnPoints = iStartingLearnPoints;
 
          while iMaxLevel < level
          {
@@ -11690,7 +11676,7 @@ messages:
    GivePlayerAllSkills(school = 0, level = -1, upto = TRUE, iability = 99, override = FALSE)
    "Used only for testing."
    {
-      local i, iStartingLearnPoints, iTotalLearnPoints, iMaxLevel, iMaxLearnPoints;
+      local i, iMaxLevel;
       
       if level = -1 OR level > 6
       {
@@ -11702,11 +11688,11 @@ messages:
       if NOT (IsClass(self,&DM) OR override)
       {
          iMaxLevel = 0;
-         iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
+         local iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
             (Send(self,@GetRawIntellect) * 2) / 5;
 
-         iStartingLearnPoints = Send(self,@GetTotalLearnPoints,#except=school);
-         iTotalLearnPoints = iStartingLearnPoints;
+         local iStartingLearnPoints = Send(self,@GetTotalLearnPoints,#except=school);
+         local iTotalLearnPoints = iStartingLearnPoints;
 
          while iMaxLevel < level
          {
@@ -11769,11 +11755,11 @@ messages:
 
    IsWizard()
    {
-      local i, iSpell;
+      local i;
       
       for i in plSpells
       {
-         iSpell = Send(self,@DecodeSpellNum,#compound=i);
+         local iSpell = Send(self,@DecodeSpellNum,#compound=i);
          if Send(Send(SYS,@FindSpellByNum,#num=iSpell),@GetLevel) = 5
          {
             return TRUE;
@@ -11848,9 +11834,7 @@ messages:
    GetDefaultShirtColor()
    "This does not include skin tones."
    {
-      local iXlat;
-      
-      iXlat = Send(self,@GetDefaultShirtTranslation);
+      local iXlat = Send(self,@GetDefaultShirtTranslation);
       
       return Send(SYS,@DecodePrimaryColor,#Xlat=iXlat);
    }
@@ -11861,7 +11845,7 @@ messages:
       
       for i in plUsing
       {
-         if IsClass(i,&shirt)
+         if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
          {
             return Send(i,@GetPaletteTranslation);
          }
@@ -11879,30 +11863,28 @@ messages:
    GetDefaultPantsColor()
    "This does not include skin tones."
    {
-      local iXlat;
-      
-      iXlat = Send(self,@GetDefaultPantsTranslation);
+      local iXlat = Send(self,@GetDefaultPantsTranslation);
       
       return Send(SYS,@DecodePrimaryColor,#Xlat=iXlat);
    }
 
    SetSkinColor(color = 1)
    {
-      local iColor, i, oRoom;
+      local i;
 
       % Arms (hands) and face are the only default things that need to
       %  have skin colors associated with it.  Other items in use
       %  may need to, though (low cut dress).
       
       Send(self,@SetSkinTranslation,#translation=color);
-      iColor = Send(self,@GetDefaultShirtColor);
+      local iColor = Send(self,@GetDefaultShirtColor);
       Send(self,@SetDefaultClothes,#shirt_color = iColor);
       for i in plUsing
       {
          Send(i,@DoPlayerArt);
       }
 
-      oRoom = Send(self,@GetOwner);
+      local oRoom = Send(self,@GetOwner);
       if oRoom <> $
       {    
          Send(oRoom,@SomethingChanged,#what=self);
@@ -12097,11 +12079,9 @@ messages:
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,parm4 = $,
                                             parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      local oSnoop;
-
       if type = SAY_NORMAL and what <> self and IsClass(what,&Player)
       {
-         oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
+         local oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
          if oSnoop <> $
          {
             Send(oSnoop,@SomeoneOverheard,#from=what,#to=self,#string=string);
@@ -12130,16 +12110,15 @@ messages:
 
    RemoveInaccessibleSpells()
    {
-      local num, i, oSpell, iability;
+      local i;
       
       for i in plSpells
       {
-         num = Send(self,@DecodeSpellNum,#compound=i);
-         oSpell = Send(SYS,@FindSpellByNum,#num=num);
+         local iSpellNum = Send(self,@DecodeSpellNum,#compound=i);
+         local oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
          if NOT Send(oSpell,@IsAccessible)
          {
-            iAbility = Send(self,@DecodeSpellAbility,#compound=i);
-            Send(self,@RemoveSpell,#num=num);
+            Send(self,@RemoveSpell,#num=iSpellNum);
          }
       }
       
@@ -12226,8 +12205,6 @@ messages:
 
    ClearBondedItem()
    {
-      local oldBondedItem;
-
       if ptBondedItemReport <> $
       {
          DeleteTimer(ptBondedItemReport);
@@ -12239,10 +12216,10 @@ messages:
          return;
       }
 
-      oldBondedItem = poBondedItem;
+      local oOldBondedItem = poBondedItem;
       poBondedItem = $;
       Send(Send(SYS,@FindItemAttByNum,#num=IA_BONDED),@RemoveFromItem,
-           #oItem=oldBondedItem);
+           #oItem=oOldBondedItem);
       
       return;
    }
@@ -12275,8 +12252,6 @@ messages:
    "Sets all time variables to the current time.  Useful for when changing "
    "server time."
    {
-      local time;
-
       % Reset our attack timer, a traditional use of this function when attack
       %  time was a timestamp instead of a timer.
       if ptAttackTimer <> $
@@ -12285,19 +12260,24 @@ messages:
          ptAttackTimer = $;
       }
 
-      time = GetTime();
+      local iNow = GetTime();
    
-      piLastDeathTime = time;
-      piGuildRejoinTimestamp = time;
-      piLast_restart_time = time;
-      piTimeLastStomachUpdate = time;
-      piTimeAttackedPlayer = time;
+      piLastDeathTime = iNow;
+      piGuildRejoinTimestamp = iNow;
+      piLast_restart_time = iNow;
+      piTimeLastStomachUpdate = iNow;
+      piTimeAttackedPlayer = iNow;
 
       return;
    }
 
    SendLightingInformation()
+   "Queries equipped items directly for their light color and intensity."
+   "When multiple sources are active, their colors are mixed."
+   "Steady (non-flickering) light is preferred over wavering when present."
    {
+      local i;
+
       if poIllusion_set <> $
       {
          if NOT Send(poIllusion_set,@IllusionGetLightingInformation,#who=self)
@@ -12308,20 +12288,77 @@ messages:
 
          return;
       }
-      else
-      {
-         % A bit of a kludge.  Ideally, we should query the objects we are using
-         %  to find out if any want to add lighting information to us.
-         if (piDrawFX & FLICKERING_YES)
-         {
-            AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-            % 75 out of 255 intensity of light
-            AddPacket(1,60);
-            % Color
-            AddPacket(2,LIGHT_FIRE);
 
-            return;
+      % Query equipped items for their light properties.
+      local iTorchColor = 0;
+      local iTorchIntensity = 0;
+      local iGlowColor = 0;
+      local iGlowIntensity = 0;
+
+      for i in plUsing
+      {
+         if Send(i,@IsFlickering)
+         {
+            iTorchColor = Send(i,@GetLightColor);
+            iTorchIntensity = Send(i,@GetLightIntensity);
          }
+
+         if Send(i,@IsGlowing)
+         {
+            iGlowColor = Send(i,@GetLightColor);
+            iGlowIntensity = Send(i,@GetLightIntensity);
+         }
+      }
+
+      % Accumulate light from active sources, mixing colors.
+      local iFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+      local iIntensity = 0;
+      local iColor = 0;
+      local bHasLight = FALSE;
+      local bHasSteady = FALSE;
+
+      if iGlowColor <> 0
+      {
+         iColor = iGlowColor;
+         iIntensity = iGlowIntensity;
+         bHasLight = TRUE;
+         bHasSteady = TRUE;
+      }
+
+      if iTorchColor <> 0
+      {
+         if bHasLight
+         {
+            % Mix with existing light source.
+            iColor = Send(self,@MixLightColors,
+                          #iColor1=iColor,#iColor2=iTorchColor);
+            if iTorchIntensity > iIntensity
+            {
+               iIntensity = iTorchIntensity;
+            }
+         }
+         else
+         {
+            iColor = iTorchColor;
+            iIntensity = iTorchIntensity;
+         }
+
+         bHasLight = TRUE;
+      }
+
+      if bHasLight
+      {
+         % Prefer steady light when a non-flickering source is present.
+         if NOT bHasSteady
+         {
+            iFlags = iFlags | LIGHT_FLAG_WAVERING;
+         }
+
+         AddPacket(2,iFlags);
+         AddPacket(1,iIntensity);
+         AddPacket(2,iColor);
+
+         return;
       }
 
       propagate;
@@ -12330,25 +12367,23 @@ messages:
    IsInSameRoom(what = $)
    "Determine if given object is in same room as we are."
    {
-      local what_owner, found;
-
       if poOwner = $ OR what = $
       {
          return FALSE;
       }
 
-      found = FALSE;
-      what_owner = Send(what, @GetOwner);
-      while what_owner <> $
+      local bFound = FALSE;
+      local oWhatOwner = Send(what, @GetOwner);
+      while oWhatOwner <> $
       {
-         if what_owner = poOwner
+         if oWhatOwner = poOwner
          {
-            found = TRUE;
+            bFound = TRUE;
             break;
          }
-         what_owner = Send(what_owner, @GetOwner);
+         oWhatOwner = Send(oWhatOwner, @GetOwner);
       }
-      return found;
+      return bFound;
    }
 
    AddDonationYear(year = $)

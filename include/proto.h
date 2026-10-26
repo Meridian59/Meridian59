@@ -61,8 +61,7 @@ enum {
    BP_WAIT                  = 21,
    BP_UNWAIT                = 22,
    BP_CHANGE_PASSWORD       = 23,
-   BP_AD_SELECTED           = 24,
-   
+
    BP_CHANGE_RESOURCE       = 30,
    BP_SYS_MESSAGE           = 31,
    BP_MESSAGE               = 32,
@@ -310,9 +309,11 @@ enum {
 enum { STAT_INT = 1, STAT_RES = 2, };
 
 /* Statistics group types */
-enum {
-   STATS_NUMERIC    = 1,    // Numeric values
-   STATS_LIST       = 2,    // Items in a list
+// Needs to match server-side values
+enum StatGroupType : unsigned char {
+   INVALID_TYPE     = 0,    // Invalid type
+   STATS_NUMERIC    = 1,    // Numeric values = STAT_VALUE
+   STATS_LIST       = 2,    // Items in a list = STAT_LIST
 };
 
 /* Enchantment types */

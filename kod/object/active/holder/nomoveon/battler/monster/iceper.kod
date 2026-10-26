@@ -127,6 +127,8 @@ classvars:
 
 properties:
 
+   piDrawFX = DRAWFX_TRANSLUCENT_50
+
    pbThrow = FALSE
 
    prWeaponOverlay = $

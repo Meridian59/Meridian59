@@ -22,6 +22,14 @@
 
 #define CONFIG_MAX_VOLUME 100  // Max value of sound / music volume settings
 
+static const int CONFIG_MAX_TEXT_ZOOM_LIMIT = 100;  // Max value of map text zoom limit
+
+// UI themes
+enum class Theme : int {
+   Default = 0,
+   Dark    = 1,
+};
+
 // Communication settings
 typedef struct {
    WORD  timeout;                 /* # of seconds to wait before redialing */
@@ -88,6 +96,7 @@ typedef struct {
    bool clearCache;
 
    bool colorcodes;
+   Theme theme;
    int lastPasswordChange;
 
    int soundLibrary;             /* Reserved for struct layout compatibility */
@@ -106,6 +115,7 @@ typedef struct {
    int	mouselookYScale;
 
    bool map_annotations;       /* Display annotations on map? */
+   int map_text_zoom_limit;    // 0 - 100
 
    int sound_volume;           // 0 - 100
    int music_volume;           // 0 - 100
@@ -132,6 +142,8 @@ void SaveSettings(void);
 void ConfigLoad(void);
 void ConfigSave(void);
 
+void ThemeApply(void);
+
 void WindowSettingsSave(void);
 void WindowSettingsLoad(WINDOWPLACEMENT *w);
 
@@ -139,7 +151,6 @@ void TimeSettingsLoad(void);
 void TimeSettingsSave(int download_time);
 
 M59EXPORT int GetConfigInt(char *section, char *key, int default_value, char *fname);
-bool WritePrivateProfileInt(char *section, char *key, int value, char *fname);
 M59EXPORT bool WriteConfigInt(char *section, char *key, int value, char *fname);
 
 void ConfigSetServerNameByNumber(int num);

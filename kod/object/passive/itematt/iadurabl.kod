@@ -59,16 +59,15 @@ messages:
 
    AddEffects(oItem=$,state1=$)
    {
-	local iHits;
-	
-	if state1=$  { state1 = viDefault_Bonus; }
+      local iHits, iMaxHits;
 
-        iHits = send(oItem,@GetMaxHits);
-	iHits = (iHits * state1)/100;
-	iHits = bound(iHits,1,$);
-	send(oItem,@setMaxHits,#number=iHits);
+      if state1=$  { state1 = viDefault_Bonus; }
+      iHits = Bound((Send(oItem, @GetHits) * state1) / 100, 1, $);
+      iMaxHits = Bound((Send(oItem, @GetMaxHits) * state1) / 100, 1, $);
+      Send(oItem, @SetHits, #number=iHits);
+      Send(oItem, @SetMaxHits, #number=iMaxHits);
 
-	return;
+      return;
    }
   
    AppendDesc(oItem =$)

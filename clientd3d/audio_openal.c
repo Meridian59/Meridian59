@@ -20,9 +20,12 @@
 #include <list>
 #include <unordered_map>
 #include <filesystem>
+#include <thread>
+#include <chrono>
+#include <mutex>
 
-// STB Vorbis for OGG decoding (compiled separately with STB_VORBIS_NO_PUSHDATA_API)
-extern "C" int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_rate, short **output);
+#define STB_VORBIS_HEADER_ONLY
+#include <stb_vorbis.c>
 
 // Configuration
 static const int MAX_AUDIO_SOURCES = 32;
@@ -34,6 +37,13 @@ static ALCcontext* g_context = NULL;
 static ALuint g_sources[MAX_AUDIO_SOURCES];
 static int g_numSources = 0;
 static bool g_initialized = false;
+
+// Per-source state
+struct SourceState {
+   float baseGain;
+   bool  isLoop;
+};
+static SourceState g_sourceState[MAX_AUDIO_SOURCES];
 
 // LRU buffer cache: list ordered by recency (front = newest), map for O(1) lookup.
 struct CacheNode {
@@ -72,10 +82,56 @@ static std::list<CacheNode> g_cacheList;
 static std::unordered_map<std::string, std::list<CacheNode>::iterator,
                           CaseInsensitiveHash, CaseInsensitiveEqual> g_cacheMap;
 
-// Music state
-static ALuint g_musicSource = 0;
-static ALuint g_musicBuffer = 0;
-static bool g_musicPlaying = false;
+// Tracked source registry: links a playing OpenAL source to a game object
+// so the source's position can be refreshed each frame as the object moves.
+// Key is the OpenAL source ID, value is the game object whose position the
+// source should follow.
+static std::unordered_map<ALuint, ID> g_trackedSources;
+
+// Music streaming state
+static const int STREAM_NUM_BUFFERS = 4;
+static const int STREAM_BUFFER_SAMPLES = 4096;
+
+struct MusicStream {
+   stb_vorbis* vorbis;
+   ALuint source;
+   ALuint buffers[4];
+   ALenum format;
+   int channels;
+   int sample_rate;
+   bool looping;
+   bool playing;
+   bool finished;
+};
+
+static MusicStream g_music = {};
+
+/* Music thread: command types sent from main thread to music thread. */
+enum MusicCmd {
+   MUSIC_CMD_NONE,
+   MUSIC_CMD_PLAY,
+   MUSIC_CMD_STOP,
+   MUSIC_CMD_VOLUME,
+};
+
+static std::mutex g_musicCS;
+static HANDLE g_musicThread = NULL;
+static bool g_musicThreadRunning = false;
+
+/*
+ * Pending command slot (main thread writes, music thread reads).
+ * This is a single slot, not a queue. Only one command can be pending
+ * at a time. If the main thread posts two commands before the music
+ * thread wakes, the second overwrites the first.
+ */
+static MusicCmd g_musicCmd = MUSIC_CMD_NONE;
+static std::string g_musicCmdFile;
+static bool g_musicCmdLoop = false;
+static float g_musicCmdVolume = 1.0f;
+
+static void MusicStreamUpdate(void);
+static void MusicStopPlayback(void);
+static DWORD WINAPI MusicThreadProc(LPVOID param);
 
 // Master volume
 static float g_masterVolume = 1.0f;
@@ -128,10 +184,16 @@ bool AudioInit(HWND hWnd)
    }
    g_numSources = MAX_AUDIO_SOURCES;
 
-   alGenSources(1, &g_musicSource);
+   alGenSources(1, &g_music.source);
    if (alGetError() != AL_NO_ERROR)
    {
       debug(("AudioInit: Failed to generate music source\n"));
+   }
+
+   alGenBuffers(STREAM_NUM_BUFFERS, g_music.buffers);
+   if (alGetError() != AL_NO_ERROR)
+   {
+      debug(("AudioInit: Failed to generate music stream buffers\n"));
    }
 
    alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
@@ -139,10 +201,23 @@ bool AudioInit(HWND hWnd)
    ALfloat listenerOri[] = { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }; // forward, up
    alListenerfv(AL_ORIENTATION, listenerOri);
 
-   // Use linear distance model for predictable 3D audio falloff
+   // Use linear falloff by default, but let each source pick its own
+   // curve so they don't all have to fade out the same way.
    alDistanceModel(AL_LINEAR_DISTANCE_CLAMPED);
+   alEnable(AL_SOURCE_DISTANCE_MODEL);
 
    g_initialized = true;
+
+   g_musicVolume = (float)config.music_volume / 100.0f;
+
+   g_musicThreadRunning = true;
+   g_musicThread = CreateThread(NULL, 0, MusicThreadProc, NULL, 0, NULL);
+   if (!g_musicThread)
+   {
+      debug(("AudioInit: Failed to create music thread\n"));
+      g_musicThreadRunning = false;
+   }
+
    debug(("AudioInit: OpenAL initialized successfully\n"));
    
    return true;
@@ -156,14 +231,25 @@ void AudioShutdown(void)
    if (!g_initialized)
       return;
 
+   /* Shut down the music thread before releasing any OpenAL resources. */
+   if (g_musicThread)
+   {
+      g_musicThreadRunning = false;
+      WaitForSingleObject(g_musicThread, 2000);
+      CloseHandle(g_musicThread);
+      g_musicThread = NULL;
+   }
+
    SoundStopAll();
    MusicStop();
 
-   if (g_musicSource)
+   if (g_music.source)
    {
-      alDeleteSources(1, &g_musicSource);
-      g_musicSource = 0;
+      alDeleteSources(1, &g_music.source);
+      g_music.source = 0;
    }
+
+   alDeleteBuffers(STREAM_NUM_BUFFERS, g_music.buffers);
 
    if (g_numSources > 0)
    {
@@ -338,91 +424,342 @@ static ALuint ParseOGGFile(const char* filename)
 }
 
 /*
- * MusicPlay: Play background music file
+ * MusicStreamFillBuffer: Returns true if audio was written to the buffer,
+ *   false if the stream ended without producing samples.
  */
-bool MusicPlay(const char* filename, bool loop)
+static bool MusicStreamFillBuffer(MusicStream* ms, ALuint buffer)
 {
-   ALuint newBuffer;
-   ALint sourceState;
+   short pcm[STREAM_BUFFER_SAMPLES * 2];  // Max stereo interleaved
+   int num_shorts = STREAM_BUFFER_SAMPLES * ms->channels;
+   int samples = 0;
 
-   if (!g_initialized)
+   // Decode a chunk. stb_vorbis returns the number of samples per channel.
+   samples = stb_vorbis_get_samples_short_interleaved(
+      ms->vorbis, ms->channels, pcm, num_shorts);
+
+   if (samples == 0)
    {
-      debug(("MusicPlay: OpenAL not initialized!\n"));
+      int err = stb_vorbis_get_error(ms->vorbis);
+      debug(("MusicStreamFillBuffer: decode returned 0 samples (error=%d, looping=%d)\n",
+             err, (int)ms->looping));
+
+      // End of file. If looping, seek to start and try again.
+      if (ms->looping)
+      {
+         stb_vorbis_seek_start(ms->vorbis);
+         samples = stb_vorbis_get_samples_short_interleaved(
+            ms->vorbis, ms->channels, pcm, num_shorts);
+      }
+
+      if (samples == 0)
+      {
+         debug(("MusicStreamFillBuffer: still 0 after seek, marking finished\n"));
+         ms->finished = true;
+         return false;
+      }
+   }
+
+   alBufferData(buffer, ms->format, pcm,
+      samples * ms->channels * (int)sizeof(short), ms->sample_rate);
+
+   ALenum bufErr = alGetError();
+   if (bufErr != AL_NO_ERROR)
+   {
+      debug(("MusicStreamFillBuffer: alBufferData failed (err=0x%X, buf=%u, samples=%d)\n",
+             bufErr, buffer, samples));
       return false;
    }
 
-   // Always stop any currently playing music unconditionally
-   // This ensures we stop even if our flag got out of sync with OpenAL state
-   alSourceStop(g_musicSource);
-   alSourcei(g_musicSource, AL_BUFFER, 0);  // Detach buffer
-
-   // Verify the source actually stopped (defensive check)
-   alGetSourcei(g_musicSource, AL_SOURCE_STATE, &sourceState);
-   if (sourceState == AL_PLAYING)
-   {
-      debug(("MusicPlay: Warning - source still playing after stop!\n"));
-   }
-
-   // Delete old buffer if we had one (now safe since source is stopped and detached)
-   if (g_musicBuffer != 0)
-   {
-      alDeleteBuffers(1, &g_musicBuffer);
-      g_musicBuffer = 0;
-   }
-
-   g_musicPlaying = false;
-
-   // Load OGG file (filename already includes path) - no caching for music
-   newBuffer = ParseOGGFile(filename);
-   if (newBuffer == 0)
-   {
-      debug(("MusicPlay: Failed to load %s\n", filename));
-      return false;
-   }
-
-   g_musicBuffer = newBuffer;
-
-   alSourcei(g_musicSource, AL_BUFFER, g_musicBuffer);
-   alSourcei(g_musicSource, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
-   alSourcei(g_musicSource, AL_SOURCE_RELATIVE, AL_TRUE);
-   alSource3f(g_musicSource, AL_POSITION, 0.0f, 0.0f, 0.0f);
-   alSourcef(g_musicSource, AL_GAIN, (float)config.music_volume / 100.0f);
-
-   alSourcePlay(g_musicSource);
-
-   if (alGetError() != AL_NO_ERROR)
-   {
-      debug(("MusicPlay: Failed to play music\n"));
-      return false;
-   }
-
-   g_musicPlaying = true;
    return true;
 }
 
-void MusicStop(void)
+/*
+ * MusicPlay: Requests the music thread to open an OGG file for streaming
+ *   playback. Returns true if the command was posted. Actual playback
+ *   starts asynchronously on the music thread.
+ */
+bool MusicPlay(const std::string& filename, bool loop)
 {
-   if (!g_initialized || !g_musicSource)
-      return;
+   if (!g_initialized || !g_musicThread)
+   {
+      debug(("MusicPlay: not ready (init=%d, thread=%p)\n",
+             (int)g_initialized, (void*)g_musicThread));
+      return false;
+   }
 
-   alSourceStop(g_musicSource);
-   // Detach buffer from source before any future buffer deletion
-   alSourcei(g_musicSource, AL_BUFFER, 0);
-   g_musicPlaying = false;
+   if (!std::filesystem::exists(filename))
+   {
+      debug(("MusicPlay: File not found: %s\n", filename.c_str()));
+      return false;
+   }
+
+   {
+      std::lock_guard<std::mutex> lock(g_musicCS);
+      g_musicCmd = MUSIC_CMD_PLAY;
+      g_musicCmdFile = filename;
+      g_musicCmdLoop = loop;
+   }
+
+   debug(("MusicPlay: queued '%s' looping=%d\n", filename.c_str(), (int)loop));
+   return true;
 }
 
+/*
+ * MusicStreamUpdate: Refills processed OpenAL buffers from the vorbis
+ *   stream. Recovers from buffer underruns by restarting the source.
+ */
+static void MusicStreamUpdate(void)
+{
+   if (!g_initialized || !g_music.playing)
+      return;
+
+   // Drain any stale error from other OpenAL calls (SFX, etc.)
+   alGetError();
+
+   ALint state = 0;
+   alGetSourcei(g_music.source, AL_SOURCE_STATE, &state);
+
+   // Check how many buffers the source has finished playing
+   ALint processed = 0;
+   alGetSourcei(g_music.source, AL_BUFFERS_PROCESSED, &processed);
+
+   while (processed > 0)
+   {
+      ALuint buf;
+      alSourceUnqueueBuffers(g_music.source, 1, &buf);
+
+      if (!g_music.finished)
+      {
+         if (MusicStreamFillBuffer(&g_music, buf))
+         {
+            alSourceQueueBuffers(g_music.source, 1, &buf);
+         }
+      }
+
+      processed--;
+   }
+
+   if (state != AL_PLAYING)
+   {
+      ALint queued = 0;
+      alGetSourcei(g_music.source, AL_BUFFERS_QUEUED, &queued);
+      if (queued > 0)
+      {
+         // Source starved. Restart playback with whatever is queued.
+         alSourcePlay(g_music.source);
+      }
+      else
+      {
+         debug(("MusicStreamUpdate: all buffers consumed, playback done\n"));
+         g_music.playing = false;
+      }
+   }
+}
+
+/*
+ * MusicStartPlayback: Opens a vorbis stream and begins playback.
+ */
+static void MusicStartPlayback(const std::string& filename, bool loop)
+{
+   alGetError();
+
+   MusicStopPlayback();
+   alGetError();
+
+   int error = 0;
+   g_music.vorbis = stb_vorbis_open_filename(filename.c_str(), &error, NULL);
+   if (!g_music.vorbis)
+   {
+      debug(("MusicStartPlayback: Failed to open %s (error %d)\n", filename.c_str(), error));
+      return;
+   }
+
+   stb_vorbis_info info = stb_vorbis_get_info(g_music.vorbis);
+   g_music.channels = info.channels;
+   g_music.sample_rate = info.sample_rate;
+   g_music.looping = loop;
+   g_music.finished = false;
+
+   if (info.channels == 1)
+      g_music.format = AL_FORMAT_MONO16;
+   else
+      g_music.format = AL_FORMAT_STEREO16;
+
+   int queued = 0;
+   for (int i = 0; i < STREAM_NUM_BUFFERS; i++)
+   {
+      if (MusicStreamFillBuffer(&g_music, g_music.buffers[i]))
+         queued++;
+      else
+         break;
+   }
+
+   if (queued == 0)
+   {
+      debug(("MusicStartPlayback: No audio data in %s\n", filename.c_str()));
+      stb_vorbis_close(g_music.vorbis);
+      g_music.vorbis = NULL;
+      return;
+   }
+
+   /* Setting AL_BUFFER to 0 detaches any previous buffer and resets the
+    * source to AL_INITIAL so it can accept a new queue. AL_LOOPING is
+    * off because OpenAL's looping only replays a single buffer, not the
+    * whole queue. We loop manually by seeking the decoder back to the
+    * start when it reaches end-of-file. */
+   alSourcei(g_music.source, AL_BUFFER, 0);
+   alSourcei(g_music.source, AL_LOOPING, AL_FALSE);
+   alSourcei(g_music.source, AL_SOURCE_RELATIVE, AL_TRUE);
+   alSource3f(g_music.source, AL_POSITION, 0.0f, 0.0f, 0.0f);
+   alSourcef(g_music.source, AL_GAIN, g_musicVolume * g_masterVolume);
+
+   alGetError();  // Clear errors before queue+play
+   alSourceQueueBuffers(g_music.source, queued, g_music.buffers);
+   ALenum queueErr = alGetError();
+   alSourcePlay(g_music.source);
+   ALenum playErr = alGetError();
+
+   if (queueErr != AL_NO_ERROR || playErr != AL_NO_ERROR)
+   {
+      debug(("MusicStartPlayback: Failed - source=%u, queueErr=0x%X, playErr=0x%X\n",
+             g_music.source, queueErr, playErr));
+      stb_vorbis_close(g_music.vorbis);
+      g_music.vorbis = NULL;
+      return;
+   }
+
+   g_music.playing = true;
+
+   debug(("MusicStartPlayback: streaming '%s' ch=%d rate=%d looping=%d source=%u\n",
+          filename.c_str(), g_music.channels, g_music.sample_rate, (int)loop,
+          g_music.source));
+}
+
+/*
+ * MusicStopPlayback: Stops the source, unqueues buffers, and closes the
+ *   decoder.
+ */
+static void MusicStopPlayback(void)
+{
+   alSourceStop(g_music.source);
+
+   ALint queued = 0;
+   alGetSourcei(g_music.source, AL_BUFFERS_QUEUED, &queued);
+   while (queued > 0)
+   {
+      ALuint buf;
+      alSourceUnqueueBuffers(g_music.source, 1, &buf);
+      queued--;
+   }
+
+   alSourcei(g_music.source, AL_BUFFER, 0);
+
+   if (g_music.vorbis)
+   {
+      stb_vorbis_close(g_music.vorbis);
+      g_music.vorbis = NULL;
+   }
+
+   g_music.playing = false;
+   g_music.finished = false;
+}
+
+/*
+ * MusicThreadProc: Background thread that services music streaming buffers
+ *   and processes commands from the main thread. Runs independently of the
+ *   Windows message pump so buffer refills cannot be starved by UI activity.
+ */
+static DWORD WINAPI MusicThreadProc(LPVOID param)
+{
+   while (g_musicThreadRunning)
+   {
+      MusicCmd cmd = MUSIC_CMD_NONE;
+      std::string cmdFile;
+      bool cmdLoop = false;
+      float cmdVolume = 1.0f;
+
+      {
+         std::lock_guard<std::mutex> lock(g_musicCS);
+         cmd = g_musicCmd;
+         if (cmd != MUSIC_CMD_NONE)
+         {
+            cmdFile = g_musicCmdFile;
+            cmdLoop = g_musicCmdLoop;
+            cmdVolume = g_musicCmdVolume;
+            g_musicCmd = MUSIC_CMD_NONE;
+         }
+      }
+
+      switch (cmd)
+      {
+      case MUSIC_CMD_PLAY:
+         MusicStartPlayback(cmdFile, cmdLoop);
+         break;
+      case MUSIC_CMD_STOP:
+         MusicStopPlayback();
+         break;
+      case MUSIC_CMD_VOLUME:
+         if (g_music.source)
+            alSourcef(g_music.source, AL_GAIN, cmdVolume * g_masterVolume);
+         break;
+      default:
+         break;
+      }
+
+      MusicStreamUpdate();
+      std::this_thread::sleep_for(std::chrono::milliseconds(75));
+   }
+
+   MusicStopPlayback();
+   return 0;
+}
+
+/*
+ * MusicStop: Posts a stop command to the music thread.
+ */
+void MusicStop(void)
+{
+   if (!g_initialized)
+      return;
+
+   debug(("MusicStop: called (playing=%d, vorbis=%p)\n",
+          (int)g_music.playing, (void*)g_music.vorbis));
+
+   if (g_musicThread)
+   {
+      std::lock_guard<std::mutex> lock(g_musicCS);
+      g_musicCmd = MUSIC_CMD_STOP;
+   }
+   else
+   {
+      MusicStopPlayback();
+   }
+}
+
+/*
+ * MusicSetVolume: Posts a volume change to the music thread.
+ */
 void MusicSetVolume(float volume)
 {
    g_musicVolume = volume;
-   if (g_initialized && g_musicSource)
+   if (!g_initialized || !g_music.source)
+      return;
+
+   if (g_musicThread)
    {
-      alSourcef(g_musicSource, AL_GAIN, volume * g_masterVolume);
+      std::lock_guard<std::mutex> lock(g_musicCS);
+      g_musicCmdVolume = volume;
+      g_musicCmd = MUSIC_CMD_VOLUME;
+   }
+   else
+   {
+      alSourcef(g_music.source, AL_GAIN, volume * g_masterVolume);
    }
 }
 
 bool MusicIsPlaying(void)
 {
-   return g_musicPlaying;
+   return g_music.playing;
 }
 
 /*
@@ -624,9 +961,13 @@ static ALuint LoadAudioBuffer(const char* filename)
 
 /*
  * SoundPlay: Returns true if sound started. Supports OGG/WAV, 3D positioning, looping.
+ *   When source_obj is non-zero and the sound is positional, the source is
+ *   registered so subsequent frames refresh its position from the object's
+ *   current location.
  */
 bool SoundPlay(const char* filename, int volume, BYTE flags,
-               int src_row, int src_col, int radius, int max_vol)
+               int src_row, int src_col, int radius, int max_vol,
+               ID source_obj)
 {
    if (!g_initialized)
       return false;
@@ -703,13 +1044,40 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       alSourcei(source, AL_SOURCE_RELATIVE, AL_FALSE);
       alSource3f(source, AL_POSITION, -(float)src_col, 0.0f, (float)src_row);
 
-      // Distance attenuation: full volume within 1 tile, silent at radius
-      alSourcef(source, AL_REFERENCE_DISTANCE, 1.0f);
-      alSourcef(source, AL_MAX_DISTANCE, (float)radius);
+      // Pick the distance attenuation curve:
+      //   - If the caller set a radius, fade linearly from full volume
+      //     at 1 tile to silence at that radius (hard cutoff).  Used
+      //     for looping sources and one-shots with an explicit range.
+      //   - Otherwise use OpenAL's "inverse" model: a 1/distance curve
+      //     that halves every time distance doubles and never reaches
+      //     zero, so distant one-shots stay faintly audible.
+      ALenum model;
+      float refDist, maxDist;
+      if ((flags & SF_LOOP) || radius > 0)
+      {
+         float r = (radius > 0) ? (float)radius : (float)VOLUME_CUTOFF_DISTANCE;
+         model   = AL_LINEAR_DISTANCE_CLAMPED;
+         refDist = 1.0f;
+         maxDist = r;
+      }
+      else
+      {
+         model   = AL_INVERSE_DISTANCE_CLAMPED;
+         refDist = 2.0f;
+         maxDist = 10000.0f;
+      }
+      alSourcei(source, AL_DISTANCE_MODEL, model);
+      alSourcef(source, AL_REFERENCE_DISTANCE, refDist);
+      alSourcef(source, AL_MAX_DISTANCE, maxDist);
       alSourcef(source, AL_ROLLOFF_FACTOR, 1.0f);
 
       float gain = (float)max_vol / (float)MAX_VOLUME;
-      gain *= (float)config.ambient_volume / 100.0f;
+      g_sourceState[sourceIndex].baseGain = gain;
+      g_sourceState[sourceIndex].isLoop = (flags & SF_LOOP) != 0;
+      if (flags & SF_LOOP)
+         gain *= (float)config.ambient_volume / 100.0f;
+      else
+         gain *= (float)config.sound_volume / 100.0f;
       alSourcef(source, AL_GAIN, gain);
    }
    else
@@ -720,6 +1088,8 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
 
       // Set volume (volume is 0-MAX_VOLUME, convert to 0.0-1.0)
       float gain = (float)volume / (float)MAX_VOLUME;
+      g_sourceState[sourceIndex].baseGain = gain;
+      g_sourceState[sourceIndex].isLoop = (flags & SF_LOOP) != 0;
       if (flags & SF_LOOP)
          gain *= (float)config.ambient_volume / 100.0f;
       else
@@ -750,6 +1120,14 @@ bool SoundPlay(const char* filename, int volume, BYTE flags,
       return false;
    }
 
+   // Register the source for per-frame position updates if it is a positional
+   // sound emitted by a known game object.  Non-positional sounds (UI, ambient
+   // loops at placeholder coords) ignore source_obj.
+   if (isPositional && source_obj != 0)
+   {
+      g_trackedSources[source] = source_obj;
+   }
+
    return true;
 }
 
@@ -778,6 +1156,8 @@ void SoundStopAll(void)
    {
       alSourceStop(g_sources[i]);
    }
+
+   g_trackedSources.clear();
 }
 
 /*
@@ -796,6 +1176,32 @@ void SoundStopLooping(void)
       {
          alSourceStop(g_sources[i]);
       }
+   }
+}
+
+/*
+ * ResetSoundVolume:  Reapply Sound and Ambient slider values to every
+ *   currently-playing source.  Walks the source pool and recomputes each
+ *   source's gain as base * slider, where the base was recorded at SoundPlay
+ *   time and the slider is picked by the source's stored loop flag.  Idle
+ *   sources are skipped.
+ */
+void ResetSoundVolume(void)
+{
+   if (!g_initialized)
+      return;
+
+   for (int i = 0; i < g_numSources; i++)
+   {
+      ALint state;
+      alGetSourcei(g_sources[i], AL_SOURCE_STATE, &state);
+      if (state != AL_PLAYING && state != AL_PAUSED)
+         continue;
+
+      float slider = g_sourceState[i].isLoop
+         ? (float)config.ambient_volume / 100.0f
+         : (float)config.sound_volume / 100.0f;
+      alSourcef(g_sources[i], AL_GAIN, g_sourceState[i].baseGain * slider);
    }
 }
 
@@ -820,7 +1226,47 @@ void Audio_StopSourcesForFilename(const char* filename)
       {
          alSourceStop(g_sources[i]);
          alSourcei(g_sources[i], AL_BUFFER, 0);
+         g_trackedSources.erase(g_sources[i]);
       }
+   }
+}
+
+/*
+ * AudioUpdateTrackedSources: Refresh OpenAL source positions for sounds
+ *   attached to moving game objects.  Drops entries whose source has stopped
+ *   or whose object can no longer be found by ID.
+ */
+void AudioUpdateTrackedSources(void)
+{
+   if (!g_initialized)
+      return;
+
+   for (auto it = g_trackedSources.begin(); it != g_trackedSources.end(); )
+   {
+      ALuint source = it->first;
+      ID object_id = it->second;
+
+      ALint state = AL_STOPPED;
+      alGetSourcei(source, AL_SOURCE_STATE, &state);
+      if (state != AL_PLAYING && state != AL_PAUSED)
+      {
+         it = g_trackedSources.erase(it);
+         continue;
+      }
+
+      room_contents_node *obj = GetRoomObjectById(object_id);
+      if (obj == NULL)
+      {
+         // Untrack but leave the source playing at its last position.
+         it = g_trackedSources.erase(it);
+         continue;
+      }
+
+      int row = obj->motion.y >> LOG_FINENESS;
+      int col = obj->motion.x >> LOG_FINENESS;
+      // Negate X to match the listener's coordinate convention
+      alSource3f(source, AL_POSITION, -(float)col, 0.0f, (float)row);
+      ++it;
    }
 }
 

@@ -222,6 +222,9 @@ void EnchantmentsMovePlayer(void)
 
       x += width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      // basically no op on Windows, but fixes Wine rendering
+      // https://github.com/Meridian59/Meridian59/pull/1337
+      InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }
 /************************************************************************/
@@ -251,6 +254,9 @@ void EnchantmentsMoveRoom(void)
 
       x -= width + ENCHANT_BORDER;
       ShowWindow(e->hwnd, SW_SHOWNORMAL);
+      // basically no op on Windows, but fixes Wine rendering
+      // https://github.com/Meridian59/Meridian59/pull/1337
+      InvalidateRect(e->hwnd, NULL, FALSE);
    }
 }
 /****************************************************************************/
@@ -285,7 +291,7 @@ bool EnchantmentDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
       p.x = r.left;
       p.y = r.top;
       ScreenToClient(cinfo->hMain, &p);
-      OffscreenWindowBackground(NULL, p.x, p.y, ENCHANT_SIZE, ENCHANT_SIZE);
+      OffscreenSidebarBackground(p.x, p.y, ENCHANT_SIZE, ENCHANT_SIZE);
 
       area.x = area.y = 0;
       area.cx = area.cy = ENCHANT_SIZE;

@@ -1,7 +1,7 @@
 Meridian 59 v1.1, January, 2015
 Andrew Kirmse and Chris Kirmse
 
-Copyright 1994-2025 Andrew Kirmse and Chris Kirmse
+Copyright 1994-2026 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
 
@@ -23,14 +23,13 @@ the original source so that everyone can benefit.
 WHAT'S INCLUDED AND NOT INCLUDED
 
 The source to the client, server, game code, Blakod compiler, room
-editor, and all associated tools are included.  The source code to the
-Miles Sound System audio library is not included.  Client builds that you 
-make will use the fallback waveplay audio library instead.
+editor, and all associated tools are included.  Audio is handled by
+OpenAL Soft, whose prebuilt binaries are included in external/.
 
 
 BUILD INSTRUCTIONS
 
-The code has been built successfully with Microsoft Visual Studio 2022
+The code has been built successfully with Microsoft Visual Studio 2026
 Community Edition, which you can download for free at 
 https://visualstudio.microsoft.com/downloads/
 
@@ -88,7 +87,9 @@ The blakserv.cfg file requires some manual changes to run on Linux.
 
 THIRD-PARTY CODE
 
-Meridian uses zlib, libpng, libarchive.  All three are built from source.
+Meridian uses zlib, libpng, libarchive, and OpenAL Soft.  zlib, libpng,
+and libarchive are built from source.  OpenAL Soft is included as a
+prebuilt binary (LGPL; see external/openal-soft/ for license details).
 libarchive was configured via cmake with the following cmake environment
 variables set to use zlib:
 

@@ -96,6 +96,21 @@ static bool incremental_background = false;
  */
 static int background_cones = MAX_ITEMS;
 
+// Depth counter: >0 when the BSP walk is traversing the far side of a
+// separator plane that contains at least one translucent wall. Used as a
+// cheap early-exit so we can skip the per-column overlap test below when no
+// translucent walls are anywhere on the current path.
+static int translucent_wall_depth = 0;
+
+// Per-screen-column ref count of how many translucent walls on the current
+// BSP path actually cover each column.  Objects in the far subtree are marked
+// behind_translucent only if their projected column range overlaps a column
+// with count > 0. Without this, a separator plane that mixes translucent and
+// opaque walls would mark every object in the far subtree, including objects
+// entirely behind the opaque wall - those would then be re-added by the D3D
+// post-pass and rely on the depth buffer to occlude them.
+static int translucent_col_count[MAXX];
+
 static void doDrawWall(DrawWallStruct *wall, ViewCone *c);
 static void doDrawBackground(ViewCone *c);
 static void SetMappingValues(SlopeData *slope);
@@ -465,7 +480,7 @@ static void AddObjects(room_type *room)
          nobjects--;
          continue;
       }
-      d->draw.height = max(bottom, r->motion.z);
+      d->draw.height = std::max(bottom, (long)r->motion.z);
 
       // Set object depth based on "depth" sector flags
       d->draw.depth = sector_depths[SectorDepth(sector_flags)];
@@ -499,6 +514,7 @@ static void AddObjects(room_type *room)
 
       d->ncones = 0;
       d->ncones_ptr = &d->ncones;
+      d->behind_translucent = false;
 
       // set center field
       a = (left_a * dx + left_b * dy) >> (FIX_DECIMAL - 6);
@@ -581,6 +597,7 @@ static void AddObjects(room_type *room)
       d->draw.secondtranslation = 0;
       d->ncones = 0;
       d->ncones_ptr = &d->ncones;
+      d->behind_translucent = false;
       d->draw.obj = NULL;
 
       // set center field
@@ -729,6 +746,7 @@ static void init_cone_tree()
    c->cone.bot_a = 1;
    c->cone.bot_b = 0;
    c->cone.bot_d = area.cy - 1;
+   c->cone.seen_translucent = false;
 
 #if CHECK_DEPTH
    max_depth = 0;
@@ -793,7 +811,7 @@ loop:
    if (node->left)
    {
       if (node->right)
-         h = max(node->left->height, node->right->height) + 1;
+         h = std::max(node->left->height, node->right->height) + 1;
       else
          h = node->left->height + 1;
    }
@@ -1083,8 +1101,8 @@ static bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
    {
       next = c->next;  // get next pointer now, before we munge c
 
-      c0 = max(col0, c->cone.leftedge);
-      c1 = min(col1, c->cone.rightedge);
+      c0 = std::max(col0, (long)c->cone.leftedge);
+      c1 = std::min(col1, (long)c->cone.rightedge);
 
       // some common subexpressions
       a_topb = a * c->cone.top_b;
@@ -1294,8 +1312,8 @@ static bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
       next = c->next;  // get next pointer now, before we munge c
 
       // get left and right edges of item under consideration
-      c0 = max(col0, c->cone.leftedge);
-      c1 = min(col1, c->cone.rightedge);
+      c0 = std::max(col0, (long)c->cone.leftedge);
+      c1 = std::min(col1, (long)c->cone.rightedge);
 
       a_botb = a * c->cone.bot_b;
       a_botd = a * c->cone.bot_d;
@@ -1823,13 +1841,13 @@ bool Bbox_shadowed(long x0, long y0, long x1, long y1)
    {  // find minimum column
       col0 = screen_width;
       if (r0 > 0)
-         col0 = min(col0, (screen_width * l0 + screen_width2) / (l0 + r0));
+         col0 = std::min(col0, (screen_width * l0 + screen_width2) / (l0 + r0));
       if (r1 > 0)
-         col0 = min(col0, (screen_width * l1 + screen_width2) / (l1 + r1));
+         col0 = std::min(col0, (screen_width * l1 + screen_width2) / (l1 + r1));
       if (r2 > 0)
-         col0 = min(col0, (screen_width * l2 + screen_width2) / (l2 + r2));
+         col0 = std::min(col0, (screen_width * l2 + screen_width2) / (l2 + r2));
       if (r3 > 0)
-         col0 = min(col0, (screen_width * l3 + screen_width2) / (l3 + r3));
+         col0 = std::min(col0, (screen_width * l3 + screen_width2) / (l3 + r3));
    }
 
    if (offrightedge)
@@ -1838,13 +1856,13 @@ bool Bbox_shadowed(long x0, long y0, long x1, long y1)
    {  // find maximum column
       col1 = 0;
       if (l0 > 0)
-         col1 = max(col1, (screen_width * l0 + screen_width2) / (l0 + r0));
+         col1 = std::max(col1, (screen_width * l0 + screen_width2) / (l0 + r0));
       if (l1 > 0)
-         col1 = max(col1, (screen_width * l1 + screen_width2) / (l1 + r1));
+         col1 = std::max(col1, (screen_width * l1 + screen_width2) / (l1 + r1));
       if (l2 > 0)
-         col1 = max(col1, (screen_width * l2 + screen_width2) / (l2 + r2));
+         col1 = std::max(col1, (screen_width * l2 + screen_width2) / (l2 + r2));
       if (l3 > 0)
-         col1 = max(col1, (screen_width * l3 + screen_width2) / (l3 + r3));
+         col1 = std::max(col1, (screen_width * l3 + screen_width2) / (l3 + r3));
    }
 
    /* Note: we only use the left and right edges of the view cone because
@@ -2024,6 +2042,13 @@ static void WalkWall(WallData *wall, long side)
    long z0, zz0, z1, zz1, z2, zz2, z3, zz3;
    long t0, t1;
 
+   // Saved section boundary coefficients for translucent WALL_NORMAL cone restriction.
+   // WALL_NORMAL must only draw in the middle section (between WALL_ABOVE and WALL_BELOW)
+   // to avoid double-blending the same pixels.
+   long norm_top_a = 0, norm_top_b = 0, norm_top_d = 0; // WALL_ABOVE bottom boundary
+   long norm_bot_a = 0, norm_bot_b = 0, norm_bot_d = 0; // WALL_BELOW top boundary
+   bool has_norm_top = false, has_norm_bot = false;
+
    DrawItem item_template;
 
    DrawItem *item;
@@ -2132,6 +2157,28 @@ static void WalkWall(WallData *wall, long side)
    debug(("WalkWall %d %d\n",col0,col1));
 #endif
 
+   // A translucent wall deliberately does NOT narrow the BSP cone (so geometry
+   // behind it stays visible).  Opaque walls walked behind it therefore inherit
+   // an over-sized cone that spans the whole see-through region instead of just
+   // their own extent.  Mark exactly the cone columns this translucent wall
+   // covers so doDrawWall can clamp those opaque walls to their true geometry.
+   // Splitting the cone here keeps the mark precise; ordinary opaque walls
+   // (un-marked cones) keep the "extend to cone" behaviour that prevents
+   // 1-pixel background-revealing seams in normal geometry.
+   if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+   {
+      ConeTreeNode *mc, *mnext;
+      for (mc = search_for_first(col0); mc->cone.leftedge <= col1; mc = mnext)
+      {
+         mnext = mc->next;  // capture before splitting
+         if (col0 > mc->cone.leftedge)
+            mc = split_cone(mc, col0 - 1, false);
+         if (col1 < mc->cone.rightedge)
+            mc = split_cone(mc, col1, true);
+         mc->cone.seen_translucent = true;
+      }
+   }
+
    // Look for lower wall
    if (sidedef->below_bmap != NULL && ((z1 != z0) || (zz1 != zz0)))
    {
@@ -2164,12 +2211,52 @@ static void WalkWall(WallData *wall, long side)
          d = a * toprow0 - b * col0;
       }
 
-      item_template.type = DrawWallType;
-      item_template.u.wall.wall = wall;
-      item_template.u.wall.side = SGN(side);
-      item_template.u.wall.wall_type = WALL_BELOW;
-      if (add_dn(&item_template, a, b, d, col0, col1))
-         wall->seen = true;
+      // Save WALL_BELOW top boundary for WALL_NORMAL cone restriction (translucent walls).
+      if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+      { norm_bot_a = a; norm_bot_b = b; norm_bot_d = d; has_norm_bot = true; }
+
+      if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+      {
+         // Translucent WALL_BELOW: add DrawItems bounded to the step section WITHOUT
+         // narrowing the BSP cone.  Leaving the cone open lets background and far-side
+         // geometry render correctly behind the translucent wall.  The DrawItem's cone
+         // top is set to (a,b,d) — the WALL_BELOW top boundary — so doDrawWall clamps
+         // the texture to the correct section automatically via clipstart/clipend.
+         ConeTreeNode *bc, *bnext;
+         for (bc = search_for_first(col0); bc->cone.leftedge <= col1; bc = bnext)
+         {
+            bnext = bc->next;
+            if (nitems >= MAX_ITEMS) { debug(("out of item memory Walk Wall below\n")); return; }
+            DrawItem *bi = &drawdata[nitems++];
+            bi->type            = DrawTranslucentWallType;
+            bi->u.wall.wall     = wall;
+            bi->u.wall.side     = SGN(side);
+            bi->u.wall.wall_type = WALL_BELOW;
+            bi->cone.leftedge   = std::max(col0, (long)bc->cone.leftedge);
+            bi->cone.rightedge  = std::min(col1, (long)bc->cone.rightedge);
+            bi->cone.top_a      = a;              // WALL_BELOW top boundary
+            bi->cone.top_b      = b;
+            bi->cone.top_d      = d;
+            // Use screen bottom as the cone bot for WALL_BELOW.
+            // bc->cone.bot = floor_row-1 (cone already narrowed by near floor).
+            // WALL_BELOW's top = floor_row → clipstart > clipend → nothing drawn.
+            // Force cone bot to screen bottom so the below-section draws.
+            // Near floor renders on top anyway.
+            bi->cone.bot_a      = 1;
+            bi->cone.bot_b      = 0;
+            bi->cone.bot_d      = area.cy - 1;    // screen bottom
+            wall->seen = true;
+         }
+      }
+      else
+      {
+         item_template.type           = DrawWallType;
+         item_template.u.wall.wall    = wall;
+         item_template.u.wall.side    = SGN(side);
+         item_template.u.wall.wall_type = WALL_BELOW;
+         if (add_dn(&item_template, a, b, d, col0, col1))
+            wall->seen = true;
+      }
    }
 
    // Look for above wall
@@ -2203,12 +2290,53 @@ static void WalkWall(WallData *wall, long side)
          d = a * botrow0 - b * col0;
       }
 
-      item_template.type = DrawWallType;
-      item_template.u.wall.wall = wall;
-      item_template.u.wall.side = SGN(side);
-      item_template.u.wall.wall_type = WALL_ABOVE;
-      if (add_up(&item_template, a, b, d, col0, col1))
-         wall->seen = true;
+      // Save WALL_ABOVE bottom boundary for WALL_NORMAL cone restriction (translucent walls).
+      if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+      { norm_top_a = a; norm_top_b = b; norm_top_d = d; has_norm_top = true; }
+
+      if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+      {
+         // Translucent WALL_ABOVE: add DrawItems bounded to the railing section WITHOUT
+         // narrowing the BSP cone.  Leaving the cone open lets background and far-side
+         // geometry render correctly behind the translucent wall.  The DrawItem's cone
+         // bot is set to (a,b,d) — the WALL_ABOVE bottom boundary — so doDrawWall clamps
+         // the texture to the correct section automatically via clipstart/clipend.
+         ConeTreeNode *ac, *anext;
+         for (ac = search_for_first(col0); ac->cone.leftedge <= col1; ac = anext)
+         {
+            anext = ac->next;
+            if (nitems >= MAX_ITEMS) { debug(("out of item memory Walk Wall above\n")); return; }
+            DrawItem *ai = &drawdata[nitems++];
+            ai->type            = DrawTranslucentWallType;
+            ai->u.wall.wall     = wall;
+            ai->u.wall.side     = SGN(side);
+            ai->u.wall.wall_type = WALL_ABOVE;
+            ai->cone.leftedge   = std::max(col0, (long)ac->cone.leftedge);
+            ai->cone.rightedge  = std::min(col1, (long)ac->cone.rightedge);
+            // Use screen top as the cone top for WALL_ABOVE.
+            // The near room's WalkLeaf has already narrowed the cone to
+            // [ceiling_row+1, floor_row-1] by the time WalkWall runs, so
+            // ac->cone.top = ceiling_row+1.  WALL_ABOVE's bot = ceiling_row
+            // → clipstart > clipend → nothing drawn.  Force cone top to row 0
+            // so the above-section draws.  Near ceiling renders on top anyway.
+            ai->cone.top_a      = 1;
+            ai->cone.top_b      = 0;
+            ai->cone.top_d      = 0;              // screen top (row 0)
+            ai->cone.bot_a      = a;              // WALL_ABOVE bottom boundary
+            ai->cone.bot_b      = b;
+            ai->cone.bot_d      = d;
+            wall->seen = true;
+         }
+      }
+      else
+      {
+         item_template.type           = DrawWallType;
+         item_template.u.wall.wall    = wall;
+         item_template.u.wall.side    = SGN(side);
+         item_template.u.wall.wall_type = WALL_ABOVE;
+         if (add_up(&item_template, a, b, d, col0, col1))
+            wall->seen = true;
+      }
    }
 
    // Look for normal wall
@@ -2223,7 +2351,8 @@ static void WalkWall(WallData *wall, long side)
          next = c->next;
          wall->seen = true;
 
-         if (sidedef->flags & WF_TRANSPARENT && !(sidedef->flags & WF_NOLOOKTHROUGH))
+         if ((sidedef->flags & WF_TRANSPARENT && !(sidedef->flags & WF_NOLOOKTHROUGH)) ||
+             wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
          {
             if (nitems >= MAX_ITEMS)
             {
@@ -2231,7 +2360,7 @@ static void WalkWall(WallData *wall, long side)
                return;
             }
             item = &drawdata[nitems++];
-            item->type = DrawWallType;
+            item->type = (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE) ? DrawTranslucentWallType : DrawWallType;
             item->u.wall.wall = wall;
             item->u.wall.side = SGN(side);
             item->u.wall.wall_type = WALL_NORMAL;
@@ -2240,6 +2369,24 @@ static void WalkWall(WallData *wall, long side)
                item->cone.leftedge = col0;
             if (col1 < item->cone.rightedge)
                item->cone.rightedge = col1;
+            // For translucent walls: restrict the WALL_NORMAL cone to the section
+            // between WALL_ABOVE and WALL_BELOW so that WALL_NORMAL does not draw
+            // in the railing/step areas, which would cause double alpha blending.
+            if (wall->translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+            {
+               if (has_norm_top)
+               {
+                  item->cone.top_a = norm_top_a;
+                  item->cone.top_b = norm_top_b;
+                  item->cone.top_d = norm_top_d + 1; // same offset as add_up uses
+               }
+               if (has_norm_bot)
+               {
+                  item->cone.bot_a = norm_bot_a;
+                  item->cone.bot_b = norm_bot_b;
+                  item->cone.bot_d = norm_bot_d - 1; // same offset as add_dn uses
+               }
+            }
             continue;
          }
 
@@ -2323,6 +2470,26 @@ static void WalkObjects(ObjectData *objects)
 
       if (right >= MAXX)
          right = MAXX - 1;
+
+      // Mark behind_translucent only if this object's screen columns actually
+      // overlap a translucent wall on the BSP path. Objects behind opaque
+      // walls in a plane that also contains a translucent wall must NOT be
+      // marked, or the D3D post-pass would re-add them and they'd appear
+      // through the opaque wall on the map.
+      if (translucent_wall_depth > 0)
+      {
+         long ovlo = std::max(left, 0L);
+         long ovhi = std::min(right, (long)MAXX - 1);
+         for (long col = ovlo; col <= ovhi; col++)
+         {
+            if (translucent_col_count[col] > 0)
+            {
+               object->behind_translucent = true;
+               break;
+            }
+         }
+      }
+
       for (c = search_for_first(left); c->cone.leftedge <= right; c = c->next)
       {
          if (nitems >= MAX_ITEMS)
@@ -2537,7 +2704,7 @@ static void WalkLeaf(BSPleaf *leaf)
          {
             a = 1;
             b = 0;
-            d = min(row0, row1);
+            d = std::min(row0, row1);
          }
          else
          {
@@ -2600,7 +2767,7 @@ static void WalkLeaf(BSPleaf *leaf)
          {
             a = 1;
             b = 0;
-            d = min(row0, row1);
+            d = std::min(row0, row1);
          }
          else
          {
@@ -2627,6 +2794,7 @@ static void WalkLeaf(BSPleaf *leaf)
    }
 }
 
+
 static void WalkBSPtree(BSPnode *tree)
 {
    long side;
@@ -2647,78 +2815,126 @@ static void WalkBSPtree(BSPnode *tree)
    /* debug(("box (%ld %ld) (%ld %ld)) opened\n",tree->bbox.x0, tree->bbox.y0,
       tree->bbox.x1, tree->bbox.y1); */
 
-   switch (tree->type)
+   if (tree->type == BSPleaftype)
    {
-   case BSPleaftype:
       WalkLeaf(&tree->u.leaf);
       return;
+   }
 
-   case BSPinternaltype:
-      side = (a = tree->u.internal.separator.a) * viewer_x + (b = tree->u.internal.separator.b) * viewer_y +
-             tree->u.internal.separator.c;
-
-      if (shade_amount != 0)
-      {
-         long lo_end = FINENESS - shade_amount;
-
-         if (side < 0)
-         {
-            a = -a;
-            b = -b;
-         }
-
-         lightscale = (long) (a * sun_vect.x + b * sun_vect.y) >> LOG_FINENESS;
-
-         lightscale = (lightscale + FINENESS) >> 1;  // map to 0 to 1 range
-
-         lightscale = lo_end + ((lightscale * shade_amount) >> LOG_FINENESS);
-
-         if (lightscale > FINENESS)
-            lightscale = FINENESS;
-         else if (lightscale < 0)
-            lightscale = 0;
-      }
-      else
-         lightscale = FINENESS;
-
-      // first, traverse closer side
-      if (side > 0)
-         WalkBSPtree(tree->u.internal.pos_side);
-      else
-         WalkBSPtree(tree->u.internal.neg_side);
-
-      // if entire screen is covered, we're done
-      if (cone_tree_root == NULL)
-         return;
-
-      // then do walls on the separator
-      if (side != 0)
-      {
-         WallList list;
-         // long     d,c = tree->u.internal.separator.c;
-
-         for (list = tree->u.internal.walls_in_plane; list; list = list->next)
-         {
-            WalkWall(list, side);
-
-            list->lightscale = lightscale;
-
-            if (cone_tree_root == NULL)
-               return;
-         }
-      }
-
-      // lastly, traverse farther side
-      if (side > 0)
-         WalkBSPtree(tree->u.internal.neg_side);
-      else
-         WalkBSPtree(tree->u.internal.pos_side);
-
-      return;
-   default:
+   if (tree->type != BSPinternaltype)
+   {
       debug(("WalkBSPtree error!\n"));
       return;
    }
+
+   side = (a = tree->u.internal.separator.a) * viewer_x + (b = tree->u.internal.separator.b) * viewer_y +
+          tree->u.internal.separator.c;
+
+   if (shade_amount != 0)
+   {
+      long lo_end = FINENESS - shade_amount;
+
+      if (side < 0)
+      {
+         a = -a;
+         b = -b;
+      }
+
+      lightscale = (long) (a * sun_vect.x + b * sun_vect.y) >> LOG_FINENESS;
+
+      lightscale = (lightscale + FINENESS) >> 1;  // map to 0 to 1 range
+
+      lightscale = lo_end + ((lightscale * shade_amount) >> LOG_FINENESS);
+
+      if (lightscale > FINENESS)
+         lightscale = FINENESS;
+      else if (lightscale < 0)
+         lightscale = 0;
+   }
+   else
+      lightscale = FINENESS;
+
+   // first, traverse closer side
+   if (side > 0)
+      WalkBSPtree(tree->u.internal.pos_side);
+   else
+      WalkBSPtree(tree->u.internal.neg_side);
+
+   // if entire screen is covered, we're done
+   if (cone_tree_root == NULL)
+      return;
+
+   // then do walls on the separator
+   if (side != 0)
+   {
+      WallList list;
+
+      for (list = tree->u.internal.walls_in_plane; list; list = list->next)
+      {
+         WalkWall(list, side);
+
+         list->lightscale = lightscale;
+
+         if (cone_tree_root == NULL)
+            return;
+      }
+   }
+
+   // lastly, traverse farther side.
+   // For each translucent wall in this separator plane, project it to screen
+   // columns and ref-count those columns in translucent_col_count. When
+   // WalkObjects marks far-side objects, it consults this map so that an
+   // object is flagged behind_translucent only if it actually overlaps a
+   // translucent wall in screen space — not merely because the plane
+   // contained one somewhere.
+   static const int MAX_TRANSLUCENT_PER_PLANE = 16;
+   long trans_lo[MAX_TRANSLUCENT_PER_PLANE];
+   long trans_hi[MAX_TRANSLUCENT_PER_PLANE];
+   int n_trans = 0;
+   for (WallList wl = tree->u.internal.walls_in_plane; wl; wl = wl->next)
+   {
+      if (wl->translucency_level <= WALL_TRANSLUCENCY_OPAQUE)
+         continue;
+      long t0, t1, c0, c1;
+      float wd0, wd1;
+      if (!world_to_screen(wl->x0, wl->y0, wl->x1, wl->y1, &t0, &t1, &c0, &wd0, &c1, &wd1))
+         continue;
+      if (c1 < c0)
+      {
+         long tmp;
+         SWAP(c0, c1, tmp);
+      }
+      c1--;  // fix overlap, matching WalkWall
+      if (c1 < c0)
+         continue;
+      if (c0 < 0)
+         c0 = 0;
+      if (c1 >= MAXX)
+         c1 = MAXX - 1;
+      if (n_trans >= MAX_TRANSLUCENT_PER_PLANE)
+      {
+         debug(("too many translucent walls in plane\n"));
+         break;
+      }
+      trans_lo[n_trans] = c0;
+      trans_hi[n_trans] = c1;
+      n_trans++;
+      for (long col = c0; col <= c1; col++)
+         translucent_col_count[col]++;
+   }
+   if (n_trans > 0)
+      translucent_wall_depth++;
+
+   if (side > 0)
+      WalkBSPtree(tree->u.internal.neg_side);
+   else
+      WalkBSPtree(tree->u.internal.pos_side);
+
+   if (n_trans > 0)
+      translucent_wall_depth--;
+   for (int t = 0; t < n_trans; t++)
+      for (long col = trans_lo[t]; col <= trans_hi[t]; col++)
+         translucent_col_count[col]--;
 }
 
 /*****************************************************************
@@ -2788,7 +3004,7 @@ static void outlinecone(ViewCone *c)
       debug(("minrow left (%d %d): %d\n", c->leftedge, c->rightedge, minrow));
    if (maxrow >= area.cy)
       debug(("maxrow left (%d %d): %d (%d)\n", c->leftedge, c->rightedge, maxrow, area.cy));
-   for (row = max(0, minrow); row <= min(area.cy - 1, maxrow); row++)
+   for (row = std::max(0, minrow); row <= std::min(area.cy - 1, maxrow); row++)
       *(gBits + row * MAXX + c->leftedge) = fillcolor;
 
    minrow = DIVUP(c->top_b * c->rightedge + c->top_d, c->top_a);
@@ -2801,7 +3017,7 @@ static void outlinecone(ViewCone *c)
              DIVDOWN(c->bot_b * c->leftedge + c->bot_d, c->bot_a), c->rightedge, minrow, maxrow));
    if (maxrow >= area.cy)
       debug(("maxrow right (%d %d): %d (%d)\n", c->leftedge, c->rightedge, maxrow, area.cy));
-   for (row = max(0, minrow); row <= min(area.cy - 1, maxrow); row++)
+   for (row = std::max(0, minrow); row <= std::min(area.cy - 1, maxrow); row++)
       *(gBits + row * MAXX + c->rightedge) = fillcolor;
 
    fillcolor += 15;
@@ -2838,6 +3054,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
    bool top_down;
    bool no_vtile;  // true when wall texture doesn't tile vertically
    bixlat *pBiXlat = NULL;
+   WallTranslucency translucency_level;
 
 #if DRAW_WALL_CONES
    fillcone(c);
@@ -2883,6 +3100,20 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 
    backwards = sidedef->flags & WF_BACKWARDS;
    transparent = sidedef->flags & WF_TRANSPARENT;
+   translucency_level = BSPwall->translucency_level;
+   // Select palette blend table matching the wall's translucency level.
+   // Mirrors the approach used by DrawObjectTranslucent() in objdraw.c.
+   if (translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+   {
+      extern bixlat _blend25, _blend50, _blend75;
+      switch (translucency_level)
+      {
+         case WALL_TRANSLUCENCY_25: pBiXlat = &_blend25; break;
+         case WALL_TRANSLUCENCY_50: pBiXlat = &_blend50; break;
+         case WALL_TRANSLUCENCY_75: pBiXlat = &_blend75; break;
+         default:                   break; // Remains NULL; failsafe to opaque
+      }
+   }
    if ((sidedef->flags & WF_NOLOOKTHROUGH) && incremental_background)
       doDrawBackground(c);
 
@@ -2938,7 +3169,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 
          // This is the last piece of code I wrote as an employee of 3DO
          // 3-24-1997 Colin Andrews
-         top = max(BSPwall->z3, BSPwall->zz3);
+         top = std::max(BSPwall->z3, BSPwall->zz3);
          top = (top + FINENESS - 1) & ~(FINENESS - 1);
       }
 
@@ -2946,7 +3177,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          bottom = BSPwall->z2;
       else
       {  // bottom of wall is sloped, choose abitrary texture endpoint
-         bottom = min(BSPwall->z2, BSPwall->zz2);
+         bottom = std::min(BSPwall->z2, BSPwall->zz2);
          bottom = bottom & ~(FINENESS - 1);
       }
 
@@ -2966,7 +3197,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          top = BSPwall->z1;
       else
       {  // top of wall is sloped, choose abitrary texture endpoint
-         top = max(BSPwall->z1, BSPwall->zz1);
+         top = std::max(BSPwall->z1, BSPwall->zz1);
          top = (top + FINENESS - 1) & ~(FINENESS - 1);
       }
 
@@ -2974,7 +3205,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          bottom = BSPwall->z0;
       else
       {  // bottom of wall is sloped, choose abitrary texture endpoint
-         bottom = min(BSPwall->z0, BSPwall->zz0);
+         bottom = std::min(BSPwall->z0, BSPwall->zz0);
          bottom = bottom & ~(FINENESS - 1);
       }
 
@@ -2994,7 +3225,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          top = BSPwall->z2;
       else
       {  // top of wall is sloped, choose abitrary texture endpoint
-         top = max(BSPwall->z2, BSPwall->zz2);
+         top = std::max(BSPwall->z2, BSPwall->zz2);
          top = (top + FINENESS - 1) & ~(FINENESS - 1);
       }
 
@@ -3002,7 +3233,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          bottom = BSPwall->z1;
       else
       {  // bottom of wall is sloped, choose abitrary texture endpoint
-         bottom = min(BSPwall->z1, BSPwall->zz1);
+         bottom = std::min(BSPwall->z1, BSPwall->zz1);
          bottom = bottom & ~(FINENESS - 1);
       }
 
@@ -3016,11 +3247,6 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
    default:
       debug(("doDrawWall got bad wall type %d\n", wall->wall_type));
       return;
-   }
-
-   if (FALSE)
-   {
-      pBiXlat = FindStandardBiXlat(BIXLAT_BLEND50);
    }
 
    d0 = GetDistance(x0, y0);
@@ -3092,18 +3318,59 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       rowstart = horizon + ((viewer_height - top) << LOG_VIEWER_DISTANCE) / d;
       rowend = horizon + ((viewer_height - bottom) << LOG_VIEWER_DISTANCE) / d;
 
-      // extend wall to cover entire cone - ensures there's no holes!
-      if (rowstart > clipstart)
-         rowstart = clipstart;
-      if (rowend < clipend)
-         rowend = clipend;
+      // Save unclamped geometry rows before any clamping.
+      // rowstart_persp / rowend_persp are used for yinc and ytex so that the texture
+      // scales and positions correctly even when the wall extends beyond screen bounds.
+      int rowstart_persp = rowstart;
+      int rowend_persp   = rowend;
+
+      if (translucency_level > WALL_TRANSLUCENCY_OPAQUE)
+      {
+         // Translucent walls: clamp the DRAWING range to screen + cone bounds.
+         if (rowstart < 0)      rowstart = 0;
+         if (rowend >= area.cy) rowend   = area.cy - 1;
+         if (rowstart < clipstart) rowstart = clipstart;
+         if (rowend > clipend)     rowend   = clipend;
+
+         if (rowstart > rowend) continue;
+         clipstart = rowstart;
+         clipend   = rowend;
+      }
+      else if (c->seen_translucent)
+      {
+         // Opaque wall behind a translucent wall: clamp the drawing range to the
+         // wall's actual geometry rows.  clipstart/clipend come from a BSP cone
+         // that a translucent wall left un-narrowed, so it is much larger than
+         // this wall's real screen extent.  Without this clamp, total_steps =
+         // clipend-clipstart+1 would span the full cone, tiling the wall texture
+         // into the floor/ceiling and above/below the wall's actual section.
+         if (rowstart < clipstart) rowstart = clipstart;
+         if (rowend > clipend)    rowend   = clipend;
+         if (rowstart > rowend) continue;
+         clipstart = rowstart;
+         clipend   = rowend;
+      }
+      else
+      {
+         // Ordinary opaque wall: extend the wall to cover its entire cone so
+         // there are no holes.  The cone exactly abuts the neighbouring geometry
+         // (floors, ceilings, adjacent walls); integer rounding in the
+         // perspective projection above can leave rowstart/rowend a pixel inside
+         // the cone, and drawing only that range would leave a 1-pixel gap that
+         // reveals the background.  Leaving clipstart/clipend at the cone bounds
+         // fills the whole cone and guarantees abutting geometry meets seamlessly.
+      }
 
       // get palette
       palette = GetLightPalette(d, light, BSPwall->lightscale, 0);
 
-      // Tile wall bitmap vertically -- BITMAP_HEIGHT bitmap is FINENESS tall
-      if (rowend > rowstart)
-         yinc = ((BITMAP_HEIGHT << FIX_DECIMAL) - 1) / (rowend - rowstart);
+      // Tile wall bitmap vertically -- BITMAP_HEIGHT bitmap is FINENESS tall.
+      // Use the unclamped geometry rows to map the texture across the full
+      // physical wall height. This ensures the perspective scaling remains
+      // constant even when the drawing area is clipped by the screen or a cone,
+      // preventing the texture from swimming.
+      if (rowend_persp > rowstart_persp)
+         yinc = ((BITMAP_HEIGHT << FIX_DECIMAL) - 1) / (rowend_persp - rowstart_persp);
       else
          yinc = 0;
 
@@ -3134,11 +3401,14 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          bitmap_height = DibHeight(bmap);
       }
 
-      // Align texture bottom-up or top-down
+      // Align texture bottom-up or top-down.
+      // Use the unclamped geometry rows for ytex so that the starting texel
+      // reflects the physical wall position, keeping the texture correctly
+      // anchored even if the wall is clipped.
       if (top_down)
-         ytex = yinc * (rowstart - clipend) + (yoffset << FIX_DECIMAL);
+         ytex = yinc * (rowstart_persp - clipend) + (yoffset << FIX_DECIMAL);
       else
-         ytex = yinc * (rowend - clipend) + (yoffset << FIX_DECIMAL);
+         ytex = yinc * (rowend_persp - clipend) + (yoffset << FIX_DECIMAL);
 
       // Compute starting point in textures (use texture offset)
       length = BSPwall->length * DibShrinkFactor(bmap);
@@ -3161,13 +3431,34 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
 
       total_steps = clipend - clipstart + 1;
 
-      // If this wall doesn't tile vertically, stop at top of texture
+      // If this wall doesn't tile vertically, limit drawing to the single tile bounds
       if (no_vtile && yinc != 0)
       {
-         int temp;
+         if (ytex >= (bitmap_width << FIX_DECIMAL))
+         {
+            total_steps = 0;
+         }
+         else
+         {
+            // Limit total_steps so we don't draw past the top of the texture
+            total_steps = std::min((long)total_steps, (long)DIVUP((bitmap_width << FIX_DECIMAL) - ytex, yinc));
 
-         temp = yinc * (rowend - clipend) + (yoffset << FIX_DECIMAL);
-         total_steps = min(total_steps, DIVUP((bitmap_width << FIX_DECIMAL) - temp, yinc));
+            // If we start below the texture, skip the bottom pixels
+            if (ytex < 0)
+            {
+               long skip_steps = DIVUP(-ytex, yinc);
+               if (skip_steps >= total_steps)
+               {
+                  total_steps = 0;
+               }
+               else
+               {
+                  total_steps -= skip_steps;
+                  clipend -= skip_steps;
+                  ytex += skip_steps * yinc;
+               }
+            }
+         }
       }
 
       // Make sure ytex >= 0
@@ -3182,8 +3473,8 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
          // Draw until we reach the top of the wall on the screen, or the top of the bitmap
          if (yinc)
          {
-            num_steps = min(total_steps, DIVUP((bitmap_width << FIX_DECIMAL) - ytex, yinc));
-            num_steps = max(1, num_steps);
+            num_steps = std::min(total_steps, DIVUP((bitmap_width << FIX_DECIMAL) - ytex, yinc));
+            num_steps = std::max(1L, num_steps);
          }
          else
             num_steps = total_steps;
@@ -3216,6 +3507,19 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
                   screen_ptr -= MAXX;
                   ytex += yinc;
                }
+            }
+         }
+         else if (pBiXlat != NULL)
+         {
+            // Palette-blended translucency: blend wall texture with scene behind it.
+            // pBiXlat selects the 25/50/75% mix table matching translucency_level.
+            // The scene (background + opaque geometry + objects) is already fully
+            // composited on screen by the time this second-pass draw runs.
+            while (screen_ptr > end_screen_ptr)
+            {
+               *screen_ptr = fastBIXLAT(palette[*(square_base_ptr - (ytex >> FIX_DECIMAL))], *screen_ptr, pBiXlat);
+               screen_ptr -= MAXX;
+               ytex += yinc;
             }
          }
          else
@@ -3608,7 +3912,7 @@ static void doDrawSloped(ViewCone *c, BSPleaf *leaf, BYTE floor)
       {
 
          // how many pixels to skip in this sub-affine step
-         count = min(SLOPE_TEXTURE_STEP, len);
+         count = std::min((long)SLOPE_TEXTURE_STEP, len);
          len -= SLOPE_TEXTURE_STEP;
 
          // save values for current endpoint
@@ -3908,6 +4212,9 @@ static void DrawItems()
       case DrawWallType:
          doDrawWall(&item->u.wall, &item->cone);
          break;
+      case DrawTranslucentWallType:
+         doDrawWall(&item->u.wall, &item->cone);
+         break;
       case DrawFloorType:
          doDrawFloor(&item->u.floor, &item->cone);
          break;
@@ -4027,7 +4334,7 @@ static void doDrawBackground(ViewCone *c)
          xoffset = xoffset % width;
          while (mincol <= maxcol)
          {
-            length = min(maxcol - mincol + 1, width - xoffset);
+            length = std::min(maxcol - mincol + 1, width - xoffset);
 
             memcpy(gBits + row * MAXX + mincol, bkgnd_ptr + xoffset, length);
             mincol += length;
@@ -4076,15 +4383,15 @@ static void doDrawBackground(ViewCone *c)
 
       if (px + over_width <= c->leftedge || px > c->rightedge)
          continue;
-      starty = max(minrow, py);
-      endy = min(maxrow, py + over_height - 1);
+      starty = std::max((long)minrow, py);
+      endy = std::min((long)maxrow, py + over_height - 1);
       overlay->rcScreen.top = starty;
       overlay->rcScreen.bottom = endy;
       bg_overlayVisible = TRUE;
       for (row = starty; row <= endy; row++)
       {
-         mincol = max(c->leftedge, px);
-         maxcol = min(c->rightedge, px + over_width - 1);
+         mincol = std::max((long)c->leftedge, px);
+         maxcol = std::min((long)c->rightedge, px + over_width - 1);
 
          if (c->top_b > 0)
          {
@@ -4350,7 +4657,172 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw)
    }
 
    // find items in view
+   translucent_wall_depth = 0;
    WalkBSPtree(room->tree);
+
+   // D3D post-pass: objects the cone-based BSP traversal missed (e.g. behind
+   // transparent walls when surrounding geometry consumed all screen cones) are
+   // added here with ncones==0.  DrawItems (software renderer) skips them via
+   // the ncones>0 guard; the D3D renderer uses hardware depth testing so these
+   // objects are correctly visible through transparent walls and occluded by
+   // opaque geometry without needing drawdata occlusion ordering.
+   for (int i = 0; i < nobjects; i++)
+   {
+      ObjectData *od = &objectdata[i];
+      if (od->ncones != 0 || !od->draw.draw)
+         continue;
+      // Only include objects that were actually behind a translucent wall
+      // during the BSP walk. Objects behind opaque walls also have ncones==0
+      // but should NOT be added to drawdata — they are correctly hidden.
+      if (!od->behind_translucent)
+         continue;
+      if (nitems >= MAX_ITEMS)
+         break;
+
+      // Compute screen left/right bounds using same projection as WalkObjects.
+      long px, py, pa, pb, left, right;
+      px = od->x0 - viewer_x;
+      py = od->y0 - viewer_y;
+      pa = (left_a * px + left_b * py) >> (FIX_DECIMAL - 6);
+      pb = (right_a * px + right_b * py) >> (FIX_DECIMAL - 6);
+      if (pa + pb <= 0)
+         continue;
+      left = (pa * screen_width + screen_width2) / (pa + pb);
+
+      px = od->x1 - viewer_x;
+      py = od->y1 - viewer_y;
+      pa = (left_a * px + left_b * py) >> (FIX_DECIMAL - 6);
+      pb = (right_a * px + right_b * py) >> (FIX_DECIMAL - 6);
+      if (pa + pb <= 0)
+         continue;
+      right = (pa * screen_width + screen_width2) / (pa + pb);
+      right--;  // fix overlap
+      if (right >= MAXX)
+         right = MAXX - 1;
+      if (right < left)
+         continue;
+
+      DrawItem *item        = &drawdata[nitems++];
+      item->type            = DrawObjectType;
+      item->cone.leftedge   = left;
+      item->cone.rightedge  = right;
+      item->cone.top_a      = 1;
+      item->cone.top_b      = 0;
+      item->cone.top_d      = 0;
+      item->cone.bot_a      = 1;
+      item->cone.bot_b      = 0;
+      item->cone.bot_d      = area.cy - 1;
+      item->u.object.object = od;
+      // Set ncones=1 so doDrawObject's decrement reaches 0 correctly and
+      // DrawObjectDecorations is called.  Both the software renderer (via
+      // DrawItems) and the D3D hardware path render these objects.
+      od->ncones = 1;
+   }
+
+   // Wall post-pass: walls the BSP cone traversal missed (e.g., far-side walls
+   // beyond a transparent wall that exhausted all remaining cones).  We compute
+   // the wall's actual screen-row range from its heights so that it doesn't
+   // bleed into sky/floor areas.  Near-side geometry (lower drawdata indices,
+   // drawn last in back-to-front order) correctly occludes these walls.
+   for (int wi = 0; wi < room->num_walls; wi++)
+   {
+      WallData *w = &room->walls[wi];
+      if (w->seen)
+         continue;
+      if (nitems >= MAX_ITEMS)
+         break;
+
+      // Determine which side the viewer is on
+      float side_val = w->separator.a * viewer_x + w->separator.b * viewer_y + w->separator.c;
+      if (side_val == 0.0f)
+         continue;
+      long wside = (side_val > 0.0f) ? 1 : -1;
+
+      Sidedef *wsidedef = (wside > 0) ? w->pos_sidedef : w->neg_sidedef;
+      if (wsidedef == NULL || wsidedef->normal_bmap == NULL)
+         continue;
+
+      // Only handle WALL_NORMAL (the main mid-wall section)
+      if (w->z2 <= w->z1 && w->zz2 <= w->zz1)
+         continue;
+
+      // Project wall endpoints to screen columns (also clips to view frustum)
+      long wcol0, wcol1, wt0, wt1;
+      float wd0, wd1;
+      if (!world_to_screen(w->x0, w->y0, w->x1, w->y1, &wt0, &wt1, &wcol0, &wd0, &wcol1, &wd1))
+         continue;
+
+      // Interpolate heights at clipped endpoints (same as WalkWall)
+      long wz1 = w->z1, wz2 = w->z2;
+      long wzz1 = w->zz1, wzz2 = w->zz2;
+      if (wt0 != 0)
+      {
+         wz1 = LERP(wz1, wzz1, wt0);
+         wz2 = LERP(wz2, wzz2, wt0);
+      }
+      if (wt1 != FINENESS)
+      {
+         wzz1 = LERP(w->z1, wzz1, wt1);
+         wzz2 = LERP(w->z2, wzz2, wt1);
+      }
+
+      // Ensure col0 is on the left (same as WalkWall)
+      if (wcol1 < wcol0)
+      {
+         long ltmp;
+         SWAP(wcol0, wcol1, ltmp);
+         std::swap(wd0, wd1);
+         SWAP(wz1, wzz1, ltmp);
+         SWAP(wz2, wzz2, ltmp);
+      }
+      wcol1--;  // fix overlap
+      if (wcol1 < wcol0 || wcol0 >= MAXX)
+         continue;
+      if (wcol1 >= MAXX)
+         wcol1 = MAXX - 1;
+
+      // Compute screen row range at each endpoint for WALL_NORMAL (z2=top, z1=bot)
+      long toprow0 = horizon + (viewer_height - wz2) * VIEWER_DISTANCE / wd0;
+      long toprow1 = horizon + (viewer_height - wzz2) * VIEWER_DISTANCE / wd1;
+      long botrow0 = horizon + (viewer_height - wz1) * VIEWER_DISTANCE / wd0;
+      long botrow1 = horizon + (viewer_height - wzz1) * VIEWER_DISTANCE / wd1;
+
+      toprow0 = std::max((long)MINCLIPROW, std::min((long)MAXCLIPROW, toprow0));
+      toprow1 = std::max((long)MINCLIPROW, std::min((long)MAXCLIPROW, toprow1));
+      botrow0 = std::max((long)MINCLIPROW, std::min((long)MAXCLIPROW, botrow0));
+      botrow1 = std::max((long)MINCLIPROW, std::min((long)MAXCLIPROW, botrow1));
+
+      // Build cone coefficients for the wall's row range (linear interpolation
+      // of top/bot rows across the column span, like add_up/add_dn do)
+      long ctop_a, ctop_b, ctop_d;
+      long cbot_a, cbot_b, cbot_d;
+      if (wcol0 == wcol1)
+      {
+         ctop_a = 1; ctop_b = 0; ctop_d = std::min(toprow0, toprow1);
+         cbot_a = 1; cbot_b = 0; cbot_d = std::max(botrow0, botrow1);
+      }
+      else
+      {
+         ctop_a = wcol1 - wcol0; ctop_b = toprow1 - toprow0;
+         ctop_d = ctop_a * toprow0 - ctop_b * wcol0;
+         cbot_a = wcol1 - wcol0; cbot_b = botrow1 - botrow0;
+         cbot_d = cbot_a * botrow0 - cbot_b * wcol0;
+      }
+
+      DrawItem *witem    = &drawdata[nitems++];
+      witem->type        = DrawWallType;
+      witem->u.wall.wall = w;
+      witem->u.wall.side = (short)wside;
+      witem->u.wall.wall_type = WALL_NORMAL;
+      witem->cone.leftedge  = wcol0;
+      witem->cone.rightedge = wcol1;
+      witem->cone.top_a = ctop_a; witem->cone.top_b = ctop_b; witem->cone.top_d = ctop_d;
+      witem->cone.bot_a = cbot_a; witem->cone.bot_b = cbot_b; witem->cone.bot_d = cbot_d;
+      // This cone is built from the wall's own geometry, so treat it as an
+      // ordinary opaque wall (extend to cone).  drawdata is a reused static
+      // array, so clear the flag explicitly rather than inheriting a stale one.
+      witem->cone.seen_translucent = false;
+   }
 
    if (draw)
    {
@@ -4360,6 +4832,9 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, bool draw)
             doDrawBackground(&c->cone);
 
       // draw items, back to front
+      // Translucent walls are drawn at their natural painter's-algorithm position:
+      // after far geometry (already on screen at higher indices) and before near
+      // objects (lower indices), so near-side objects correctly appear in front.
       DrawItems();
 
 #if DRAW_CONE_OUTLINES

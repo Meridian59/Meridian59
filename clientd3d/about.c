@@ -150,6 +150,9 @@ BOOL AboutInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    char buffer[80];
    char format[80];
 
+   /* Ensure resources are loaded before we try to use them */
+   LoadResources();
+
    /* Load credits from bgf file */
    if (DibOpenFile(credits_filename, &credits_b))
       credits_pdib = BitmapsGetPdibByIndex(credits_b, credits_page);
@@ -206,8 +209,8 @@ BOOL AboutInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    dude_x = pt.x;
    dude_y = pt.y;
 
-   gbits_width  = max(scroll_width, DUDE_AREA_WIDTH);
-   gbits_height = max(scroll_height, DUDE_MAX_HEIGHT);
+   gbits_width  = std::max(scroll_width, DUDE_AREA_WIDTH);
+   gbits_height = std::max(scroll_height, DUDE_MAX_HEIGHT);
 
    gDC = CreateMemBitmap(gbits_width, gbits_height, &gOldBitmap, &gBits);
    if (gDC == 0)
@@ -215,30 +218,27 @@ BOOL AboutInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
 
    timer_id = SetTimer(hDlg, TIMER_ABOUT, ABOUT_INTERVAL, NULL);
 
-   if (state == STATE_GAME)
+   // Set up animated characters
+   for (i = 0; i < NUM_DUDES; i++)
    {
-      // Set up animated characters
-      for (i=0; i < NUM_DUDES; i++)
-      {
-	 object_node *obj;
-	 
-	 obj = dudes[i].obj = ObjectGetBlank();	
-	 obj->icon_res = ABOUT_RSC;
-	 obj->animate->animation = ANIMATE_NONE;
-	 
-	 if (i == 0)
-	 {
-	    dudes[i].angle = 3 * NUMDEGREES / 4;
-	    dudes[i].x = DUDE_X1;
-	 }
-	 else 
-	 {
-	    dudes[i].angle = NUMDEGREES / 4;
-	    dudes[i].x = DUDE_X2;
-	 }
-      }
-   }
+       object_node *obj;
    
+       obj = dudes[i].obj = ObjectGetBlank();
+       obj->icon_res = ABOUT_RSC;
+       obj->animate->animation = ANIMATE_NONE;
+   
+       if (i == 0)
+       {
+		   dudes[i].angle = 3 * NUMDEGREES / 4;
+		   dudes[i].x = DUDE_X1;
+       }
+       else
+       {
+		   dudes[i].angle = NUMDEGREES / 4;
+		   dudes[i].x = DUDE_X2;
+       }
+   }
+
    CenterWindow(hDlg, GetParent(hDlg));
    return TRUE;
 }
@@ -302,7 +302,7 @@ void AboutTimer(HWND hwnd, UINT id)
 	       case ABOUT_RSC3: index = 5; break;
 	       default: index = rand() % num_sounds; break;
 	       }
-	       PlayWaveFile(hMain, sounds[index], MAX_VOLUME, SF_RANDOM_PITCH, 0, 0, 0, 0);
+	       PlayWaveFile(hMain, sounds[index], MAX_VOLUME, SF_RANDOM_PITCH, 0, 0, 0, 0, 0);
 	    }
 	 }
 		

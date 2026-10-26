@@ -164,8 +164,16 @@ comment, describing the message handler.  Administrators can view
 these comments in the game.
 
 A message handler's body contains a sequence of statements, each
-ending with a semicolon.  The first statement optionally declares a
-list of local variables used by the handler.  A class also inherits
+ending with a semicolon.  A {\tt local} statement declares a list of
+local variables; it may appear anywhere a statement may, in the
+handler body or inside the braced block of any {\tt if}, {\tt else},
+{\tt for} or {\tt while} statement, as in C++.  A variable is visible
+from its declaration to the closing brace of the block containing it.
+Each declared variable may be given an initial value, as in
+{\tt local a = 0, b = a + 1, c;}.  The initial values are ordinary
+expressions, evaluated in order at the point of the declaration each
+time control reaches it; an initializer may refer to variables declared
+earlier.  A class also inherits
 its superclass's message handlers.  When an object's class hierarchy
 contains more than one message handler of the same name, the handler
 for the lowest class in the object's hierarchy is called first.  This
@@ -186,8 +194,15 @@ must be globally unique, and message handler names must be unique
 within a class.  The scope of all identifiers appearing on the left
 hand sides of assignments in the constant, resource, property, and
 classvar blocks is the class in which the blocks appear.  Parameter
-names and local variables appearing in a message handler have scope
-restricted to that message handler.
+names have scope restricted to their message handler.  A local
+variable's scope runs from its declaration to the end of the innermost
+braced block containing the declaration (or to the end of the handler
+body).  A name may not be redeclared while it is still in scope (so a
+block cannot shadow a parameter or an enclosing local), but two blocks
+that do not overlap may each declare a local of the same name, and a
+name may be declared again after an earlier declaration of it has gone
+out of scope.  Locals without an initializer are not initialized; the
+compiler requires that they be assigned before use.
 
 
 

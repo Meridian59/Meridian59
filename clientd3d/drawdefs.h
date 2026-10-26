@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -13,13 +13,12 @@
 #ifndef _DRAWDEFS_H
 #define _DRAWDEFS_H
 
-#define NUMDEGREES 4096
+constexpr int NUMDEGREES = 4096;
 #define LOG_NUMDEGREES 12
 #define NUMDEGREES_MASK 0xfff
 
-#define PI      3.1415926f
-#define PITWICE 6.2831853f
-#define PIHALF  1.5707963f
+constexpr float PI = 3.1415926f;
+constexpr float PITWICE = 2.0f * PI;
 
 /* Turning MACROs */
 #define TURN_LEFT(angle) ((angle + 3 * NUMDEGREES / 4) % NUMDEGREES)
@@ -27,8 +26,8 @@
 #define TURN_BACK(angle) ((angle + NUMDEGREES / 2) % NUMDEGREES)
 
 /* Original game clients view port size -- must be DWORD aligned for WinG */
-#define CLASSIC_WIDTH 452
-#define CLASSIC_HEIGHT 276
+constexpr int CLASSIC_WIDTH = 452;
+constexpr int CLASSIC_HEIGHT = 276;
 
 /* Scaler used to increase the classic view port x,y values */
 #define VIEW_SCALER 5
@@ -63,9 +62,24 @@
 #define VIEWER_DISTANCE  (FINENESS >> 1)         /* Distance from viewer to screen in pixels */
 #define LOG_VIEWER_DISTANCE  (LOG_FINENESS - 1)
 
-/* Convert from pseudo degrees to radians */
-#define DegToRad(x) ((float) (x) * PITWICE / NUMDEGREES)
-#define RadToDeg(x) ((long)  ((x) * NUMDEGREES / PITWICE))
+constexpr float deg_to_rad(float degrees)
+{
+	return degrees * (PITWICE / 360.0f);
+}
+constexpr float rad_to_deg(float radians)
+{	
+	return radians * (360.0f / PITWICE);
+}
+
+/* Convert between game units and radians */
+constexpr float game_angle_to_rad(float angle)
+{
+	return angle * (PITWICE / static_cast<float>(NUMDEGREES));
+}
+constexpr long rad_to_game_angle(float radians)
+{
+	return static_cast<long>(radians * (static_cast<float>(NUMDEGREES) / PITWICE));
+}
 
 #define NUM_COLORS 256
 #define MAX_LIGHT 256  

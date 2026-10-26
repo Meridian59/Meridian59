@@ -121,6 +121,7 @@ void TextInputResize(int xsize, int ysize, AREA view)
 void TextInputSetFocus(bool forward)
 {
    SetFocus(hwndInput);
+   skip_selection = false;
    ComboBox_SetEditSel(hwndInput, 0, -1);  // select all text
 }
 /************************************************************************/
@@ -140,10 +141,18 @@ void TextInputDrawBorder(void)
    a.cx += 2 * HIGHLIGHT_THICKNESS;
    a.cy += 2 * HIGHLIGHT_THICKNESS - 1; //There is no bottom treatment on editbox.
 
+   // If the chat box is selected, draw the highlight color.  If not,
+   // draw the theme's border color when it has one, else the default border.
+   int index;
    if (IsChild(hwndInput, GetFocus()))
-      DrawBorder(&a, HIGHLIGHT_INDEX, NULL);
-   else 
-      DrawBorder(&a, border_index, NULL);
+      index = HIGHLIGHT_INDEX;
+   else
+   {
+      COLORREF themeColor = ThemeBorderColor();
+      index = (themeColor != CLR_INVALID) ? GetClosestPaletteIndex(themeColor) : border_index;
+   }
+
+   DrawBorder(&a, index, NULL);
 }
 
 /************************************************************************/
@@ -161,6 +170,7 @@ void TextInputSetText(char *text, bool focus)
    if (focus)
       SetFocus(hwndInput);
 
+   skip_selection = false;
    ComboBox_SetEditSel(hwndInput, len, len);  // Move caret to end of text
 }
 /************************************************************************/

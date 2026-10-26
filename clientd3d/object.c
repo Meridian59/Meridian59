@@ -73,6 +73,34 @@ int CompareObjectNameAndNumber(void *obj1, void *obj2)
 }
 /*****************************************************************************/
 /*
+ * Object light effect predicates.
+ *
+ * OF_BOUNCING is not a bit of its own: it is OF_FLICKERING | OF_FLASHING.  A
+ * bouncing object therefore satisfies a bare test for either light effect, and
+ * would be lit as though it were carrying a torch.  Test light effects through
+ * these predicates rather than against the flag bits directly.
+ */
+bool ObjectIsBouncing(int flags)
+{
+   return OF_BOUNCING == (OF_BOUNCING & flags);
+}
+/*****************************************************************************/
+bool ObjectHasFlickeringLight(int flags)
+{
+   return 0 != (flags & OF_FLICKERING) && !ObjectIsBouncing(flags);
+}
+/*****************************************************************************/
+bool ObjectHasFlashingLight(int flags)
+{
+   return 0 != (flags & OF_FLASHING) && !ObjectIsBouncing(flags);
+}
+/*****************************************************************************/
+bool ObjectHasLightEffect(int flags)
+{
+   return ObjectHasFlickeringLight(flags) || ObjectHasFlashingLight(flags);
+}
+/*****************************************************************************/
+/*
  * OverlayListDestroy:  Free memory associated with a list of overlays, and return NULL.
  */
 list_type OverlayListDestroy(list_type overlays)
@@ -93,6 +121,11 @@ object_node *ObjectGetBlank(void)
    memset(obj, 0, sizeof(object_node));
    obj->overlays = &obj->normal_overlays;
    obj->animate  = &obj->normal_animate;
+   
+   // Initialize flickerTime to random value for desynchronized OF_FLICKERING animation
+   // This ensures each object starts at a different point in its flicker cycle
+   obj->flickerTime = rand() % 10000;  // Random start time 0-10 seconds
+   
    return obj;
 }
 /*****************************************************************************/
@@ -117,6 +150,14 @@ object_node *ObjectCopy(object_node *obj)
    temp->translation = obj->translation;
    temp->normal_translation = obj->normal_translation;
    temp->secondtranslation = obj->secondtranslation;
+   
+   // Copy timing fields for animations
+   temp->bounceTime = obj->bounceTime;
+   temp->phaseTime = obj->phaseTime;
+   temp->lightAdjust = obj->lightAdjust;
+   temp->effect = obj->effect;
+   temp->flickerTime = obj->flickerTime;
+   
    memcpy(&temp->normal_animate, &obj->normal_animate, sizeof(Animate));
 
    // Copy overlay structures

@@ -25,7 +25,7 @@ resources:
    kocsew2_music = cave.mid
 
    kocsew2_locked_1 = \
-      "Alternately wading and swimming in digusting filth, you rattle "
+      "Alternately wading and swimming in disgusting filth, you rattle "
       "the locked gate without any effect."
 
 classvars:

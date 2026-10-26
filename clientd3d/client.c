@@ -11,9 +11,15 @@
 */
 
 #include <assert.h>
-#include <crtdbg.h>
 
 #include "client.h"
+#include <dwmapi.h>
+
+#ifdef M59_RETAIL
+  // Minidump reporting
+  #include "bugsplat.h"
+#endif
+
 
 HWND hMain = NULL;             /* Main window */
 HINSTANCE hInst = NULL;           /* Program's instance */
@@ -161,9 +167,13 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_INITMENUPOPUP, InitMenuPopupHandler);
 
 	case WM_MEASUREITEM:
+		if (MenuBarMeasureItem((MEASUREITEMSTRUCT *)lParam))
+			return TRUE;
 		ItemListMeasureItem(hwnd, (MEASUREITEMSTRUCT *) lParam);
 		return 0;
 	case WM_DRAWITEM:     // windowsx.h macro always returns FALSE
+		if (MenuBarDrawItem((DRAWITEMSTRUCT *)lParam))
+			return TRUE;
 		return MainDrawItem(hwnd, (const DRAWITEMSTRUCT *)(lParam));
 
 	case WM_SETCURSOR:
@@ -269,6 +279,46 @@ void ClearMessageQueue(void)
 	}
 }
 /************************************************************************/
+/*
+ * ThemeApplyTitleBar:  Apply the active theme's title bar style.
+ */
+static void ThemeApplyTitleBar(void)
+{
+	// DWM needs a 4-byte BOOL, not a 1-byte bool.
+	BOOL dwmDark = static_cast<BOOL>(ThemeUsesDarkTitleBar());
+	DwmSetWindowAttribute(hMain, DWMWA_USE_IMMERSIVE_DARK_MODE,
+		&dwmDark, sizeof(dwmDark));
+}
+/************************************************************************/
+/*
+ * ThemeApply:  Reload the color palette and main window background
+ *   bitmap for the active theme, apply the title bar style, apply the
+ *   menu bar style, fire EVENT_COLORCHANGED so modules refresh their
+ *   themed resources, and force a repaint of the main window.
+ */
+void ThemeApply(void)
+{
+	ColorsDestroy();
+	ColorsCreate(false);
+
+	// Reload main background so the theme's tiles take effect immediately.
+	CreateWindowBackground();
+
+	ThemeApplyTitleBar();
+	MenuBarApply(GetMenu(hMain));
+	DrawMenuBar(hMain);
+
+	MainChangeColor();
+	ModuleEvent(EVENT_COLORCHANGED, COLOR_ID_ALL, 0);
+	if (hMain != NULL)
+	{
+		// RDW_ALLCHILDREN forces sidebar/inventory child windows to repaint
+		// over the refreshed main background.
+		RedrawWindow(hMain, NULL, NULL,
+			RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+	}
+}
+/************************************************************************/
 void SetUpCrashReporting() {
 #ifdef M59_RETAIL
   static MiniDmpSender *pSender;
@@ -319,6 +369,9 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		exit(1);
 	}
 
+	ThemeApplyTitleBar();
+	MenuBarApply(GetMenu(hMain));
+
 	if (config.debug)
 		CreateDebugWindow();
 
@@ -326,7 +379,22 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	w.length = sizeof(WINDOWPLACEMENT);
 	WindowSettingsLoad(&w);
-	SetWindowPlacement(hMain, &w);
+	int showCmd = w.showCmd;
+
+	if (showCmd == SW_SHOWMAXIMIZED || showCmd == SW_MAXIMIZE)
+	{
+		// Maximize now so splash screen is positioned correctly.
+		// WM_SETREDRAW prevents visual flash during resize.
+		SendMessage(hMain, WM_SETREDRAW, FALSE, 0);
+		ShowWindow(hMain, SW_SHOWMAXIMIZED);
+		ShowWindow(hMain, SW_HIDE);
+		SendMessage(hMain, WM_SETREDRAW, TRUE, 0);
+	}
+	else
+	{
+		w.showCmd = SW_HIDE;
+		SetWindowPlacement(hMain, &w);
+	}
 
 	D3DRenderInit(hMain);
 
@@ -338,6 +406,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	MainInitState(STATE_OFFLINE);
 
+	ShowWindow(hMain, showCmd);
 	UpdateWindow(hMain);
 
 	while (!bQuit)

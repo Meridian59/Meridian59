@@ -8,59 +8,65 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-#define MAX_PARTICLES	128
-#define SANDSTORM_R		226
-#define SANDSTORM_G		153
-#define SANDSTORM_B		6
-#define SANDSTORM_A		255
+///////////////
+// Constants //
+///////////////
+static constexpr int MAX_PARTICLES_PER_EMITTER = 128;
 
-#define RAIN_R			128
-#define RAIN_G			128
-#define RAIN_B			128
-#define RAIN_A			128
-
-typedef struct particle
+////////////////
+// Structures //
+////////////////
+struct particle
 {
-	int			energy;
-	custom_xyz	pos;
-	custom_xyz	oldPos;
+	custom_xyz	position;
+	custom_xyz	oldPosition;
 	custom_xyz	velocity;
 	custom_xyz	rotation;
 	custom_bgra	bgra;
-	float		size;
-	float		weight;
-} particle;
+	// If false, the particle isn't included in the rendering.
+	bool		isActive;
+	int			timeLeft;
+};
 
-typedef struct emitter
+struct emitter
 {
 	int			numParticles;
-	int			energy;
+	int			nextSlot;
+	int			particleLifetime;
 	int			timer;
 	int			timerBase;
-	int			randomPos;
-	int			randomRot;
-	custom_xyz	pos;
-	custom_xyz	delta;
+
+	// The world position of the emitter.
+	custom_xyz	position;
+
+	// Base velocity/rotation for newly initialized particles.
 	custom_xyz	velocity;
 	custom_xyz	rotation;
+
+	// Randomization ranges to apply to the base transform settings for particles.
+	// Setting both min and max to 0 means no variance.
+	custom_xyz		positionVarianceMin;
+	custom_xyz		positionVarianceMax;
+	custom_xyz		rotationVarianceMin;
+	custom_xyz		rotationVarianceMax;
+	custom_xyz		velocityVarianceMin;
+	custom_xyz		velocityVarianceMax;
+
 	custom_bgra	bgra;
-	particle	particles[MAX_PARTICLES];
-	bool		bRandomize;
-} emitter;
+	particle	particles[MAX_PARTICLES_PER_EMITTER];
+};
 
-typedef struct particle_system
+struct particle_system
 {
-	int			numParticles;
-	list_type	emitterList;
-} particle_system;
+	std::vector<emitter*>	emitterList;
+};
 
-void	D3DParticleSystemReset(particle_system *pParticleSystem);
-void	D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float posY, float posZ,
-							float velX, float velY, float velZ, unsigned char b, unsigned char g,
-							unsigned char r, unsigned char a, int energy, int timerBase,
-							float rotX, float rotY, float rotZ, bool bRandomize, int randomPos, int randomRot);
-void	D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
-//void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
+////////////////
+// Prototypes //
+////////////////
+void	D3DParticleSystemClear(particle_system *pParticleSystem);
+emitter* D3DParticleEmitterInit(particle_system *pParticleSystem, int time);
+void	D3DParticleEmitterUpdate(emitter *pEmitter, custom_xyz deltaPosition);
 void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem);
 

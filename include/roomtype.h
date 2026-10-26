@@ -12,6 +12,21 @@
 #ifndef _ROOMTYPE_H
 #define _ROOMTYPE_H
 
+#include <vector>
+
+struct server_polygon {
+   int num_vertices;
+   int *vertices_x;
+   int *vertices_y;
+};
+
+// Stores polygon data for a single sector
+struct server_sector
+{
+   int id;                                // server id of the sector
+   std::vector<server_polygon> polygons;  // array of sector polygons
+};
+
 /* Room contents to draw */
 typedef struct
 {
@@ -29,6 +44,7 @@ typedef struct
 
    int security;          /* Security number, unique to each roo file, to ensure that client
                              loads the correct roo file */
+   std::vector<server_sector> sectors;
 } room_type;
 
 #endif /* #ifndef _ROOMTYPE_H */

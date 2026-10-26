@@ -59,6 +59,8 @@ EXPORTS
 	GetFont
 	GetColor
 	GetBrush
+	ThemeCurrent
+	ThemeBorderColor
 	CenterWindow
 	GetFontHeight	
 	EditBoxScroll
@@ -74,6 +76,7 @@ EXPORTS
 	ResizeDialogItem
 	ResizeDialog
 	MenuFindItemByName
+	MenuBarApply
 	SetMainCursor
 	GameWindowSetCursor
 	GetBitmapResource

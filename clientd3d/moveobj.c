@@ -166,8 +166,7 @@ void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace)
 	else 
 	{
 		float distance = sqrtf((float)(dx * dx + dy * dy)) / (float)FINENESS;
-		// Object motion is given in # of grid squares per 10 seconds
-		r->motion.increment = (((float) r->motion.speed) / 10000.0f) / distance;
+		r->motion.increment = (((float) r->motion.speed) / OBJECT_INTERVAL_MS) / distance;
 	}
 	
 	r->motion.move_animating = true;
@@ -230,12 +229,12 @@ bool ObjectsMove(int dt)
 			if (r->motion.v_z == 0)
 				RoomObjectSetHeight(r);
 		}
-		if (OF_BOUNCING == (OF_BOUNCING & r->obj.flags))
+		if (ObjectIsBouncing(r->obj.flags))
 		{
 			if (!(OF_PLAYER & r->obj.flags))
 			{
 				int floor,ceiling,angleBounce,bounceHeight;
-				r->obj.bounceTime += min(dt,40);
+				r->obj.bounceTime += std::min(dt,40);
 				if (r->obj.bounceTime > TIME_FULL_OBJECT_BOUNCE)
 					r->obj.bounceTime -= TIME_FULL_OBJECT_BOUNCE;
 				angleBounce = NUMDEGREES * r->obj.bounceTime / TIME_FULL_OBJECT_BOUNCE;

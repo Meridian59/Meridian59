@@ -23,7 +23,7 @@ resources:
    kocatansouth_northdoors = "This door to the inner wall is firmly bolted shut."
    kocatansouth_private = "You are not permitted inside the private residence."
    kocatansouth_whooping = \
-      "You hear loud whooping noises eminating from inside, and decide it's best "
+      "You hear loud whooping noises emanating from inside, and decide it's best "
       "not to enter."
 
    kocatansouth_drown = \

@@ -2,11 +2,11 @@
 # 
 # Groups:
 #            1 Underground
-#            2 Standing
-#          3-7 Walking
-#         8-11 Attack
-#        12-15 Throw
-#        16-20 Popup
+#           20 Standing
+#          2-6 Walking
+#         7-10 Attack
+#        11-14 Throw
+#        15-19 Popup
 #^Applied to Hotspot: 0
 #*Groups: 19
 #* Unlabeled Group

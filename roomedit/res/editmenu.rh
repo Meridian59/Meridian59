@@ -164,6 +164,14 @@
 #define CM_MISCV_DELETE         2202
 #define CM_MISCV_MERGE          2203
 #define CM_MISCV_ADD            2204
+#define CM_MISCV_SLOPE          2205
+
+//
+// "Select sector" dialog (disambiguation for CM_MISCV_SLOPE)
+//
+#define IDD_SELECT_SECTOR       50
+#define IDC_SELECT_SECTOR1      102
+#define IDC_SELECT_SECTOR2      103
 
 //
 // MENU_MISC_SECTORS

@@ -306,7 +306,7 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
          if (count > 0) {
             // If lastIndex is valid, use it as reference point
             // Otherwise start from beginning           
-            int index = (lastIndex >= 0) ? min(lastIndex, count - 1) : 0;
+            int index = (lastIndex >= 0) ? std::min(lastIndex, count - 1) : 0;
             ListView_SetItemState(hList, index, LVIS_SELECTED, LVIS_SELECTED);
          }
 

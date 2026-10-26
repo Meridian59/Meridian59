@@ -32,6 +32,19 @@ static bool safety_flipped;
 
 /****************************************************************************/
 /*
+ * SendConfiguredSafety:  Send the configured safety state to the server and
+ *   record it in pinfo.aggressive.
+ */
+static void SendConfiguredSafety(void)
+{
+   pinfo.aggressive = cinfo->config->aggressive;
+   if (pinfo.aggressive)
+      SendSafety(0);
+   else
+      SendSafety(1);
+}
+/****************************************************************************/
+/*
  * InterfaceInit:  Called on startup.  Initialize interface.
  */
 void InterfaceInit(void)
@@ -71,10 +84,7 @@ void InterfaceInit(void)
       RequestRest();
    else
       RequestStand();
-   if (cinfo->config->aggressive)
-      SendSafety(0);
-   else
-      SendSafety(1);
+   SendConfiguredSafety();
 }
 /****************************************************************************/
 /*
@@ -106,9 +116,13 @@ void InterfaceFontChanged(WORD font_id, LOGFONT *font)
 /****************************************************************************/
 void InterfaceColorChanged(WORD color_id, COLORREF color)
 {
-   InventoryChangeColor();   
+   InventoryChangeColor(color_id);
    StatsChangeColor();
    StatsMainChangeColor();
+
+   // Reload frame element bitmaps when every color changes (theme switch).
+   if (color_id == COLOR_ID_ALL)
+      InterfaceDrawInit();
 }
 /****************************************************************************/
 /*
@@ -130,15 +144,18 @@ void InterfaceResizeModule(int xsize, int ysize, AREA *view)
 void InterfaceRedrawModule(HDC hdc)
 {
   UserAreaRedraw();
+  InterfaceDrawSidebarBackground(hdc);
   InterfaceDrawElements(hdc);
   StatsDrawBorder();
   StatsMainRedraw();
   StatsDraw();
   if( StatsGetCurrentGroup() == STATS_INVENTORY )
   {
-    InvalidateRect( GetHwndInv(), NULL, FALSE );
-    ShowInventory(TRUE);
-    InventoryRedraw();
+    /* Repaint the inventory dialog and all its children (item grid and
+       scrollbar) so they draw on top of the sidebar background.  hMain
+       has no WS_CLIPCHILDREN, so the background fill covers them. */
+    RedrawWindow(GetHwndInvDialog(), NULL, NULL,
+       RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
   }
 }
 
@@ -168,10 +185,7 @@ void InterfaceResetData(void)
       RequestRest();
    else
       RequestStand();
-   if (cinfo->config->aggressive)
-      SendSafety(0);
-   else
-      SendSafety(1);
+   SendConfiguredSafety();
 
    RequestSpells();
    RequestSkills();
@@ -409,7 +423,7 @@ void InterfaceUserChanged(void)
       if (cinfo->config->aggressive)
       {
          if (!safety_flipped)
-            SendSafety(0);
+            SendConfiguredSafety();
          safety_flipped = true;
       }
       else 
@@ -423,7 +437,7 @@ void InterfaceUserChanged(void)
       if (!cinfo->config->aggressive)
       {
          if (!safety_flipped)
-            SendSafety(1);
+            SendConfiguredSafety();
          safety_flipped = true;
       }
       else 

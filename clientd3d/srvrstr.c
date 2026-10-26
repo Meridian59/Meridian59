@@ -33,10 +33,11 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    char *fmt, *next_ptr; /* next_ptr points into format string fmt */
    char tempfmt[MAXMESSAGE], format[MAXMESSAGE], *param_ptr = *params;
    char* message;
-   char *rsc, type_char, *orig_message;
+   char *rsc, type_char, *orig_message, *message_end;
    DWORD field, num_chars;
    WORD string_len;
    bool done = false;
+   size_t remaining, copy_len;
 
    /* qparams are %q parameters; we need to save their positions and replace them last, 
     * even after %s (in case replacement %q string contains a literal %s) */
@@ -81,6 +82,7 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 
    /* Prepare to format into the caller's message buffer. */
    orig_message = message;
+   message_end = orig_message + MAXMESSAGE;
 
    /* Keep looping through string until there's nothing left to replace */
    while (!done)
@@ -116,7 +118,8 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	 switch (type_char)
 	 {
 	 case '%':              /* %% ==> % */
-	    *message++ = '%';
+	    if (message < message_end - 1)
+	       *message++ = '%';
 	    break;
 	    
 	 case 'd':
@@ -138,11 +141,17 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	       if ((rsc = LookupRsc(field)) == NULL)
 		  return false;
 
-	       num_chars = sprintf(message, tempfmt, rsc);
-	    }	 
+	       remaining = message_end - message;
+	       num_chars = snprintf(message, remaining, tempfmt, rsc);
+	       if (num_chars >= remaining)
+	          num_chars = remaining > 0 ? (DWORD)(remaining - 1) : 0;
+	    }
 	    else
 	    {
-	       num_chars = sprintf(message, tempfmt, field);
+	       remaining = message_end - message;
+	       num_chars = snprintf(message, remaining, tempfmt, field);
+	       if (num_chars >= remaining)
+	          num_chars = remaining > 0 ? (DWORD)(remaining - 1) : 0;
 	    }
 	    
 	    message += num_chars;  /* Overwrite null char next time */
@@ -172,8 +181,12 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	    }
 	    
 	    /* Copy this section of format string */
-	    strncpy(message, tempfmt, (next_ptr - fmt));
-	    message += (next_ptr - fmt);
+	    copy_len = next_ptr - fmt;
+	    remaining = message_end - message - 1;
+	    if (copy_len > remaining)
+	       copy_len = remaining;
+	    strncpy(message, tempfmt, copy_len);
+	    message += copy_len;
 	    
 	    /* Skip string */
 	    param_ptr += string_len;
@@ -186,7 +199,12 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 	 next_ptr = strchr(fmt, '%');      
       }
       /* Copy over last part of string */
-      strcpy(message, fmt);
+      remaining = message_end - message;
+      if (remaining > 0)
+      {
+         strncpy(message, fmt, remaining - 1);
+         message[remaining - 1] = '\0';
+      }
 
       /* Prepare for next pass */
       message = orig_message;
@@ -231,18 +249,34 @@ bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
       tempfmt[(next_ptr - fmt) - 2] = '\0';
       
       /* Add tempfmt and then literal string to end of message */
-      strcpy(message, tempfmt);
-      message += strlen(tempfmt);
+      remaining = message_end - message;
+      if (remaining > 1)
+      {
+         strncpy(message, tempfmt, remaining - 1);
+         message[remaining - 1] = '\0';
+         message += strlen(message);
+      }
 
-      strncpy(message, param_ptr, string_len);
-      message += string_len;
+      remaining = message_end - message - 1;
+      if (string_len > remaining)
+         string_len = (WORD)remaining;
+      if (string_len > 0)
+      {
+         strncpy(message, param_ptr, string_len);
+         message += string_len;
+      }
 
       fmt = next_ptr;
       next_ptr = strchr(fmt, '%');
    }
 
    /* Copy over last part of string */
-   strcpy(message, fmt);
+   remaining = message_end - message;
+   if (remaining > 0)
+   {
+      strncpy(message, fmt, remaining - 1);
+      message[remaining - 1] = '\0';
+   }
 
    return true;
 }
@@ -277,7 +311,31 @@ static FormatCode code_table[] = {
 { 'n', CODE_STYLE, STYLE_RESET },
 };
 
+// Dark theme code table; same length and order as code_table.
+static FormatCode code_table_dark[] = {
+{ 'r', CODE_COLOR, PALETTERGB(230, 100, 100) }, // Soft Red
+{ 'g', CODE_COLOR, PALETTERGB( 80, 200, 120) }, // Bright Green
+{ 'l', CODE_COLOR, PALETTERGB(  0, 255,   0) }, // Lime Green
+{ 'b', CODE_COLOR, PALETTERGB(100, 149, 237) }, // Cornflower Blue
+{ 'c', CODE_COLOR, PALETTERGB(100, 220, 220) }, // Soft Cyan
+{ 'k', CODE_COLOR, PALETTERGB(160, 160, 160) }, // Gray
+{ 'w', CODE_COLOR, PALETTERGB(255, 255, 255) }, // White
+{ 'y', CODE_COLOR, PALETTERGB(255, 255,   0) }, // Yellow
+{ 'o', CODE_COLOR, PALETTERGB(255, 172,  28) }, // Bright Orange
+{ 'p', CODE_COLOR, PALETTERGB(255, 192, 203) }, // Pink
+{ 'B', CODE_STYLE, STYLE_BOLD },
+{ 'I', CODE_STYLE, STYLE_ITALIC },
+{ 'U', CODE_STYLE, STYLE_UNDERLINE },
+{ 'n', CODE_STYLE, STYLE_RESET },
+};
+
 static int num_format_codes = sizeof(code_table) / sizeof(FormatCode);
+
+// Returns the color code table for the active theme.
+static FormatCode *ColorCodeTableForTheme(Theme theme)
+{
+   return (theme == Theme::Default) ? code_table : code_table_dark;
+}
 
 /************************************************************************/
 /*
@@ -342,20 +400,21 @@ void DisplayMessage(const char *message, COLORREF start_color, BYTE start_style)
 	 break;
 
       new_type = 0;
+      FormatCode *active_table = ColorCodeTableForTheme(config.theme);
       for (i=0; i < num_format_codes; i++)
       {
-	 if (code_table[i].code != ch)
+	 if (active_table[i].code != ch)
 	    continue;
 
-	 switch (code_table[i].type)
+	 switch (active_table[i].type)
 	 {
 	 case CODE_COLOR:
-	    new_color = code_table[i].data;
+	    new_color = active_table[i].data;
 	    new_type |= CODE_COLOR;
 	    break;
 
 	 case CODE_STYLE:
-	    switch (code_table[i].data)
+	    switch (active_table[i].data)
 	    {
 	    case STYLE_NORMAL:
 	       new_style = STYLE_NORMAL;
@@ -368,7 +427,7 @@ void DisplayMessage(const char *message, COLORREF start_color, BYTE start_style)
 	       break;
 	       
 	    default:
-	       new_style = style ^ code_table[i].data;  // Toggle style
+	       new_style = style ^ active_table[i].data;  // Toggle style
 	       break;
 	    }
 	       
@@ -376,7 +435,7 @@ void DisplayMessage(const char *message, COLORREF start_color, BYTE start_style)
 	    break;
 
 	 default:
-	    debug(("DisplayServerMessage got unknown code type %d\n", code_table[i].type));
+	    debug(("DisplayServerMessage got unknown code type %d\n", active_table[i].type));
 	    break;
 	 }
       }

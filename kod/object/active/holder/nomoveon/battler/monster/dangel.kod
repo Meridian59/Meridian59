@@ -245,6 +245,12 @@ messages:
       }
       else
       {
+         % An evil twin can only copy a player.
+         if NOT IsClass(target,&Player)
+         {
+            return FALSE;
+         }
+
          oTwin = Create(&EvilTwin,#iSpellpower=100,#oMaster=self,
                         #oTarget=target);
       }

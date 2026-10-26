@@ -411,7 +411,12 @@ void TViewBitmapListDialog::LBNSelchange ()
 	{
 	   TextureInfo *info = FindTextureByName(BitmapName);
 	   pBitmapControl->SelectBitmap2 (info->filename);
-	   SetCaption(info->filename);
+
+	   char caption[MAX_BITMAPNAME + 32];
+	   sprintf (caption, "%s (%dx%d)", info->filename,
+				pBitmapControl->GetBitmapWidth(),
+				pBitmapControl->GetBitmapHeight());
+	   SetCaption (caption);
 	}
 }
 
@@ -708,7 +713,11 @@ int TDisplayBitmapDialog::SelectBitmap2 (const char *str)
 {
 	pBitmapControl->SelectBitmap2 (str);
 
-	SetCaption(str);
+	char caption[MAX_BITMAPNAME + 32];
+	sprintf (caption, "%s (%dx%d)", str,
+			 pBitmapControl->GetBitmapWidth(),
+			 pBitmapControl->GetBitmapHeight());
+	SetCaption (caption);
 
 	return 1;
 }
@@ -887,3 +896,46 @@ void TDisplayFloorTextureDialog::SetupWindow ()
 	SetCaption ("Viewing Floor/Ceiling textures");
 }
 
+// One shared preview for wall and floor/ceiling textures (same bitmap control).
+static TDisplayWallTextureDialog *s_pTextureDialog = NULL;
+
+void ShowTexturePreview (TWindow *parent, const char *texname, BOOL createIfNeeded)
+{
+	if (parent == NULL || texname == NULL || texname[0] == '\0' || strcmp (texname, "-") == 0)
+		return;
+
+	if (s_pTextureDialog == NULL || s_pTextureDialog->IsWindow() == FALSE)
+	{
+		if (!createIfNeeded)
+			return;
+
+		delete s_pTextureDialog;
+		s_pTextureDialog = new TDisplayWallTextureDialog (parent);
+		s_pTextureDialog->Create();
+	}
+
+	if (s_pTextureDialog->IsWindow())
+	{
+		char name[MAX_BITMAPNAME + 1];
+		strncpy (name, texname, MAX_BITMAPNAME);
+		name[MAX_BITMAPNAME] = '\0';
+
+		TextureInfo *info = FindTextureByName(name);
+		if (info == NULL || s_pTextureDialog->SelectBitmap2 (info->filename) < 0)
+			Notify ("Error: Cannot select the texture name \"%s\" in the "
+				"dialog box of Texture view ! (BUG)", texname);
+	}
+	else if (createIfNeeded)
+		Notify ("Error: Cannot create dialog box of Texture view !");
+}
+
+void CloseTexturePreview ()
+{
+	delete s_pTextureDialog;
+	s_pTextureDialog = NULL;
+}
+
+BOOL IsTexturePreviewOpen ()
+{
+	return s_pTextureDialog != NULL && s_pTextureDialog->IsWindow();
+}

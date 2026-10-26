@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -25,6 +25,7 @@ bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
 static void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE secondtranslation, int flags);
 static void DrawPlayerOverlayOverlays(PDIB pdib_obj, AREA *obj_area, list_type overlays,
                                       bool underlays, BYTE secondtranslation, int flags);
+static void PreloadPlayerOverlay(object_node *overlayObj);
 /************************************************************************/
 void SetPlayerOverlay(char hotspot, object_node *poverlay)
 {
@@ -38,6 +39,8 @@ void SetPlayerOverlay(char hotspot, object_node *poverlay)
       ObjectDestroyAndFree(poverlay);
       return;
    }
+
+   PreloadPlayerOverlay(poverlay);
 
    // Replace previous player overlay, if any
    if (player.poverlays[num].obj != NULL)
@@ -270,4 +273,21 @@ bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area)
    obj_area->cy = dib_height;
    return true;
 }
+/************************************************************************/
+/*
+ * PreloadPlayerOverlay:  Loads any overlay bitmaps that aren't cached in yet.
+ *  Prevents desyncs in paired animations when one bitmap needs to load in
+ *  while the other is already cached.
+ */
+static void PreloadPlayerOverlay(object_node *overlayObj)
+{
+   // Base bitmap
+   GetObjectBitmap(overlayObj->icon_res);
 
+   // Attached bitmaps
+   for (list_type node = *(overlayObj->overlays); node != nullptr; node = node->next)
+   {
+      const auto *attachedOverlay = static_cast<const Overlay *>(node->data);
+      GetObjectBitmap(attachedOverlay->icon_res);
+   }
+}

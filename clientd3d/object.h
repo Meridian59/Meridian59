@@ -94,6 +94,8 @@ typedef struct {
    int	     lightAdjust;	  // For flicker and flash
    BYTE	     effect;		  // Display effect
    d_lighting	dLighting;			// new lighting flags for d3d client
+   int       flickerTime;         // Time accumulator for OF_FLICKERING animation (milliseconds)
+
 } object_node;
 
 typedef struct {
@@ -105,6 +107,11 @@ typedef struct {
    bool        visible;           // True when object is visible in current frame
    int			boundingHeightAdjust;	// adjustment in height from overlays
 } room_contents_node;
+
+bool ObjectIsBouncing(int flags);
+bool ObjectHasFlickeringLight(int flags);
+bool ObjectHasFlashingLight(int flags);
+bool ObjectHasLightEffect(int flags);
 
 M59EXPORT bool CompareIdObject(void *idnum, void *obj);
 bool CompareId(void *id1, void *id2);

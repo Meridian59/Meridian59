@@ -27,9 +27,9 @@ constants:
 resources:
  
    itematttranscendant_desc = "It glows with a soft, white light."
-   itematttranscendant_name = "transcendant %s"
+   itematttranscendant_name = "transcendent %s"
 
-   transcendant_DM = "transcendant"
+   transcendent_DM = "transcendent"
 
 classvars:
 
@@ -45,7 +45,7 @@ classvars:
 
 
    viDifficulty = 3
-   vrDM_Trigger = transcendant_DM
+   vrDM_Trigger = transcendent_DM
 
 properties:
 

@@ -29,6 +29,8 @@ properties:
 
    plPlayerRestrict2       = $            % we keep a copy here so that other quests can modify the defaults read from the template
 
+   piReservedAt            = 0            % GetTime() when Q_R2_QN_ASSIGNABLE flipped to TRUE. 0 means never stamped.
+
 messages:
 
 Constructor()
@@ -470,6 +472,10 @@ ModifyPlayerRestrict2(restrict_type=$, inst_num=1, parm1=$, parm2=$)
                if (parm1 <> TRUE) {
                   return FALSE;
                }
+
+               % Set the time this quest was assigned, so that it can be expired
+               % if not accepted within the reservation lifetime.
+               piReservedAt = GetTime();
             }
             if restrict_type = Q_R2_IS_GUILD_MEMBER_OF {
                if (parm1 = $) or (not isClass(parm1, &Guild)) {
@@ -621,12 +627,41 @@ ExpireQuest(report = TRUE)
 % returns FALSE if time expired (and cancels quest), TRUE if time left
 CheckDeadline( time = 0 )
 {
-   local iStatus, iTimeLeft, bDebug;
-   bDebug = send(send( SYS, @GetQuestEngine ), @GetDebugStatus);
+   local iStatus, iTimeLeft, bDebug, oQuestEngine, iMinAge, iR2;
+
+   oQuestEngine = Send(SYS,@GetQuestEngine);
+   iMinAge = Send(oQuestEngine,@GetQuestReservationLifetime);
+   bDebug = Send(oQuestEngine, @GetDebugStatus);
+
    if( time = 0 )
    {
       debug( "Quest: timelimit = 0?" );
       return;
+   }
+
+   % Assigned "waiting" quests have no node deadline, so we intervene here to expire them
+   % when they get beyond their reservation lifetime.
+   if Send(poQuestNode,@GetStatus) = QN_STATUS_WAITING_FOR_PLAYERS
+   {
+      for iR2 in plPlayerRestrict2
+      {
+         if (First(iR2) = Q_R2_QN_ASSIGNABLE) AND (Nth(iR2, 2) = TRUE)
+         {
+            if piReservedAt = 0
+               OR (GetTime() - piReservedAt) >= iMinAge
+            {
+               if bDebug
+               {
+                  debug("Recycling abandoned quest, quest type ", piQuestTemplateIndex);
+               }
+
+               Send(self,@Cancel);
+               return;
+            }
+
+            break;
+         }
+      }
    }
 
    iTimeLeft = send( poQuestNode, @GetDeadline ) - time;

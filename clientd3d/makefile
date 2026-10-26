@@ -23,10 +23,9 @@ LIBS =  \
 	ws2_32.lib comctl32.lib advapi32.lib \
 	winmm.lib libarchive.lib rscload.lib wininet.lib \
 	ole32.lib OpenAL32.lib \
-	d3d9.lib libpng.lib zlib.lib
+	d3d9.lib libpng.lib zlib.lib dwmapi.lib
 
-# Setting RETAIL=1 turns on the Miles Sound System, which we can't
-# put in the open source version
+# Setting RETAIL=1 includes Bugsplat; not needed for development
 !ifdef RETAIL
 
 CFLAGS = $(CFLAGS) -DM59_RETAIL
@@ -90,7 +89,7 @@ OBJS = \
         $(OUTDIR)\graphctl.obj \
         $(OUTDIR)\animate.obj \
         $(OUTDIR)\config.obj \
-        $(OUTDIR)\project.obj \
+        $(OUTDIR)\projectile.obj \
         $(OUTDIR)\uselist.obj \
         $(OUTDIR)\move.obj \
         $(OUTDIR)\startup.obj \
@@ -139,11 +138,13 @@ OBJS = \
         $(OUTDIR)\d3drender.obj \
         $(OUTDIR)\d3drender_bgoverlays.obj \
         $(OUTDIR)\d3drender_fx.obj \
+        $(OUTDIR)\d3drender_lights.obj \
         $(OUTDIR)\d3drender_materials.obj \
         $(OUTDIR)\d3drender_objects.obj \
         $(OUTDIR)\d3drender_skybox.obj \
         $(OUTDIR)\d3drender_textures.obj \
         $(OUTDIR)\d3drender_world.obj \
+        $(OUTDIR)\skybox_load.obj \
         $(OUTDIR)\matrix.obj \
         $(OUTDIR)\xform.obj \
         $(OUTDIR)\signup.obj\

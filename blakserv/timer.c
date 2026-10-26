@@ -346,13 +346,14 @@ timer_node * GetTimerByID(int timer_id)
 
 void ForEachTimer(void (*callback_func)(timer_node *t))
 {
-   timer_node *t;
+   timer_node *t, *next;
 
    t = timers;
    while (t != NULL)
    {
+      next = t->next;  // In case callback_func deletes timer
       callback_func(t);
-      t = t->next;
+      t = next;
    }
 }
 

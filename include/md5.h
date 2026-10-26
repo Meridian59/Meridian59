@@ -40,6 +40,6 @@ typedef uint16_t UINT2;
 /* UINT4 defines a four byte word */
 typedef uint32_t UINT4;
 
-void MDString (char *string, unsigned char *digest);
+void MDString (const char *string, unsigned char *digest);
 
 #endif /* #ifndef _MD5_H */

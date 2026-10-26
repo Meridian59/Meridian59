@@ -292,12 +292,6 @@ keymap select_key_table[] = {
 { 0, 0, 0},   // Must end table this way
 };
 
-/* Keys in waiting states, so that user can still quit game */
-static keymap default_key_table[] = {
-{ 'Q',          KEY_NONE,  A_QUIT },
-{ 0, 0, 0},   // Must end table this way
-};
-
 static TypedCommand commands[] = {
 { "say",         CommandSay, },
 { "yell",        CommandYell, },
@@ -579,7 +573,7 @@ keymap gQuickChatTable[] = {
 };
 
 extern player_info* GetPlayerInfo(void);
-extern void SetActiveStatGroup(int stat_group);
+extern void SetActiveStatGroup(StatGroup stat_group);
 extern int GetActiveStatGroup(void);
 
 /* local function prototypes */
@@ -618,7 +612,6 @@ void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
    CustomConfigInit();
 
    KeyAddTable(GAME_SELECT, select_key_table);
-   KeyAddTable(GAME_INVALID, default_key_table);
 
    InterfaceInit();
 }
@@ -627,7 +620,6 @@ void WINAPI ModuleExit(void)
 {
    KeyRemoveTable(GAME_PLAY, interface_key_table);
    KeyRemoveTable(GAME_SELECT, select_key_table);
-   KeyRemoveTable(GAME_INVALID, default_key_table);
 
    FreeVerbAliases();
 
@@ -787,14 +779,14 @@ void CustomConfigInit(void)
 		255, file);
 
 	value = atoi(string0);
-	cinfo->config->mouselookXScale = min(30, max(1, value));
+	cinfo->config->mouselookXScale = std::min(30, std::max(1, value));
 
 	// mouselook y scale
 	GetPrivateProfileString(config, "mouselookyscale", "error\n", string0,
 		255, file);
 
 	value = atoi(string0);
-	cinfo->config->mouselookYScale = min(30, max(1, value));
+	cinfo->config->mouselookYScale = std::min(30, std::max(1, value));
 
 	// mouselook invert
 	GetPrivateProfileString(config, "invertmouse", "error\n", string0,
@@ -978,23 +970,23 @@ bool ExtractStatistic(char **ptr, Statistic *s)
    switch (s->type)
    {
    case STATS_NUMERIC:
-      Extract(ptr, &s->numeric.tag,   SIZE_STAT_TYPE);
+      Extract(ptr, &s->numeric.tag, SIZE_STAT_TYPE);
       Extract(ptr, &s->numeric.value, SIZE_ID);
-      
+
       if (s->numeric.tag == STAT_INT)
       {
-	 Extract(ptr, &s->numeric.min, SIZE_ID);
-	 Extract(ptr, &s->numeric.max, SIZE_ID);
-	 Extract(ptr, &s->numeric.current_max, SIZE_ID);
+         Extract(ptr, &s->numeric.min, SIZE_ID);
+         Extract(ptr, &s->numeric.max, SIZE_ID);
+         Extract(ptr, &s->numeric.current_max, SIZE_ID);
       }
       break;
-      
+
    case STATS_LIST:
       Extract(ptr, &s->list.id, SIZE_ID);
       Extract(ptr, &s->list.value, SIZE_ID);
       Extract(ptr, &s->list.icon, SIZE_ID);
       break;
-      
+
    default:
       debug(("ExtractStatistic got unknown stat type %d\n", (int) s->type));
       return false;
@@ -1112,7 +1104,7 @@ bool HandleRemoveSkill(char *ptr, long len)
 /********************************************************************/
 bool HandleStat(char *ptr, long len)
 {
-   BYTE group;
+   StatGroup group;
    Statistic s;
    char *start = ptr;
 
@@ -1131,7 +1123,8 @@ bool HandleStat(char *ptr, long len)
 bool HandleStatGroup(char *ptr, long len)
 {
    list_type stat_list = NULL;
-   BYTE group, list_len;
+   StatGroup group;
+   BYTE list_len;
    int i;
    char *start = ptr;
 
@@ -1693,7 +1686,7 @@ bool WINAPI EventInventory(int command, void *data)
       DisplayInventory(cinfo->player->inventory);
       StatsShowGroup( false );
       ShowInventory( true );
-      DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
+      DisplayInventoryAsStatGroup( StatGroup::STATS_INVENTORY );
       break;
 
    case INVENTORY_ADD:
@@ -1702,7 +1695,7 @@ bool WINAPI EventInventory(int command, void *data)
       //DisplayInventory(cinfo->player->inventory);
       StatsShowGroup( false );
       ShowInventory( true );
-      DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
+      DisplayInventoryAsStatGroup( StatGroup::STATS_INVENTORY );
 
       break;
 
@@ -1787,12 +1780,12 @@ player_info *GetPlayer(void)
    return GetPlayerInfo();
 }
 
-void SetStatGroup(int stat_group)
+void SetStatGroup(StatGroup stat_group)
 {
-   SetActiveStatGroup(stat_group);
+   SetActiveStatGroup((int)stat_group);
 }
 
-int GetStatGroup(void)
+StatGroup GetStatGroup(void)
 {
-   return GetActiveStatGroup();
+   return (StatGroup)GetActiveStatGroup();
 }

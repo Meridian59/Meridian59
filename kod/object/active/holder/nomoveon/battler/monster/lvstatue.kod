@@ -884,14 +884,21 @@ messages:
       
       AddPacket(1,iOverlays);
       AddPacket(4,prLeft_arm, 1,HS_LEFT_HAND);
-      
-      if iLeft_group = 1
+
+      if prLeft_arm = LivingStatue_icon_blank
       {
-         AddPacket(1,ANIMATE_CYCLE, 4,200, 2,2, 2,3);
+         AddPacket(1,ANIMATE_NONE, 2,1);
       }
       else
       {
-         AddPacket(1,ANIMATE_NONE, 2,iLeft_group); 
+         if iLeft_group = 1
+         {
+            AddPacket(1,ANIMATE_CYCLE, 4,200, 2,2, 2,3);
+         }
+         else
+         {
+            AddPacket(1,ANIMATE_NONE, 2,iLeft_group); 
+         }
       }
 
       AddPacket(4,prRight_arm, 1,HS_RIGHT_HAND);
@@ -971,19 +978,26 @@ messages:
 
       AddPacket(4,prLeft_arm,1,HS_LEFT_HAND);
 
-      if piAnimation = ANIM_CAST
+      if prLeft_arm = LivingStatue_icon_blank
       {
-         AddPacket(1,ANIMATE_ONCE, 4,300, 2,8, 2,8, 2,iLeft_group);
+         AddPacket(1,ANIMATE_NONE, 2,1);
       }
       else
       {
-         if piAnimation = PANM_WEAPON_ATTACK
+         if piAnimation = ANIM_CAST
          {
-            AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,iLeft_group);
+            AddPacket(1,ANIMATE_ONCE, 4,300, 2,8, 2,8, 2,iLeft_group);
          }
          else
          {
-            AddPacket(1,ANIMATE_NONE, 2,iLeft_group);
+            if piAnimation = PANM_WEAPON_ATTACK
+            {
+               AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,iLeft_group);
+            }
+            else
+            {
+               AddPacket(1,ANIMATE_NONE, 2,iLeft_group);
+            }
          }
       }
 

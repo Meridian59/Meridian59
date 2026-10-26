@@ -341,7 +341,7 @@ void ExtractObject(char **ptr, object_node *item, bool includeLight)
    item->normal_overlays = ExtractOverlays(ptr);
    item->overlays = &item->normal_overlays;
 
-   if (OF_BOUNCING == (OF_BOUNCING & item->flags))
+   if (ObjectIsBouncing(item->flags))
    {
       item->bounceTime = (WORD)(rand() % 1000);
    }

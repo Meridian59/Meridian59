@@ -90,6 +90,7 @@ BEGIN
             MENUITEM "&Listar caixas",              ID_FONT_LIST
             MENUITEM "&Títulos",                    ID_FONT_TITLES
             MENUITEM "Emails e &mensagens",         ID_FONT_MAIL
+            MENUITEM "&Anotaciones del mapa",       ID_FONT_ANNOTATIONS
             POPUP "Imprimir mapa"
             BEGIN
                 MENUITEM "Comentários",             ID_OPTIONS_FONT_MAP_TEXT
@@ -166,7 +167,7 @@ BEGIN
     LISTBOX         IDC_QUANLIST,143,118,22,20,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
 END
 
-IDD_SETTINGS DIALOGEX 0, 0, 256, 250
+IDD_SETTINGS DIALOGEX 0, 0, 256, 255
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Configurações antecipadas Meridian 59"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -193,7 +194,7 @@ BEGIN
     CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,95,129,145,15
     LTEXT           "Volume do som ambiente",IDC_STATIC,13,147,85,10
     CONTROL         "",IDC_AMBIENT_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,95,144,145,15
-    GROUPBOX        "Interface",IDC_STATIC,5,175,246,70,WS_GROUP
+    GROUPBOX        "Interface",IDC_STATIC,5,175,246,85,WS_GROUP
     CONTROL         "Mostrar ícones",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,197,62,9
     CONTROL         "Mostrar barra",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,187,68,9
     CONTROL         "Congelar janela de texto ao retroceder",IDC_SCROLLLOCK,
@@ -202,8 +203,9 @@ BEGIN
     CONTROL         "Mostrar latência",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,187,77,9
     CONTROL         "Mapa dinâmico",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,197,79,10
     CONTROL         "Texto colorido",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,187,72,10
-    CONTROL         "Anotações do mapa",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,197,71,9
     PUSHBUTTON      "&Configurações",IDC_PROFANESETTINGS,169,225,70,12
+    LTEXT           "Tema:",IDC_STATIC,14,242,20,9
+    COMBOBOX        IDC_THEME,36,240,60,60,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_COLOR DIALOG 0, 0, 201, 92
@@ -649,6 +651,11 @@ BEGIN
     PUSHBUTTON      "+",IDC_MAP_MOD,125,7,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMIN_MOD,125,26,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,125,45,14,14
+
+    GROUPBOX        "Opções do Mapa",IDC_STATIC,6,80,245,45,WS_GROUP
+    CONTROL         "Anotações",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,91,72,10
+    LTEXT           "Limite de Zoom do Texto",IDC_STATIC,13,109,50,10
+    CONTROL         "",IDC_ANNOTATION_ZOOM_LIMIT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
 END
 
 IDD_MOVEMENT DIALOG 0, 0, 296, 138
@@ -1023,6 +1030,8 @@ BEGIN
 	IDS_DUPLICATE_BINDINGS			"Foi detectada uma duplicação de atribuições para a mesma tecla.\nIsso pode fazer com que alguns comandos não funcionem em\nMeridian 59. Verifique suas atribuições de teclas."
 	IDS_DEFAULT_ARE_YOU_SURE		"Tem certeza de que deseja restaurar todas as configurações para os valores padrão?"
 	IDS_RESTORE_DEFAULTS			"Restaurar Padrões"
+	IDS_THEME_DEFAULT				"Padrão"
+	IDS_THEME_DARK					"Escuro"
 END
 
 
@@ -1101,6 +1110,7 @@ BEGIN
             MENUITEM "Inventarfenster",             ID_FONT_LIST
             MENUITEM "Überschriften",               ID_FONT_TITLES
             MENUITEM "Post && Nachrichten",         ID_FONT_MAIL
+            MENUITEM "Kartenbeschriftungen",        ID_FONT_ANNOTATIONS
             POPUP "Karten drucken"
             BEGIN
                 MENUITEM "Kommentare",                  ID_OPTIONS_FONT_MAP_TEXT
@@ -1177,7 +1187,7 @@ BEGIN
     LISTBOX         IDC_QUANLIST,143,118,22,20,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
 END
 
-IDD_SETTINGS DIALOGEX 0, 0, 256, 260
+IDD_SETTINGS DIALOGEX 0, 0, 256, 265
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59 Voreinstellungen"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -1204,7 +1214,7 @@ BEGIN
     CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,83,148,159,15
     LTEXT           "Umgebungs Lautstärke",IDC_STATIC,13,149,76,10
     CONTROL         "",IDC_AMBIENT_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,83,131,159,15
-    GROUPBOX        "Oberfläche",IDC_STATIC,5,175,246,70,WS_GROUP
+    GROUPBOX        "Oberfläche",IDC_STATIC,5,175,246,87,WS_GROUP
     CONTROL         "Icons anzeigen",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,197,62,9
     CONTROL         "Iconhilfe an/aus",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,187,68,9
     CONTROL         "Textfenster beim zurückscrollen einfrieren",IDC_SCROLLLOCK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,207,166,10
@@ -1214,6 +1224,8 @@ BEGIN
     CONTROL         "Dynamische Karte",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,196,79,10
     CONTROL         "Bunter Text",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,185,72,10
     CONTROL         "Rotierender Würfel",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,197,71,9
+    LTEXT           "Thema:",IDC_STATIC,14,243,24,9
+    COMBOBOX        IDC_THEME,42,241,60,60,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_COLOR DIALOG 0, 0, 201, 92
@@ -1451,7 +1463,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,74,260,40,14
     CTEXT           "Meridian 59 Client (build %d)",IDC_NUMBER,0,4,189,8
-    CTEXT           "Copyright © 1994-2025 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
+    CTEXT           "Copyright © 1994-2026 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
     CTEXT           "All rights reserved.",IDC_SPECIAL2,0,25,189,8
     CONTROL         "",IDC_SCROLL,"Static",SS_GRAYRECT | SS_SUNKEN | WS_BORDER,23,146,143,105
 END
@@ -1661,6 +1673,11 @@ BEGIN
     PUSHBUTTON      "+",IDC_MAP_MOD,125,7,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMIN_MOD,125,26,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,125,45,14,14
+
+    GROUPBOX        "Kartenoptionen",IDC_STATIC,6,80,245,45,WS_GROUP
+    CONTROL         "Kartennotizen",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,91,72,10
+    LTEXT           "Zoomgrenze für Text",IDC_STATIC,13,109,50,10
+    CONTROL         "",IDC_ANNOTATION_ZOOM_LIMIT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
 END
 
 IDD_MOVEMENT DIALOG 0, 0, 296, 138
@@ -2037,6 +2054,8 @@ BEGIN
 	IDS_DUPLICATE_BINDINGS			"Doppelte Tastenzuweisungen für dieselbe Taste wurden erkannt.\nDies könnte dazu führen, dass einige Befehle in Meridian 59 nicht funktionieren.\nBitte überprüfen Sie Ihre Bindungen."
 	IDS_DEFAULT_ARE_YOU_SURE		"Sind Sie sicher, dass Sie alle Einstellungen auf die Standardwerte zurücksetzen möchten?"
 	IDS_RESTORE_DEFAULTS			"Standardwerte wiederherstellen"
+	IDS_THEME_DEFAULT				"Standard"
+	IDS_THEME_DARK					"Dunkel"
 END
 
 
@@ -2116,6 +2135,7 @@ BEGIN
             MENUITEM "&List boxes",                 ID_FONT_LIST
             MENUITEM "&Titles",                     ID_FONT_TITLES
             MENUITEM "&Mail and news",              ID_FONT_MAIL
+            MENUITEM "Map &Annotations",            ID_FONT_ANNOTATIONS
             POPUP "Map Printing"
             BEGIN
                 MENUITEM "Comments",                    ID_OPTIONS_FONT_MAP_TEXT
@@ -2192,7 +2212,7 @@ BEGIN
     LISTBOX         IDC_QUANLIST,143,118,22,20,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
 END
 
-IDD_SETTINGS DIALOGEX 0, 0, 257, 242
+IDD_SETTINGS DIALOGEX 0, 0, 257, 261
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59 Preferences"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -2220,7 +2240,7 @@ BEGIN
     CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,124,173,15
     LTEXT           "Ambient volume",IDC_STATIC,13,143,53,10
     CONTROL         "",IDC_AMBIENT_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,142,173,15
-    GROUPBOX        "Interface Features",IDC_STATIC,6,165,245,59,WS_GROUP
+    GROUPBOX        "Interface Features",IDC_STATIC,6,165,245,78,WS_GROUP
     CONTROL         "Show toolbar",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,176,62,9
     CONTROL         "Show tooltips",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,187,62,9
     CONTROL         "Lock text window in place when scrolling back",IDC_SCROLLLOCK,
@@ -2229,9 +2249,10 @@ BEGIN
     CONTROL         "Show latency meter",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,89,176,77,9
     CONTROL         "Show dynamic map",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,89,187,79,10
     CONTROL         "Show colored text",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,176,72,10
-    CONTROL         "Map annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,187,72,10
+    CONTROL         "Spinning cube",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,187,72,10
     PUSHBUTTON      "&Profanity Options and Policy...",IDC_PROFANESETTINGS,102,208,142,12
-    CONTROL         "Spinning cube",ID_SPINNING_CUBE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,173,199,71,9
+    LTEXT           "Theme:",IDC_STATIC,14,226,24,9
+    COMBOBOX        IDC_THEME,40,224,60,60,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
 IDD_COLOR DIALOG 0, 0, 201, 92
@@ -2474,7 +2495,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,74,260,40,14
     CTEXT           "Meridian 59 Client (build %d)",IDC_NUMBER,0,4,189,8
-    CTEXT           "Copyright © 1994-2025 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
+    CTEXT           "Copyright © 1994-2026 Andrew Kirmse and Chris Kirmse",IDC_SPECIAL1,0,15,189,8
     CTEXT           "All rights reserved.",IDC_SPECIAL2,0,25,189,8
     CONTROL         "",IDC_SCROLL,"Static",SS_GRAYRECT | SS_SUNKEN | WS_BORDER,23,146,143,105
 END
@@ -2795,6 +2816,11 @@ BEGIN
     PUSHBUTTON      "+",IDC_MAP_MOD,118,7,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMIN_MOD,118,26,14,14
     PUSHBUTTON      "+",IDC_MAPZOOMOUT_MOD,118,45,14,14
+
+    GROUPBOX        "Map Options",IDC_STATIC,6,80,245,45,WS_GROUP
+    CONTROL         "Annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,91,72,10
+    LTEXT           "Text Zoom Limit",IDC_STATIC,13,109,50,10
+    CONTROL         "",IDC_ANNOTATION_ZOOM_LIMIT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
 END
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3019,6 +3045,7 @@ IDI_KEYBIND				ICON					"bitmap\\m59bind.ico"
 //
 
 IDB_BACKGROUND          BITMAP                  "bitmap\\bkgnd.bmp"
+IDB_BACKGROUND_DARK     BITMAP                  "bitmap\\bkgnd_dark.bmp"
 
 IDB_ANNOTATE            BITMAP                  "bitmap\\annotate.bmp"
 
@@ -3312,6 +3339,8 @@ BEGIN
 	IDS_DUPLICATE_BINDINGS			"Duplicate bindings for the same key have been detected.\nThis could cause some commands to not work on\nMeridian 59.  Please double check your bindings."
 	IDS_DEFAULT_ARE_YOU_SURE		"Are you sure you want to restore all settings to their default?"
 	IDS_RESTORE_DEFAULTS			"Restore Defaults"
+	IDS_THEME_DEFAULT				"Default"
+	IDS_THEME_DARK					"Dark"
 END
 
 

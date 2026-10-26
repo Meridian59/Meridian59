@@ -70,6 +70,8 @@ messages:
    Exotic()
    "Admin supported."
    {
+      local oRoom;
+
       vrDesc = exotic_top_desc_rsc;
       vrName = exotic_top_name_rsc;
       vrIcon = exotic_top_ground_icon;
@@ -77,7 +79,11 @@ messages:
       vrIcon_male = exotic_top_male;
       vrIcon_female = exotic_top_female;
 
-      send(send(SYS,@UtilGetRoom,#what=self),@SomethingChanged,#what=self);
+      oRoom = send(SYS,@UtilGetRoom,#what=self);
+      if oRoom <> $
+      {
+         send(oRoom,@SomethingChanged,#what=self);
+      }
 
       return;
    }

@@ -33,8 +33,8 @@
 
 %type <int_val>		Classes
 %type <stmt_val> 	statement
-%type <list_val> 	statement_list parameter_list argument_list vars
-%type <list_val>	locals classvar_list property_list resource_list expression_list 
+%type <list_val> 	statement_list parameter_list argument_list vars block
+%type <list_val>	classvar_list property_list resource_list expression_list
 %type <list_val>	message_handler_list arg_list2 param_list2
 %type <list_val>	Messages_Block Classvars_Block Properties_Block Resources_Block
 %type <int_val>         Constants_Block constants_list constant_assign
@@ -175,11 +175,23 @@ message_handler_list:
 	;
 
 message_handler:
-		message_header '{' locals statement_list '}'
-		{ $$ = make_message_handler($1, NULL, $3, $4); }
+		message_header block
+		{ $$ = make_message_handler($1, NULL, $2); }
  	/* this form includes a comment string describing the message handler */
-        |       message_header STRING_CONSTANT '{' locals statement_list '}'
-		{ $$ = make_message_handler($1, $2, $4, $5); }
+        |       message_header STRING_CONSTANT block
+		{ $$ = make_message_handler($1, $2, $3); }
+	;
+
+/* A braced block of statements.  Local variables may be declared anywhere
+ * in a block and are visible from the declaration to the closing brace.
+ * The slots they occupy are reused by later blocks that don't overlap
+ * with this one. */
+block:
+		'{' start_block statement_list '}'
+		{ leave_block(); $$ = $3; }
+	;
+
+start_block:	/* empty */	{ enter_block(); }
 	;
 
 message_header:
@@ -187,17 +199,13 @@ message_header:
 		{ $$ = make_message_header($1, $2); }
 	;
 
-locals:
-		/* empty */	{ $$ = NULL; }		
-	|	LOCAL vars SEP  { $$ = $2; }
-	;
-
 vars:
 		var		{ $$ = list_add_item(NULL, $1); }
 	|	vars ',' var	{ $$ = list_add_item($1, $3); }
 	;
 
-var:		id		{ $$ = make_var($1); }
+var:		id			{ $$ = make_var($1, NULL); }
+	|	id '=' expression	{ $$ = make_var($1, $3); }
 	;
 
 parameter_list:
@@ -216,6 +224,9 @@ parameter:
 statement_list:
 		/* empty */	{ $$ = NULL; }
 	| 	statement_list statement { if ($2 != NULL) $$ = add_statement($1, $2); }
+	/* A local declaration contributes an assignment statement for each
+	 * variable that has an initializer, and nothing for the others. */
+	|	statement_list LOCAL vars SEP { $$ = list_append($1, take_local_inits()); }
 	;
 
 statement: 
@@ -241,15 +252,16 @@ statement:
 				  $$ = allocate_statement();
 				  $$->type = S_CONTINUE; }
 	|       INCLUDE fname SEP { include_file($2); $$ = NULL; }
-	|	error SEP	{ $$ = NULL; }
+	|	error SEP	{ $$ = NULL;
+				  /* Discard initializers from a local declaration abandoned by error recovery */
+				  take_local_inits(); }
 	;
 
 if_stmt:
-		IF expression '{' statement_list '}'
-		{ $$ = make_if_stmt($2, $4, NULL); }
-	|	IF expression '{' statement_list '}'  
-                  ELSE '{' statement_list '}' 
-		{ $$ = make_if_stmt($2, $4, $8); }
+		IF expression block
+		{ $$ = make_if_stmt($2, $3, NULL); }
+	|	IF expression block ELSE block
+		{ $$ = make_if_stmt($2, $3, $5); }
 	;
 
 assign_stmt:
@@ -258,8 +270,8 @@ assign_stmt:
 	;
 
 for_stmt:
-		FOR loop_variable IN expression '{' start_loop statement_list '}' end_loop
-		{ $$ = make_for_stmt($2, $4, $7); }
+		FOR loop_variable IN expression start_loop block end_loop
+		{ $$ = make_for_stmt($2, $4, $6); }
 	;
 
 loop_variable: 
@@ -267,8 +279,8 @@ loop_variable:
 ;
 
 while_stmt:
-		WHILE expression '{' start_loop statement_list '}' end_loop
-		{ $$ = make_while_stmt($2, $5); }
+		WHILE expression start_loop block end_loop
+		{ $$ = make_while_stmt($2, $4); }
 	;
 
 start_loop:	/* empty*/	{ enter_loop(); }

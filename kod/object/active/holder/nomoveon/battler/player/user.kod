@@ -1463,7 +1463,6 @@ messages:
       
       % TODO: Should arrange in decreasing order of frequency
 
-      % These are idempotent state changes; dropping either can desync the client.
       if iClient_cmd = UC_REST
       {
          if NOT Send(self,@IsResting)

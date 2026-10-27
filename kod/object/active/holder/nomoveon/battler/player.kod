@@ -7863,7 +7863,7 @@ messages:
       Send(self,@RemoveAllEnchantments,#report=FALSE);
       local bNo_drop_death = FALSE;
 
-      local iRoom = Send(poOwner,@GetRoomNum);
+      local iRoom = Send(oRoom,@GetRoomNum);
 
       % Reign of Blood Frenzy death?  Newbie death?
       % Don't drop anything or take any penalties.

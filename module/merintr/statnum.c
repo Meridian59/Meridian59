@@ -49,7 +49,7 @@ void StatsNumCreate(list_type stats)
          continue;
 
       s->hControl = CreateWindow(GraphCtlGetClassName(), NULL,
-                                 WS_CHILD | GCS_LIMITBAR | GCS_NUMBER,
+                                 WS_CHILD | GCS_LIMITBAR | GCS_NUMBER | GCS_CUSTOM,
                                  0, 0, 0, 0, hStats,
                                  NULL, hInst, NULL);
 
@@ -149,8 +149,11 @@ void StatsNumResize(list_type stats)
       s->y = y;
       y += s->cy;
 
-      MoveWindow(s->hControl, x, s->y + (s->cy - STATS_BAR_HEIGHT) / 2,
-         stats_bar_width, STATS_BAR_HEIGHT, TRUE);
+      // A tall custom stat bar can exceed a row sized to a small font so clamp it
+      // to the row height.
+      int bar_height = std::min(StatsBarHeight(), s->cy);
+      MoveWindow(s->hControl, x, s->y + (s->cy - bar_height) / 2,
+         stats_bar_width, bar_height, TRUE);
 
       // Only show graph bar if it's completely visible
       //	And Inventory is not selected.	ajw

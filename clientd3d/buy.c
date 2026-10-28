@@ -146,6 +146,7 @@ BOOL BuyInitDialog(HWND hDlg, HWND hwndFocus, LPARAM lParam)
    info = (BuyDialogStruct *) lParam;
 
    CenterWindow(hDlg, GetParent(hDlg));
+   ThemeApplyDialogTitleBar(hDlg);
    info->hwndItemList = GetDlgItem(hDlg, IDC_ITEMLIST);
    info->hwndCostList = GetDlgItem(hDlg, IDC_COSTLIST);
    info->hwndQuanList = GetDlgItem(hDlg, IDC_QUANLIST);

@@ -100,9 +100,13 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       CenterWindow(hDlg, cinfo->hMain);
       hReadMailDlg = hDlg;
 
+      ThemeApplyDialogTitleBar(hDlg);
+
       hEdit = GetDlgItem(hDlg, IDC_MAILEDIT);
       hList = GetDlgItem(hDlg, IDC_MAILLIST);
       SendMessage(hDlg, BK_SETDLGFONTS, 0, 0);
+      if (ThemeColorsDialogs())
+         SendMessage(hDlg, BK_SETDLGCOLORS, 0, 0);
 
       ListView_SetExtendedListViewStyleEx(hList, LVS_EX_FULLROWSELECT,
                                           LVS_EX_FULLROWSELECT);
@@ -167,6 +171,8 @@ INT_PTR CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    case BK_SETDLGCOLORS:
       ListView_SetTextColor(hList, GetColor(COLOR_LISTFGD));
       ListView_SetBkColor(hList, GetColor(COLOR_LISTBGD));
+      // Without this, each row keeps the system background behind its text.
+      ListView_SetTextBkColor(hList, GetColor(COLOR_LISTBGD));
       InvalidateRect(hDlg, NULL, TRUE);
       return TRUE;
 

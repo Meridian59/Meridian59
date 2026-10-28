@@ -12,6 +12,14 @@ Theme definitions and the abstraction that hides them live in `clientd3d/color.c
 
 The active theme is stored in `Config::theme` (the `Theme` enum in `clientd3d/config.h`).  Each theme keeps its customized colors in its own INI section (e.g. `[Colors]`, `[ColorsDark]`) so switching themes does not clobber the other theme's saved values.
 
+## Dialog coloring
+
+Pop-up dialogs (item and player descriptions, trade, and similar) keep the default system look unless the active theme colors them.  A theme colors dialog interiors when `ThemeColorsDialogs` in `clientd3d/color.c` returns true for it.  The shared `DialogCtlColor` handler then paints the dialog background, labels, edit boxes, and lists from the theme palette.  Buttons and scrollbars keep the default system look.
+
+The title bar is separate from the interior.  `ThemeApplyDialogTitleBar` sets it one dialog at a time, so a dialog follows the theme only when it makes that call.  A dialog that routes its control colors through `DialogCtlColor` without making the call gets a themed interior under a system title bar.
+
+Make that call in `WM_INITDIALOG`, before the dialog is shown.  Made later, the title bar fades from light to dark as the dialog appears.
+
 ## Bitmap surfaces
 
 Bitmap theming is per-surface.  A surface is themed when a `_DARK` (or other theme-specific) variant exists and the code path routes the ID through a resolver.  Surfaces without a variant render the default art under every theme.
@@ -100,7 +108,8 @@ The major components to touch:
 2. The color tables and INI machinery in `clientd3d/color.c`.
 3. The per-theme menu bar color in `ThemeMenuBarColor` in `clientd3d/color.c` (optional).  Skip to keep the system default.
 4. The per-theme title bar style in `ThemeUsesDarkTitleBar` in `clientd3d/color.c` (optional).  Return `true` for light text on a dark title bar, `false` for dark text on a light title bar.  Match this to the menu bar color for the most consistent look.
-5. Server message colors in `clientd3d/srvrstr.c` (optional).
-6. The Settings UI: localized string in `clientd3d/client.rc` and combo entry in `clientd3d/preferences.c`.
-7. Bitmap variants (optional): author `_<NAME>` BMP files and extend the per-module bitmap resolvers in `clientd3d/color.c` and `module/merintr/theme.c`.
-8. Theme capability switches in `module/merintr/theme.c`.
+5. The dialog coloring capability in `ThemeColorsDialogs` in `clientd3d/color.c` (optional).  Return `true` to color pop-up dialog interiors from the theme palette instead of the system colors.
+6. Server message colors in `clientd3d/srvrstr.c` (optional).
+7. The Settings UI: localized string in `clientd3d/client.rc` and combo entry in `clientd3d/preferences.c`.
+8. Bitmap variants (optional): author `_<NAME>` BMP files and extend the per-module bitmap resolvers in `clientd3d/color.c` and `module/merintr/theme.c`.
+9. Theme capability switches in `module/merintr/theme.c`.

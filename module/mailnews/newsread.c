@@ -143,6 +143,7 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    {
    case WM_INITDIALOG:
       CenterWindow(hDlg, cinfo->hMain);
+      ThemeApplyDialogTitleBar(hDlg);
       info = (ReadNewsDialogStruct *)lParam;
 
       hList = GetDlgItem(hDlg, IDC_NEWSLIST);
@@ -153,6 +154,8 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
       SetWindowFont(hEdit, GetFont(FONT_MAIL), FALSE);
       SetWindowFont(hList, GetFont(FONT_MAIL), FALSE);
+      if (ThemeColorsDialogs())
+         SendMessage(hDlg, BK_SETDLGCOLORS, 0, 0);
 
       /* Store dialog rectangle in case of resize */
       GetWindowRect(hDlg, &dlg_rect);
@@ -206,6 +209,15 @@ INT_PTR CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
       lpmmi->ptMinTrackSize.x = 200;
       lpmmi->ptMinTrackSize.y = 300;
       return 0;
+
+   case BK_SETDLGCOLORS:
+      // List views ignore WM_CTLCOLORLISTBOX, so their colors are set here.
+      ListView_SetTextColor(hList, GetColor(COLOR_LISTFGD));
+      ListView_SetBkColor(hList, GetColor(COLOR_LISTBGD));
+      // Without this, each row keeps the system background behind its text.
+      ListView_SetTextBkColor(hList, GetColor(COLOR_LISTBGD));
+      InvalidateRect(hDlg, NULL, TRUE);
+      return TRUE;
 
    case BK_ARTICLES:
       /* Get rid of old index, if any */

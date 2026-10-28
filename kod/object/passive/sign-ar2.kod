@@ -65,6 +65,16 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#name=");
+      AppendTempLiteral(vrName);
+      AppendTempString(",#style=");
+      AppendTempLiteral(piStyle);
+
+      propagate;
+   }
+
    NewOwner(what=$)
    "Deletes itself if not loaded into the Tos Arena."
    "The poOwner=$ is necessary to keep it from deleting itself as soon as it's made."

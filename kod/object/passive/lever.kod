@@ -55,6 +55,22 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#description=");
+      AppendTempLiteral(vrDesc);
+      AppendTempString(",#icon=");
+      AppendTempLiteral(vrIcon);
+      AppendTempString(",#range=");
+      AppendTempLiteral(piRange);
+      AppendTempString(",#stuck=");
+      AppendTempLiteral(pbStuck);
+      AppendTempString(",#BlueNameProtected=");
+      AppendTempLiteral(pbBlueNameProtected);
+
+      propagate;
+   }
+
    TryActivate(who=$)
    "Return False only if you want user.kod to send its own error message to user."
    {

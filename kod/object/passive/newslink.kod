@@ -55,6 +55,20 @@ messages:
       propagate;      
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#nid=");
+      AppendTempLiteral(piNews);
+      AppendTempString(",#name=");
+      AppendTempLiteral(vrName);
+      AppendTempString(",#desc=");
+      AppendTempLiteral(vrDesc);
+      AppendTempString(",#icon=");
+      AppendTempLiteral(vrIcon);
+
+      propagate;
+   }
+
    TryLook(what = $)
    {
       Send(what,@SendLookNews,#what=self);

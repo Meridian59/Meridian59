@@ -51,6 +51,18 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#iFlags=");
+      AppendTempLiteral(viLightFlags);
+      AppendTempString(",#iColor=");
+      AppendTempLiteral(viLightColor);
+      AppendTempString(",#bVisible=");
+      AppendTempLiteral(vrIcon = DynamicLight_visible_icon);
+
+      propagate;
+   }
+
    SetAnimationSpeed()
    {
       % Does not animate

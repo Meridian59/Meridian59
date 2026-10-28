@@ -51,6 +51,16 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#classtype=");
+      AppendTempLiteral(GetClass(poTemplate));
+      AppendTempString(",#amount=");
+      AppendTempLiteral(piAmount_left);
+
+      propagate;
+   }
+
    TryActivate(who=$)
    "Return False only if you want user.kod to send its own error message to user."
    {

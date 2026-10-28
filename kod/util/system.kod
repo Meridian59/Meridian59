@@ -6692,6 +6692,118 @@ messages:
       return;
    }
 
+   DumpPassiveObjects(rid = $)
+   "Admin supported\n"
+   "Debugs, for each room (or room <rid>), Blakod that puts its passive "
+   "objects back as they are now, between begin and end lines.  It uses "
+   "locals oRoom and oObject, looks each room up by number and makes only what "
+   "is missing (nothing of the class at exactly that spot), so it can run on a "
+   "server that has some of them, and running it twice changes nothing.  Items "
+   "on the floor are left out."
+   {
+      local oRoom, i, oObject, bHeader;
+
+      Debug("\x25 DumpPassiveObjects begin");
+      for oRoom in plRooms
+      {
+         if rid <> $ AND Send(oRoom,@GetRoomNum) <> rid
+         {
+            continue;
+         }
+
+         bHeader = FALSE;
+         for i in Send(oRoom,@GetplPassive)
+         {
+            oObject = First(i);
+            if NOT IsClass(oObject,&PassiveObject)
+            {
+               continue;
+            }
+
+            if NOT bHeader
+            {
+               ClearTempString();
+               AppendTempString("\x25 Room ");
+               AppendTempString(Send(oRoom,@GetRoomNum));
+               AppendTempString(": ");
+               AppendTempString(Send(oRoom,@GetName));
+               Debug(GetTempString());
+               ClearTempString();
+               AppendTempString("oRoom = Send(SYS,@FindRoomByNum,#num=");
+               AppendTempString(Send(oRoom,@GetRoomNum));
+               AppendTempString(");");
+               Debug(GetTempString());
+               bHeader = TRUE;
+            }
+
+            Send(self,@DumpPassiveObject,#what=oObject);
+         }
+      }
+      Debug("\x25 DumpPassiveObjects end");
+
+      return;
+   }
+
+   DumpPassiveObject(what = $)
+   "Debugs the Blakod that makes <what> in oRoom unless one of its class is "
+   "at exactly its spot."
+   {
+      if NOT Send(what,@CanDump)
+      {
+         ClearTempString();
+         AppendTempString("\x25 Not recreated: ");
+         AppendTempLiteral(GetClass(what));
+         AppendTempString(" at row ");
+         AppendTempString(Send(what,@GetRow));
+         AppendTempString(", col ");
+         AppendTempString(Send(what,@GetCol));
+         Debug(GetTempString());
+
+         return;
+      }
+
+      ClearTempString();
+      AppendTempString("if NOT Send(oRoom,@HasPassiveAt,#class=");
+      AppendTempLiteral(GetClass(what));
+      AppendTempString(",#row=");
+      AppendTempString(Send(what,@GetRow));
+      AppendTempString(",#col=");
+      AppendTempString(Send(what,@GetCol));
+      AppendTempString(",#fine_row=");
+      AppendTempString(Send(what,@GetFineRow));
+      AppendTempString(",#fine_col=");
+      AppendTempString(Send(what,@GetFineCol));
+      AppendTempString(")");
+      Debug(GetTempString());
+      Debug("{");
+
+      ClearTempString();
+      AppendTempString("   oObject = Create(");
+      AppendTempLiteral(GetClass(what));
+      Send(what,@AppendCreateSettings);
+      AppendTempString(");");
+      Debug(GetTempString());
+
+      Send(what,@DumpSetup);
+
+      ClearTempString();
+      AppendTempString("   Send(oRoom,@NewHold,#what=oObject,#new_row=");
+      AppendTempString(Send(what,@GetRow));
+      AppendTempString(",#new_col=");
+      AppendTempString(Send(what,@GetCol));
+      AppendTempString(",#fine_row=");
+      AppendTempString(Send(what,@GetFineRow));
+      AppendTempString(",#fine_col=");
+      AppendTempString(Send(what,@GetFineCol));
+      AppendTempString(",#new_angle=");
+      AppendTempString(Send(what,@GetAngle));
+      AppendTempString(");");
+      Debug(GetTempString());
+      Debug("}");
+
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

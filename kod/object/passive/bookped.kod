@@ -46,6 +46,16 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#Name=");
+      AppendTempLiteral(vrName);
+      AppendTempString(",#Text=");
+      AppendTempLiteral(prText);
+
+      propagate;
+   }
+
    SendLookAnimation()
    {
       AddPacket(1, ANIMATE_NONE, 2, 2);

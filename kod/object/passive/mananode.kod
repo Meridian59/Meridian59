@@ -89,6 +89,20 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#node_num=");
+      AppendTempLiteral(piNode_Num);
+      AppendTempString(",#name_rsc=");
+      AppendTempLiteral(vrName);
+      AppendTempString(",#desc_rsc=");
+      AppendTempLiteral(prDesc_add_on);
+      AppendTempString(",#iRoomNum=");
+      AppendTempLiteral(piRoomNum);
+
+      propagate;
+   }
+
    ShowDesc()
    {
       if prDesc_add_on <> $

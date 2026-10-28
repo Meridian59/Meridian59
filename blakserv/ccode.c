@@ -1207,6 +1207,144 @@ blak_int C_AppendTempString(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
+/*
+ * AppendQuotedToTempString:  Append text to the temp string as a Blakod string
+ *   constant: quoted, with the characters a constant can't hold escaped (and
+ *   %, which the compiler would take for a comment).
+ */
+static void AppendQuotedToTempString(const char *s, int len)
+{
+	char hex[5];
+
+	AppendTempString("\"", 1);
+	for (int i = 0; i < len; i++)
+	{
+		unsigned char ch = (unsigned char) s[i];
+		if (ch == '\r' && i + 1 < len && s[i + 1] == '\n')
+			continue;   // CR-LF is what "\n" compiles to
+		if (ch == '\n')
+			AppendTempString("\\n", 2);
+		else if (ch == '"' || ch == '\\')
+		{
+			AppendTempString("\\", 1);
+			AppendTempString(s + i, 1);
+		}
+		else if (ch < 32 || ch > 126 || ch == '%')   // % would start a comment
+		{
+			snprintf(hex, sizeof(hex), "\\x%02x", ch);
+			AppendTempString(hex, 4);
+		}
+		else
+			AppendTempString(s + i, 1);
+	}
+	AppendTempString("\"", 1);
+}
+
+/*
+ * AppendLiteralToTempString:  Append val to the temp string as the Blakod that
+ *   produces it.  Strings become string constants, which are the compiling
+ *   class's own: Blakod that keeps one in another class's object copies it
+ *   first (through the temp string).  Values with no literal (objects, timers,
+ *   ...) are written as $.  Returns false if anything was written as $ that
+ *   wasn't $.
+ */
+static bool AppendLiteralToTempString(val_type val)
+{
+	switch (val.v.tag)
+	{
+	case TAG_NIL :
+		AppendTempString("$", 1);
+		return true;
+
+	case TAG_INT :
+		AppendNumToTempString((int) val.v.data);
+		return true;
+
+	case TAG_CLASS :
+	{
+		class_node *c = GetClassByID((int) val.v.data);
+		if (c == NULL)
+			break;
+		AppendTempString("&", 1);
+		AppendTempString(c->class_name, (int) strlen(c->class_name));
+		return true;
+	}
+
+	case TAG_RESOURCE :
+	{
+		resource_node *r = GetResourceByID((int) val.v.data);
+		if (r == NULL)
+			break;
+		// A resource made at run time has no name: its text stands for it.
+		if (r->resource_name != NULL)
+			AppendTempString(r->resource_name, (int) strlen(r->resource_name));
+		else
+			AppendQuotedToTempString(r->resource_val, (int) strlen(r->resource_val));
+		return true;
+	}
+
+	case TAG_STRING :
+	{
+		string_node *snod = GetStringByID((int) val.v.data);
+		if (snod == NULL)
+			break;
+		AppendQuotedToTempString(snod->data, snod->len_data);
+		return true;
+	}
+
+	case TAG_DEBUGSTR :
+	{
+		// A string constant of the code running, as AppendTempString reads it.
+		class_node *c = GetClassByID(GetKodStats()->interpreting_class);
+		const char *str = c == NULL ? NULL : GetClassDebugStr(c, (int) val.v.data);
+		if (str == NULL)
+			break;
+		AppendQuotedToTempString(str, (int) strlen(str));
+		return true;
+	}
+
+	case TAG_LIST :
+	{
+		bool faithful = true;
+		AppendTempString("[", 1);
+		for (bool first = true; val.v.tag == TAG_LIST; first = false)
+		{
+			list_node *l = GetListNodeByID((int) val.v.data);
+			if (l == NULL)
+				return false;
+			if (!first)
+				AppendTempString(", ", 2);
+			faithful = AppendLiteralToTempString(l->first) && faithful;
+			val = l->rest;
+		}
+		AppendTempString("]", 1);
+		return faithful;
+	}
+	}
+
+	AppendTempString("$", 1);
+	return false;
+}
+
+blak_int C_AppendTempLiteral(int object_id,local_var_type *local_vars,
+					   int num_normal_parms,parm_node normal_parm_array[],
+					   int num_name_parms,parm_node name_parm_array[])
+{
+	val_type val, ret_val;
+
+	val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	if (val.v.tag == TAG_TEMP_STRING)
+	{
+		bprintf("C_AppendTempLiteral attempting to append temp string to itself!\n");
+		return NIL;
+	}
+
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = AppendLiteralToTempString(val);
+	return ret_val.int_val;
+}
+
 blak_int C_CreateString(int object_id,local_var_type *local_vars,
 				   int num_normal_parms,parm_node normal_parm_array[],
 				   int num_name_parms,parm_node name_parm_array[])

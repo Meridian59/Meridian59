@@ -34,6 +34,18 @@ messages:
 
       propagate;
    }
+
+   AppendCreateSettings()
+   {
+      AppendTempString(",#name=");
+      AppendTempLiteral(vrName);
+      AppendTempString(",#icon=");
+      AppendTempLiteral(vrIcon);
+      AppendTempString(",#desc=");
+      AppendTempLiteral(vrDesc);
+
+      propagate;
+   }
    ReqNewOwner(what = $)
    {
       return False;

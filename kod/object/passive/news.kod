@@ -79,6 +79,18 @@ messages:
       propagate;      
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#nid=");
+      AppendTempLiteral(piNews);
+      AppendTempString(",#name=");
+      AppendTempLiteral(vrName);
+      AppendTempString(",#desc=");
+      AppendTempLiteral(vrDesc);
+
+      propagate;
+   }
+
    Delete()
    "Don't do anything on delete--stay in system's list of newsgroups, so if "
    "a room is deleted and wants to recreate us, it can find us in system.\n\n"

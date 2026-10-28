@@ -723,7 +723,7 @@ properties:
 
 messages:
 
-   Constructor(type=0, rName=$, rIcon=$, rDesc=$)
+   Constructor(type=0, rName=$, rIcon=$, rDesc=$, xlat=$, group=$)
    {
       if (type = 0) AND (rName = $ OR rIcon = $ OR rDesc = $)
       {
@@ -741,6 +741,70 @@ messages:
          vrName = rName;
          vrIcon = rIcon;
          vrDesc = rDesc;
+      }
+
+      if xlat <> $
+      {
+         piXlat = xlat;
+      }
+
+      if group <> $
+      {
+         piGroup = group;
+      }
+
+      propagate;
+   }
+
+   AppendCreateSettings()
+   {
+      AppendTempString(",#rName=");
+      AppendTempLiteral(vrName);
+      AppendTempString(",#rIcon=");
+      AppendTempLiteral(vrIcon);
+      AppendTempString(",#rDesc=");
+      AppendTempLiteral(vrDesc);
+      if piXlat <> $
+      {
+         AppendTempString(",#xlat=");
+         AppendTempLiteral(piXlat);
+      }
+      if piGroup <> 1
+      {
+         AppendTempString(",#group=");
+         AppendTempLiteral(piGroup);
+      }
+
+      propagate;
+   }
+
+   DumpSetup()
+   {
+      if pbLook
+      {
+         Debug("   Send(oObject,@SetLookable,#value=TRUE);");
+      }
+      if pbHanging
+      {
+         Debug("   Send(oObject,@SetHanging,#value=TRUE);");
+      }
+      if pbNoMoveOn
+      {
+         Debug("   Send(oObject,@SetNoMoveOn,#value=TRUE);");
+      }
+      if pbFlicker
+      {
+         Debug("   Send(oObject,@SetFlickering,#value=TRUE);");
+      }
+      if psCustomDesc <> $
+      {
+         % Through the temp string, which SetCustomDesc copies: a string
+         % constant would be the pasting class's.
+         ClearTempString();
+         AppendTempString("   ClearTempString(); AppendTempString(");
+         AppendTempLiteral(psCustomDesc);
+         AppendTempString("); Send(oObject,@SetCustomDesc,#text=GetTempString());");
+         Debug(GetTempString());
       }
 
       propagate;

@@ -68,6 +68,14 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#status=");
+      AppendTempLiteral(piState);
+
+      propagate;
+   }
+
    ShowDesc()
    {
       AddPacket(4,vrDesc);

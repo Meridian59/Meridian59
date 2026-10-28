@@ -26,5 +26,29 @@ messages:
       return PASSIVE;
    }
 
+   % Blakod that recreates this object as it is now (system's DumpPassiveObjects):
+   % Create(&Class<settings>), then the statements of DumpSetup, using oObject.
+
+   CanDump()
+   "FALSE if Blakod can't recreate this object (a setting would be an object)."
+   {
+      return TRUE;
+   }
+
+   AppendCreateSettings()
+   "Appends to the temp string the Create() settings (\",#name=value\" each) "
+   "that give a new object of this class this one's state.  A class that has "
+   "some appends its own and propagates."
+   {
+      return;
+   }
+
+   DumpSetup()
+   "Debugs the Blakod statements that set up, on oObject, the state no "
+   "Create() setting gives."
+   {
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -2058,6 +2058,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case APPENDTEMPSTRING : strncpy(c_name, "AppendTempString", sizeof(c_name)); break;
 		case CLEARTEMPSTRING : strncpy(c_name, "ClearTempString", sizeof(c_name)); break;
 		case GETTEMPSTRING : strncpy(c_name, "GetTempString", sizeof(c_name)); break;
+		case APPENDTEMPLITERAL : strncpy(c_name, "AppendTempLiteral", sizeof(c_name)); break;
 		case STRINGLENGTH : strncpy(c_name, "StringLength", sizeof(c_name)); break;
 		case STRINGCONSISTSOF : strncpy(c_name, "StringConsistsOf", sizeof(c_name)); break;
 		case CREATETIMER : strncpy(c_name, "CreateTimer", sizeof(c_name)); break;

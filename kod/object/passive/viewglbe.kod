@@ -48,6 +48,20 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#target=");
+      AppendTempLiteral(poTargetGlobe);
+
+      propagate;
+   }
+
+   CanDump()
+   {
+      % Its #target is an object, which has no literal.
+      return FALSE;
+   }
+
    TryActivate(who=$)
    "Return False only if you want user.kod to send its own error message to user."
    {

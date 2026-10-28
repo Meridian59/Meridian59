@@ -50,6 +50,14 @@ messages:
       propagate;
    }
 
+   AppendCreateSettings()
+   {
+      AppendTempString(",#has_flame=");
+      AppendTempLiteral(pbIsLit);
+
+      propagate;
+   }
+
    SetAnimationSpeed()
    {
       % Set our animations a bit randomly.

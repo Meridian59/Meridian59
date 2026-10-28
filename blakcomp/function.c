@@ -82,6 +82,7 @@ function_type Functions[] = {
 {"AppendTempString",    APPENDTEMPSTRING,AEXPRESSION,   ANONE},
 {"ClearTempString",     CLEARTEMPSTRING, ANONE},
 {"GetTempString",       GETTEMPSTRING,   ANONE},
+{"AppendTempLiteral",   APPENDTEMPLITERAL, AEXPRESSION, ANONE},
 {"CreateString",        CREATESTRING,    ANONE},
 {"IsObject",            ISOBJECT,        AEXPRESSION,   ANONE},
 {"RecycleUser",         RECYCLEUSER,     AEXPRESSION,   ANONE},

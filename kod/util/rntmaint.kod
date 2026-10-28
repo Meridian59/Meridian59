@@ -21,7 +21,7 @@ constants:
 resources:
 
    RoomMaintenance_room_already = "You already have a room here."
-   RoomMaintenance_no_rental_fee = "You have no money to rent a room."
+   RoomMaintenance_no_rental_fee = "You don't have enough money to rent a room."
 
    RoomMaintenance_key_copied = "Here is a copy of your room key."
    RoomMaintenance_no_key = "Where is the key from this inn to copy?"

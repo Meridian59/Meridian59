@@ -16,6 +16,10 @@
 
 #include "drawdefs.h"    // Basic constant definitions
 
+// Forward declaration of Vector3D required for getSunVector() to
+// avoid issues with include-order in client.h
+struct Vector3D;  
+
 /* a divided by b, rounded down */
 #define DIVDOWN(a,b) (a)/(b)
 /* a divided by b, rounded up (doesn't work for b<0!!!!) */
@@ -23,8 +27,8 @@
 
 /* Given a distance x, return palette index to use.  Must have x > 0 */
 /* "v" is strength of light source at viewer; "a" strength of ambient light */
-#define LIGHT_INDEX(x, v, a) (min(MAX_LIGHT - 1, \
-				  (4*FINENESS*FINENESS) / (x) * (v) / KOD_LIGHT_LEVELS + (a)))
+#define LIGHT_INDEX(x, v, a) (std::min(MAX_LIGHT - 1, \
+				  (int)((4*FINENESS*FINENESS) / (x) * (v) / KOD_LIGHT_LEVELS + (a))))
 
 #define LIGHT_NEUTRAL 192       // Light level of sector drawn at ambient light level
 
@@ -62,6 +66,7 @@ typedef struct
    // These need to be 64 bit to avoid overflow in some multiplications
    int64 top_a, top_b, top_d;
    int64 bot_a, bot_b, bot_d;     /* see comments in drawbsp.c */
+   bool seen_translucent;         /* true if a translucent wall left this cone un-narrowed */
 } ViewCone;
 
 /* Parameters to be passed to DrawRoom3D */
@@ -114,6 +119,7 @@ int  GetFlicker(room_contents_node *obj);
 const Draw3DParams& getDrawParams();
 void setDrawParams(Draw3DParams* newDrawParams);
 
+const Vector3D& getSunVector();
 
 #endif /* #ifndef _DRAW3D_H */
 

@@ -322,13 +322,13 @@ void UserActivateMouse(void)
  */
 void UserDrop(void)
 {
-   list_type sel_list, l;
+   list_type sel_list;
    
    sel_list = DisplayLookList(hMain, GetString(hInst, IDS_DROP), 
 			      player.inventory, LD_MULTIPLESEL | LD_AMOUNTS | LD_SINGLEAUTO);
 
-   for (l = sel_list; l != NULL; l = l->next)
-      RequestDrop((object_node *) (l->data));
+   if (sel_list != NULL)
+      RequestDrop(sel_list);
 
    ObjectListDestroy(sel_list);
 }

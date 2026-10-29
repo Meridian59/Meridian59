@@ -98,15 +98,11 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 		MatrixIdentity(&mat);
 		MatrixIdentity(&rot);
 
-		const float FULL_CIRCLE_TO_DEGREES = 360.0f / 4096.0f;
-		const float DEGREES_TO_RADIANS = PI / 180.0f;
-		const float ANGLE_RANGE_TO_DEGREES = 45.0f / 414.0f;
-
 		const auto& angleHeading = bgoSceneParams.angleHeading;
 		const auto& anglePitch = bgoSceneParams.anglePitch;
 
-		MatrixRotateY(&rot, (float)angleHeading * FULL_CIRCLE_TO_DEGREES * DEGREES_TO_RADIANS);
-		MatrixRotateX(&mat, (float)anglePitch * ANGLE_RANGE_TO_DEGREES * DEGREES_TO_RADIANS);
+		MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
+		MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_PITCH_RAD);
 		MatrixTranspose(&rot, &rot);
 		MatrixTranslate(&mat, bg_overlay_pos.x, bg_overlay_pos.z, bg_overlay_pos.y);
 		MatrixMultiply(&pChunk->xForm, &rot, &mat);
@@ -226,17 +222,17 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 
 		if (
 			(
-				(D3DRENDER_CLIP(topLeft.x, 1.0f) &&
-					D3DRENDER_CLIP(topLeft.y, 1.0f)) ||
-				(D3DRENDER_CLIP(bottomLeft.x, 1.0f) &&
-					D3DRENDER_CLIP(bottomLeft.y, 1.0f)) ||
-				(D3DRENDER_CLIP(topRight.x, 1.0f) &&
-					D3DRENDER_CLIP(topRight.y, 1.0f)) ||
-				(D3DRENDER_CLIP(bottomRight.x, 1.0f) &&
-					D3DRENDER_CLIP(bottomRight.y, 1.0f)) ||
-				(D3DRENDER_CLIP(center.x, 1.0f))
+				(D3DRender_InBounds(topLeft.x, 1.0f) &&
+					D3DRender_InBounds(topLeft.y, 1.0f)) ||
+				(D3DRender_InBounds(bottomLeft.x, 1.0f) &&
+					D3DRender_InBounds(bottomLeft.y, 1.0f)) ||
+				(D3DRender_InBounds(topRight.x, 1.0f) &&
+					D3DRender_InBounds(topRight.y, 1.0f)) ||
+				(D3DRender_InBounds(bottomRight.x, 1.0f) &&
+					D3DRender_InBounds(bottomRight.y, 1.0f)) ||
+				(D3DRender_InBounds(center.x, 1.0f))
 				) &&
-			D3DRENDER_CLIP(topLeft.z, 1.0f))
+			D3DRender_InBounds(topLeft.z, 1.0f))
 		{
 
 			int tempLeft = (topLeft.x * w / 2) + (w / 2);
@@ -261,7 +257,7 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 				range->top_row = tempTop;
 				range->bottom_row = tempBottom;
 
-				*bgoSceneParams.numVisibleObjects = min(*bgoSceneParams.numVisibleObjects + 1, MAXOBJECTS);
+				*bgoSceneParams.numVisibleObjects = std::min(*bgoSceneParams.numVisibleObjects + 1, MAXOBJECTS);
 			}
 
 			overlay->rcScreen.left = tempLeft;
@@ -273,10 +269,10 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 			overlay->drawn = TRUE;
 
 			// Record boundaries of drawing area.
-			range->left_col = min(range->left_col, tempLeft);
-			range->right_col = max(range->right_col, tempRight);
-			range->top_row = min(range->top_row, tempTop);
-			range->bottom_row = max(range->bottom_row, tempBottom);
+			range->left_col = std::min(range->left_col, (long)tempLeft);
+			range->right_col = std::max(range->right_col, (long)tempRight);
+			range->top_row = std::min(range->top_row, (long)tempTop);
+			range->bottom_row = std::max(range->bottom_row, (long)tempBottom);
 		}
 
 	}

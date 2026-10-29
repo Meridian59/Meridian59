@@ -25,7 +25,7 @@ void InventoryBoxResize(int xsize, int ysize, AREA *view);
 void InventoryRedraw(void);
 bool InventoryDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis);
 void InventoryResetFont(void);
-void InventoryChangeColor(void);
+void InventoryChangeColor(WORD color_id);
 void InventorySetFocus(bool forward);
 void InventoryChangeItem(object_node *obj);
 void InventorySelChange(void);
@@ -44,6 +44,7 @@ void AnimateInventory(int dt);
 
 void ShowInventory(bool bShow);
 HWND GetHwndInv();
+HWND GetHwndInvDialog();
 RawBitmap* pinventory_bkgnd();
 
 #endif /* #ifndef _INVENTRY_H */

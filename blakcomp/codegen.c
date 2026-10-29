@@ -727,8 +727,10 @@ void codegen_message(message_handler_type m)
       for ( ; p != NULL; p = p->next)
 	 codegen_parameter( (param_type) p->data);
 
-   /* # of local variables, including parameters.  -1 is to start at 0. */
-   numlocals = list_length(m->locals) + list_length(m->header->params) - 1;
+   /* Highest # local variable, including parameters; -1 if none.  Block-scoped
+    * locals reuse #s, so this is the peak computed by the parser rather than
+    * a count of declarations. */
+   numlocals = m->maxlocal;
    maxlocals = numlocals;
 
    /* Write out code */
@@ -853,8 +855,9 @@ void codegen_class(class_type c)
 /************************************************************************/
 /* 
  * codegen: Generate code for all the classes in the symbol table.
+ *   Returns true iff the .bof file was written successfully.
  */
-void codegen(char *kod_fname, char *bof_fname)
+bool codegen(char *kod_fname, char *bof_fname)
 {
    list_type c = NULL;
    long endpos, stringpos, debugpos, namepos;
@@ -867,7 +870,7 @@ void codegen(char *kod_fname, char *bof_fname)
    if (outfile == nullptr)
    {
       simple_error("Unable to open bof file %s!", bof_fname);
-      return;
+      return false;
    }
 
    /* Write out header info */
@@ -927,16 +930,18 @@ void codegen(char *kod_fname, char *bof_fname)
       else simple_warning("Deleted file %s", bof_fname);
    }
 
-   /* Write out resources & new database if we compiled ok */
+   /* Write out resources if we compiled ok.  The database itself is saved
+    * once by main() after all source files have been compiled. */
    if (codegen_ok)
    {
       char temp[256];
       set_extension(temp, sizeof(temp), bof_fname, ".rsc");
       write_resources(temp);
-      save_kodbase();
    }
 
    /* Mark all classes as done */
    for (c = st.classes; c != NULL; c = c->next)
       ((class_type) (c->data))->is_new = false;
+
+   return codegen_ok;
 }

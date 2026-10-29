@@ -1919,14 +1919,44 @@ messages:
       return;
    }
 
-   FindBadItemFlags() 
+   FindBadItemFlags()
    "Print object ID if item is in an illegal state"
    {
-      if piItem_flags = $ 
+      if piItem_flags = $
       {
          debug("Item", self, "has $ piItem_flags");
       }
       return;
+   }
+
+   % Returns TRUE if this item produces a flickering light effect (e.g. a lit
+   % torch). Used by the client to animate the player's light contribution.
+   IsFlickering()
+   {
+      return FALSE;
+   }
+
+   % Returns TRUE if this item emits a steady glow (e.g. a magical weapon).
+   % Used by the client to apply a constant light around the holder.
+   IsGlowing()
+   {
+      return FALSE;
+   }
+
+   % Returns the color of light this item emits as a 16-bit packed RGB value
+   % in XRRRRRGGGGGBBBBB format: bit 15 = negative light flag, bits 14-10 = red (0-31),
+   % bits 9-5 = green (0-31), bits 4-0 = blue (0-31).
+   % 0 means default/white light. Subclasses override to tint the glow.
+   GetLightColor()
+   {
+      return 0;
+   }
+
+   % Returns the intensity of light this item emits (0 = none, max 255).
+   % Higher values produce a brighter and farther-reaching glow. Typical values are 4-10.
+   GetLightIntensity()
+   {
+      return 0;
    }
 
 end

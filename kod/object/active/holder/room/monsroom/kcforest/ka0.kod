@@ -89,7 +89,7 @@ messages:
                        &ForgetPotion,
                        &JewelofFroz,
                        &Gauntlet,
-                       &Helm,
+                       &SimpleHelm,
                        &IvyCirclet,
                        &OrcShield,
                        &ChickenSoup,

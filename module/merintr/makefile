@@ -35,6 +35,7 @@ $(OUTDIR)\merintr.dll: \
       $(OUTDIR)\drawint.obj \
       $(OUTDIR)\groupdlg.obj \
       $(OUTDIR)\skills.obj \
+      $(OUTDIR)\theme.obj \
       $(OUTDIR)\merintr.res
 
 !include $(TOPDIR)\rules.mak

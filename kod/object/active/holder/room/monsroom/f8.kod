@@ -126,7 +126,7 @@ messages:
       if (pbPasswordDoorUnlocked OR (send(oGuildHall,@GetGuildOwner) = $))
          AND (row=26) AND (col=50)
       {
-         Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+         Send(what,@WaveSendUser,#wave_rsc=vrDoor_open_sound);
          Send(SYS,@UtilGoNearSquare,#what=what,
                #where=Send(SYS,@FindRoomByNum,#num=RID_GUILDH3),#new_row=25,#new_col=2);
 

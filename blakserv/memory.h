@@ -43,7 +43,7 @@ const char * GetMemoryStatName(int malloc_id);
 void * AllocateMemoryDebug(int malloc_id,size_t size,const char *filename,int linenumber);
 void FreeMemoryX(int malloc_id,void **ptr,size_t size);
 void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size);
-
+void AddMemoryCount(int malloc_id, int64_t size);
 
 /* i want to be able to affect the passed ptr */
 #define FreeMemory(m_id,ptr,size) FreeMemoryX(m_id,(void **) &ptr,size)

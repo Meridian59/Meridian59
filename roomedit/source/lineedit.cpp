@@ -38,6 +38,7 @@
 #include <owl\listbox.h>
 #endif
 
+
 #ifndef __OWL_EDIT_H
 #include <owl\edit.h>
 #endif
@@ -333,9 +334,6 @@ TDialog(parent, resId, module)
    CurLineDef = LineDefs[Selected->objnum];
    memset(&ConfirmData, 0, sizeof(ConfirmData));
    
-   // Crete object for texture view, but do not create dialog box.
-   pWTextureDialog = NULL;
-   
    pPassPosCheck      = newTCheckBox(this, IDC_PASSPOS, 0);
    pPassNegCheck      = newTCheckBox(this, IDC_PASSNEG, 0);
    pTransPosCheck     = newTCheckBox(this, IDC_TRANSPOS, 0);
@@ -423,6 +421,9 @@ TDialog(parent, resId, module)
    pScrollSlowRadio[1]  = newTRadioButton(this, IDC_SCROLLSLOW2);
    pScrollMediumRadio[1]  = newTRadioButton(this, IDC_SCROLLMEDIUM2);
    pScrollFastRadio[1]  = newTRadioButton(this, IDC_SCROLLFAST2);
+
+   pTranslucencyPos = newTComboBox(this, IDC_POS_TRANSLUCENCY);
+   pTranslucencyNeg = newTComboBox(this, IDC_NEG_TRANSLUCENCY);
 }
 
 
@@ -433,7 +434,6 @@ TDialog(parent, resId, module)
 TLineDefEditDialog::~TLineDefEditDialog ()
 {
    Destroy();
-   delete pWTextureDialog;
 }
 
 
@@ -445,7 +445,15 @@ void TLineDefEditDialog::SetupWindow ()
 {
    TDialog::SetupWindow();
    ::CenterWindow (this);
-   
+
+   // Populate translucency dropdowns
+   const char *transLabels[] = { "None", "75% transparent", "50% transparent", "25% transparent" };
+   for (int ti = 0; ti < 4; ti++)
+   {
+      pTranslucencyPos->AddString(transLabels[ti]);
+      pTranslucencyNeg->AddString(transLabels[ti]);
+   }
+
 //   InitLineDefSet();
 //   SetLineDefList();
    SetTextureList();
@@ -710,7 +718,13 @@ void TLineDefEditDialog::CmOk ()
 	       }
 
 	       pSelLineDef->blak_flags = lflags;
-	    }
+
+          if (ConfirmData.pTranslucencyPosCheck)
+             pSelLineDef->translucency_pos = CurLineDef.translucency_pos;
+
+          if (ConfirmData.pTranslucencyNegCheck)
+             pSelLineDef->translucency_neg = CurLineDef.translucency_neg;
+       }
 	    
 	    // Did we made changes?
 	    if ( memcmp (pSelLineDef, &LineDefBefore, sizeof (CurLineDef)) != 0 )
@@ -832,6 +846,24 @@ void TLineDefEditDialog::GetLineDef ()
       flags |= SCROLL_FAST << 25;
 
    CurLineDef.blak_flags = flags;
+
+   // Read translucency dropdowns
+   int tpos = pTranslucencyPos->GetSelIndex();
+   int tneg = pTranslucencyNeg->GetSelIndex();
+   BYTE new_tpos = (BYTE) (tpos >= 0 ? tpos : 0);
+   BYTE new_tneg = (BYTE) (tneg >= 0 ? tneg : 0);
+   if (CurLineDef.translucency_pos != new_tpos)
+   {
+      ConfirmData.pFlagsCheck = TRUE;
+      ConfirmData.pTranslucencyPosCheck = TRUE;
+   }
+   if (CurLineDef.translucency_neg != new_tneg)
+   {
+      ConfirmData.pFlagsCheck = TRUE;
+      ConfirmData.pTranslucencyNegCheck = TRUE;
+   }
+   CurLineDef.translucency_pos = new_tpos;
+   CurLineDef.translucency_neg = new_tneg;
 }
 
 
@@ -1122,6 +1154,28 @@ void TLineDefEditDialog::SetLineDef ()
    wsprintf (str, "%d", CurLineDef.end);
    pVertex2Edit->SetText (str);
 
+   // Disable transparency if attached to a sloped sector
+   BOOL bSloped = FALSE;
+   if (CurLineDef.sidedef1 != -1)
+   {
+      SHORT s1 = SideDefs[CurLineDef.sidedef1].sector;
+      if (s1 != -1 && (Sectors[s1].blak_flags & (SF_SLOPED_FLOOR | SF_SLOPED_CEILING)))
+         bSloped = TRUE;
+   }
+   if (!bSloped && CurLineDef.sidedef2 != -1)
+   {
+      SHORT s2 = SideDefs[CurLineDef.sidedef2].sector;
+      if (s2 != -1 && (Sectors[s2].blak_flags & (SF_SLOPED_FLOOR | SF_SLOPED_CEILING)))
+         bSloped = TRUE;
+   }
+
+   if (bSloped)
+   {
+      CurLineDef.translucency_pos = 0;
+      CurLineDef.translucency_neg = 0;
+      CurLineDef.blak_flags &= ~(BF_POS_TRANSPARENT | BF_NEG_TRANSPARENT);
+   }
+
    // Setup flags checkboxes
    int flags = CurLineDef.blak_flags;
    pPassPosCheck->SetCheck   (flags & BF_POS_PASSABLE ? BF_CHECKED : BF_UNCHECKED);
@@ -1144,6 +1198,18 @@ void TLineDefEditDialog::SetLineDef ()
    pNegNoVTile->SetCheck    (flags & BF_NEG_NO_VTILE ? BF_CHECKED : BF_UNCHECKED);
    pPosNoHTile->SetCheck    (flags & BF_POS_NO_HTILE ? BF_CHECKED : BF_UNCHECKED);
    pNegNoHTile->SetCheck    (flags & BF_NEG_NO_HTILE ? BF_CHECKED : BF_UNCHECKED);
+
+   // Set translucency dropdowns (clamp to 0-3 for safety)
+   int tpos = CurLineDef.translucency_pos;
+   int tneg = CurLineDef.translucency_neg;
+   pTranslucencyPos->SetSelIndex(tpos >= 0 && tpos <= 3 ? tpos : 0);
+   pTranslucencyNeg->SetSelIndex(tneg >= 0 && tneg <= 3 ? tneg : 0);
+
+   // Disable transparency options if attached to a sloped sector
+   pTransPosCheck->EnableWindow(!bSloped);
+   pTransNegCheck->EnableWindow(!bSloped);
+   pTranslucencyPos->EnableWindow(!bSloped);
+   pTranslucencyNeg->EnableWindow(!bSloped);
 
    switch (WallScrollPosDirection(flags))
    {
@@ -1750,10 +1816,8 @@ void TLineDefEditDialog::TextureSelchange ()
    strcpy (TextureName, texname);
    
    // If texture view dialog box opened, change selection
-   if ( pWTextureDialog != NULL && pWTextureDialog->IsWindow() )
-   {
+   if (IsTexturePreviewOpen ())
       TextureListDBLClick();
-   }
 }
 
 
@@ -1766,25 +1830,8 @@ void TLineDefEditDialog::TextureListDBLClick ()
    // Don't select empty texture !
    if ( TextureName[0] == '\0' || strcmp (TextureName, "-") == 0 )
       return;
-   
-   // Create modeless dialog box
-   if ( pWTextureDialog == NULL || pWTextureDialog->IsWindow() == FALSE )
-   {
-      delete pWTextureDialog;
-      pWTextureDialog = new TDisplayWallTextureDialog (Parent);
-      pWTextureDialog->Create();
-   }
-   
-   if ( pWTextureDialog->IsWindow() )
-   {
-      TextureInfo *info = FindTextureByName(TextureName);
 
-      if ( pWTextureDialog->SelectBitmap2 (info->filename) < 0 )
-	 Notify ("Error: Cannot select the texture name \"%s\" in the "
-		 "dialog box of Wall Texture view ! (BUG)", TextureName);
-   }
-   else
-      Notify ("Error: Cannot create dialog box of Wall Texture view !");
+   ShowTexturePreview (Parent, TextureName, TRUE);
 }
 
 

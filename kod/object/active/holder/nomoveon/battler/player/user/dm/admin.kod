@@ -31,21 +31,6 @@ resources:
 
    admin_currently_in = "The ROO for `b%s`n is `k`B%s`n."
 
-   admin_create_itematt_command = "create item attribute"
-   admin_create_unrevealed_itematt_command = "create unrevealed itematt"
-   admin_anonymous_command = "anonymous"
-   admin_shadow_command = "shadow"
-   admin_relic_command = "relic"
-   admin_start_tour_command = "start tour"
-   admin_end_tour_command = "end tour"
-   admin_mortal_command = "mortal"
-   admin_immortal_command = "immortal"
-   admin_create_dynamic_light_command = "place dynamic light"
-   admin_create_ornamental_object = "place ornament"
-   admin_logoffghost_on_command = "logoffghost on"
-   admin_logoffghost_off_command = "logoffghost off"
-   admin_logoffghost_temp_off_command = "logoffghost temp off"
-
    admin_no_longer = "This command no longer exists; try the DM command form."
 
    % not for admin use, but to let creator work
@@ -60,6 +45,10 @@ resources:
    admin_gone_mortal = "%s appears more vulnerable."
    admin_gone_immortal = "%s appears less vulnerable."
 
+   admin_placed_all_monsters = "Placed %i of each monster type (%i monsters)."
+   admin_placed_translucent_monsters = \
+      "Placed %i of each translucent and stone monster type (%i monsters)."
+
    admin_logoffghost_on = "Logoff penalties are now active."
    admin_logoffghost_off = "Logoff penalties are now inactive."
    admin_logoffghost_temp_off = "Logoff penalties are now temporarily inactive."
@@ -68,6 +57,8 @@ classvars:
 
 
 properties:
+
+   plPlaceableTypes = $
 
    pbCapableAdmin = TRUE
    pbSay_commands = TRUE
@@ -80,6 +71,27 @@ properties:
    piTour_count
 
 messages:
+
+   InitPlaceableTypes()
+   "Builds the placeable types list. If entries are added or removed, "
+   "use PostPatch to nil plPlaceableTypes."
+   {
+      plPlaceableTypes = [ ["place table lamp",      &TableLamp],
+                           ["place kocatan lamp",    &KocatanLamp],
+                           ["place lamp",            &Lamp],
+                           ["place brazier switch",  &BrazierSwitch],
+                           ["place skull brazier",   &SkullBrazier],
+                           ["place kocatan brazier", &KocatanBrazier],
+                           ["place brazier",         &Brazier],
+                           ["place candelabra",      &Candelabra],
+                           ["place candle",          &Candle],
+                           ["place firepit",         &Firepit],
+                           ["place smoke column",    &SmokeColumn],
+                           ["place orc torch",       &OrcTorch],
+                           ["place glow tree",       &GlowTree] ];
+
+      return;
+   }
 
    UserLogonHook()
    {
@@ -139,7 +151,12 @@ messages:
 
    UserSay(string = $,type = $)
    {
-      local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute;
+      local oWeapon, i, oObject, lItemAttributes, lAttribute, bShouldRevealAttribute,
+            lEntry;
+
+      % Admin mode commands use only string literals, not resources,
+      % to ensure the English command always works regardless of any
+      % resource localization.
 
       % Everything below this point involves checks for commands issued through the SAY_DM
       % (dm <command here>) channel.
@@ -148,13 +165,12 @@ messages:
          propagate;
       }
 
-      bShouldRevealAttribute = NOT StringContain(string, admin_create_unrevealed_itematt_command);
+      bShouldRevealAttribute = NOT StringContain(string, "create unrevealed itematt");
       
       % if bShouldRevealAttribute ends up FALSE, we've already passed the 
       % dialog check for an attempt to create an item attribute.  Otherwise,
       % check the dialog for the standard item attribute creation strings 
       if (NOT bShouldRevealAttribute
-         OR StringContain(string,admin_create_itematt_command)
          OR StringContain(string,"create itematt"))
       {
          %% Only works on weapons for now.
@@ -208,8 +224,7 @@ messages:
          return;
       }
 
-      if (StringContain(string,admin_relic_command)
-          OR StringContain(string,"relic"))
+      if (StringContain(string,"relic"))
       {
          if (StringContain(string,"1") OR StringContain(string,"heirloom"))
          {
@@ -247,8 +262,7 @@ messages:
          }
       }
 
-      if StringEqual(string,admin_anonymous_command)
-         OR StringEqual(string,"anonymous")
+      if StringEqual(string,"anonymous")
       {
          if NOT (piFlags & PFLAG_ANONYMOUS)
          {
@@ -280,8 +294,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,admin_shadow_command)
-         OR StringEqual(string,"shadow")
+      if StringEqual(string,"shadow")
       {
          Send(self,@MsgSendUser,#message_rsc=admin_black);
          Send(self,@SetPlayerDrawfx,#drawfx=DRAWFX_BLACK);
@@ -292,24 +305,21 @@ messages:
       }
 
 
-      if StringEqual(string,admin_start_tour_command)
-         OR StringEqual(string,"start tour")
+      if StringEqual(string,"start tour")
       {
          Send(self,@StartTour);
 
          return;
       }
 
-      if StringEqual(string,admin_end_tour_command)
-         OR StringEqual(string,"end tour")
+      if StringEqual(string,"end tour")
       {
          Send(self,@EndTour);
 
          return;
       }
 
-      if StringEqual(string,admin_mortal_command)
-         or StringEqual(string,"mortal")
+      if StringEqual(string,"mortal")
       {
          pbImmortal = FALSE;
 
@@ -328,8 +338,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,admin_immortal_command)
-         OR StringEqual(string,"immortal")
+      if StringEqual(string,"immortal")
       {
          pbImmortal = pbImmortalSave;
 
@@ -356,8 +365,24 @@ messages:
          return;
       }
 
+      % Handled here rather than propagating, since the DM monster-by-name
+      % command matches any string containing "monster".
+      if StringEqual(string,"place all monsters")
+      {
+         Send(self,@PlaceAllMonsters);
+
+         return;
+      }
+
+      if StringEqual(string,"place translucent monsters")
+      {
+         Send(self,@PlaceTranslucentMonsters);
+
+         return;
+      }
+
       %%% Code for placing an ornamental object
-      if StringContain(string, admin_create_ornamental_object)
+      if StringContain(string,"place ornament")
       {
          oObject = Create(&OrnamentalObject, #type=OO_DUNG);
          Send(oObject, @PlaceAt, #what=self);
@@ -367,8 +392,7 @@ messages:
 
       %%% Code for placing light items.
 
-      if StringEqual(string,admin_create_dynamic_light_command)
-         OR StringEqual(string,"place dynamic light")
+      if StringEqual(string,"place dynamic light")
       {
          oObject = create(&DynamicLight,#bVisible=TRUE);
 
@@ -380,58 +404,23 @@ messages:
          return;
       }
 
-      if StringContain(string,"place lamp")
+      %%% Data-driven placement of objects by class.
+      if plPlaceableTypes = $
       {
-         oObject = create(&Lamp);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
+         Send(self,@InitPlaceableTypes);
       }
 
-      if StringContain(string,"place brazier")
+      for lEntry in plPlaceableTypes
       {
-         oObject = create(&Brazier);
+         if StringEqual(string, First(lEntry))
+         {
+            Send(self, @AdminPlaceObject, #class=Nth(lEntry, 2));
 
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
+            return;
+         }
       }
 
-      if StringContain(string,"place candelabra")
-      {
-         oObject = create(&Candelabra);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringContain(string,"place candle")
-      {
-         oObject = create(&Candle);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringContain(string,"place firepit")
-      {
-         oObject = create(&Firepit);
-
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringEqual(string,admin_logoffghost_on_command)
-         OR StringEqual(string,"logoffghost on")
+      if StringEqual(string,"logoffghost on")
       {
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_on);
          Send(SYS,@SetLogoffPenaltyEnable,#enable=TRUE);
@@ -439,8 +428,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,admin_logoffghost_off_command)
-         OR StringEqual(string,"logoffghost off")
+      if StringEqual(string,"logoffghost off")
       {
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_off);
          Send(SYS,@SetLogoffPenaltyEnable,#enable=FALSE);
@@ -448,8 +436,7 @@ messages:
          return;
       }
 
-      if StringEqual(string,admin_logoffghost_temp_off_command)
-         OR StringEqual(string,"logoffghost temp off")
+      if StringEqual(string,"logoffghost temp off")
       {
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_temp_off);
          Send(SYS,@TempDisableLogoffPenalties);         
@@ -540,6 +527,95 @@ messages:
       }
 
       propagate;
+   }
+
+   AdminPlaceObject(class=$)
+   "Creates an object of the given class at the admin's position."
+   {
+      local oObject;
+
+      oObject = Create(class);
+      Send(poOwner, @NewHold, #what=oObject,
+           #new_row=Send(self, @GetRow),
+           #new_col=Send(self, @GetCol),
+           #fine_row=Send(self, @GetFineRow),
+           #fine_col=Send(self, @GetFineCol));
+
+      return;
+   }
+
+   PlaceMonsterCopies(oTemplate = $,iEachCount = 1)
+   "Creates iEachCount monsters of oTemplate's class at the admin's position. "
+   "Returns the number of monsters created."
+   {
+      local iCopy;
+
+      if NOT Send(oTemplate,@DMCanPlace)
+      {
+         return 0;
+      }
+
+      iCopy = 0;
+      while iCopy < iEachCount
+      {
+         Send(self,@AdminPlaceObject,#class=GetClass(oTemplate));
+         iCopy = iCopy + 1;
+      }
+
+      return iEachCount;
+   }
+
+   PlaceAllMonsters(iEachCount = 1)
+   "Creates iEachCount of every monster template at the admin's position, "
+   "for testing. They are cleaned up like any other monster when the room "
+   "empties. Change the default here to spawn a bigger crowd, but note that "
+   "a few hundred of them in one room will bog that room down."
+   {
+      local i, iSpawned;
+
+      iSpawned = 0;
+
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         iSpawned = iSpawned + Send(self,@PlaceMonsterCopies,#oTemplate=i,
+                                    #iEachCount=iEachCount);
+      }
+
+      Send(self,@MsgSendUser,#message_rsc=admin_placed_all_monsters,
+           #parm1=iEachCount,#parm2=iSpawned);
+
+      return;
+   }
+
+   PlaceTranslucentMonsters(iEachCount = 1)
+   "Creates iEachCount of every monster template drawn with a translucency or "
+   "second-translation (stone) effect, for eyeballing those blend modes side "
+   "by side. Same crowding caveat as PlaceAllMonsters."
+   {
+      local i, iSpawned, lBlendedEffects;
+
+      % Monsters are opaque unless they carry one of these draw effects, so
+      % this list decides what counts as translucent. DRAWFX_BLACK and
+      % DRAWFX_INVISIBLE are deliberately absent: neither blends.
+      lBlendedEffects = [ DRAWFX_TRANSLUCENT_25, DRAWFX_TRANSLUCENT_50,
+                          DRAWFX_TRANSLUCENT_75, DRAWFX_DITHERTRANS,
+                          DRAWFX_DOUBLETRANS, DRAWFX_SECONDTRANS ];
+
+      iSpawned = 0;
+
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         if FindListElem(lBlendedEffects,Send(i,@GetDrawFX)) <> 0
+         {
+            iSpawned = iSpawned + Send(self,@PlaceMonsterCopies,#oTemplate=i,
+                                       #iEachCount=iEachCount);
+         }
+      }
+
+      Send(self,@MsgSendUser,#message_rsc=admin_placed_translucent_monsters,
+           #parm1=iEachCount,#parm2=iSpawned);
+
+      return;
    }
 
    %%% Investigator stuff

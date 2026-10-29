@@ -18,6 +18,7 @@ void DrawBitmapClose(void);
 M59EXPORT void DrawStretchedObjectDefault(HDC hdc, object_node *obj, AREA *area, HBRUSH brush);
 M59EXPORT void DrawStretchedOverlays(HDC hdc, object_node *obj, AREA *area, HBRUSH brush);
 M59EXPORT void DrawStretchedObjectGroup(HDC hdc, object_node *obj, int group, AREA *area, HBRUSH brush);
+M59EXPORT void DrawStretchedObjectGroupTransparent(HDC hdc, object_node *obj, int group, AREA *area, HBRUSH brush);
 M59EXPORT void DrawStretchedOverlayRange(HDC hdc, object_node *obj, AREA *area, HBRUSH brush, 
 					int low, int high);
 

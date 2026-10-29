@@ -28,9 +28,19 @@ list_type current_users = NULL;
 */
 void SetCurrentUsers(list_type users)
 {
-	/* Destroy old list, and if dialog is up, reset user list box */
+	/* If the Who dialog is open, repopulate it from the new list before freeing the old one. */
+	ResetWhoList(users);
 	ObjectListDestroy(current_users);
 	current_users = users;
+}
+/*****************************************************************************/
+/*
+* CurrentUser:  Return the logged on user with that id, or NULL if none.
+*/
+object_node *CurrentUser(ID user_id)
+{
+	return (object_node *) list_find_item(current_users, (void *) user_id,
+		CompareIdObject);
 }
 /*****************************************************************************/
 /*

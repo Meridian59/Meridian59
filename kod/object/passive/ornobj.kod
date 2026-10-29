@@ -611,7 +611,7 @@ resources:
 
    oo_modpotion_name = "model potion"
    oo_modpotion_icon = potion01.bgf
-   oo_modpotion_desc = "A plaque below the model reads:\nMystical elixers are common in Meridian."
+   oo_modpotion_desc = "A plaque below the model reads:\nMystical elixirs are common in Meridian."
    oo_modscroll_name = "model scroll"
    oo_modscroll_icon = scr01.bgf
    oo_modscroll_desc = "A plaque below the model reads:\nLetters, scrolls and recipes are often the objects of quests!"

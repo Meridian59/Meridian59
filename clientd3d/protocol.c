@@ -38,7 +38,7 @@ static client_message game_msg_table[] = {
 { BP_REQ_GET_FROM_CONTAINER,   { PARAM_OBJECT, PARAM_END }, },
 { BP_REQ_INVENTORY,        { PARAM_END }, },
 { BP_REQ_INVENTORY_MOVE,   { PARAM_WORD, PARAM_WORD, PARAM_END }, },
-{ BP_REQ_DROP,             { PARAM_OBJECT, PARAM_END }, },
+{ BP_REQ_DROP,             { PARAM_OBJECT_LIST, PARAM_END }, },
 { BP_REQ_PUT,              { PARAM_OBJECT, PARAM_ID, PARAM_END }, },
 { BP_SAY_TO,               { PARAM_SAY_INFO, PARAM_STRING, PARAM_END }, },
 { BP_SAY_GROUP,            { PARAM_ID_LIST, PARAM_STRING, PARAM_END }, },

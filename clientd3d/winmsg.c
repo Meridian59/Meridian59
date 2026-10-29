@@ -148,6 +148,7 @@ void MainQuit(HWND hwnd)
 	
 	MainExitState();
 	
+	MenuBarShutdown();
 	FontsDestroy();
 	ColorsDestroy();
 	MusicClose();

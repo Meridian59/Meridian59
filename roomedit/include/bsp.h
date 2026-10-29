@@ -61,6 +61,11 @@
 #define WF_HAS_ANIMATED   0x00000400      // Has animated once and hence is dynamic geometry, required for new client
 #define WF_NO_HTILE       0x00020000      // Don't tile texture horizontally (must be transparent)
 
+// Translucency level (alpha-blend transparency, 2 bits in bits 15-16)
+// 0 = opaque, 1 = 25% visible, 2 = 50% visible, 3 = 75% visible
+#define WF_TRANSLUCENCY_MASK  0x00018000
+static BYTE WallTranslucencyLevel(DWORD flags) { return (BYTE)((flags & WF_TRANSLUCENCY_MASK) >> 15); }
+
 // Texture scrolling constants
 #define SCROLL_NONE    0x00000000      // No texture scrolling   
 #define SCROLL_SLOW    0x00000001      // Slow speed texture scrolling   

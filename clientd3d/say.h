@@ -13,6 +13,7 @@
 #define _SAY_H
 
 void SetCurrentUsers(list_type users);
+object_node *CurrentUser(ID user_id);
 void AddCurrentUser(object_node *user);
 void RemoveCurrentUser(ID user_id);
 void FreeCurrentUsers(void);

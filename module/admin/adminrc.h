@@ -61,6 +61,7 @@
 #define IDC_FINECOLEDIT                 1046
 #define IDC_TELEPORT                    1047
 #define IDC_INVALIDATE                  1058
+#define IDC_SORTPROPS                   1059
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -69,7 +70,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        105
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1059
+#define _APS_NEXT_CONTROL_VALUE         1060
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

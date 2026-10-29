@@ -56,7 +56,7 @@ static int _nVerbAliases = 0;
 static int _nAllocated = 0;
 #define CHUNKSIZE 10
 
-static const char* _szDefaultVerbAliases =
+static const char _szDefaultVerbAliases[] =
    "chuckle=emote chuckles.\0"
    "giggle=emote giggles.\0"
    "hail=tellguild Hail Guildmembers!\0"
@@ -187,7 +187,8 @@ void CmdAliasInit(void)
     {
       if (pSection)
         SafeFree(pSection);
-      pSection = strdup(_szDefaultVerbAliases);
+      pSection = (char *) SafeMalloc(sizeof(_szDefaultVerbAliases));
+      memcpy(pSection, _szDefaultVerbAliases, sizeof(_szDefaultVerbAliases));
     }
 
     char *pVerb = pSection;

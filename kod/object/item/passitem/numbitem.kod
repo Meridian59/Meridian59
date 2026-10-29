@@ -93,41 +93,42 @@ messages:
       return viBulk * piNumber;
    }
 
+   GetNumberCanHoldWeight(weight = 0)
+   {
+      if viWeight = 0
+      {
+         return INFINITE_COUNT;
+      }
+
+      if viWeight > 0
+      {
+         return weight / viWeight;
+      }
+
+      return weight * 100 / (-viWeight);
+   }
+
+   GetNumberCanHoldBulk(bulk = 0)
+   {
+      if viBulk = 0
+      {
+         return INFINITE_COUNT;
+      }
+
+      if viBulk > 0
+      {
+         return bulk / viBulk;
+      }
+
+      return bulk * 100 / (-viBulk);
+   }
+
    GetNumberCanHold(what = $, weight = 0, bulk = 0)
    {
       local iBulk_can_hold, iWeight_can_hold;
 
-      if viBulk = 0
-      {
-         iBulk_can_hold = INFINITE_COUNT;
-      }
-      else
-      {
-         if viBulk > 0
-         {
-            iBulk_can_hold = bulk / viBulk;
-         }
-         else
-         {
-            iBulk_can_hold = bulk * 100 / (-viBulk);
-         }
-      }
-
-      if viWeight = 0
-      {
-         iWeight_can_hold = INFINITE_COUNT;
-      }
-      else
-      {
-         if viWeight > 0
-         {
-            iWeight_can_hold = weight / viWeight;
-         }
-         else
-         {
-            iWeight_can_hold = weight * 100 / (-viWeight);
-         }
-      }
+      iBulk_can_hold = Send(self,@GetNumberCanHoldBulk,#bulk=bulk);
+      iWeight_can_hold = Send(self,@GetNumberCanHoldWeight,#weight=weight);
 
       if iBulk_can_hold = INFINITE_COUNT
       {

@@ -42,6 +42,7 @@ void GameTryGetUser(session_node *s);
 void GameSendEachUserChoice(user_node *u);
 void GameSendSystemEnter(session_node *s);
 void GameDMCommand(session_node *s,int type,char *str);
+bool GameDMParseObjectID(const char *str,int *object_id);
 
 static char* _redbookstring = NULL;
 static int _redbookid = 0;
@@ -99,7 +100,7 @@ void GameProcessSessionTimer(session_node *s)
    if (GetTime() - s->game->game_last_message_time > ConfigInt(INACTIVE_GAME))
    {
       lprintf("GameProcessSessionTimer logging out ACCOUNT %i (%s) which hasn't been heard from.\n",
-	 s->account->account_id, s->account->name);
+              s->account->account_id, s->account->name.c_str());
       HangupSession(s);
       return;
    }
@@ -406,7 +407,6 @@ void GameProtocolParse(session_node *s,client_msg *msg)
 {
    user_node *u;
    int object_id;
-   char *ptr;
 
    char password[MAX_LOGIN_PASSWORD+1],new_password[MAX_LOGIN_PASSWORD+1];
    int len,index;
@@ -434,28 +434,6 @@ void GameProtocolParse(session_node *s,client_msg *msg)
       GameEchoPing(s);
       break;
 
-   case BP_AD_SELECTED :
-      /* they clicked on an ad; log it */
-      switch (msg->data[1])
-      {
-      case 1:
-	 ptr = LockConfigStr(ADVERTISE_URL1);
-	 lprintf("GameProtocolParse found account %i visited ad 1, %s\n",s->account->account_id,
-		 ptr);
-	 UnlockConfigStr();
-	 break;
-      case 2:
-	 ptr = LockConfigStr(ADVERTISE_URL2);
-	 lprintf("GameProtocolParse found account %i visited ad 2, %s\n",s->account->account_id,
-		 ptr);
-	 UnlockConfigStr();
-	 break;
-      default :
-	 eprintf("GameProtocolParse found account %i visited unknown ad %i\n",
-		 s->account->account_id,msg->data[1]);
-      }
-      break;
-         
    case BP_USE_CHARACTER :
       if (s->game->object_id == INVALID_OBJECT)
       {
@@ -516,7 +494,7 @@ void GameProtocolParse(session_node *s,client_msg *msg)
       len = *(short *)(msg->data+index);
       if (index + 2 + len > msg->len) /* 2 = length word len */
 	 break;
-      if (len-1 > sizeof(password))
+      if (len < 0 || len >= (int) sizeof(password))
 	 break;
       memcpy(password,msg->data+index+2,len);
       password[len] = 0; /* null terminate string */
@@ -525,13 +503,13 @@ void GameProtocolParse(session_node *s,client_msg *msg)
       len = *(short *)(msg->data+index);
       if (index + 2 + len > msg->len)
 	 break;
-      if (len-1 > sizeof(new_password))
+      if (len < 0 || len >= (int) sizeof(new_password))
 	 break;
       memcpy(new_password,msg->data+index+2,len);
       new_password[len] = 0; /* null terminate string */
       index += 2 + len;
 
-      if (strcmp(s->account->password,password))
+      if (s->account->password != password)
       {
 	 AddByteToPacket(BP_PASSWORD_NOT_OK);
 	 SendPacket(s->session_id);
@@ -647,10 +625,33 @@ void GameSendSystemEnter(session_node *s)
 
 }
 
+/* Parse a client-supplied object id for a DM command.  The string must be
+   nothing but a decimal integer naming an existing object; anything else is
+   rejected so that client text can never reach the admin command parser. */
+bool GameDMParseObjectID(const char *str,int *object_id)
+{
+   char *end;
+   long val;
+
+   if (str == NULL || *str == 0)
+      return false;
+
+   val = strtol(str,&end,10);
+   if (*end != 0 || val < 0 || val > INT_MAX)
+      return false;
+
+   if (GetObjectByID((int) val) == NULL)
+      return false;
+
+   *object_id = (int) val;
+   return true;
+}
+
 void GameDMCommand(session_node *s,int type,char *str)
 {
    char buf[LEN_MAX_CLIENT_MSG + 200];
    int acctype;
+   int target_id;
 
    acctype = ACCOUNT_NORMAL;
    if (s && s->account)
@@ -662,42 +663,94 @@ void GameDMCommand(session_node *s,int type,char *str)
    switch (type)
    {
    case DM_CMD_GO_ROOM :
-      if (0 != atoi(str))
-      {
-	 //ASSERT(0 != ACCOUNT_ADMIN);
-	 //ASSERT(0 != ACCOUNT_DM);
-	 if (ConfigInt(RIGHTS_GOROOMBYNUM) == 0)
-	 {
-	    dprintf("DM Command GOROOM (by number) disabled.");
-	    break;
-	 }
-	 if (ConfigInt(RIGHTS_GOROOMBYNUM) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
-	 {
-	    dprintf("DM Command GOROOM (by number) disabled for DMs; must be Admin.");
-	    break;
-	 }
-      }
-      if (ConfigInt(RIGHTS_GOROOM) == 0)
-      {
-	 dprintf("DM Command GOROOM disabled.");
-	 break;
-      }
-      if (ConfigInt(RIGHTS_GOROOM) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
-      {
-	 dprintf("DM Command GOROOM disabled for DMs; must be Admin.");
-	 break;
-      }
-      snprintf(buf, sizeof(buf), "send object %i teleportto rid int %s",s->game->object_id,str);
-      SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
-      TryAdminCommand(s->session_id,buf); 
-      break;
+   {
+     if (0 != atoi(str))
+     {
+       if (ConfigInt(RIGHTS_GOROOMBYNUM) == 0)
+       {
+         dprintf("DM Command GOROOM (by number) disabled.");
+         break;
+       }
+       if (ConfigInt(RIGHTS_GOROOMBYNUM) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
+       {
+         dprintf("DM Command GOROOM (by number) disabled for DMs; must be Admin.");
+         break;
+       }
+     }
+     if (ConfigInt(RIGHTS_GOROOM) == 0)
+     {
+       dprintf("DM Command GOROOM disabled.");
+       break;
+     }
+     if (ConfigInt(RIGHTS_GOROOM) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
+     {
+       dprintf("DM Command GOROOM disabled for DMs; must be Admin.");
+       break;
+     }
 
+     int rid = atoi(str);
+     if (rid == 0)
+     {
+       // Room specified by filename ("tos") or by a symbolic
+       // constant from blakston.khd ("rid_tos").
+       roomdata_node *room = GetRoomDataByFilename(str);
+       if (room != nullptr)
+       {
+         // Ask kod which room object uses this .roo resource; the room
+         // number lives only on the Blakod side (piRoom_num).
+         int message_id = GetIDByName("FindRoomNumByResource");
+         int parm_id = GetIDByName("rsc");
+         if (message_id == INVALID_ID || parm_id == INVALID_ID)
+         {
+           SendSessionAdminText(s->session_id,
+                                "Couldn't find kod function FindRoomNumByResource to look up room.\n");
+           break;
+         }
+
+         val_type rsc_val;
+         rsc_val.v.tag = TAG_RESOURCE;
+         rsc_val.v.data = room->resource_id;
+
+         parm_node p;
+         p.type = CONSTANT;
+         p.value = rsc_val.int_val;
+         p.name_id = parm_id;
+
+         val_type ret_val;
+         ret_val.int_val = SendTopLevelBlakodMessage(GetSystemObjectID(),message_id,1,&p);
+         if (ret_val.v.tag != TAG_INT)
+         {
+           SendSessionAdminText(s->session_id,
+                                "Room \"%s\" is loaded but no room object uses it.\n",str);
+           break;
+         }
+         rid = (int) ret_val.v.data;
+       }
+       else if (LookupAdminConstant(str,&rid) == false || rid == 0)
+       {
+         SendSessionAdminText(s->session_id,
+                              "No loaded room or constant matches \"%s\".\n",str);
+         break;
+       }
+     }
+
+     snprintf(buf, sizeof(buf), "send object %i teleportto rid int %i",s->game->object_id,rid);
+     SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
+     TryAdminCommand(s->session_id,buf);
+     break;
+   }
+   
    case DM_CMD_GO_PLAYER :
-      if (ConfigInt(RIGHTS_GOPLAYER) == 0)
+     if (ConfigInt(RIGHTS_GOPLAYER) == 0)
 	 break;
       if (ConfigInt(RIGHTS_GOPLAYER) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
 	 break;
-      snprintf(buf, sizeof(buf), "send object %i admingotoobject what object %s",s->game->object_id,str);
+      if (!GameDMParseObjectID(str,&target_id))
+      {
+         SendSessionAdminText(s->session_id,"Invalid object id \"%s\".\n",str);
+         break;
+      }
+      snprintf(buf, sizeof(buf), "send object %i admingotoobject what object %i",s->game->object_id,target_id);
       SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
       TryAdminCommand(s->session_id,buf); 
       break;
@@ -707,7 +760,12 @@ void GameDMCommand(session_node *s,int type,char *str)
 	 break;
       if (ConfigInt(RIGHTS_GETPLAYER) == ACCOUNT_ADMIN && acctype == ACCOUNT_DM)
 	 break;
-      snprintf(buf, sizeof(buf), "send object %s admingotoobject what object %i",str,s->game->object_id);
+      if (!GameDMParseObjectID(str,&target_id))
+      {
+         SendSessionAdminText(s->session_id,"Invalid object id \"%s\".\n",str);
+         break;
+      }
+      snprintf(buf, sizeof(buf), "send object %i admingotoobject what object %i",target_id,s->game->object_id);
       SendSessionAdminText(s->session_id,"~B> %s\n",buf); /* echo it to 'em */
       TryAdminCommand(s->session_id,buf); 
       break;

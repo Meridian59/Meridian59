@@ -279,9 +279,6 @@ void CharPickLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFla
       if (PtInRect(&rect, p))
       {
 	 WebLaunchBrowser(info->ads[i].url);
-
-	 // Tell server that user selected ad
-	 SendAdSelected(i + 1);
 	 return;
       }
    }

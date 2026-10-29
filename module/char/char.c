@@ -40,7 +40,6 @@ client_message msg_table[] = {
 			     PARAM_BYTE, PARAM_BYTE,
 			     PARAM_INT_ARRAY, PARAM_ID_LIST, PARAM_ID_LIST, PARAM_END }, },
 { BP_SEND_CHARINFO,        { PARAM_END }, },
-{ BP_AD_SELECTED,          { PARAM_BYTE, PARAM_END }, },
 { 0,                       { PARAM_END }, },
 };
 
@@ -110,7 +109,7 @@ bool HandleCharacters(char *ptr, long len)
 
       Extract(&ptr, &c->id, SIZE_ID);
       Extract(&ptr, &string_len, SIZE_STRING_LEN);
-      string_len = min(string_len, MAXNAME);
+      string_len = std::min((int)string_len, MAXNAME);
       c->name = (char *) SafeMalloc(string_len + 1);
       Extract(&ptr, c->name, string_len);
       c->name[string_len] = 0;

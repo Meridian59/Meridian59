@@ -263,7 +263,7 @@ void OwnerListMeasureItem(HWND hwnd, MEASUREITEMSTRUCT *lpmis, bool combo)
 
    height = GetFontHeight(GetFont(FONT_LIST));
    if (style & OD_DRAWOBJ)
-      height = max(LIST_OBJECT_HEIGHT, height);
+      height = std::max(LIST_OBJECT_HEIGHT, height);
    lpmis->itemHeight = height + 2 * LIST_OBJECT_TOP_BORDER;
 }
 /*****************************************************************************/

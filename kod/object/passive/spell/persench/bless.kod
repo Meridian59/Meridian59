@@ -29,7 +29,7 @@ resources:
    bless_success_rsc = "Kraanan fills %s%s with the spirit of battle."
 
    bless_spell_intro = \
-      "Kraanan Lv. 2: Bestows the Warrior God's blessing, improving your"
+      "Kraanan Lv. 2: Bestows the Warrior God's blessing, improving your "
       "combat abilities."
 
 classvars:
@@ -71,15 +71,14 @@ messages:
       return;
    }
 
-   CastSpell(who = $,iSpellPower= 0,ltargets=$)
+   InitializeEnchantmentState(target=$, iSpellpower=0)
    {
-      Send(First(lTargets),@AddAttackModifier,#what=self);       
+      % Add attack modifier here, after parent class confirms target is valid.
+      if target <> $
+      {
+         Send(target,@AddAttackModifier,#what=self);
+      }
 
-      propagate;
-   }
-
-   InitializeEnchantmentState(iSpellpower=$)
-   {
       return iSpellpower;
    }
 

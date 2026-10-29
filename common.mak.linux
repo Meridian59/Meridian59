@@ -57,16 +57,21 @@ KODINCLUDEDIR = $(KODDIR)/include
 
 PALETTEFILE = $(TOPDIR)/blakston.pal
 
-CCOMMONFLAGS = -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX -DFMT_UNICODE=0 --std=c++20
+# compiler flags:
+# -x c++ 					Forces C++ mode for all files (required for .c files)
+# -Wno-unused-result 		Suppresses warnings when a function return value is ignored
+# -Werror 					Treat all warnings as errors
+# -DBLAK_PLATFORM_LINUX 	Defines 'BLAK_PLATFORM_LINUX'
+# -DFMT_UNICODE=0 			Disables Unicode support for fmtlib
+# -std=c++20 				Select the C++20 language standard
+
+CCOMMONFLAGS = -x c++ -Wno-unused-result -Werror -DBLAK_PLATFORM_LINUX -DFMT_UNICODE=0 -std=c++20
 
 OS := $(shell uname)
 
 ifeq ($(OS),Darwin)
     BLAK_PLATFORM_MAC = 1
-    # Clang won't treat .c files as C++ without this
-    CCOMMONFLAGS += -x c++
 endif
-
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -O3
 CDEBUGFLAGS = $(CCOMMONFLAGS) -DBLAKDEBUG -g

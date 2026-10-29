@@ -330,7 +330,7 @@ void InterfaceLoadElement(InterfaceElement *element)
 {
    BITMAPINFOHEADER *ptr;
    
-   ptr = GetBitmapResource(hInst, element->id);
+   ptr = GetBitmapResource(hInst, InterfaceThemeResourceId(element->id));
    if (ptr == NULL)
    {
      element->bits = NULL;
@@ -760,8 +760,42 @@ void InterfaceDrawResize(int xsize, int ysize, AREA *view)
 
   hdc = GetDC(cinfo->hMain);
   SelectPalette(hdc, cinfo->hPal, FALSE);
+  InterfaceDrawSidebarBackground(hdc);
   InterfaceDrawElements(hdc);
   ReleaseDC(cinfo->hMain, hdc);
+}
+/****************************************************************************/
+/*
+ * InterfaceDrawSidebarBackground:  Fill the right sidebar (enchantments,
+ *   portrait, stats) with the inventory texture.  Does nothing when the
+ *   active theme keeps the default window background.
+ */
+void InterfaceDrawSidebarBackground(HDC hdc)
+{
+   if (!ThemeSidebarUsesInventoryFill())
+      return;
+
+   RECT r;
+   r.left   = player_enchant_x - 1;
+   r.top    = TOP_BORDER + EDGETREAT_HEIGHT + ENCHANT_BORDER - 1;
+   r.right  = r.left + USERAREA_WIDTH + stat_width + (stat_bar_x - stat_x) + MAPTREAT_WIDTH + 1;
+   r.bottom = r.top + (player_enchant_bottom - player_enchant_y) + USERAREA_HEIGHT +
+              ENCHANT_BORDER + MAPTREAT_HEIGHT;
+
+   DrawWindowBackgroundColor(pinventory_bkgnd(), hdc, &r, r.left, r.top, -1);
+}
+/****************************************************************************/
+/*
+ * OffscreenSidebarBackground:  Set up the offscreen buffer for a
+ *   rectangle on the sidebar.  Uses the inventory texture when the
+ *   active theme paints the sidebar with that texture, otherwise the
+ *   default window background.  Returns the background bitmap used.
+ */
+RawBitmap *OffscreenSidebarBackground(int x, int y, int cx, int cy)
+{
+   RawBitmap *bg = ThemeSidebarUsesInventoryFill() ? pinventory_bkgnd() : NULL;
+   OffscreenWindowBackground(bg, x, y, cx, cy);
+   return bg;
 }
 /****************************************************************************/
 /*
@@ -773,15 +807,20 @@ void InterfaceDrawElements(HDC hdc)
   InterfaceElement *e;
   bool vertical;
 
+  // The theme does not change mid-draw, so read these once instead of per element.
+  bool drawStatsOrnamentalFrame = ThemeDrawsStatsAreaOrnamentalFrame();
+  bool drawChatOrnamentalFrame  = ThemeDrawsChatBoxOrnamentalFrame();
+
   for (i=0; i < NUM_AUTO_ELEMENTS; i++)
   {
-	  //	Temp. disable xxx
-/*	  if( i >= ELEMENT_ULTOP && i <= ELEMENT_LRRIGHT )
+	  // Skip inventory corner bitmaps.  The inventory edge repeaters (ELEMENT_ITOP
+	  // through ELEMENT_IRIGHT) are already skipped in the repeater loop below, so
+	  // these corners have no connecting edges and draw as floating fragments.
+	  // Stats area and chat box corner bitmaps draw only when the theme draws its ornamental frame.
+	  if ((i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT) ||
+	      (!drawStatsOrnamentalFrame && i >= ELEMENT_SULTOP && i <= ELEMENT_SLRRIGHT) ||
+	      (!drawChatOrnamentalFrame  && i >= ELEMENT_BULTOP && i <= ELEMENT_BLRRIGHT))
 		  continue;
-	  if( i >= ELEMENT_IULTOP && i <= ELEMENT_ILRRIGHT )
-		  continue;
-	  if( i == ELEMENT_BLLBOTTOM || i == ELEMENT_BLRBOTTOM )
-		  continue;*/
 
     OffscreenWindowBackground(NULL, elements[i].x, elements[i].y, elements[i].width, elements[i].height);
     
@@ -799,7 +838,11 @@ void InterfaceDrawElements(HDC hdc)
 	  //	disable xxx
 	if( i >= ELEMENT_TOP && i <= ELEMENT_RIGHT )
 		continue;
-	if( i == ELEMENT_BBOTTOM )
+	// Skip the edit box bottom repeater.  Stats area and chat box edge
+	// repeater bitmaps draw only when the theme draws its ornamental frame.
+	if ((i == ELEMENT_BBOTTOM) ||
+	    (!drawStatsOrnamentalFrame && i >= ELEMENT_STOP && i <= ELEMENT_SRIGHT) ||
+	    (!drawChatOrnamentalFrame  && i >= ELEMENT_BTOP && i <= ELEMENT_BRIGHT))
 		continue;
 
 	e = &repeaters[i].element;
@@ -821,6 +864,15 @@ void InterfaceDrawElements(HDC hdc)
 
       GdiFlush();
     }
+  }
+
+  // Draw a stats area border if the active theme has a border color.
+  COLORREF borderColor = ThemeBorderColor();
+  if (borderColor != CLR_INVALID)
+  {
+    AREA stat;
+    StatsGetArea(&stat);
+    DrawBorder(&stat, GetClosestPaletteIndex(borderColor), NULL);
   }
 }
 /****************************************************************************/

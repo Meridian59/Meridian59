@@ -49,5 +49,7 @@ bool GraphicsMouseCaptured(void);
 int GetFPS(void);
 int GetMSDrawFrame(void);
 
+long getShadeAmount();
+
 #endif
 

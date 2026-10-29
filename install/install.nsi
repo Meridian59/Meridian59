@@ -137,6 +137,7 @@ Section "Meridian 59 (required)"
   File "${SOURCEDIR}\BsSndRpt.exe"
   File "${SOURCEDIR}\BugSplat.dll"
   File "${SOURCEDIR}\BugSplatRc.dll"
+  File "${SOURCEDIR}\MSVCP140.dll"
 
   ; Install font
   StrCpy $FONT_DIR $FONTS

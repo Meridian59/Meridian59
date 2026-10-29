@@ -31,12 +31,15 @@
 #include "actions.h"
 #include "drawint.h"
 #include "groupdlg.h"
+#include "theme.h"
 
 #define MODULE_ID 100    // Unique module id #
 
 #define A_CAST          (A_MODULE + 200)
 #define A_CASTSPELL     (A_MODULE + 201)
 #define A_LOOKINVENTORY (A_MODULE + 202)    // Examine item in inventory
+#define A_REST          (A_MODULE + 203)
+#define A_STAND         (A_MODULE + 204)
 
 // Window messages
 #define BK_CREATED      (WM_USER + 100)
@@ -100,7 +103,7 @@ extern HINSTANCE hInst;  // module handle
 
 extern player_info *GetPlayer(void);
 
-extern void SetStatGroup(int stat_group);
-extern int GetStatGroup(void);
+extern void SetStatGroup(StatGroup stat_group);
+extern StatGroup GetStatGroup(void);
 
 #endif /* #ifndef _MERINTR_H */

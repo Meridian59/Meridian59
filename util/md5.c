@@ -298,7 +298,7 @@ static void Decode (UINT4 *output, unsigned char *input, unsigned int len)
 
 /* Digests a string and prints the result.  Digest must be at least 16 bytes long.
  */
-void MDString (char *string, unsigned char *digest)
+void MDString (const char *string, unsigned char *digest)
 {
    int i;
    MD5_CTX context;

@@ -27,6 +27,7 @@ enum {
    FONT_MAP_TITLE,
    FONT_MAP_LABEL,
    FONT_MAP_TEXT,
+   FONT_MAP_ANNOTATIONS,    /* For annotations on the map & mini-map */
    MAXFONTS,
 };
 

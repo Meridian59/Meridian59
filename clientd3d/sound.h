@@ -18,9 +18,10 @@ void SoundInitialize(void);
 
 M59EXPORT bool PlayWaveFile(HWND hwnd, const char *fname, int volume,
                                      BYTE flags, int src_row, int src_col, int radius,
-                                     int max_vol);
+                                     int max_vol, ID source_obj);
 
-M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col, int radius, int max_vol);
+M59EXPORT void PlayWaveRsc(ID rsc, int volume, BYTE flags, int row, int col,
+                                     int radius, int max_vol, ID source_obj);
 
 /* Marks all currently tracked looping sounds for potential cleanup. */
 void Sound_BeginLoopingSoundTransition(void);

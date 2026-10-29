@@ -24,7 +24,8 @@ typedef enum
    DrawObjectType,
    DrawBackgroundType,
    DrawSlopedFloorType,
-   DrawSlopedCeilingType
+   DrawSlopedCeilingType,
+   DrawTranslucentWallType  // translucent walls: rendered in a second pass after all opaque geometry
 } DrawType;
 
 enum { WALL_ABOVE = 1, WALL_BELOW, WALL_NORMAL };  // Wall types

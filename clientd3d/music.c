@@ -72,7 +72,7 @@ static void PlayMusicFileInternal(const std::string& fname)
    // Stop any currently playing music before attempting new track
    MusicStop();
 
-   if (MusicPlay(filename.c_str(), true))
+   if (MusicPlay(filename, true))
    {
       playing_music = true;
       return;

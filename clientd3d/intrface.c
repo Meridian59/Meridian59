@@ -115,6 +115,7 @@ void InterfaceResize(int xsize, int ysize)
    GraphicsAreaResize(xsize, ysize);
 
    CopyCurrentView(&view);
+   xsize = GetInterfaceRight();
 
    TextInputResize(xsize, ysize, view);
    EditBoxResize(xsize, ysize, view);

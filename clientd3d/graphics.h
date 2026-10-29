@@ -19,8 +19,13 @@
 #define MIN_TOP_TOOLBAR 6      // Minimum height of top area with toolbar present
 #define MIN_TOP_NOTOOLBAR 26   // Minimum height of top area without toolbar present
 
+// Left edge of the room view on a window no wider than 1920x1080
+#define VIEW_LEFT (LEFT_BORDER + HIGHLIGHT_THICKNESS + EDGETREAT_WIDTH)
+
 M59EXPORT void CopyCurrentView(AREA *v);
 M59EXPORT void CopyCurrentAreaMiniMap( AREA* v );
+M59EXPORT int GetInterfaceLeft(void);
+M59EXPORT int GetInterfaceRight(void);
 
 void ResizeAll(void);
 M59EXPORT bool MouseToRoom(int *x, int *y);

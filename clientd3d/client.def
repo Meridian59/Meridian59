@@ -166,6 +166,8 @@ EXPORTS
 	TooltipForwardMessage
 	CopyCurrentView
 	CopyCurrentAreaMiniMap
+	GetInterfaceLeft
+	GetInterfaceRight
 	TextInputSetFocus
 	GetTextInputHeight
 	GetAmount

@@ -24,6 +24,31 @@ void SetSelectCallback(SelectCallback fn)
 }
 /************************************************************************/
 /*
+ * GetMouseSquareObjects:  Return objects under (x, y), nearest first.
+ */
+static list_type GetMouseSquareObjects(int x, int y)
+{
+   list_type square_list, spell_list, l;
+   room_contents_node *r;
+
+   square_list = GetObjects3D(x, y, 0, 0, OF_NOEXAMINE);
+
+   // Add spell-selectable objects to the list even if OF_NOEXAMINE
+   spell_list = GetObjects3D(x, y, 0, OF_SPELLSELECT, 0);
+
+   for (l = spell_list; l != NULL; l = l->next)
+   {
+      r = (room_contents_node *) (l->data);
+      if (r->obj.flags & OF_NOEXAMINE)
+         square_list = list_add_sorted_item(square_list, r, CompareRoomObjectDistance);
+   }
+
+   list_delete(spell_list);
+
+   return square_list;
+}
+/************************************************************************/
+/*
  * UserSelect:  User selected object to apply.  If target is 0, object is below
  *   current position of mouse pointer; otherwise target gives target object id.
  *   Get object that's there, if any, and call callback on that object.
@@ -43,7 +68,7 @@ void UserSelect(ID target)
       SetFocus(hMain);
       
       /* See if user clicked on an object--even if not, go back to normal mode */
-      square_list = GetObjects3D(x, y, 0, 0, OF_NOEXAMINE);
+      square_list = GetMouseSquareObjects(x, y);
       
       GameSetState(GAME_PLAY);
       

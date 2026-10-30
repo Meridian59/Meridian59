@@ -109,7 +109,9 @@ messages:
    { 
       local iVigor;
       
-      % Lock the player's vigor rest threshold while enchanted
+      % Lock the player's vigor rest threshold while enchanted.  This wipes
+      % out what vigor boons changed, so they must not take it back later.
+      Send(Send(SYS,@FindSpellByNum,#num=SID_VIGOR_BOON),@ForgetEffects,#who=who);
       Send(who,@SetVigorRestThreshold,#amount=10);
 
       % Calculate new vigor = 40 + Stamina/2 + skill %

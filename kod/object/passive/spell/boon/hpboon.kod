@@ -48,25 +48,29 @@ properties:
 messages:
 
    DoSpellEffect(who = $, amount = $)
+   "Returns the change actually made to max health."
    {
-   Send(who, @GainMaxHealth,#amount=amount);
+   local iChange;
+
+   iChange = Send(who, @GainMaxHealth,#amount=amount);
    if amount >= 0
       { Send(who,@MsgSendUser,#message_rsc=hpboon_inc); }
    else
       { Send(who,@MsgSendUser,#message_rsc=hpboon_dec); }
 
-   return;
+   return iChange;
    }
 
    UndoSpellEffect(who = $, amount = $)
+   "Takes back <amount>.  Returns the part max health's lower bound kept us "
+   "from taking back."
    {
    amount = -amount;
-   Send(who, @GainMaxHealth,#amount=-amount);
    if amount >= 0
       { Send(who,@MsgSendUser,#message_rsc=hpboon_inc); }
    else
       { Send(who,@MsgSendUser,#message_rsc=hpboon_dec); }
-   return;
+   return amount - Send(who, @GainMaxHealth,#amount=amount);
    }
 
 end

@@ -55,10 +55,13 @@ messages:
    else
       { Send(who,@MsgSendUser,#message_rsc=vigorboon_dec); }
 
-   return;
+   % The threshold is bounded, so report the change actually made.
+   return send(who, @GetVigorRestThreshold) - (iVigorRestThreshold - amount);
    }
 
    UndoSpellEffect(who = $, amount = $)
+   "Takes back <amount>.  Returns the part the threshold's bounds kept us "
+   "from taking back."
    {
    local iVigorRestThreshold;
 
@@ -72,7 +75,7 @@ messages:
    else
       { Send(who,@MsgSendUser,#message_rsc=vigorboon_dec); }
 
-   return;
+   return iVigorRestThreshold - send(who, @GetVigorRestThreshold);
    }
 
 end

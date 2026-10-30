@@ -23,6 +23,11 @@ constants:
    BOON_DEFAULT_AMOUNT = 5
    HOURS_LOGGED_ON_PER_DAY = 2
 
+   % State is +/-(unapplied * BOON_UNAPPLIED + hours * 100 + amount), with the
+   % sign of the amount asked for.  "unapplied" is the part of the amount a
+   % bound kept from taking effect; it stays 0 for boons that are never cut.
+   BOON_UNAPPLIED = 10000
+
 resources:
 
    boon_caster_msg = "You cast %s on %s%s."
@@ -77,7 +82,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local iAmount, iNumEnchantHours, iState, oRoom;
+      local iAmount, iNumEnchantHours, iState, oRoom, iApplied;
 
       iNumEnchantHours = send(self,@DecodeDuration,#Compound=iSpellPower);
       iAmount = send(self,@DecodeAmount,#Compound=iSpellPower);
@@ -92,12 +97,18 @@ messages:
       }
 
       iState = (iNumEnchantHours * 100) + abs(iAmount);
+
+      % Boons that a bound can cut short return the change they really made.
+      iApplied = send(self,@DoSpellEffect,#who=first(lTargets),#amount=iAmount);
+      if iApplied <> $
+      {
+         iState = iState + ((abs(iAmount) - abs(iApplied)) * BOON_UNAPPLIED);
+      }
+
       if iAmount < 0
       {
          iState = -iState;
       }
-
-      send(self,@DoSpellEffect,#who=first(lTargets),#amount=iAmount);      
 
       send(first(lTargets),@StartEnchantment,#what=self,
                #time=BOON_HOUR,#state=iState);
@@ -187,15 +198,13 @@ messages:
    {
       local istate;
 
+      % Drop the hours left; keep the amount and its unapplied part.
+      istate = ((abs(state) / BOON_UNAPPLIED) * BOON_UNAPPLIED) + (state mod 100);
       if state < 0
       {
-         istate = -(state mod 100);
+         istate = -istate;
       }
-      else
-      {
-         istate = state mod 100;
-      }
-     
+
       Send(self,@EndEnchantment,#who=who,#state=istate,#report=report);
 
       return;
@@ -214,10 +223,19 @@ messages:
 
    EndEnchantment( who = $, state = 0, report = TRUE )
    {
-      if (state / 100 = 0)
+      local iShortfall;
+
+      if ((abs(state) / 100) mod 100 = 0)
       {
-         state = state * 1;
-         send(self,@UndoSpellEffect,#who=who,#amount=state);      
+         iShortfall = send(self,@UndoSpellEffect,#who=who,
+                           #amount=Send(self,@GetAppliedAmount,#state=state));
+         if iShortfall <> $
+         {
+            if iShortfall <> 0
+            {
+               Send(self,@ReduceOtherEffects,#who=who,#amount=iShortfall);
+            }
+         }
       }
       else
       {
@@ -233,6 +251,91 @@ messages:
          send(who,@StartEnchantment,#what=self,#time=BOON_HOUR,#state=state);
       }
       return;
+   }
+
+   ReduceOtherEffects(who = $, amount = 0)
+   "An undo fell <amount> short because the attribute hit a bound.  Other "
+   "copies of this boon on <who> whose change has the same sign as <amount> "
+   "only got that much room from the copy that just ended, so take <amount> "
+   "off them; otherwise they would put it back when they end."
+   {
+      local i, iState, iChange, iTake;
+
+      for i in Send(who,@GetEnchantmentList)
+      {
+         if amount = 0
+         {
+            return;
+         }
+
+         if Nth(i,2) = self AND Length(i) >= 3
+         {
+            iState = Nth(i,3);
+            iChange = Send(self,@GetAppliedAmount,#state=iState);
+
+            if (amount < 0 AND iChange < 0) OR (amount > 0 AND iChange > 0)
+            {
+               iTake = amount;
+               if abs(iTake) > abs(iChange)
+               {
+                  iTake = iChange;
+               }
+               amount = amount - iTake;
+
+               % Mark that much more of its amount unapplied; the sign stays.
+               if iState < 0
+               {
+                  SetNth(i,3,iState - (abs(iTake) * BOON_UNAPPLIED));
+               }
+               else
+               {
+                  SetNth(i,3,iState + (abs(iTake) * BOON_UNAPPLIED));
+               }
+            }
+         }
+      }
+
+      return;
+   }
+
+   ForgetEffects(who = $)
+   "Something set the attribute outright, wiping out what the copies of this "
+   "boon on <who> changed.  Keep their hours and amount, but mark all of it "
+   "unapplied so nothing is undone later."
+   {
+      local i, iState;
+
+      for i in Send(who,@GetEnchantmentList)
+      {
+         if Nth(i,2) = self AND Length(i) >= 3
+         {
+            iState = Nth(i,3);
+            if iState < 0
+            {
+               SetNth(i,3,-((iState mod BOON_UNAPPLIED) + ((iState mod 100) * BOON_UNAPPLIED)));
+            }
+            else
+            {
+               SetNth(i,3,(iState mod BOON_UNAPPLIED) + ((iState mod 100) * BOON_UNAPPLIED));
+            }
+         }
+      }
+
+      return;
+   }
+
+   GetAppliedAmount(state = 0)
+   "Returns the change a boon with this <state> really made (see BOON_UNAPPLIED)."
+   {
+      local iAmount;
+
+      iAmount = (state mod 100) - (abs(state) / BOON_UNAPPLIED);
+      if state < 0
+      {
+         return -iAmount;
+      }
+
+      return iAmount;
    }
 
    CanBeRemovedByPlayer()

@@ -342,22 +342,35 @@ bool AnimateBackgroundOverlays(int dt)
  */
 bool AnimatePlayerOverlays(int dt)
 {
-   int i;
-   bool need_redraw = false, retval;
+   bool need_redraw = false;
 
-   for (i=0; i < NUM_PLAYER_OVERLAYS; i++)
+   for (int i = 0; i < NUM_PLAYER_OVERLAYS; i++)
    {
       PlayerOverlay *poverlay = &player.poverlays[i];
 
-      if (poverlay->obj == NULL || poverlay->hotspot == 0)
-	 continue;
-      
-      retval = AnimateObject(poverlay->obj, dt);
+      if (poverlay->obj == nullptr || poverlay->hotspot == 0)
+         continue;
+
+      bool retval = AnimateObject(poverlay->obj, dt);
       need_redraw = need_redraw || retval;
 
       // If animation is over, group becomes -1 => we should remove overlay
-      if (poverlay->obj->animate->group == (WORD) -1)
-	 poverlay->hotspot = 0;
+      if (poverlay->obj->animate->group == ANIMATE_GROUP_END)
+      {
+         poverlay->hotspot = 0;
+
+         // If we saved a previous overlay, bring it back
+         if (poverlay->saved_obj != nullptr)
+         {
+            ObjectDestroyAndFree(poverlay->obj);
+            poverlay->obj = poverlay->saved_obj;
+            poverlay->hotspot = poverlay->saved_hotspot;
+
+            poverlay->saved_obj = nullptr;
+            poverlay->saved_hotspot = 0;
+            need_redraw = true;
+         }
+      }
    }
    return need_redraw;
 }

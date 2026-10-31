@@ -8428,17 +8428,6 @@ messages:
          return;
       }
 
-      local i;
-      for i in plWindow_overlays
-      {
-         if Send(i,@GetWindowOverlayID) = PWO_RIGHT_HAND
-         {
-            % Of right hand overlay already exists, we can't restore it correctly
-            %  yet, so just don't change it
-            return;
-         }
-      }
-
       AddPacket(1,BP_PLAYER_OVERLAY);
       AddPacket(1,HS_SE);
       AddPacket(4,PWO_RIGHT_HAND);

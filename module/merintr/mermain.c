@@ -75,7 +75,7 @@ void InterfaceInit(void)
 
    GetClientRect(cinfo->hMain, &r);
    CopyCurrentView(&area);
-   InterfaceResizeModule(r.right, r.bottom, &area);
+   InterfaceResizeModule(GetInterfaceRight(), r.bottom, &area);
 
    pinfo.resting = false;
    safety_flipped = false;

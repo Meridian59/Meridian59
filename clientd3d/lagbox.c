@@ -159,7 +159,7 @@ void Lagbox_Reposition()
 	if (IsRectEmpty(&rcToolbar))
 	{
 		// a small square where the toolbar would start
-		MoveWindow(hwndLagbox, TOOLBAR_X, TOOLBAR_Y, 20, 20, TRUE);
+		MoveWindow(hwndLagbox, ToolbarGetLeft(), TOOLBAR_Y, 20, 20, TRUE);
 		ShowWindow(hwndLagbox, config.lagbox? SW_NORMAL : SW_HIDE);
 		InvalidateRect(hwndLagbox, NULL, FALSE);
 	}

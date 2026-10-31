@@ -65,9 +65,8 @@ messages:
    {
       local oRoom, oTarget;
 
-      oRoom = send(who,@GetOwner);
+      oRoom = Send(who,@GetOwner);
       oTarget = First(lTargets);
-
 
       if IsClass(oTarget,&DeadBody) AND Send(oTarget,@WasPlayer)
       {
@@ -75,16 +74,16 @@ messages:
 
          if oCorpseRoom = $ OR Send(oCorpseRoom,@SafePlayerAttack)
          {
-            send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=send(oTarget,@GetCorpseName));
+            Send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=Send(oTarget,@GetCorpseName));
 
             return FALSE;
          }
 
-         if (send(oRoom,@CountHoldingHowMany,#class=&monster) > 25)
-            or (send(oRoom,@CountHoldingSummoned) > 
-               Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
+         if (Send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25)
+            or (Send(oRoom,@CountHoldingSummoned) > 
+               Send(Send(SYS,@GetSettings),@GetPlayerSummonedObjectLimit))
          {
-            send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=send(oTarget,@GetCorpseName));
+            Send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=Send(oTarget,@GetCorpseName));
 
             return FALSE;
          }

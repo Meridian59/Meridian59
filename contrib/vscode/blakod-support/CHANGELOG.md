@@ -1,10 +1,22 @@
 # Change Log
 
-All notable changes to the "blakod-support" extension will be documented in this file.
+## [2.0.0] - 2026-10-30
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+### Fixed
+- Highlighting on `local` lines
+- Highlighting inside `Debug` calls
+- `#region` parameters
 
-## [Unreleased]
+### Changed
+- Keywords, numbers, and operators match the compiler
+- Built-in calls match the compiler
+- Outline entries for sections and message handlers
+- Brace indentation and folding
+- Comments are `%` only
+
+### Removed
+- `/* */` comments
+- Highlighting for `switch`, `case`, `default`, `foreach`, `do`, and `&&`
 
 ## [1.0.0] - 2023-04-17
 
@@ -12,3 +24,5 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Initial release
 - Adds support for syntax highlighting
 - Adds support for document symbols (i.e. Outline view)
+
+[Keep a Changelog](http://keepachangelog.com/)

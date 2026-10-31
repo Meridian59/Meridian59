@@ -2,8 +2,8 @@
   "name": "blakod-support",
   "displayName": "Blakod Support",
   "description": "Scripting language used for the MMORPG, Meridian 59",
-	 "repository": "https://github.com/Meridian59/Meridian59",
-	 "publisher": "Meridian59",
+  "repository": "https://github.com/Meridian59/Meridian59",
+  "publisher": "Meridian59",
   "version": "2.0.0",
   "icon": "resources/icon.png",
   "engines": {
@@ -54,12 +54,10 @@
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.28.2",
     "eslint": "^8.36.0",
     "glob": "^8.1.0",
     "mocha": "^12.0.1",
     "typescript": "^4.9.5"
-  },
-  "dependencies": {
-    "package.json": "^2.0.1"
   }
 }

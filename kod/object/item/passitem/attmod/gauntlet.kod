@@ -198,97 +198,68 @@ messages:
    
    GetOverrideRightArm(who=$)
    {  
-      local i, bFound;
+      local i;
+      local rGauntletRightMale = standardshirt_rightarm_gauntlet_male;
+      local rGauntletRightFemale = standardshirt_rightarm_gauntlet_female;
 
       % Robes have their own gauntlets
 
       for i in send(who,@GetPlayerUsing)
       {
-         if IsClass(i,&Robe) AND NOT IsClass(i,&LightRobe) 
+         if IsClass(i,&Robe) AND send(i,@OverrideArmsForGauntlets)
          {
-            if send(who,@GetGender) = GENDER_MALE
-            {
-               return robe_rightarm_gauntlet_male;
-            }
-            return robe_rightarm_gauntlet_female;
-         }
-      }
-      
-      bFound = FALSE;
-      for i in send(who,@GetPlayerUsing)
-      {
-         if isClass(i,&TankTop)
-         {
-            bFound = TRUE;
-            
+            rGauntletRightMale = robe_rightarm_gauntlet_male;
+            rGauntletRightFemale = robe_rightarm_gauntlet_female;
             break;
-         }
       }
       
-      if bFound
-      {
-         if send(who,@GetGender) = GENDER_MALE
+         if IsClass(i,&TankTop)
          {
-            return barearm_rightarm_gauntlet_male;
+            rGauntletRightMale  = barearm_rightarm_gauntlet_male;
+            rGauntletRightFemale = barearm_rightarm_gauntlet_female;
          }
-      
-         return barearm_rightarm_gauntlet_female;
       }      
       
       if send(who,@GetGender) = GENDER_MALE
+
       {
-         return standardshirt_rightarm_gauntlet_male;
+         return rGauntletRightMale;
       }
       
-      return standardshirt_rightarm_gauntlet_female;
+      return rGauntletRightFemale;
    }
 
    GetOverrideLeftArm(who=$)
    {
-      local i, bFound;
+      local i;
+      local rGauntletLeftMale = standardshirt_leftarm_gauntlet_male;
+      local rGauntletLeftFemale = standardshirt_leftarm_gauntlet_female;
 
       % Robes have their own gauntlets
 
       for i in send(who,@GetPlayerUsing)
       {
-         if IsClass(i,&Robe) AND NOT IsClass(i,&LightRobe)
-         {
-            if send(who,@GetGender) = GENDER_MALE
+         if IsClass(i,&Robe) AND send(i,@OverrideArmsForGauntlets)
             {
-               return robe_leftarm_gauntlet_male; 
-            }
-            return robe_leftarm_gauntlet_female;
-         }
-      }
-
-
-      bFound = FALSE;
-      for i in send(who,@GetPlayerUsing)
-      {
-         if isClass(i,&TankTop)
-         {
-            bFound = TRUE;
-
+            rGauntletLeftMale = robe_leftarm_gauntlet_male;
+            rGauntletLeftFemale = robe_leftarm_gauntlet_female;
             break;
-         }
       }
       
-      if bFound
-      {
-         if send(who,@GetGender) = GENDER_MALE
+         if IsClass(i,&TankTop)
          {
-            return barearm_leftarm_gauntlet_male;
+            rGauntletLeftMale  = barearm_leftarm_gauntlet_male;
+            rGauntletLeftFemale = barearm_leftarm_gauntlet_female;
          }
-      
-         return barearm_leftarm_gauntlet_female;
       }
 
       if send(who,@GetGender) = GENDER_MALE
+
       {
-         return standardshirt_leftarm_gauntlet_male;
+         return rGauntletLeftMale;
       }
       
-      return standardshirt_leftarm_gauntlet_female;
+      return rGauntletLeftFemale;
    }
 
    % No alterations when we hit the target....
@@ -363,5 +334,3 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

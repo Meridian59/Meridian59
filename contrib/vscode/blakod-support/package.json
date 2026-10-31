@@ -4,7 +4,7 @@
   "description": "Scripting language used for the MMORPG, Meridian 59",
 	 "repository": "https://github.com/Meridian59/Meridian59",
 	 "publisher": "Meridian59",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "icon": "resources/icon.png",
   "engines": {
     "vscode": "^1.77.0"

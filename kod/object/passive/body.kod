@@ -198,7 +198,7 @@ messages:
    {
       if pbMob
       {
-         return LOOK_NO | piDrawfx;
+         return LOOK_NO | SPELLSELECT_YES | piDrawfx;
       }
       
       return viObject_flags | piDrawfx;

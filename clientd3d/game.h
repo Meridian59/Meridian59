@@ -23,10 +23,15 @@
 // Convert from server drawing angle to client angle
 #define ANGLE_STOC(x) ((x) * NUMDEGREES / MAX_ANGLE)
 
-typedef struct {
+struct PlayerOverlay
+{
    char         hotspot;     // Screen hotspot on which to put player overlay
    object_node *obj;         // Player overlay and its overlays
-} PlayerOverlay;
+
+   // Saved overlay (if any) that's temporarily replaced by a one-shot overlay animation
+   char         saved_hotspot;
+   object_node *saved_obj;
+};
 
 typedef struct 
 {

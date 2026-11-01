@@ -27,11 +27,31 @@ static void DrawPlayerOverlayOverlays(PDIB pdib_obj, AREA *obj_area, list_type o
                                       bool underlays, BYTE secondtranslation, int flags);
 static void PreloadPlayerOverlay(object_node *overlayObj);
 /************************************************************************/
+/*
+ * IsTemporaryPlayerOverlay:  Return true if the overlay is a one-shot animation
+ *   that removes itself when done (e.g. the spell casting hand).
+ */
+static bool IsTemporaryPlayerOverlay(object_node *poverlay, char hotspot)
+{
+   return (hotspot != 0) && (poverlay->animate->animation == ANIMATE_ONCE)
+      && (poverlay->animate->group_final == ANIMATE_GROUP_END);
+}
+/************************************************************************/
+/*
+ * ClearSavedPlayerOverlay:  Frees the saved overlay (if any).
+ */
+static void ClearSavedPlayerOverlay(PlayerOverlay *slot)
+{
+   if (slot->saved_obj != nullptr)
+      ObjectDestroyAndFree(slot->saved_obj);
+
+   slot->saved_obj = nullptr;
+   slot->saved_hotspot = 0;
+}
+/************************************************************************/
 void SetPlayerOverlay(char hotspot, object_node *poverlay)
 {
-   ID num;
-   
-   num = poverlay->id - 1;
+   ID num = poverlay->id - 1;
 
    if (num < 0 || num >= NUM_PLAYER_OVERLAYS)
    {
@@ -42,27 +62,50 @@ void SetPlayerOverlay(char hotspot, object_node *poverlay)
 
    PreloadPlayerOverlay(poverlay);
 
-   // Replace previous player overlay, if any
-   if (player.poverlays[num].obj != NULL)
-      ObjectDestroyAndFree(player.poverlays[num].obj);
+   PlayerOverlay *slot = &player.poverlays[num];
 
-   player.poverlays[num].obj     = poverlay;
-   player.poverlays[num].hotspot = hotspot;
+   // Check if the new overlay is a one-shot animation.
+   bool isNewOverlayTemporary = IsTemporaryPlayerOverlay(poverlay, hotspot);
+
+   // Also check if slot is currently showing a non-temporary overlay (e.g. holding a weapon).
+   bool isCurrentOverlayNonTemporary = (slot->obj != nullptr) && (slot->hotspot != 0)
+      && !IsTemporaryPlayerOverlay(slot->obj, slot->hotspot);
+
+   if (isNewOverlayTemporary && isCurrentOverlayNonTemporary && (slot->saved_obj == nullptr))
+   {
+      // Hide the current overlay until the animation finishes.
+      slot->saved_obj     = slot->obj;
+      slot->saved_hotspot = slot->hotspot;
+   }
+   else
+   {
+      // Replace previous player overlay (if any).
+      if (slot->obj != nullptr)
+         ObjectDestroyAndFree(slot->obj);
+
+      // A new non-temporary overlay supersedes any hidden one; a new temporary
+      //  one keeps it, so it's still restored when this animation ends.
+      if (!isNewOverlayTemporary)
+         ClearSavedPlayerOverlay(slot);
+   }
+
+   slot->obj     = poverlay;
+   slot->hotspot = hotspot;
    RedrawAll();
 }
 /************************************************************************/
 /*
- * PlayerOverlaysFree:  Free all player overlays
+ * PlayerOverlaysFree:  Free all player overlays.
  */
 void PlayerOverlaysFree(void)
 {
-   int i;
-
-   for (i=0; i < NUM_PLAYER_OVERLAYS; i++)
+   for (int i = 0; i < NUM_PLAYER_OVERLAYS; i++)
    {
-      if (player.poverlays[i].obj != NULL)
-	 ObjectDestroyAndFree(player.poverlays[i].obj);
-      player.poverlays[i].obj = NULL;
+      if (player.poverlays[i].obj != nullptr)
+         ObjectDestroyAndFree(player.poverlays[i].obj);
+      player.poverlays[i].obj = nullptr;
+
+      ClearSavedPlayerOverlay(&player.poverlays[i]);
    }
 }
 

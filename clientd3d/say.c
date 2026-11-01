@@ -92,7 +92,20 @@ void FreeCurrentUsers(void)
 */
 void UserWho(void)
 {
-	SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
+	HWND hWho = WhoDialogGet();
+
+	// Only one Who dialog may be open at a time.
+	// A second would take the live updates from the first.
+	if (hWho != NULL)
+	{
+		ShowWindow(hWho, SW_SHOWNORMAL);
+		SetFocus(hWho);
+		return;
+	}
+
+	TooltipReset();
+
+	CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
 		WhoDialogProc, (LPARAM) current_users);
 }
 

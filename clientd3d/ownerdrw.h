@@ -21,6 +21,7 @@
 #define OD_ONLYSEL       0x00000004        // Draw object or icon only if selected
 #define OD_COLORTEXT     0x00000008        // Draw text in specified special color
 #define OD_NEXTICON      0x00000010        // Icon drawn is given index plus one
+#define OD_CHARACTER_NOTES 0x00000020      // Draw character notes after player names
 #define OD_ICONINDEXMASK 0x0000F000        // Index of icon to be drawn
 #define OD_GETICONINDEX(style) (((style) & OD_ICONINDEXMASK) >> 12)
 #define OD_MAKEICONINDEX(icon) (((icon) << 12) & OD_ICONINDEXMASK)

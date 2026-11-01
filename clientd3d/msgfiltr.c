@@ -13,6 +13,7 @@
  */
 
 #include "client.h"
+#include "characternotes.h"
 
 static HWND hWhoDialog = NULL;        /* Non-null if Who dialog is up */
 
@@ -20,6 +21,7 @@ extern player_info player;
 
 #define WHOM_UPDATE (WM_APP+5)
 #define WHOM_RESET  (WM_APP+6)
+#define IDM_WRITE_CHARACTER_NOTE 1
 
 /*****************************************************************************/
 /*
@@ -105,6 +107,74 @@ void ResetWhoList(list_type users)
       SendMessage(hWhoDialog, WHOM_RESET, 0, (LPARAM)users);
 }
 
+static LRESULT CALLBACK WhoListSubclassProc(HWND list, UINT message, WPARAM wParam,
+                                            LPARAM lParam, UINT_PTR subclassId,
+                                            DWORD_PTR refData)
+{
+   if (message == WM_CONTEXTMENU)
+   {
+      HWND dialog = (HWND)refData;
+      POINT screenPoint;
+      int item;
+
+      screenPoint.x = GET_X_LPARAM(lParam);
+      screenPoint.y = GET_Y_LPARAM(lParam);
+      if (screenPoint.x == -1 && screenPoint.y == -1)
+      {
+         RECT itemRect;
+         item = (int)SendMessage(list, LB_GETCARETINDEX, 0, 0);
+         if (item == LB_ERR || SendMessage(list, LB_GETITEMRECT, item,
+                                           (LPARAM)&itemRect) == LB_ERR)
+            return 0;
+         screenPoint.x = itemRect.left + (itemRect.right - itemRect.left) / 2;
+         screenPoint.y = itemRect.top + (itemRect.bottom - itemRect.top) / 2;
+         ClientToScreen(list, &screenPoint);
+      }
+      else
+      {
+         POINT clientPoint = screenPoint;
+         DWORD hit;
+         ScreenToClient(list, &clientPoint);
+         hit = (DWORD)SendMessage(list, LB_ITEMFROMPOINT, 0,
+                                  MAKELPARAM(clientPoint.x, clientPoint.y));
+         if (HIWORD(hit))
+            return 0;
+         item = LOWORD(hit);
+      }
+
+      LRESULT itemData = SendMessage(list, LB_GETITEMDATA, item, 0);
+      if (itemData == LB_ERR || itemData == 0)
+         return 0;
+      object_node *user = (object_node *)itemData;
+
+      HMENU menu = CreatePopupMenu();
+      if (!menu)
+      {
+         debug(("WhoListSubclassProc(): cannot create context menu\n"));
+         return 0;
+      }
+      if (!AppendMenu(menu, MF_STRING, IDM_WRITE_CHARACTER_NOTE, "Write note"))
+      {
+         debug(("WhoListSubclassProc(): cannot add context menu item\n"));
+         DestroyMenu(menu);
+         return 0;
+      }
+
+      int command = TrackPopupMenu(menu, TPM_RETURNCMD | TPM_RIGHTBUTTON,
+                                   screenPoint.x, screenPoint.y, 0, dialog, NULL);
+      DestroyMenu(menu);
+      if (command == IDM_WRITE_CHARACTER_NOTE)
+      {
+         std::string characterName = LookupNameRsc(user->name_res);
+         EditCharacterNote(dialog, characterName.c_str());
+         InvalidateRect(list, NULL, TRUE);
+      }
+      return 0;
+   }
+
+   return DefSubclassProc(list, message, wParam, lParam);
+}
+
 /*****************************************************************************/
 INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -121,7 +191,8 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
       hList = GetDlgItem(hDlg, IDC_USERLIST);
 
       // Don't draw objects; too slow to load user bitmaps
-      SetWindowLongPtr(hList, GWLP_USERDATA, OD_DRAWICON | OD_ONLYSEL | OD_COLORTEXT | OD_MAKEICONINDEX(0));
+      SetWindowLongPtr(hList, GWLP_USERDATA, OD_DRAWICON | OD_ONLYSEL | OD_COLORTEXT |
+                       OD_CHARACTER_NOTES | OD_MAKEICONINDEX(0));
       
       /* Set contents of user list */
       ItemListSetContents(hList, users, false);
@@ -149,6 +220,8 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
          SetWindowLongPtr(hList, GWLP_USERDATA, GetWindowLongPtr(hList, GWLP_USERDATA) | OD_NEXTICON);
 
       hWhoDialog = hDlg;
+      if (!SetWindowSubclass(hList, WhoListSubclassProc, 1, (DWORD_PTR)hDlg))
+         debug(("WhoDialogProc(): could not install player list context menu\n"));
       return TRUE;
 
    case WHOM_UPDATE:
@@ -260,6 +333,7 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
       break;
       
    case WM_DESTROY:
+     RemoveWindowSubclass(GetDlgItem(hDlg, IDC_USERLIST), WhoListSubclassProc, 1);
      hWhoDialog = NULL;
      return TRUE;
    }

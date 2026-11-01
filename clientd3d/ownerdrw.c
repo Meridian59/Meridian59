@@ -15,6 +15,7 @@
  */
 
 #include "client.h"
+#include "characternotes.h"
 
 /* Size of objects drawn in list box */
 #define LIST_OBJECT_HEIGHT 16
@@ -483,6 +484,56 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo)
 
    SetTextColor(lpdis->hDC, crColorText);
    DrawText(lpdis->hDC, buf, (int) strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
+
+   if ((style & OD_CHARACTER_NOTES) && obj != NULL)
+   {
+      std::string playerName = LookupNameRsc(obj->name_res);
+      const char *note = GetCharacterNote(playerName.c_str());
+      if (note && *note)
+      {
+         SIZE nameSize;
+         SIZE separatorSize;
+         int nameLength = (int)strlen(buf);
+         if (GetTextExtentPoint32(lpdis->hDC, buf, nameLength, &nameSize))
+         {
+            RECT noteRect = r;
+            noteRect.left += nameSize.cx;
+            if (noteRect.left < noteRect.right)
+            {
+               const char separator[] = " - ";
+               SetTextColor(lpdis->hDC, crColorText);
+               DrawText(lpdis->hDC, separator, 3, &noteRect,
+                        DT_VCENTER | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+
+               if (GetTextExtentPoint32(lpdis->hDC, separator, 3, &separatorSize))
+                  noteRect.left += separatorSize.cx;
+
+               HFONT normalFont = (HFONT)GetFont(FONT_LIST);
+               HFONT italicFont = NULL;
+               LOGFONT fontInfo;
+               if (GetObject(normalFont, sizeof(fontInfo), &fontInfo))
+               {
+                  fontInfo.lfItalic = TRUE;
+                  italicFont = CreateFontIndirect(&fontInfo);
+               }
+
+               if (italicFont)
+               {
+                  HGDIOBJ oldFont = SelectObject(lpdis->hDC, italicFont);
+                  DrawText(lpdis->hDC, note, (int)strlen(note), &noteRect,
+                           DT_VCENTER | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+                  SelectObject(lpdis->hDC, oldFont);
+                  DeleteObject(italicFont);
+               }
+               else
+               {
+                  DrawText(lpdis->hDC, note, (int)strlen(note), &noteRect,
+                           DT_VCENTER | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+               }
+            }
+         }
+      }
+   }
 
    RestoreDC(lpdis->hDC, dc_state);
 

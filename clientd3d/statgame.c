@@ -11,6 +11,7 @@
  */
 
 #include "client.h"
+#include "characternotes.h"
 
 /* Current state of game--selecting object, picking character, etc. */
 static int game_state = GAME_NONE;
@@ -33,6 +34,7 @@ static POINT previous_mouse_position;
 void GameInit(void)
 {
    LoadProfaneTerms();
+   LoadCharacterNotes();
 
    // Set period of multimedia timer
    timeBeginPeriod(1);

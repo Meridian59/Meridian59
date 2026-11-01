@@ -11,6 +11,7 @@
 */
 
 #include "client.h"
+#include "characternotes.h"
 
 static HMODULE hRichEditLib; 
 
@@ -145,6 +146,7 @@ void MainQuit(HWND hwnd)
 	if (config.save_settings)
 		SaveSettings();
 	FreeProfaneTerms();
+	FreeCharacterNotes();
 	
 	MainExitState();
 	

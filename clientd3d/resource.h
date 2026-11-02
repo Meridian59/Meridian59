@@ -645,6 +645,7 @@
 #define IDC_ANNOTATION_ZOOM_LIMIT       3653
 #define IDS_THEME_DEFAULT               3654
 #define IDS_THEME_DARK                  3655
+#define IDS_WHO_COPYNAME                3656
 
 // Next default values for new objects
 // 

@@ -106,6 +106,66 @@ void ResetWhoList(list_type users)
 }
 
 /*****************************************************************************/
+/*
+ * CopyTextToClipboard:  Place a null-terminated ANSI string on the clipboard.
+ *   On success the clipboard owns the memory.
+ */
+static void CopyTextToClipboard(HWND hwnd, const char *text)
+{
+   if (text == NULL || text[0] == '\0')
+      return;
+
+   const size_t len = strlen(text) + 1;
+   HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, len);
+   if (hMem == NULL)
+      return;
+
+   char *dest = (char *) GlobalLock(hMem);
+   if (dest == NULL)
+   {
+      GlobalFree(hMem);
+      return;
+   }
+   memcpy(dest, text, len);
+   GlobalUnlock(hMem);
+
+   if (!OpenClipboard(hwnd))
+   {
+      GlobalFree(hMem);
+      return;
+   }
+
+   EmptyClipboard();
+   if (SetClipboardData(CF_TEXT, hMem) == NULL)
+      GlobalFree(hMem);
+   CloseClipboard();
+}
+
+/*****************************************************************************/
+/*
+ * WhoListItemFromPoint:  Return the list index under the client point, or
+ *   LB_ERR when the point is not on a player row.
+ */
+static int WhoListItemFromPoint(HWND hList, POINT clientPt)
+{
+   const DWORD result = (DWORD) SendMessage(hList, LB_ITEMFROMPOINT, 0, MAKELPARAM(clientPt.x, clientPt.y));
+   if (HIWORD(result) != 0)
+      return LB_ERR;
+
+   const int index = (int) (short) LOWORD(result);
+   if (index < 0)
+      return LB_ERR;
+
+   RECT rc;
+   if (ListBox_GetItemRect(hList, index, &rc) == LB_ERR)
+      return LB_ERR;
+   if (!PtInRect(&rc, clientPt))
+      return LB_ERR;
+
+   return index;
+}
+
+/*****************************************************************************/
 INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
    HWND hList;
@@ -258,7 +318,60 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
         return TRUE;
       }
       break;
+
+   case WM_CONTEXTMENU:
+   {
+      HWND hList = GetDlgItem(hDlg, IDC_USERLIST);
+      if ((HWND) wParam != hList)
+         break;
+
+      POINT pt;
+      pt.x = GET_X_LPARAM(lParam);
+      pt.y = GET_Y_LPARAM(lParam);
+      POINT client = pt;
+      ScreenToClient(hList, &client);
+
+      const int index = WhoListItemFromPoint(hList, client);
+      if (index < 0)
+         return TRUE;
+
+      const LRESULT data = SendMessage(hList, LB_GETITEMDATA, (WPARAM) index, 0);
       
+      if (data == LB_ERR || data == 0)
+         return TRUE;
+      
+      object_node *obj = (object_node *) data;
+      const ID playerId = obj->id;
+
+      HMENU menu = CreatePopupMenu();
+      if (menu == NULL)
+         return TRUE;
+
+      AppendMenu(menu, MF_STRING, IDS_WHO_COPYNAME, GetString(hInst, IDS_WHO_COPYNAME));
+      
+      const int cmd = TrackPopupMenu(menu,
+                           TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD | TPM_NONOTIFY,
+                           pt.x, pt.y, 0, hDlg, NULL);
+      DestroyMenu(menu);
+      if (cmd == 0)
+         return TRUE;
+
+      obj = ItemListFindObject(hList, playerId);
+      if (obj == NULL)
+         return TRUE;
+
+      if (cmd == IDS_WHO_COPYNAME)
+      {
+         char name[MAXSTRINGLEN];
+
+         strncpy(name, LookupNameRsc(obj->name_res), sizeof(name) - 1);
+         name[sizeof(name) - 1] = '\0';
+         CopyTextToClipboard(hDlg, name);
+      }
+      
+      return TRUE;
+   }
+
    case WM_DESTROY:
      hWhoDialog = NULL;
      return TRUE;

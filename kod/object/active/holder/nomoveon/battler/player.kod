@@ -1848,7 +1848,7 @@ messages:
          Send(oCaramo,@UserLogon,#who=self);
       }
 
-      if piPoisonStrength > 0
+      if piPoisonStrength > 0 AND ptPoison = $
       {
          ptPoison = CreateTimer(self,@PoisonTimer,10000);
       }

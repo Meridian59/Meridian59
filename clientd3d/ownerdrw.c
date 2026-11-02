@@ -15,7 +15,6 @@
  */
 
 #include "client.h"
-#include "characternotes.h"
 
 /* Size of objects drawn in list box */
 #define LIST_OBJECT_HEIGHT 16

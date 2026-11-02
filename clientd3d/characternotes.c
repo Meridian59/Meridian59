@@ -1,12 +1,14 @@
 /*
- * characternotes.c: Persistent notes associated with character names.
+ * characternotes.c: persistent notes associated with character names.
  */
 
 #include "client.h"
 #include "characternotes.h"
 
+#include <fstream>
 #include <map>
 
+/* Notes are shared by all accounts and characters using this client installation. */
 static const char* _szCharacterNotesFile = "mail\\characternotes.dat";
 
 struct CharacterNameLess
@@ -22,7 +24,7 @@ static std::map<std::string, std::string, CharacterNameLess> characterNotes;
 struct CharacterNoteDialogData
 {
    std::string characterName;
-   char note[MAX_CHARACTER_NOTE + 1];
+   std::string note;
 };
 
 const char *GetCharacterNote(const char *characterName)
@@ -32,54 +34,44 @@ const char *GetCharacterNote(const char *characterName)
 
    std::map<std::string, std::string, CharacterNameLess>::const_iterator note =
       characterNotes.find(characterName);
+   /* the returned pointer remains valid until this note is changed or erased  */
    return note == characterNotes.end() ? NULL : note->second.c_str();
 }
 
 void LoadCharacterNotes(void)
 {
-   FILE *file;
-   char line[512];
+   std::ifstream file(_szCharacterNotesFile);
 
    characterNotes.clear();
-   file = fopen(_szCharacterNotesFile, "rt");
    if (!file)
    {
       debug(("LoadCharacterNotes(): cannot open %s\n", _szCharacterNotesFile));
       return;
    }
 
-   while (fgets(line, sizeof(line), file))
+   std::string line;
+   while (std::getline(file, line))
    {
-      size_t length = strlen(line);
-      char *separator;
-      char *note;
+      /* Each record contains a character name, a tab, and a note of up to MAX_CHARACTER_NOTE characters. */
+      size_t lineEnd = line.find_first_of("\r\n");
+      if (lineEnd != std::string::npos)
+         line.erase(lineEnd);
 
-      if (length > 0 && line[length - 1] != '\n' && !feof(file))
-      {
-         int ch;
-         while ((ch = fgetc(file)) != '\n' && ch != EOF)
-            ;
-         continue;
-      }
-
-      line[strcspn(line, "\r\n")] = '\0';
-      separator = strchr(line, '\t');
-      if (!separator)
+      size_t separator = line.find('\t');
+      if (separator == std::string::npos)
          continue;
 
-      *separator = '\0';
-      note = separator + 1;
-      if (!line[0] || strlen(line) > MAX_CHARNAME ||
-          strlen(note) > MAX_CHARACTER_NOTE)
+      std::string characterName = line.substr(0, separator);
+      std::string note = line.substr(separator + 1);
+      if (characterName.empty() || characterName.size() > MAX_CHARNAME ||
+          note.size() > MAX_CHARACTER_NOTE)
          continue;
 
-      characterNotes[line] = note;
+      characterNotes[characterName] = note;
    }
 
-   if (ferror(file))
+   if (file.bad())
       debug(("LoadCharacterNotes(): error reading %s\n", _szCharacterNotesFile));
-
-   fclose(file);
 }
 
 BOOL SaveCharacterNotes(void)
@@ -135,7 +127,7 @@ static INT_PTR CALLBACK CharacterNoteDialogProc(HWND dialog, UINT message,
       SetDlgItemText(dialog, IDC_CHARACTERNOTE_LABEL, characterLabel.c_str());
       SendDlgItemMessage(dialog, IDC_CHARACTERNOTE_EDIT, EM_LIMITTEXT,
                          MAX_CHARACTER_NOTE, 0);
-      SetDlgItemText(dialog, IDC_CHARACTERNOTE_EDIT, data->note);
+      SetDlgItemText(dialog, IDC_CHARACTERNOTE_EDIT, data->note.c_str());
       return TRUE;
    }
 
@@ -144,7 +136,7 @@ static INT_PTR CALLBACK CharacterNoteDialogProc(HWND dialog, UINT message,
       {
       case IDOK:
       {
-         char note[MAX_CHARACTER_NOTE + 1];
+         std::string note(MAX_CHARACTER_NOTE + 1, '\0');
          std::string oldNote;
          std::map<std::string, std::string, CharacterNameLess>::const_iterator old =
             characterNotes.find(data->characterName);
@@ -152,14 +144,17 @@ static INT_PTR CALLBACK CharacterNoteDialogProc(HWND dialog, UINT message,
          if (old != characterNotes.end())
             oldNote = old->second;
 
-         GetDlgItemText(dialog, IDC_CHARACTERNOTE_EDIT, note, sizeof(note));
-         for (char *ch = note; *ch; ++ch)
-            if (*ch == '\t' || *ch == '\r' || *ch == '\n')
-               *ch = ' ';
+         UINT noteLength = GetDlgItemText(dialog, IDC_CHARACTERNOTE_EDIT, &note[0],
+                                          static_cast<int>(note.size()));
+         note.resize(noteLength);
+         /* Keep notes on one line so they remain a single file record. */
+         for (size_t i = 0; i < note.size(); ++i)
+            if (note[i] == '\t' || note[i] == '\r' || note[i] == '\n')
+               note[i] = ' ';
 
          if (oldNote != note)
          {
-            if (note[0])
+            if (!note.empty())
                characterNotes[data->characterName] = note;
             else
                characterNotes.erase(data->characterName);
@@ -171,6 +166,7 @@ static INT_PTR CALLBACK CharacterNoteDialogProc(HWND dialog, UINT message,
                else
                   characterNotes[data->characterName] = oldNote;
 
+               /* keep the in-memory note unchanged when saving fails. */
                MessageBox(dialog,
                           "Unable to save character notes to mail\\characternotes.dat.",
                           szAppName, MB_OK | MB_ICONERROR);
@@ -201,11 +197,13 @@ void EditCharacterNote(HWND parent, const char *characterName)
       return;
 
    data.characterName = characterName;
-   data.note[0] = '\0';
    existingNote = GetCharacterNote(characterName);
    if (existingNote)
-      strncpy(data.note, existingNote, MAX_CHARACTER_NOTE);
-   data.note[MAX_CHARACTER_NOTE] = '\0';
+   {
+      data.note = existingNote;
+      if (data.note.size() > MAX_CHARACTER_NOTE)
+         data.note.resize(MAX_CHARACTER_NOTE);
+   }
 
    if (SafeDialogBoxParam(hInst, MAKEINTRESOURCE(IDD_CHARACTERNOTE), parent,
                           CharacterNoteDialogProc, (LPARAM)&data) == -1)

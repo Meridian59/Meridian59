@@ -11,7 +11,6 @@
  */
 
 #include "client.h"
-#include "characternotes.h"
 
 /* Current state of game--selecting object, picking character, etc. */
 static int game_state = GAME_NONE;

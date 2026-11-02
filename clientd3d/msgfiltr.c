@@ -13,7 +13,6 @@
  */
 
 #include "client.h"
-#include "characternotes.h"
 
 static HWND hWhoDialog = NULL;        /* Non-null if Who dialog is up */
 

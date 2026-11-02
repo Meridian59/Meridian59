@@ -11,7 +11,6 @@
 */
 
 #include "client.h"
-#include "characternotes.h"
 
 static HMODULE hRichEditLib; 
 

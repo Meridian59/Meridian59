@@ -107,15 +107,14 @@ void ResetWhoList(list_type users)
 
 /*****************************************************************************/
 /*
- * CopyTextToClipboard:  Place a null-terminated ANSI string on the clipboard.
- *   On success the clipboard owns the memory.
+ * CopyTextToClipboard:  Place an ANSI string on the clipboard.
  */
-static void CopyTextToClipboard(HWND hwnd, const char *text)
+static void CopyTextToClipboard(HWND hwnd, const std::string &text)
 {
-   if (text == NULL || text[0] == '\0')
+   if (text.empty())
       return;
 
-   const size_t len = strlen(text) + 1;
+   const size_t len = text.size() + 1;
    HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, len);
    if (hMem == NULL)
       return;
@@ -126,7 +125,7 @@ static void CopyTextToClipboard(HWND hwnd, const char *text)
       GlobalFree(hMem);
       return;
    }
-   memcpy(dest, text, len);
+   memcpy(dest, text.c_str(), len);
    GlobalUnlock(hMem);
 
    if (!OpenClipboard(hwnd))
@@ -362,11 +361,7 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 
       if (cmd == IDS_WHO_COPYNAME)
       {
-         char name[MAXSTRINGLEN];
-
-         strncpy(name, LookupNameRsc(obj->name_res), sizeof(name) - 1);
-         name[sizeof(name) - 1] = '\0';
-         CopyTextToClipboard(hDlg, name);
+         CopyTextToClipboard(hDlg, LookupNameRsc(obj->name_res));
       }
       
       return TRUE;

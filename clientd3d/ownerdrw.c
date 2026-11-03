@@ -499,36 +499,23 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo)
             noteRect.left += nameSize.cx;
             if (noteRect.left < noteRect.right)
             {
-               const char separator[] = " - ";
+               const char separator[] = " ";
                SetTextColor(lpdis->hDC, crColorText);
-               DrawText(lpdis->hDC, separator, 3, &noteRect,
+               DrawText(lpdis->hDC, separator, 1, &noteRect,
                         DT_VCENTER | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
 
-               if (GetTextExtentPoint32(lpdis->hDC, separator, 3, &separatorSize))
+               if (GetTextExtentPoint32(lpdis->hDC, separator, 1, &separatorSize))
                   noteRect.left += separatorSize.cx;
 
-               HFONT normalFont = (HFONT)GetFont(FONT_LIST);
-               HFONT italicFont = NULL;
-               LOGFONT fontInfo;
-               if (GetObject(normalFont, sizeof(fontInfo), &fontInfo))
-               {
-                  fontInfo.lfItalic = TRUE;
-                  italicFont = CreateFontIndirect(&fontInfo);
-               }
+               SIZE paddingSize;
+               if (GetTextExtentPoint32(lpdis->hDC, "M", 1, &paddingSize))
+                  noteRect.right -= paddingSize.cx / 2;
 
-               if (italicFont)
-               {
-                  HGDIOBJ oldFont = SelectObject(lpdis->hDC, italicFont);
+               SetTextColor(lpdis->hDC, RGB(232, 220, 184));
+               if (noteRect.left < noteRect.right)
                   DrawText(lpdis->hDC, note, (int)strlen(note), &noteRect,
-                           DT_VCENTER | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-                  SelectObject(lpdis->hDC, oldFont);
-                  DeleteObject(italicFont);
-               }
-               else
-               {
-                  DrawText(lpdis->hDC, note, (int)strlen(note), &noteRect,
-                           DT_VCENTER | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
-               }
+                           DT_VCENTER | DT_RIGHT | DT_NOPREFIX | DT_SINGLELINE |
+                           DT_END_ELLIPSIS);
             }
          }
       }

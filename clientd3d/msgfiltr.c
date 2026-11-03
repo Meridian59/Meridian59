@@ -327,12 +327,38 @@ INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
       POINT pt;
       pt.x = GET_X_LPARAM(lParam);
       pt.y = GET_Y_LPARAM(lParam);
-      POINT client = pt;
-      ScreenToClient(hList, &client);
 
-      const int index = WhoListItemFromPoint(hList, client);
-      if (index < 0)
-         return TRUE;
+      int index;
+      if (pt.x == -1 && pt.y == -1)
+      {
+         // Invoked from the keyboard, use the focused row
+         index = (int) SendMessage(hList, LB_GETCARETINDEX, 0, 0);
+         if (index < 0)
+            return TRUE;
+
+         RECT rcItem, rcClient, rcVisible;
+         GetClientRect(hList, &rcClient);
+         if (ListBox_GetItemRect(hList, index, &rcItem) != LB_ERR &&
+             IntersectRect(&rcVisible, &rcItem, &rcClient))
+         {
+            pt.x = rcVisible.left;
+            pt.y = rcVisible.bottom;
+         }
+         else
+         {
+            pt.x = rcClient.left;
+            pt.y = rcClient.top;
+         }
+         ClientToScreen(hList, &pt);
+      }
+      else
+      {
+         POINT client = pt;
+         ScreenToClient(hList, &client);
+         index = WhoListItemFromPoint(hList, client);
+         if (index < 0)
+            return TRUE;
+      }
 
       const LRESULT data = SendMessage(hList, LB_GETITEMDATA, (WPARAM) index, 0);
       

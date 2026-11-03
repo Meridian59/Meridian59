@@ -106,6 +106,23 @@ void ResetWhoList(list_type users)
       SendMessage(hWhoDialog, WHOM_RESET, 0, (LPARAM)users);
 }
 
+static int WhoListItemFromPoint(HWND list, POINT clientPoint)
+{
+   DWORD hit = (DWORD)SendMessage(list, LB_ITEMFROMPOINT, 0,
+                                  MAKELPARAM(clientPoint.x, clientPoint.y));
+   if (HIWORD(hit) != 0)
+      return LB_ERR;
+
+   int item = (int)(short)LOWORD(hit);
+   RECT itemRect;
+   if (item < 0 ||
+       ListBox_GetItemRect(list, item, &itemRect) == LB_ERR ||
+       !PtInRect(&itemRect, clientPoint))
+      return LB_ERR;
+
+   return item;
+}
+
 static LRESULT CALLBACK WhoListSubclassProc(HWND list, UINT message, WPARAM wParam,
                                             LPARAM lParam, UINT_PTR subclassId,
                                             DWORD_PTR refData)
@@ -132,19 +149,17 @@ static LRESULT CALLBACK WhoListSubclassProc(HWND list, UINT message, WPARAM wPar
       else
       {
          POINT clientPoint = screenPoint;
-         DWORD hit;
          ScreenToClient(list, &clientPoint);
-         hit = (DWORD)SendMessage(list, LB_ITEMFROMPOINT, 0,
-                                  MAKELPARAM(clientPoint.x, clientPoint.y));
-         if (HIWORD(hit))
+         item = WhoListItemFromPoint(list, clientPoint);
+         if (item == LB_ERR)
             return 0;
-         item = LOWORD(hit);
       }
 
       LRESULT itemData = SendMessage(list, LB_GETITEMDATA, item, 0);
       if (itemData == LB_ERR || itemData == 0)
          return 0;
       object_node *user = (object_node *)itemData;
+      ID userId = user->id;
 
       HMENU menu = CreatePopupMenu();
       if (!menu)
@@ -164,6 +179,10 @@ static LRESULT CALLBACK WhoListSubclassProc(HWND list, UINT message, WPARAM wPar
       DestroyMenu(menu);
       if (command == IDM_WRITE_CHARACTER_NOTE)
       {
+         user = ItemListFindObject(list, userId);
+         if (!user)
+            return 0;
+
          std::string characterName = LookupNameRsc(user->name_res);
          EditCharacterNote(dialog, characterName.c_str());
          InvalidateRect(list, NULL, TRUE);

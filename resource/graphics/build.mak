@@ -122,6 +122,8 @@ BGFS = \
 	blh.bgf \
 	bli.bgf \
 	blj.bgf \
+	blk.bgf \
+	bll.bgf \
 	block.bgf \
 	bloodinn.bgf \
 	blubott4.bgf \
@@ -164,6 +166,8 @@ BGFS = \
 	brh.bgf \
 	bri.bgf \
 	brj.bgf \
+	brk.bgf \
+	brl.bgf \
 	brnurn4.bgf \
 	bsmith.bgf \
 	bta.bgf \

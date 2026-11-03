@@ -762,6 +762,11 @@ messages:
 
    EnterStateAttack(target = $, actnow=TRUE)
    {     
+      if poOwner = $
+      {
+         return;
+      }
+
       Send(self,@SetState,#bit=STATE_ATTACK);
       Send(self,@ClearBehavior);
       if actnow
@@ -778,6 +783,11 @@ messages:
 
    EnterStateChase( target = $, actnow = TRUE )
    {
+      if poOwner = $
+      {
+         return;
+      }
+
       if poTarget <> target AND vrSound_aware <> $
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_aware,
@@ -5545,6 +5555,11 @@ messages:
 
    TargetSwitch(what=$, iHatred = 0)
    {      
+      if poOwner = $
+      {
+         return;
+      }
+
       if what = $
       {
          Debug("BAD target we're switching to here!");

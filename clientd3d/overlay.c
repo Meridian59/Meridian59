@@ -38,7 +38,8 @@ static bool IsTemporaryPlayerOverlay(object_node *poverlay, char hotspot)
 }
 /************************************************************************/
 /*
- * ClearSavedPlayerOverlay:  Frees the saved overlay (if any).
+ * ClearSavedPlayerOverlay:  Free and clear the saved overlay and its hotspot (if any)
+ *   so it can't be restored or freed again.  Doesn't touch the slot's current overlay.
  */
 static void ClearSavedPlayerOverlay(PlayerOverlay *slot)
 {

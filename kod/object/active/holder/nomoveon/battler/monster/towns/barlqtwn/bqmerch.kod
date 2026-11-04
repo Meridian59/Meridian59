@@ -24,7 +24,9 @@ resources:
       "royalty.  He will never run out of bad things to say about the other towns and the low "
       "life transients that wander between them."
 
+   Bqmerch_not_interested = "This offer pleaseth me not."
    Bqmerch_unwanted_give = "~k%s%s tells you, \"Wherefore dost thou offer to me such common baubles?!  I have servants who go to market to buy such things for me.~n~k\""
+   Bqmerch_offer_too_much = "Pah! I buy not by the heap. Present me a smaller measure, if thou wouldst trade."
 
 classvars:
    vrName = barloque_merch_name_rsc
@@ -36,6 +38,7 @@ classvars:
    viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_BUYER | MOB_SELLER | MOB_NOMOVE | MOB_LAWFUL
    viOccupation = MOB_ROLE_MERCHANT
 
+   vrBuyer_unwanted = Bqmerch_not_interested
    vrUnwanted_give = Bqmerch_unwanted_give
 
 properties:
@@ -112,16 +115,15 @@ messages:
 
    ObjectDesired(what=$,who=$)
    {
-      if isClass(what,&NumberItem) and
-         send(what,@GetNumber) > 25
+      if Send(self,@IsObjectGem,#what=what) OR Send(self,@IsObjectSundry,#what=what)
       {
-         return FALSE;
-      }
+         if isClass(what,&NumberItem) AND Send(what,@GetNumber) > 25
+         {
+            Send(self,@SayToOne,#target=who,#message_rsc=Bqmerch_offer_too_much);
+            return FALSE;
+         }
 
-      if send(self,@IsObjectGem,#what=what) or
-         send(self,@IsObjectSundry,#what=what)
-      {
-	 return TRUE;
+         return TRUE;
       }
 
       return FALSE;

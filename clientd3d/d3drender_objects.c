@@ -531,9 +531,9 @@ void D3DRenderNamesDraw3D(
 
 		float lastDistance = 0;
 
-		// Only one pass is needed if the text is black; the shadow pass gets skipped.
-		const bool textIsBlack = (bgra.r == 0 && bgra.g == 0 && bgra.b == 0);
-		const int numPasses = textIsBlack ? 1 : 2;
+		// Only draw a text shadow if the text and shadow colors differ
+		const bool drawShadow = (PALETTERGB(bgra.r, bgra.g, bgra.b) != NAME_COLOR_NORMAL_BG);
+		const int numPasses = drawShadow ? 2 : 1;
 
 		for (offset = 0; offset < numPasses; offset++)
 		{
@@ -643,9 +643,9 @@ void D3DRenderNamesDraw3D(
 
 				if (offset != 0)
 				{
-					bgra.r = 0;
-					bgra.g = 0;
-					bgra.b = 0;
+					bgra.r = GetRValue(NAME_COLOR_NORMAL_BG);
+					bgra.g = GetGValue(NAME_COLOR_NORMAL_BG);
+					bgra.b = GetBValue(NAME_COLOR_NORMAL_BG);
 				}
 
 				for (i = 0; i < 4; i++)

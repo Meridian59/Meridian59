@@ -782,8 +782,12 @@ void DrawObjectDecorations(DrawnObject *object)
       fg_color = PALETTERGB(color.red, color.green, color.blue);
    }
 
-   SetTextColor(gBitsDC, bg_color);
-   TextOut(gBitsDC, x + 1, y + 1, name, namelen);
+   // Only draw a text shadow if the text and shadow colors differ
+   if (fg_color != bg_color)
+   {
+      SetTextColor(gBitsDC, bg_color);
+      TextOut(gBitsDC, x + 1, y + 1, name, namelen);
+   }
    SetTextColor(gBitsDC, fg_color);
    TextOut(gBitsDC, x, y, name, namelen);
 

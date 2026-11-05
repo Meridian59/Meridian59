@@ -532,7 +532,7 @@ void D3DRenderNamesDraw3D(
 		float lastDistance = 0;
 
 		// Only draw a text shadow if the text and shadow colors differ
-		const bool drawShadow = (PALETTERGB(bgra.r, bgra.g, bgra.b) != NAME_COLOR_NORMAL_BG);
+		const bool drawShadow = (PALETTERGB(color.red, color.green, color.blue) != NAME_COLOR_NORMAL_BG);
 		const int numPasses = drawShadow ? 2 : 1;
 
 		for (offset = 0; offset < numPasses; offset++)

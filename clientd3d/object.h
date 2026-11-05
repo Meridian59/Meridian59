@@ -29,6 +29,9 @@ typedef DWORD ID;  /* Server id #s */
 #define MAX_CHARNAME 30   // Maximum length of character name
 #define MAX_DESCRIPTION 1000  /* Maximum length of character description */
 
+// Signals for a bitmap animation to delete when its current group is set to -1.
+static constexpr WORD ANIMATE_GROUP_END = static_cast<WORD>(-1);
+
 // Hold state of an object's animation
 typedef struct {
    BYTE animation;   /* How to animate object's bitmap; constants in animate.h */

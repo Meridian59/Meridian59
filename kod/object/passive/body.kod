@@ -33,6 +33,9 @@ classvars:
    vrAssassinated_desc = deadbody_assassinated_rsc
    viIndefinite = ARTICLE_A
 
+   % Allow bodies to be examined, targeted, and selected for casting upon
+   viObject_flags = UTILITY_TARGET
+
 properties:
 
    vrName
@@ -44,7 +47,7 @@ properties:
    prMonster_name = $
 
    prPlayer_name = $
-   pbWas_good_player = FALSE
+   piKarma = 0
    pbMob = FALSE
    pbAssassinated = FALSE
 
@@ -63,9 +66,9 @@ properties:
 messages:
 
    % you gotta pass in name, icon, and description to constructor
-   Constructor(name = $,icon = $,playername = $,good = FALSE, mob=FALSE ,monstername = $,
+   Constructor(name = $,icon = $,playername = $,karma = 0, mob = FALSE ,monstername = $,
                inKocatan = FALSE, assassinated = FALSE,drawfx = 0, BodyTranslation = 0,
-               LegsTranslation = 0, PlayerBodyOverlay = $, Decomposes=TRUE,
+               LegsTranslation = 0, PlayerBodyOverlay = $, Decomposes = TRUE,
                DearlyDeparted = $)
    {
       vrName = name;
@@ -73,7 +76,7 @@ messages:
       pbMob = mob;
       piDrawfx = drawfx;
       prPlayer_name = playername;
-      pbWas_good_player = good; 
+      piKarma = karma;           % Used to track monster karma as well
       pbAssassinated = assassinated;
       prPlayerBodyOverlay = PlayerBodyOverlay;
       piBodyTrans = BodyTranslation;
@@ -184,9 +187,14 @@ messages:
       return;
    }
 
-   WasGoodPlayer()
+   GetKarma()
    {
-      return pbWas_good_player;
+      return piKarma;
+   }
+   
+   WasGood()
+   {
+      return piKarma > 0;
    }
 
    WasPlayer()
@@ -196,11 +204,6 @@ messages:
 
    GetObjectFlags()
    {
-      if pbMob
-      {
-         return LOOK_NO | piDrawfx;
-      }
-      
       return viObject_flags | piDrawfx;
    }
    

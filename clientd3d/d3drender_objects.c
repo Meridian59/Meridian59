@@ -531,7 +531,11 @@ void D3DRenderNamesDraw3D(
 
 		float lastDistance = 0;
 
-		for (offset = 0; offset <= 1; offset++)
+		// Only one pass is needed if the text is black; the shadow pass gets skipped.
+		const bool textIsBlack = (bgra.r == 0 && bgra.g == 0 && bgra.b == 0);
+		const int numPasses = textIsBlack ? 1 : 2;
+
+		for (offset = 0; offset < numPasses; offset++)
 		{
 			float x = 0.0f;
 			float z = 0;

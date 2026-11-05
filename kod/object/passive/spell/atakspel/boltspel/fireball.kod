@@ -26,6 +26,8 @@ resources:
 
    fireball_sound = ffirebal.wav
 
+   fireball_hit_sound = frying.wav
+
 classvars:
 
    vrName = fireball_name_rsc
@@ -42,6 +44,7 @@ classvars:
    viSpell_level = 4
 
    vrSucceed_wav = fireball_sound
+   vrHitSound_wav = fireball_hit_sound
    
    viPostCast_time = 2        % in seconds, since it works off gettime()
 

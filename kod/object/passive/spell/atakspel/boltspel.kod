@@ -22,6 +22,8 @@ classvars:
 
    vrProjectile_Icon = $
 
+   vrHitSound_wav = $
+
    vbIsRangedAttack = TRUE
 
    viProjectileFlag = PROJ_FLAG_LIGHT_SOURCE
@@ -42,6 +44,8 @@ properties:
    % Maximum amount of bonus damage mana focus gives us for casting this spell.
    piManaFocusBonus = 10
 
+   plHitSoundTimers = $
+
 messages:
 
    CastSpell(who = $, lTargets = $)
@@ -53,6 +57,7 @@ messages:
       Send(oOwner,@SomethingShot,#who=who,#target=First(lTargets), 
            #projectile=self,#flags=viProjectileFlag);
 
+      Send(self,@SendScheduledSoundEffect,#who=who,#target=First(lTargets),#castRoom=oOwner);
 	   propagate;
    }
 
@@ -91,6 +96,98 @@ messages:
       return viProjectileLightColor;
    }
 
+   GetProjectileTravelTime(who = $, target = $)
+   {
+      local iSquaredDistanceToTarget, iSpeed, iDistance;
+      
+      if who = $ OR target = $
+      {
+         return $;
+      }
+
+      % Distance to the target squared
+      iSquaredDistanceToTarget = Send(who,@SquaredDistanceTo,#what=target);
+
+      % Get projectile speed
+      iSpeed = Send(self,@GetProjectileSpeed);
+
+      % Just in case
+      if iSquaredDistanceToTarget = $ OR iSpeed <= 0
+      {
+         return $;
+      }
+
+      % In tenths of a square;
+      iDistance = Sqrt(iSquaredDistanceToTarget * 100);
+    
+      % Cap at the maximum travel time of a porjectile (see projectile.c, )
+      % This is in milliseconds, iDistance is tenths of a square
+      % Divide by ten to get amount of squares, multiply by 1000 to get
+      % Milliseconds, e.g. multiple iDistance by 100
+      return Bound(iDistance*100/iSpeed, $ , 2000);
+   }
+
+   SendScheduledSoundEffect(who = $, target = $, castRoom = $)
+   {
+      local iTravelTime, tTimer;
+
+      if vrHitSound_wav = $ OR target = $
+      {
+         return;
+      }
+
+      % Tavel time
+      iTravelTime = Send(self,@GetProjectileTravelTime,#who=who,#target=target);
+      if iTravelTime = $ 
+      {
+         return;
+      }
+
+      % Made a timer on self that calls @SoundEffectTimer in iTravelTime time
+      tTimer = CreateTimer(self,@SoundEffectTimer,iTravelTime);
+
+      % Big list of this to hit, when, and where
+      plHitSoundTimers = Cons([tTimer,target,castRoom],plHitSoundTimers );
+
+      return;
+   }
+
+   SoundEffectTimer(timer = $)
+   {
+      local hitDetails, oCastTarget, oCastRoom;
+
+      % This list should be tiny, so this is fine, even though I think it is sorted 
+      for hitDetails in plHitSoundTimers 
+      {
+         % We got the right timer
+         if First(hitDetails) = timer
+         {
+            oCastTarget = Nth(hitDetails,2);
+            oCastRoom = Nth(hitDetails,3); 
+           
+            % Cleanup
+            plHitSoundTimers = DelListElem(plHitSoundTimers,hitDetails);
+
+            % Still in the room and target still exists
+            if NOT IsObject(oCastTarget)
+            {
+               return;
+            }
+
+            if Send(oCastTarget,@GetOwner) <> oCastRoom
+            {
+               return;
+            }
+
+            Send(oCastRoom,@SomethingWaveRoom,#what=oCastTarget,#wave_rsc=vrHitSound_wav);
+
+            return;
+           
+         }
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

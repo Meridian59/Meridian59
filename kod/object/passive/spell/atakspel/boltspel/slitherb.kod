@@ -24,6 +24,8 @@ resources:
 
    Slitherbolt_sound = slitherboltwand.wav
 
+   Slitherbolt_hit_sound = qor.wav
+
 classvars:
 
    vrName = Slitherbolt_name_rsc
@@ -41,12 +43,14 @@ classvars:
    viSpell_level = 5
 
    vrSucceed_wav = Slitherbolt_sound
+   vrHitSound_wav = Slitherbolt_hit_sound
 
    viPostCast_time = 5        % in seconds, since it works off gettime()
 
    viProjectileFlag = PROJ_FLAG_FOLLOW_GROUND
    % No projectile light information, currently
    viProjectileLightFlags = LIGHT_FLAG_NONE
+
    
 
 properties:

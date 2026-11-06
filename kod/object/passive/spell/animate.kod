@@ -65,30 +65,33 @@ messages:
    {
       local oRoom, oTarget;
 
-      oRoom = send(who,@GetOwner);
+      oRoom = Send(who,@GetOwner);
       oTarget = First(lTargets);
 
-      if not isclass(oTarget,&DeadBody)
+      if IsClass(oTarget,&DeadBody) AND Send(oTarget,@WasPlayer)
       {
-         send(who,@MsgSendUser,#message_rsc=Animate_bad_target,#parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@Getname));
+         local oCorpseRoom = Send(oTarget,@GetOwner);
 
-         return FALSE;
+         if oCorpseRoom = $ OR Send(oCorpseRoom,@SafePlayerAttack)
+         {
+            Send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=Send(oTarget,@GetCorpseName));
+
+            return FALSE;
+         }
+
+         if (Send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25)
+            or (Send(oRoom,@CountHoldingSummoned) > 
+               Send(Send(SYS,@GetSettings),@GetPlayerSummonedObjectLimit))
+         {
+            Send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=Send(oTarget,@GetCorpseName));
+
+            return FALSE;
+         }
       }
-
-      local oCorpseRoom = Send(oTarget,@GetOwner);
-
-      if oCorpseRoom = $ OR Send(oCorpseRoom,@SafePlayerAttack)
+      else
       {
-         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=send(oTarget,@GetCorpseName));
-
-         return FALSE;
-      }
-
-      if (send(oRoom,@CountHoldingHowMany,#class=&monster) > 25)
-         or (send(oRoom,@CountHoldingSummoned) > 
-             Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
-      {
-         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=send(oTarget,@GetCorpseName));
+         Send(who,@MsgSendUser,#message_rsc=Animate_bad_target,#parm1=Send(oTarget,@GetDef),
+            #parm2=Send(oTarget,@GetName));
 
          return FALSE;
       }

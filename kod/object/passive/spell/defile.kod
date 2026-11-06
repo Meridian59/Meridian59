@@ -105,6 +105,15 @@ messages:
 	      return FALSE;
       }
 
+      if NOT Send(target,@WasPlayer)
+      {
+	      Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+              #parm1=Send(self,@GetName),#parm2=Send(target,@GetDef),
+              #parm3=Send(target,@GetName));
+
+	      return FALSE;
+      }
+
       if NOT Send(target,@WasGoodPlayer)
       {
 	      Send(who,@MsgSendUser,#message_rsc=defile_not_good);           

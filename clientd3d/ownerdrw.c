@@ -484,6 +484,43 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, bool selected, bool combo)
    SetTextColor(lpdis->hDC, crColorText);
    DrawText(lpdis->hDC, buf, (int) strlen(buf), &r, DT_VCENTER | DT_LEFT | DT_NOPREFIX);
 
+   if ((style & OD_CHARACTER_NOTES) && obj != NULL)
+   {
+      std::string playerName = LookupNameRsc(obj->name_res);
+      const char *note = GetCharacterNote(playerName.c_str());
+      if (note && *note)
+      {
+         SIZE nameSize;
+         SIZE separatorSize;
+         int nameLength = (int)strlen(buf);
+         if (GetTextExtentPoint32(lpdis->hDC, buf, nameLength, &nameSize))
+         {
+            RECT noteRect = r;
+            noteRect.left += nameSize.cx;
+            if (noteRect.left < noteRect.right)
+            {
+               const char separator[] = " ";
+               SetTextColor(lpdis->hDC, crColorText);
+               DrawText(lpdis->hDC, separator, 1, &noteRect,
+                        DT_VCENTER | DT_LEFT | DT_NOPREFIX | DT_SINGLELINE);
+
+               if (GetTextExtentPoint32(lpdis->hDC, separator, 1, &separatorSize))
+                  noteRect.left += separatorSize.cx;
+
+               SIZE paddingSize;
+               if (GetTextExtentPoint32(lpdis->hDC, "M", 1, &paddingSize))
+                  noteRect.right -= paddingSize.cx / 2;
+
+               SetTextColor(lpdis->hDC, RGB(232, 220, 184));
+               if (noteRect.left < noteRect.right)
+                  DrawText(lpdis->hDC, note, (int)strlen(note), &noteRect,
+                           DT_VCENTER | DT_RIGHT | DT_NOPREFIX | DT_SINGLELINE |
+                           DT_END_ELLIPSIS);
+            }
+         }
+      }
+   }
+
    RestoreDC(lpdis->hDC, dc_state);
 
    if (!combo &&

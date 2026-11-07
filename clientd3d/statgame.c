@@ -33,6 +33,7 @@ static POINT previous_mouse_position;
 void GameInit(void)
 {
    LoadProfaneTerms();
+   LoadCharacterNotes();
 
    // Set period of multimedia timer
    timeBeginPeriod(1);

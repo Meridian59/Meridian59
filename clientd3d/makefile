@@ -80,6 +80,7 @@ OBJS = \
         $(OUTDIR)\xlat.obj \
         $(OUTDIR)\rops.obj \
         $(OUTDIR)\profane.obj \
+        $(OUTDIR)\characternotes.obj \
         $(OUTDIR)\object.obj \
         $(OUTDIR)\graphics.obj \
         $(OUTDIR)\winmsg.obj \

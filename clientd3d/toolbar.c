@@ -28,6 +28,7 @@
 static Button buttons[MAX_BUTTONS];
 static int    num_buttons;           // Number of buttons currently created
 static int    num_separators;        // Number of separators currently created
+static int    toolbar_x = TOOLBAR_X; // Client x of the first button
 
 static WNDPROC lpfnDefButtonProc; // Default toolbar window procedure
 
@@ -79,7 +80,7 @@ bool __cdecl ToolbarAddButton(AddButton *s)
       return false;
    }
 
-   x = TOOLBAR_X + num_buttons * (TOOLBAR_BUTTON_LEFT_SPACING + TOOLBAR_BUTTON_WIDTH);	//	+ num_separators * TOOLBAR_SEPARATOR_WIDTH;
+   x = toolbar_x + num_buttons * (TOOLBAR_BUTTON_LEFT_SPACING + TOOLBAR_BUTTON_WIDTH);	//	+ num_separators * TOOLBAR_SEPARATOR_WIDTH;
    y = TOOLBAR_Y + TOOLBAR_BUTTON_TOP_SPACING;
 
    // If id = 0, create separator
@@ -142,8 +143,23 @@ void ToolbarResize(int xsize, int ysize, AREA view)
 {
    int i;
 
+   // The toolbar sits above the room view, which moves on wide windows
+   toolbar_x = TOOLBAR_X + view.x - VIEW_LEFT;
    for (i=0; i < num_buttons; i++)
+   {
+      buttons[i].x = toolbar_x + i * (TOOLBAR_BUTTON_LEFT_SPACING + TOOLBAR_BUTTON_WIDTH);
+      SetWindowPos(buttons[i].hwnd, NULL, buttons[i].x, TOOLBAR_Y + TOOLBAR_BUTTON_TOP_SPACING,
+                   0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
       ToolbarSetButtonVisibility(buttons[i].hwnd);
+   }
+}
+/****************************************************************************/
+/*
+ * ToolbarGetLeft:  Client x where the toolbar starts.
+ */
+int ToolbarGetLeft(void)
+{
+   return toolbar_x;
 }
 /****************************************************************************/
 void ToolbarGetUnionRect(RECT* prcRect)

@@ -123,16 +123,31 @@ messages:
 
    GetName(cap=FALSE)
    {
+      if poOriginal = $
+      {
+         propagate;
+      }
+
       return Send(poOriginal,@GetName,#cap=cap);
    }
    
    GetDef(cap=FALSE)
    {
+      if poOriginal = $
+      {
+         propagate;
+      }
+
       return Send(poOriginal,@GetDef,#cap=cap);
    }
 
    GetIndef(cap=FALSE)
    {
+      if poOriginal = $
+      {
+         propagate;
+      }
+
       return Send(poOriginal,@GetIndef,#cap=cap);
    }
 

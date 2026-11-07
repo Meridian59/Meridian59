@@ -183,16 +183,31 @@ messages:
 
    GetName(cap=FALSE)
    {
+      if poOriginal = $
+      {
+         propagate;
+      }
+
       return send(poOriginal,@GetName,#cap=cap);
    }
    
    GetDef(cap=FALSE)
    {
+      if poOriginal = $
+      {
+         propagate;
+      }
+
       return send(poOriginal,@GetDef,#cap=cap);
    }
 
    GetIndef(cap=FALSE)
    {
+      if poOriginal = $
+      {
+         propagate;
+      }
+
       return send(poOriginal,@GetIndef,#cap=cap);
    }
 

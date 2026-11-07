@@ -94,6 +94,13 @@ messages:
 	 Send(who, @MsgSendUser, #message_rsc=enchantweapon_already_done);
 	 return False;
       }
+      % Do not allow a weapon to be enchanted if it's missing the nonmagic flag
+      if (NOT Send(oWeapon, @CheckTypeFlag, #flag=ATCK_WEAP_NONMAGIC))
+      {
+         Send(who, @MsgSendUser, #message_rsc=enchantweapon_resists,
+	        #parm1=Send(oWeapon, @GetCapDef), #parm2=send(oWeapon, @GetName));
+         return false;
+      }
       propagate;   % Check other things higher up
    }
 

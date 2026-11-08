@@ -45,6 +45,8 @@ classvars:
    viMana = 15
    viChance_To_Increase = 15
 
+   viFlash = FLASH_BAD
+
    viSpellExertion = 6
 
    viOutlaw = TRUE
@@ -169,7 +171,6 @@ messages:
          {
             Send(oTarget,@MsgSendUser,#message_rsc=blind_on);
             Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_BLIND_ON);
-            Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=2000);
          }
       }
       else  

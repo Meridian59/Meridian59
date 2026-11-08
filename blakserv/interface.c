@@ -62,9 +62,6 @@ HWND hwndTab_page;
 
 #define NUM_TAB_PAGES 3
 HWND tab_pages[NUM_TAB_PAGES];
-HWND tab_about;
-
-bool is_about;
 
 #define HWND_STATUS tab_pages[0]
 #define HWND_CHANNEL tab_pages[1]
@@ -106,7 +103,6 @@ void InterfaceCheckChannels(void);
 void InterfaceSave(void);
 void InterfaceReloadSystem(void);
 void CenterWindow(HWND hwnd, HWND hwndParent);
-static void InterfacePlaceTabPage(HWND hwndPage);
 
 INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam);
@@ -128,7 +124,6 @@ void InitInterface(void)
 	
 	sessions_logged_on = 0;
 	is_timer_pending = false;
-	is_about = false;
 
 	hEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
 	
@@ -596,11 +591,13 @@ void InterfaceCreate(HWND hwnd,WPARAM wParam,LPARAM lParam)
 
 void InterfaceCreateTabControl(HWND hwnd) 
 { 
-    TC_ITEM tie; 
+    TC_ITEM tie;
     char s[100];
     HWND hwndCtl;
     LOGFONT lf;
     HFONT font;
+    RECT rcPage;
+    int i;
     
     hwndTab = GetDlgItem(hwndMain,IDC_TAB_MAIN);
 	
@@ -621,12 +618,14 @@ void InterfaceCreateTabControl(HWND hwnd)
 		InterfaceDialogTabPage);
     tab_pages[2] = CreateDialog(hInst,MAKEINTRESOURCE(IDD_TAB_PAGE_ADMINISTRATION),hwndTab,
 		InterfaceDialogTabPage);
-	
-    /* keep about box page ready */
-    tab_about = CreateDialog(hInst,MAKEINTRESOURCE(IDD_ABOUT),hwnd,
-			     InterfaceDialogAbout);
-	
-	
+
+    /* pages are children of the tab control; place them in its display area,
+       below the tab headers */
+    GetClientRect(hwndTab,&rcPage);
+    TabCtrl_AdjustRect(hwndTab,FALSE,&rcPage);
+    for (i = 0; i < NUM_TAB_PAGES; i++)
+		SetWindowPos(tab_pages[i],HWND_TOP,rcPage.left,rcPage.top,0,0,SWP_NOSIZE);
+
     /* set admin page font */
     hwndCtl = GetDlgItem(HWND_ADMIN,IDC_ADMIN_RESPONSE);
     SendMessage(hwndCtl,WM_SETFONT,(WPARAM)GetStockObject(ANSI_FIXED_FONT),
@@ -679,13 +678,7 @@ void InterfaceSetTab(int sel)
 void InterfaceTabChange() 
 { 
 	int sel;
-	
-	if (is_about)
-	{
-		/* currently showing about box, so undo that */
-		ShowWindow(tab_about,FALSE);
-	}   
-	
+
 	sel = TabCtrl_GetCurSel(hwndTab); 
 	
 	/* Hide the current child dialog box, if any. */
@@ -876,8 +869,7 @@ void InterfaceCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 		DialogBox(hInst,MAKEINTRESOURCE(IDD_MOTD),hwnd,InterfaceDialogMotd);    
 		return;
 	case IDM_HELP_ABOUT :
-		ShowWindow(tab_about,TRUE);
-		ShowWindow(hwndTab_page,FALSE);
+		DialogBox(hInst,MAKEINTRESOURCE(IDD_ABOUT),hwnd,InterfaceDialogAbout);
 		return;
 	}
 	
@@ -1036,25 +1028,6 @@ void InterfaceReloadSystem()
 }
 
 /*
-* InterfacePlaceTabPage: Moves a page into the tab control's display area
-*   (below the tab headers).
-*/
-static void InterfacePlaceTabPage(HWND hwndPage)
-{
-	RECT rc;
-	HWND hwndParent;
-
-	GetClientRect(hwndTab, &rc);
-	TabCtrl_AdjustRect(hwndTab, FALSE, &rc);
-
-	hwndParent = GetParent(hwndPage);
-	if (hwndParent != hwndTab)
-		MapWindowPoints(hwndTab, hwndParent, (POINT *) &rc, 2);
-
-	SetWindowPos(hwndPage, HWND_TOP, rc.left, rc.top, 0, 0, SWP_NOSIZE);
-}
-
-/*
 * CenterWindow: Centers the child window (hwnd) over the parent window 
 *   (hwndParent) while ensuring it's fully visible on the screen, even 
 *   across multiple monitors. The window is positioned within the 
@@ -1155,18 +1128,16 @@ INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARA
 	switch (message)
 	{
 	case WM_INITDIALOG :
-		is_about = true;
-		
-		InterfacePlaceTabPage(hwnd); /* where the tab pages are, which it covers */
+		CenterWindow(hwnd, GetParent(hwnd));
 		SetWindowText(GetDlgItem(hwnd,IDC_ABOUT_TITLE),BlakServLongVersionString());
 		return TRUE;
-		
+
 	case WM_COMMAND :
 		switch (wParam)
 		{
 		case IDOK :
 		case IDCANCEL :
-			InterfaceTabChange();
+			EndDialog(hwnd,0);
 			return TRUE;
 		}
 	}
@@ -1178,7 +1149,6 @@ INT_PTR CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,WPARAM wParam,LPA
 	switch (message)
 	{
 	case WM_INITDIALOG:
-		InterfacePlaceTabPage(hwnd);
 		EnableThemeDialogTexture(hwnd,ETDT_ENABLETAB);
 		return TRUE;
 		

@@ -179,25 +179,30 @@ messages:
    }
    
    GetYellList(who=$)
-   "Returns a list of rooms in the yell zone of who's current location."
+   "Returns the numbers of the rooms in the yell zone of who's room, other "
+   "than their own room."
    {
       local oRoom, lRooms;
    
       %% Get yell list from current room and select a room to eavesdrop.
       oRoom = Send(who,@GetOwner);
       lRooms = Send(oRoom,@GetYellZone);
+      local iRoomNum = Send(oRoom,@GetRoomNum);
       
-      %% Eliminate the room we're in, unless there is no yell list.
-      if FindListElem(lRooms,Send(oRoom,@GetRoomNum))  
+      %% Eliminate the room we're in.
+      if FindListElem(lRooms,iRoomNum)
       {
-         if lRooms = $ OR length(lRooms) < 2
+         % lRooms is the room's plYell_Zone.  Leave it unchanged
+         local lOtherRooms = $, iNum;
+         for iNum in lRooms
          {
-            lRooms = [oRoom];
+            if iNum <> iRoomNum
+            {
+               lOtherRooms = Cons(iNum,lOtherRooms);
+            }
          }
-         else
-         {
-            lRooms = DelListElem(lRooms,oRoom);
-         }
+
+         lRooms = lOtherRooms;
       }
 
       return lRooms;

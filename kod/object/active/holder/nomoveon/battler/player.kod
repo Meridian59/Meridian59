@@ -4068,6 +4068,12 @@ messages:
       Send(poOwner,@SomethingAttacked,#what=self,#victim=what,
            #use_weapon=use_weapon,#stroke_obj=stroke_obj);
 
+      % A monster's reply to the broadcast can kill the attacker
+      if poOwner <> Send(what,@GetOwner)
+      {
+         return FALSE;
+      }
+
       % Record the swing for potential advancement.
       %  Only recorded if the player can advance on the monster, and if they
       %  are within line of sight of the target.  (If they aren't in line of sight,

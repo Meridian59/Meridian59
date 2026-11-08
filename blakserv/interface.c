@@ -27,6 +27,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <richedit.h>
+#include <uxtheme.h>
 
 /* event sent to our interface when it should update numbers */
 #define WM_BLAK_NEW_INFO       (WM_APP + 0)
@@ -105,6 +106,9 @@ void InterfaceCheckChannels(void);
 void InterfaceSave(void);
 void InterfaceReloadSystem(void);
 void CenterWindow(HWND hwnd, HWND hwndParent);
+static int InterfaceGetDpi(void);
+static int InterfaceScale(int pixels);
+static void InterfacePlaceTabPage(HWND hwndPage);
 
 INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam);
@@ -154,24 +158,32 @@ int GetUsedSessions(void)
 
 void __cdecl InterfaceThread(void *unused)
 {
-	WNDCLASS main_class;
+	WNDCLASSEX main_class;
 	MSG msg;
 	HACCEL hAccel;
-	
+
+	main_class.cbSize = sizeof(main_class);
 	main_class.style = CS_HREDRAW | CS_VREDRAW;
 	main_class.lpfnWndProc = InterfaceWindowProc;
 	main_class.cbClsExtra = 0;
 	main_class.cbWndExtra = DLGWINDOWEXTRA;
 	main_class.hInstance = hInst;
-	main_class.hIcon = LoadIcon(hInst,MAKEINTRESOURCE(IDI_MAIN));
+	/* load large and small icons separately so each uses its native size from the .ico */
+	main_class.hIcon = (HICON) LoadImage(hInst,MAKEINTRESOURCE(IDI_MAIN),IMAGE_ICON,
+		GetSystemMetrics(SM_CXICON),GetSystemMetrics(SM_CYICON),LR_DEFAULTCOLOR);
+	main_class.hIconSm = (HICON) LoadImage(hInst,MAKEINTRESOURCE(IDI_MAIN),IMAGE_ICON,
+		GetSystemMetrics(SM_CXSMICON),GetSystemMetrics(SM_CYSMICON),LR_DEFAULTCOLOR);
 	main_class.hCursor = NULL;
 	main_class.hbrBackground = (HBRUSH) GetStockObject(LTGRAY_BRUSH);
 	main_class.lpszMenuName = NULL;
 	main_class.lpszClassName = "blakserv";
+
+	RegisterClassEx(&main_class);
 	
-	RegisterClass(&main_class);
-	
-	InitCommonControls();
+	INITCOMMONCONTROLSEX icc;
+	icc.dwSize = sizeof(icc);
+	icc.dwICC = ICC_TAB_CLASSES | ICC_LISTVIEW_CLASSES | ICC_BAR_CLASSES;
+	InitCommonControlsEx(&icc);
 
    LoadLibrary("riched20.dll");
 
@@ -770,7 +782,7 @@ void InterfaceSetup()
 	
 	CreateStatusWindow(WS_CHILD | WS_VISIBLE,"",hwndMain,IDS_STATUS_WINDOW);
 	GetClientRect(hwndMain,&rcClient); 
-	status_widths[0] = rcClient.right - STATUS_CONNECTION_WIDTH;
+	status_widths[0] = rcClient.right - InterfaceScale(STATUS_CONNECTION_WIDTH);
 	status_widths[1] = rcClient.right - 1;
 	
 	SendDlgItemMessage(hwndMain,IDS_STATUS_WINDOW,SB_SETPARTS,2,(LPARAM)status_widths);
@@ -793,27 +805,27 @@ void InterfaceCreateListControl()
 	
 	lvc.pszText = const_cast<char *>("#");
 	lvc.iSubItem = 0;
-	lvc.cx = 29; 
+	lvc.cx = InterfaceScale(29); 
 	ListView_InsertColumn(hwndLV,0,&lvc);
 	
 	lvc.pszText = const_cast<char *>("Name");
 	lvc.iSubItem = 1;
-	lvc.cx = 113; 
+	lvc.cx = InterfaceScale(113); 
 	ListView_InsertColumn(hwndLV,1,&lvc);
 	
 	lvc.pszText = const_cast<char *>("Since");
 	lvc.iSubItem = 2;
-	lvc.cx = 80; 
+	lvc.cx = InterfaceScale(80); 
 	ListView_InsertColumn(hwndLV,2,&lvc);
 	
 	lvc.pszText = const_cast<char *>("State");
 	lvc.iSubItem = 3;
-	lvc.cx = 118; 
+	lvc.cx = InterfaceScale(118); 
 	ListView_InsertColumn(hwndLV,3,&lvc);
 	
 	lvc.pszText = const_cast<char *>("From");
 	lvc.iSubItem = 4;
-	lvc.cx = 127; 
+	lvc.cx = InterfaceScale(127); 
 	ListView_InsertColumn(hwndLV,4,&lvc);
 	
 }
@@ -1023,7 +1035,52 @@ void InterfaceReloadSystem()
 	LeaveServerLock();
 }
 
-/* 
+/*
+* InterfaceScale: Scales a pixel value designed at 96 DPI to the system DPI.
+*   Blakserv is system DPI aware (see blakserv.manifest), so hardcoded pixel
+*   sizes and positions must be scaled to match the dialog layout.
+*/
+static int InterfaceGetDpi(void)
+{
+	static int dpi = 0;
+
+	if (dpi == 0)
+	{
+		HDC hdc = GetDC(NULL);
+		dpi = hdc ? GetDeviceCaps(hdc, LOGPIXELSY) : 96;
+		if (hdc)
+			ReleaseDC(NULL, hdc);
+		if (dpi <= 0)
+			dpi = 96;
+	}
+	return dpi;
+}
+
+static int InterfaceScale(int pixels)
+{
+	return MulDiv(pixels, InterfaceGetDpi(), 96);
+}
+
+/*
+* InterfacePlaceTabPage: Moves a page into the tab control's display area
+*   (below the tab headers).
+*/
+static void InterfacePlaceTabPage(HWND hwndPage)
+{
+	RECT rc;
+	HWND hwndParent;
+
+	GetClientRect(hwndTab, &rc);
+	TabCtrl_AdjustRect(hwndTab, FALSE, &rc);
+
+	hwndParent = GetParent(hwndPage);
+	if (hwndParent != hwndTab)
+		MapWindowPoints(hwndTab, hwndParent, (POINT *) &rc, 2);
+
+	SetWindowPos(hwndPage, HWND_TOP, rc.left, rc.top, 0, 0, SWP_NOSIZE);
+}
+
+/*
 * CenterWindow: Centers the child window (hwnd) over the parent window 
 *   (hwndParent) while ensuring it's fully visible on the screen, even 
 *   across multiple monitors. The window is positioned within the 
@@ -1126,7 +1183,7 @@ INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARA
 	case WM_INITDIALOG :
 		is_about = true;
 		
-		SetWindowPos(hwnd,HWND_TOP,7,54,0,0,SWP_NOSIZE);
+		SetWindowPos(hwnd,HWND_TOP,InterfaceScale(7),InterfaceScale(54),0,0,SWP_NOSIZE);
 		SetWindowText(GetDlgItem(hwnd,IDC_ABOUT_TITLE),BlakServLongVersionString());
 		return TRUE;
 		
@@ -1147,7 +1204,9 @@ INT_PTR CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,WPARAM wParam,LPA
 	switch (message)
 	{
 	case WM_INITDIALOG:
-		SetWindowPos(hwnd,HWND_TOP,7,24,0,0,SWP_NOSIZE);
+		InterfacePlaceTabPage(hwnd);
+		/* paint the page with the themed tab body, not the plain dialog color */
+		EnableThemeDialogTexture(hwnd,ETDT_ENABLETAB);
 		return TRUE;
 		
 		HANDLE_MSG(hwnd,WM_COMMAND,InterfaceTabPageCommand);

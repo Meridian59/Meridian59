@@ -139,7 +139,16 @@ bool ProjectilesMove(int dt)
       next = l->next;
 
       if (MoveSingle(&p->motion, dt))
-      {
+      {  
+         if (p-> hit_sound != 0)
+         {
+           room_contents_node *target = GetRoomObjectById(p->destination);
+
+           if (target != NULL)
+           {
+             GamePlaySound(p->hit_sound,p->destination, 0,0,0,0,0);
+           }
+         }
          current_room.projectiles = list_delete_item(current_room.projectiles, p, 
                                                      CompareProjectiles);
          SafeFree(p);

@@ -45,8 +45,6 @@ classvars:
    viMana = 15
    viChance_To_Increase = 15
 
-   viFlash = FLASH_BAD
-
    viSpellExertion = 6
 
    viOutlaw = TRUE

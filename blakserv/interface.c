@@ -75,7 +75,7 @@ static WNDPROC lpfnDefAdminInputProc;
 static WNDPROC lpfnDefAdminResponseProc;
 
 /* status window stuff--make a timer to clear it every once in a while */
-#define STATUS_CONNECTION_WIDTH 30
+#define STATUS_CONNECTION_WIDTH 20 /* dialog units */
 #define STATUS_CLEAR_TIME 20000
 #define WIN_TIMER_ID 1
 bool is_timer_pending;
@@ -106,8 +106,6 @@ void InterfaceCheckChannels(void);
 void InterfaceSave(void);
 void InterfaceReloadSystem(void);
 void CenterWindow(HWND hwnd, HWND hwndParent);
-static int InterfaceGetDpi(void);
-static int InterfaceScale(int pixels);
 static void InterfacePlaceTabPage(HWND hwndPage);
 
 INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam);
@@ -708,7 +706,7 @@ void InterfaceSetup()
 	TBADDBITMAP tbab; 
 	TBBUTTON tbb[8];
 	
-	RECT rcClient;
+	RECT rcClient, rcPart;
 	int status_widths[2];
 	
 	hwndTB = CreateWindowEx(0,TOOLBARCLASSNAME,NULL,WS_CHILD | TBSTYLE_TOOLTIPS,
@@ -782,7 +780,10 @@ void InterfaceSetup()
 	
 	CreateStatusWindow(WS_CHILD | WS_VISIBLE,"",hwndMain,IDS_STATUS_WINDOW);
 	GetClientRect(hwndMain,&rcClient); 
-	status_widths[0] = rcClient.right - InterfaceScale(STATUS_CONNECTION_WIDTH);
+	/* room for the connection count, in dialog units so it grows with the font */
+	SetRect(&rcPart,0,0,STATUS_CONNECTION_WIDTH,0);
+	MapDialogRect(hwndMain,&rcPart);
+	status_widths[0] = rcClient.right - rcPart.right;
 	status_widths[1] = rcClient.right - 1;
 	
 	SendDlgItemMessage(hwndMain,IDS_STATUS_WINDOW,SB_SETPARTS,2,(LPARAM)status_widths);
@@ -797,37 +798,36 @@ void InterfaceCreateListControl()
 	
 	hwndLV = GetDlgItem(HWND_STATUS,IDC_CONNECTION_LIST);
 	
-	/* Initialize the LV_COLUMN structure. */
-	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM; 
-	lvc.fmt = LVCFMT_LEFT; 
-	
-	/* make the columns */
-	
-	lvc.pszText = const_cast<char *>("#");
-	lvc.iSubItem = 0;
-	lvc.cx = InterfaceScale(29); 
-	ListView_InsertColumn(hwndLV,0,&lvc);
-	
-	lvc.pszText = const_cast<char *>("Name");
-	lvc.iSubItem = 1;
-	lvc.cx = InterfaceScale(113); 
-	ListView_InsertColumn(hwndLV,1,&lvc);
-	
-	lvc.pszText = const_cast<char *>("Since");
-	lvc.iSubItem = 2;
-	lvc.cx = InterfaceScale(80); 
-	ListView_InsertColumn(hwndLV,2,&lvc);
-	
-	lvc.pszText = const_cast<char *>("State");
-	lvc.iSubItem = 3;
-	lvc.cx = InterfaceScale(118); 
-	ListView_InsertColumn(hwndLV,3,&lvc);
-	
-	lvc.pszText = const_cast<char *>("From");
-	lvc.iSubItem = 4;
-	lvc.cx = InterfaceScale(127); 
-	ListView_InsertColumn(hwndLV,4,&lvc);
-	
+	/* each column fits text like its sample, in the list's font and with the list's own
+	   padding: the column briefly takes the sample as its heading and is sized to that.
+	   From, the last, takes the remaining width */
+	static const struct { const char *heading, *sample; } columns[] =
+	{
+		{ "#",     "9999" },                      /* account number */
+		{ "Name",  "Typical account name" },      /* names can be longer; this fits most */
+		{ "Since", "Nov 30 23:59" },              /* ShortTimeStr */
+		{ "State", "Synchronized - validating" }, /* longest GetStateName */
+		{ "From",  "From" },
+	};
+	int i;
+
+	lvc.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
+	lvc.fmt = LVCFMT_LEFT;
+	for (i = 0; i < (int) (sizeof(columns) / sizeof(columns[0])); i++)
+	{
+		lvc.pszText = const_cast<char *>(columns[i].sample);
+		lvc.iSubItem = i;
+		ListView_InsertColumn(hwndLV,i,&lvc);
+	}
+
+	/* sizing waits until every column exists, since sizing the last one fills the list */
+	lvc.mask = LVCF_TEXT;
+	for (i = 0; i < (int) (sizeof(columns) / sizeof(columns[0])); i++)
+	{
+		ListView_SetColumnWidth(hwndLV,i,LVSCW_AUTOSIZE_USEHEADER);
+		lvc.pszText = const_cast<char *>(columns[i].heading);
+		ListView_SetColumn(hwndLV,i,&lvc);
+	}
 }
 
 
@@ -1036,32 +1036,6 @@ void InterfaceReloadSystem()
 }
 
 /*
-* InterfaceScale: Scales a pixel value designed at 96 DPI to the system DPI.
-*   Blakserv is system DPI aware (see blakserv.manifest), so hardcoded pixel
-*   sizes and positions must be scaled to match the dialog layout.
-*/
-static int InterfaceGetDpi(void)
-{
-	static int dpi = 0;
-
-	if (dpi == 0)
-	{
-		HDC hdc = GetDC(NULL);
-		dpi = hdc ? GetDeviceCaps(hdc, LOGPIXELSY) : 96;
-		if (hdc)
-			ReleaseDC(NULL, hdc);
-		if (dpi <= 0)
-			dpi = 96;
-	}
-	return dpi;
-}
-
-static int InterfaceScale(int pixels)
-{
-	return MulDiv(pixels, InterfaceGetDpi(), 96);
-}
-
-/*
 * InterfacePlaceTabPage: Moves a page into the tab control's display area
 *   (below the tab headers).
 */
@@ -1183,7 +1157,7 @@ INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARA
 	case WM_INITDIALOG :
 		is_about = true;
 		
-		SetWindowPos(hwnd,HWND_TOP,InterfaceScale(7),InterfaceScale(54),0,0,SWP_NOSIZE);
+		InterfacePlaceTabPage(hwnd); /* where the tab pages are, which it covers */
 		SetWindowText(GetDlgItem(hwnd,IDC_ABOUT_TITLE),BlakServLongVersionString());
 		return TRUE;
 		

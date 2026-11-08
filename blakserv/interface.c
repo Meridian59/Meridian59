@@ -1205,7 +1205,6 @@ INT_PTR CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,WPARAM wParam,LPA
 	{
 	case WM_INITDIALOG:
 		InterfacePlaceTabPage(hwnd);
-		/* paint the page with the themed tab body, not the plain dialog color */
 		EnableThemeDialogTexture(hwnd,ETDT_ENABLETAB);
 		return TRUE;
 		

@@ -81,8 +81,7 @@ messages:
       %%% you in the thread.
       if send(apply_on,@GetOwner) <> send(poOwner,@GetOwner)
       {
-         send(poOwner,@msgsenduser,#message_rsc=wand_target_gone,
-               #parm1=send(apply_on,@getdef),#parm2=send(apply_on,@getname));
+         send(poOwner,@msgsenduser,#message_rsc=wand_target_gone);
 		   return FALSE;
       }
 

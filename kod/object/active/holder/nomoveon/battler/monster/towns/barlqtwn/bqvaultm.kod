@@ -1,4 +1,4 @@
-% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
 % This software is distributed under a license that is described in
@@ -32,7 +32,7 @@ resources:
    barloquevaultman_dont_have = "Hmmm, I can't seem to find %s%s in thy vault."
    barloquevaultman_no_room = "Thou can not carry all of that!  Mayhaps thou should try withdrawing the items one at a time."
    barloquevaultman_deposit_thanks = "I thank thee for trusting me to quartermaster thy gear."
-   barloquevaultman_thanks = "Have is thy gear.  I thank thee for thy patronage."
+   barloquevaultman_thanks = "Here is thy gear.  I thank thee for thy patronage."
    barloquevaultman_nowithdraw_cash = "Thou currently cannot pay the exit fee to get thy items out."
    barloquevaultman_nodeposit_cash = "Storing these items would cost %i shillings - which I see thou doth not possess."
    barloquevaultman_cant_part = "Zounds... I wish to not feel responsible if thy %s were to disappear - I cannot store it."

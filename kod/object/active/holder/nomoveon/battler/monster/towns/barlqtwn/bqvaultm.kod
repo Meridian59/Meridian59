@@ -1,4 +1,4 @@
-% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
 % This software is distributed under a license that is described in
@@ -32,7 +32,7 @@ resources:
    barloquevaultman_dont_have = "Hmmm, I can't seem to find %s%s in thy vault."
    barloquevaultman_no_room = "Thou can not carry all of that!  Mayhaps thou should try withdrawing the items one at a time."
    barloquevaultman_deposit_thanks = "I thank thee for trusting me to quartermaster thy gear."
-   barloquevaultman_thanks = "Have is thy gear.  I thank thee for thy patronage."
+   barloquevaultman_thanks = "Here is thy gear.  I thank thee for thy patronage."
    barloquevaultman_nowithdraw_cash = "Thou currently cannot pay the exit fee to get thy items out."
    barloquevaultman_nodeposit_cash = "Storing these items would cost %i shillings - which I see thou doth not possess."
    barloquevaultman_cant_part = "Zounds... I wish to not feel responsible if thy %s were to disappear - I cannot store it."
@@ -53,19 +53,19 @@ classvars:
 
    viVault = VID_BARLOQUE
 
-   vrvaultman_nogold = barloquevaultman_nogold
-   vrvaultman_nocursed = barloquevaultman_nocursed
-   vrvaultman_fullvault = barloquevaultman_fullvault
-   vrvaultman_thanks_amount = barloquevaultman_thanks_amount
-   vrvaultman_dont_have = barloquevaultman_dont_have
-   vrvaultman_no_room = barloquevaultman_no_room
-   vrvaultman_deposit_thanks = barloquevaultman_deposit_thanks
-   vrvaultman_thanks = barloquevaultman_thanks
-   vrvaultman_nowithdraw_cash = barloquevaultman_nowithdraw_cash
-   vrvaultman_nodeposit_cash = barloquevaultman_nodeposit_cash
-   vrvaultman_cant_part = barloquevaultman_cant_part
-   vrvaultman_noaccount = barloquevaultman_noaccount
-   vrvaultman_not_enough = barloquevaultman_not_enough
+   vrVaultman_nogold = barloquevaultman_nogold
+   vrVaultman_nocursed = barloquevaultman_nocursed
+   vrVaultman_fullvault = barloquevaultman_fullvault
+   vrVaultman_thanks_amount = barloquevaultman_thanks_amount
+   vrVaultman_dont_have = barloquevaultman_dont_have
+   vrVaultman_no_room = barloquevaultman_no_room
+   vrVaultman_deposit_thanks = barloquevaultman_deposit_thanks
+   vrVaultman_thanks = barloquevaultman_thanks
+   vrVaultman_nowithdraw_cash = barloquevaultman_nowithdraw_cash
+   vrVaultman_nodeposit_cash = barloquevaultman_nodeposit_cash
+   vrVaultman_cant_part = barloquevaultman_cant_part
+   vrVaultman_noaccount = barloquevaultman_noaccount
+   vrVaultman_not_enough = barloquevaultman_not_enough
 
 properties:
    

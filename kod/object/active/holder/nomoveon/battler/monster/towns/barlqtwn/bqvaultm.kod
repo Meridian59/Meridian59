@@ -53,19 +53,19 @@ classvars:
 
    viVault = VID_BARLOQUE
 
-   vrvaultman_nogold = barloquevaultman_nogold
-   vrvaultman_nocursed = barloquevaultman_nocursed
-   vrvaultman_fullvault = barloquevaultman_fullvault
-   vrvaultman_thanks_amount = barloquevaultman_thanks_amount
-   vrvaultman_dont_have = barloquevaultman_dont_have
-   vrvaultman_no_room = barloquevaultman_no_room
-   vrvaultman_deposit_thanks = barloquevaultman_deposit_thanks
-   vrvaultman_thanks = barloquevaultman_thanks
-   vrvaultman_nowithdraw_cash = barloquevaultman_nowithdraw_cash
-   vrvaultman_nodeposit_cash = barloquevaultman_nodeposit_cash
-   vrvaultman_cant_part = barloquevaultman_cant_part
-   vrvaultman_noaccount = barloquevaultman_noaccount
-   vrvaultman_not_enough = barloquevaultman_not_enough
+   vrVaultman_nogold = barloquevaultman_nogold
+   vrVaultman_nocursed = barloquevaultman_nocursed
+   vrVaultman_fullvault = barloquevaultman_fullvault
+   vrVaultman_thanks_amount = barloquevaultman_thanks_amount
+   vrVaultman_dont_have = barloquevaultman_dont_have
+   vrVaultman_no_room = barloquevaultman_no_room
+   vrVaultman_deposit_thanks = barloquevaultman_deposit_thanks
+   vrVaultman_thanks = barloquevaultman_thanks
+   vrVaultman_nowithdraw_cash = barloquevaultman_nowithdraw_cash
+   vrVaultman_nodeposit_cash = barloquevaultman_nodeposit_cash
+   vrVaultman_cant_part = barloquevaultman_cant_part
+   vrVaultman_noaccount = barloquevaultman_noaccount
+   vrVaultman_not_enough = barloquevaultman_not_enough
 
 properties:
    

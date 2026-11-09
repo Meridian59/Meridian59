@@ -1,4 +1,4 @@
-% Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
 % This software is distributed under a license that is described in
@@ -145,9 +145,11 @@ messages:
 
    DoBlind(what=$,oTarget=$,iDurationSecs=0)
    {
-      local iDuration = iDurationSecs;
+      local oSpell, iDuration;
 
-      local oSpell = Send(SYS,@FindSpellByNum,#NUM=SID_EAGLE_EYES);
+      iDuration = iDurationSecs;
+      
+      oSpell = Send(SYS,@FindSpellByNum,#NUM=SID_EAGLE_EYES);
       if Send(oTarget,@IsEnchanted,#what=oSpell)
       {
          iDuration = Send(oSpell,@DoEagleEyes,#oCaster=what,#oTarget=oTarget,

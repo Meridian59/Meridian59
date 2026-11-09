@@ -190,22 +190,17 @@ messages:
       local iRoomNum = Send(oRoom,@GetRoomNum);
       
       %% Eliminate the room we're in.
-      if FindListElem(lRooms,iRoomNum)
+      % lRooms is the room's plYell_Zone.  Leave it unchanged
+      local lOtherRooms = $, iNum;
+      for iNum in lRooms
       {
-         % lRooms is the room's plYell_Zone.  Leave it unchanged
-         local lOtherRooms = $, iNum;
-         for iNum in lRooms
+         if iNum <> iRoomNum
          {
-            if iNum <> iRoomNum
-            {
-               lOtherRooms = Cons(iNum,lOtherRooms);
-            }
+            lOtherRooms = Cons(iNum,lOtherRooms);
          }
-
-         lRooms = lOtherRooms;
       }
 
-      return lRooms;
+      return lOtherRooms;
    }
 
 

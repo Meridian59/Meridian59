@@ -3236,14 +3236,12 @@ messages:
 
    VaultDeposit(who=$,lItems=$)
    {
-      local i, oVault, iFee, oMoney, iCash;
-
       if not Send(self,@MobIsVaultman)
       {
          return;
       }
 
-      oVault = Send(SYS,@FindVaultByNum,#num=Send(self,@GetVaultNum));
+      local oVault = Send(SYS,@FindVaultByNum,#num=Send(self,@GetVaultNum));
       if oVault = $
       {
          Debug("Nil vault!");
@@ -3251,7 +3249,8 @@ messages:
          return;
       }
 
-      iFee = 0;
+      local iFee = 0;
+      local i;
       for i in lItems
       {
          % Can't store anything without any bulk, such as gold
@@ -3282,7 +3281,8 @@ messages:
          iFee = iFee + Send(self,@GetVaultDepositFee,#what=i,#who=who);
       }
 
-      oMoney = Send(who,@GetMoneyObject);
+      local oMoney = Send(who,@GetMoneyObject);
+      local iCash;
       if oMoney = $
       {
          % No cash.
@@ -3342,8 +3342,7 @@ messages:
 
    VaultWithdraw(what=$,lItems=$,number_list = $)
    {
-      local i, j, iFee, iCash, oVault, iBulk, oMoney, bFound,
-            oSafeBox, lNumbers, iCount;
+      local i;
 
       if what=$ OR lItems = $
       {
@@ -3352,7 +3351,8 @@ messages:
          return;
       }
 
-      oMoney = Send(what,@GetMoneyObject);
+      local oMoney = Send(what,@GetMoneyObject);
+      local iCash;
       if oMoney = $
       {
          % No cash.
@@ -3363,8 +3363,8 @@ messages:
          iCash = Send(oMoney,@GetValue);
       }
 
-      oVault = Send(SYS,@FindVaultByNum,#num=Send(self,@GetVaultNum));
-      oSafeBox = Send(oVault,@GetPlayerSafeBox,#who=what);
+      local oVault = Send(SYS,@FindVaultByNum,#num=Send(self,@GetVaultNum));
+      local oSafeBox = Send(oVault,@GetPlayerSafeBox,#who=what);
 
       if oSafeBox = $
       {
@@ -3373,24 +3373,26 @@ messages:
          return;
       }
 
-      iFee = 0;
-      iBulk=0;
-      iCount = 0;
+      local iFee = 0;
+      local iBulk = 0;
+      local iCount = 0;
 
       % Make sure the player really has this item in storage.
+      local bFound;
       for i in lItems
       {
-         for j in Send(oSafeBox,@GetHolderPassive)
+         local oStoredItem;
+         for oStoredItem in Send(oSafeBox,@GetHolderPassive)
          {  
-            if i = j 
+            if i = oStoredItem 
             { 
                bFound = TRUE;
             } 
 
-            if isClass(i,&NumberItem) AND GetClass(i) = GetClass(j)
+            if isClass(i,&NumberItem) AND GetClass(i) = GetClass(oStoredItem)
             {
                iCount = iCount + 1; 
-               if nth(number_list,iCount) > Send(j,@GetNumber)
+               if nth(number_list,iCount) > Send(oStoredItem,@GetNumber)
                {
                   Send(self,@SayToOne,#target=what,
                        #message_rsc=vrvaultman_not_enough,
@@ -3444,7 +3446,7 @@ messages:
       }   
       
       % The next line added to handle player specified amounts
-      lNumbers = number_list;
+      local lNumbers = number_list;
 
       % At this point, we're pretty sure it's all legal.      
       for i in lItems

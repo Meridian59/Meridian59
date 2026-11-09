@@ -65,6 +65,7 @@ INT_PTR CALLBACK PostNewsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    {
    case WM_INITDIALOG:
       CenterWindow(hDlg, cinfo->hMain);
+      ThemeApplyDialogTitleBar(hDlg);
       info = (PostNewsDialogStruct *) lParam;
 
       hEdit = GetDlgItem(hDlg, IDC_NEWSEDIT);

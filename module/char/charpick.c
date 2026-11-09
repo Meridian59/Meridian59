@@ -136,6 +136,7 @@ INT_PTR CALLBACK PickCharDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    {
    case WM_INITDIALOG:
       CenterWindow(hDlg, GetParent(hDlg));
+      ThemeApplyDialogTitleBar(hDlg);
       hList = GetDlgItem(hDlg, IDC_CHARLIST);
       info = (PickCharStruct *) lParam;
 

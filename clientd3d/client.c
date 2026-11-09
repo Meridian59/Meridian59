@@ -13,7 +13,6 @@
 #include <assert.h>
 
 #include "client.h"
-#include <dwmapi.h>
 
 #ifdef M59_RETAIL
   // Minidump reporting
@@ -280,17 +279,6 @@ void ClearMessageQueue(void)
 }
 /************************************************************************/
 /*
- * ThemeApplyTitleBar:  Apply the active theme's title bar style.
- */
-static void ThemeApplyTitleBar(void)
-{
-	// DWM needs a 4-byte BOOL, not a 1-byte bool.
-	BOOL dwmDark = static_cast<BOOL>(ThemeUsesDarkTitleBar());
-	DwmSetWindowAttribute(hMain, DWMWA_USE_IMMERSIVE_DARK_MODE,
-		&dwmDark, sizeof(dwmDark));
-}
-/************************************************************************/
-/*
  * ThemeApply:  Reload the color palette and main window background
  *   bitmap for the active theme, apply the title bar style, apply the
  *   menu bar style, fire EVENT_COLORCHANGED so modules refresh their
@@ -304,7 +292,7 @@ void ThemeApply(void)
 	// Reload main background so the theme's tiles take effect immediately.
 	CreateWindowBackground();
 
-	ThemeApplyTitleBar();
+	ThemeApplyTitleBar(hMain);
 	MenuBarApply(GetMenu(hMain));
 	DrawMenuBar(hMain);
 
@@ -369,7 +357,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		exit(1);
 	}
 
-	ThemeApplyTitleBar();
+	ThemeApplyTitleBar(hMain);
 	MenuBarApply(GetMenu(hMain));
 
 	if (config.debug)

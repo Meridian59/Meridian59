@@ -79,6 +79,12 @@ messages:
          return FALSE;
       }
 
+      % The target may have left the room, or logged off, since it was picked.
+      if Send(oTarget,@GetOwner) <> Send(who,@GetOwner)
+      {
+         return FALSE;
+      }
+
       % Don't cast on non-players or morphed players.
       if NOT IsClass(oTarget,&Player)
          OR Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
@@ -91,12 +97,6 @@ messages:
       }
       else
       {
-         % The target may have left the room, or logged off, since it was picked.
-         if Send(oTarget,@GetOwner) <> Send(who,@GetOwner)
-         {
-            return FALSE;
-         }
-
          % Is a player.  Check for valid attack.
          if NOT Send(who,@AllowPlayerAttack,#victim=oTarget)
          {

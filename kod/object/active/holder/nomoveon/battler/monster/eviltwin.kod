@@ -31,8 +31,6 @@ resources:
    EvilTwin_sound_death = orc_dth.wav
    EvilTwin_sound_aware = orc_awr.wav
 
-   EvilTwin_delete =  "%s%s disappears into a puff of smoke."
-
    EvilTwin_trouble = "You sense that a evil twin you summoned has gotten you into some trouble..."
 
 classvars:
@@ -128,14 +126,6 @@ messages:
          }
       }
 
-      if (poOwner <> $)
-         AND (IsClass(poOriginal,&Monster)
-              OR send(poOriginal,@isLoggedOn))
-      {
-         Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=EvilTwin_delete,
-              #parm1=send(self,@GetDef,#cap=TRUE),#parm2=send(self,@Getname,#cap=FALSE));
-      }
-      
       poOriginal = $;
       poCaster = $;
       poArrow = $;

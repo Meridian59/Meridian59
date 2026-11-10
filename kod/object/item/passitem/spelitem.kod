@@ -316,9 +316,10 @@ messages:
    "Casts the spell specified by the item (see subclass) on whatever it"
    "is being applied to, then reduces 1 charge--break the item if last charge"
    {
-      % Attempt to cast the spell specific to the Spellitem, and only
-      % do the follow-up if the spell actually succeeds.
+      % Attempt to cast the spell specific to the Spellitem.  Only do the
+      % follow-up if the spell succeeds and the item still exists.
       if Send(self, @CastSpell, #what=what, #apply_on=apply_on)
+         AND poOwner <> $
       {
          Send(self, @OnSuccessfulApply, #what=what, #apply_on=apply_on);
       }

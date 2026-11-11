@@ -38,8 +38,10 @@ resources:
    barloquevaultman_cant_part = "Zounds... I wish to not feel responsible if thy %s were to disappear - I cannot store it."
    barloquevaultman_noaccount = "I do not seem to be storing any of thy gear."
    barloquevaultman_not_enough = "Thou have not that many %s stored in thy name!"
-
-
+   barloquevaultman_mostly_full = \
+      "Twas no small task to make room for that. Methinks thy vault is filling rather quickly."
+   barloquevaultman_almost_full = \
+      "Zounds, I scarce found room for that! Thy vault is nigh full."
 
 classvars:
 
@@ -66,6 +68,8 @@ classvars:
    vrVaultman_cant_part = barloquevaultman_cant_part
    vrVaultman_noaccount = barloquevaultman_noaccount
    vrVaultman_not_enough = barloquevaultman_not_enough
+   vrVaultman_mostly_full = barloquevaultman_mostly_full
+   vrVaultman_almost_full = barloquevaultman_almost_full
 
 properties:
    

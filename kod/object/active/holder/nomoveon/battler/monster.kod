@@ -22,6 +22,9 @@ constants:
    %  learn to qualify for a new spell.
    MONSTER_LEARN_GRADIENT = 15
 
+   VAULT_MOSTLY_FULL_PERCENT = 75
+   VAULT_ALMOST_FULL_PERCENT = 90
+
 resources:
 
    monster_percent_q = "%q"
@@ -172,6 +175,10 @@ resources:
       "cannot store it."
    vaultman_noaccount = "I do not seem to be storing any of your gear."
    vaultman_not_enough = "You don't have that many %s stored in your name!"
+   vaultman_mostly_full = \
+      "I had to do some rearranging to fit that.  Your vault is getting quite full."
+   vaultman_almost_full = \
+      "I barely managed to fit that in!  I'm afraid your vault is almost out of space."
 
    monster_say_to_one = "~k%s%s tells you, \"%s~n~k\""
 
@@ -273,6 +280,8 @@ classvars:
    vrVaultman_cant_part = vaultman_cant_part
    vrVaultman_noaccount = vaultman_noaccount
    vrVaultman_not_enough = vaultman_not_enough
+   vrVaultman_mostly_full = vaultman_mostly_full
+   vrVaultman_almost_full = vaultman_almost_full
 
    % Obsolete, but still included here for safety's sake.
    vrSound_hit = $
@@ -3309,7 +3318,8 @@ messages:
          return FALSE;            
       }
 
-      % passed all checks.  put the stuff in.      
+      % passed all checks.  put the stuff in.
+      local iVaultBulkBefore = Send(oVault,@GetCurrentBulkStored,#who=who);
       Send(oVault,@DepositItems,#lItems=lItems,#who=who);
 
       if iFee <> 0
@@ -3323,7 +3333,40 @@ messages:
          Send(self,@SayToOne,#message_rsc=vrVaultman_deposit_thanks,#target=who);
       }
 
+      Send(self,@VaultCapacityWarning,#oVault=oVault,#who=who,#iVaultBulkBefore=iVaultBulkBefore);
       Send(self,@AffectMood,#why=MOODMOD_VAULT_DEPOSIT);
+
+      return;
+   }
+
+   VaultCapacityWarning(oVault=$, who=$, iVaultBulkBefore=0)
+   "Checks if the player's vault has reached a bulk threshold to trigger a warning about it."
+   {
+      local iVaultMaxCapacity = Send(oVault, @GetCapacity);
+      if iVaultMaxCapacity <= 0
+      {
+         return;
+      }
+      
+      local iVaultBulkAfter = Send(oVault,@GetCurrentBulkStored,#who=who);
+      local iVaultPercentBefore = (iVaultBulkBefore * 100) / iVaultMaxCapacity;
+      local iVaultPercentAfter = (iVaultBulkAfter * 100) / iVaultMaxCapacity;
+
+      % Check the higher threshold first so a large deposit that crosses
+      %  both thresholds only gives the most urgent warning.
+      if iVaultPercentBefore < VAULT_ALMOST_FULL_PERCENT
+         AND iVaultPercentAfter >= VAULT_ALMOST_FULL_PERCENT
+      {
+         Send(self,@SayToOne,#target=who,#message_rsc=vrVaultman_almost_full);
+
+         return;
+      }
+
+      if iVaultPercentBefore < VAULT_MOSTLY_FULL_PERCENT      
+         AND iVaultPercentAfter >= VAULT_MOSTLY_FULL_PERCENT
+      {
+         Send(self,@SayToOne,#target=who,#message_rsc=vrVaultman_mostly_full);
+      }
 
       return;
    }

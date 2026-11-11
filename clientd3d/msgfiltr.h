@@ -16,6 +16,7 @@ void UpdateWho(object_node* pUser, BOOL bAdded);
 void ResetWhoList(list_type users);
 INT_PTR CALLBACK WhoDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void AbortWhoDialog(void);
+HWND WhoDialogGet(void);
 
 void MessageSaid(ID sender_id, ID sender_name, BYTE say_type, char *message);
 

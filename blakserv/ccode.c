@@ -635,11 +635,19 @@ void FuzzyCollapseString(char* pTarget, const char* pSource, int len)
 	while (len && iswhite(*pSource)) { pSource++; len--; }
 	while (len && iswhite(pSource[len-1])) { len--; }
 	
-	// copy the core string in uppercase
+	// copy the core string in uppercase and collapse whitespace to single spaces
 	while (len)
 	{
-		*pTarget++ = toupper(*pSource++);
-		len--;
+		if (iswhite(*pSource))
+		{
+			while (len && iswhite(*pSource)) { pSource++; len--; }
+			*pTarget++ = ' ';
+		}
+		else
+		{
+			*pTarget++ = toupper(*pSource++);
+			len--;
+		}
 	}
 	
 	*pTarget = '\0';

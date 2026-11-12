@@ -1032,6 +1032,7 @@ BEGIN
 	IDS_RESTORE_DEFAULTS			"Restaurar Padrões"
 	IDS_THEME_DEFAULT				"Padrão"
 	IDS_THEME_DARK					"Escuro"
+	IDS_WHO_COPYNAME				"Copiar nome"
 END
 
 
@@ -2056,6 +2057,7 @@ BEGIN
 	IDS_RESTORE_DEFAULTS			"Standardwerte wiederherstellen"
 	IDS_THEME_DEFAULT				"Standard"
 	IDS_THEME_DARK					"Dunkel"
+	IDS_WHO_COPYNAME				"Name kopieren"
 END
 
 
@@ -3341,6 +3343,7 @@ BEGIN
 	IDS_RESTORE_DEFAULTS			"Restore Defaults"
 	IDS_THEME_DEFAULT				"Default"
 	IDS_THEME_DARK					"Dark"
+	IDS_WHO_COPYNAME				"Copy name"
 END
 
 

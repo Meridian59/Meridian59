@@ -2728,8 +2728,10 @@ messages:
    }
 
    StartEnchantment(what = $,time = $,state = $,lastcall=TRUE,addicon=TRUE)
-   "Adds <what> to our enchantments, and creates a timer that will cause it "
-   "to end."
+   "Adds <what> to the player's enchantment list.  If the player is logged "
+   "on, the entry holds a timer for <time>.  If the player is logged off, "
+   "the entry holds the <time> value.  If <time> is NIL or 0, the entry "
+   "does not have a timer."
    {
       local oTimer, lNew_enchantment;
 
@@ -2739,13 +2741,20 @@ messages:
       }
       else 
       {
-         if lastcall
+         if pbLogged_on
          {
-            oTimer = CreateTimer(self,@EnchantmentTimer,time);
+            if lastcall
+            {
+               oTimer = CreateTimer(self,@EnchantmentTimer,time);
+            }
+            else
+            {
+               oTimer = CreateTimer(self,@PeriodicEnchantmentTimer,time);
+            }
          }
          else
          {
-            oTimer = CreateTimer(self,@PeriodicEnchantmentTimer,time);
+            oTimer = time;
          }
       }
 

@@ -50,6 +50,7 @@ typedef struct {
 void ToolbarCreate(void);
 void ToolbarDestroy(void);
 void ToolbarResize(int xsize, int ysize, AREA view);
+int  ToolbarGetLeft(void);
 
 M59EXPORT bool __cdecl ToolbarAddButton(AddButton *s);
 M59EXPORT bool ToolbarSetButtonState(int action, const void *action_data, bool state);

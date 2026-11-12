@@ -27,6 +27,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <richedit.h>
+#include <uxtheme.h>
 
 /* event sent to our interface when it should update numbers */
 #define WM_BLAK_NEW_INFO       (WM_APP + 0)
@@ -61,9 +62,6 @@ HWND hwndTab_page;
 
 #define NUM_TAB_PAGES 3
 HWND tab_pages[NUM_TAB_PAGES];
-HWND tab_about;
-
-bool is_about;
 
 #define HWND_STATUS tab_pages[0]
 #define HWND_CHANNEL tab_pages[1]
@@ -74,7 +72,7 @@ static WNDPROC lpfnDefAdminInputProc;
 static WNDPROC lpfnDefAdminResponseProc;
 
 /* status window stuff--make a timer to clear it every once in a while */
-#define STATUS_CONNECTION_WIDTH 30
+#define STATUS_CONNECTION_WIDTH 20 /* dialog units */
 #define STATUS_CLEAR_TIME 20000
 #define WIN_TIMER_ID 1
 bool is_timer_pending;
@@ -126,7 +124,6 @@ void InitInterface(void)
 	
 	sessions_logged_on = 0;
 	is_timer_pending = false;
-	is_about = false;
 
 	hEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
 	
@@ -154,24 +151,32 @@ int GetUsedSessions(void)
 
 void __cdecl InterfaceThread(void *unused)
 {
-	WNDCLASS main_class;
+	WNDCLASSEX main_class;
 	MSG msg;
 	HACCEL hAccel;
-	
+
+	main_class.cbSize = sizeof(main_class);
 	main_class.style = CS_HREDRAW | CS_VREDRAW;
 	main_class.lpfnWndProc = InterfaceWindowProc;
 	main_class.cbClsExtra = 0;
 	main_class.cbWndExtra = DLGWINDOWEXTRA;
 	main_class.hInstance = hInst;
-	main_class.hIcon = LoadIcon(hInst,MAKEINTRESOURCE(IDI_MAIN));
+	/* load large and small icons separately so each uses its native size from the .ico */
+	main_class.hIcon = (HICON) LoadImage(hInst,MAKEINTRESOURCE(IDI_MAIN),IMAGE_ICON,
+		GetSystemMetrics(SM_CXICON),GetSystemMetrics(SM_CYICON),LR_DEFAULTCOLOR);
+	main_class.hIconSm = (HICON) LoadImage(hInst,MAKEINTRESOURCE(IDI_MAIN),IMAGE_ICON,
+		GetSystemMetrics(SM_CXSMICON),GetSystemMetrics(SM_CYSMICON),LR_DEFAULTCOLOR);
 	main_class.hCursor = NULL;
 	main_class.hbrBackground = (HBRUSH) GetStockObject(LTGRAY_BRUSH);
 	main_class.lpszMenuName = NULL;
 	main_class.lpszClassName = "blakserv";
+
+	RegisterClassEx(&main_class);
 	
-	RegisterClass(&main_class);
-	
-	InitCommonControls();
+	INITCOMMONCONTROLSEX icc;
+	icc.dwSize = sizeof(icc);
+	icc.dwICC = ICC_TAB_CLASSES | ICC_LISTVIEW_CLASSES | ICC_BAR_CLASSES;
+	InitCommonControlsEx(&icc);
 
    LoadLibrary("riched20.dll");
 
@@ -586,11 +591,13 @@ void InterfaceCreate(HWND hwnd,WPARAM wParam,LPARAM lParam)
 
 void InterfaceCreateTabControl(HWND hwnd) 
 { 
-    TC_ITEM tie; 
+    TC_ITEM tie;
     char s[100];
     HWND hwndCtl;
     LOGFONT lf;
     HFONT font;
+    RECT rcPage;
+    int i;
     
     hwndTab = GetDlgItem(hwndMain,IDC_TAB_MAIN);
 	
@@ -611,12 +618,14 @@ void InterfaceCreateTabControl(HWND hwnd)
 		InterfaceDialogTabPage);
     tab_pages[2] = CreateDialog(hInst,MAKEINTRESOURCE(IDD_TAB_PAGE_ADMINISTRATION),hwndTab,
 		InterfaceDialogTabPage);
-	
-    /* keep about box page ready */
-    tab_about = CreateDialog(hInst,MAKEINTRESOURCE(IDD_ABOUT),hwnd,
-			     InterfaceDialogAbout);
-	
-	
+
+    /* pages are children of the tab control; place them in its display area,
+       below the tab headers */
+    GetClientRect(hwndTab,&rcPage);
+    TabCtrl_AdjustRect(hwndTab,FALSE,&rcPage);
+    for (i = 0; i < NUM_TAB_PAGES; i++)
+		SetWindowPos(tab_pages[i],HWND_TOP,rcPage.left,rcPage.top,0,0,SWP_NOSIZE);
+
     /* set admin page font */
     hwndCtl = GetDlgItem(HWND_ADMIN,IDC_ADMIN_RESPONSE);
     SendMessage(hwndCtl,WM_SETFONT,(WPARAM)GetStockObject(ANSI_FIXED_FONT),
@@ -669,13 +678,7 @@ void InterfaceSetTab(int sel)
 void InterfaceTabChange() 
 { 
 	int sel;
-	
-	if (is_about)
-	{
-		/* currently showing about box, so undo that */
-		ShowWindow(tab_about,FALSE);
-	}   
-	
+
 	sel = TabCtrl_GetCurSel(hwndTab); 
 	
 	/* Hide the current child dialog box, if any. */
@@ -696,7 +699,7 @@ void InterfaceSetup()
 	TBADDBITMAP tbab; 
 	TBBUTTON tbb[8];
 	
-	RECT rcClient;
+	RECT rcClient, rcPart;
 	int status_widths[2];
 	
 	hwndTB = CreateWindowEx(0,TOOLBARCLASSNAME,NULL,WS_CHILD | TBSTYLE_TOOLTIPS,
@@ -770,7 +773,10 @@ void InterfaceSetup()
 	
 	CreateStatusWindow(WS_CHILD | WS_VISIBLE,"",hwndMain,IDS_STATUS_WINDOW);
 	GetClientRect(hwndMain,&rcClient); 
-	status_widths[0] = rcClient.right - STATUS_CONNECTION_WIDTH;
+	/* room for the connection count, in dialog units so it grows with the font */
+	SetRect(&rcPart,0,0,STATUS_CONNECTION_WIDTH,0);
+	MapDialogRect(hwndMain,&rcPart);
+	status_widths[0] = rcClient.right - rcPart.right;
 	status_widths[1] = rcClient.right - 1;
 	
 	SendDlgItemMessage(hwndMain,IDS_STATUS_WINDOW,SB_SETPARTS,2,(LPARAM)status_widths);
@@ -785,37 +791,36 @@ void InterfaceCreateListControl()
 	
 	hwndLV = GetDlgItem(HWND_STATUS,IDC_CONNECTION_LIST);
 	
-	/* Initialize the LV_COLUMN structure. */
-	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM; 
-	lvc.fmt = LVCFMT_LEFT; 
-	
-	/* make the columns */
-	
-	lvc.pszText = const_cast<char *>("#");
-	lvc.iSubItem = 0;
-	lvc.cx = 29; 
-	ListView_InsertColumn(hwndLV,0,&lvc);
-	
-	lvc.pszText = const_cast<char *>("Name");
-	lvc.iSubItem = 1;
-	lvc.cx = 113; 
-	ListView_InsertColumn(hwndLV,1,&lvc);
-	
-	lvc.pszText = const_cast<char *>("Since");
-	lvc.iSubItem = 2;
-	lvc.cx = 80; 
-	ListView_InsertColumn(hwndLV,2,&lvc);
-	
-	lvc.pszText = const_cast<char *>("State");
-	lvc.iSubItem = 3;
-	lvc.cx = 118; 
-	ListView_InsertColumn(hwndLV,3,&lvc);
-	
-	lvc.pszText = const_cast<char *>("From");
-	lvc.iSubItem = 4;
-	lvc.cx = 127; 
-	ListView_InsertColumn(hwndLV,4,&lvc);
-	
+	/* each column fits text like its sample, in the list's font and with the list's own
+	   padding: the column briefly takes the sample as its heading and is sized to that.
+	   From, the last, takes the remaining width */
+	static const struct { const char *heading, *sample; } columns[] =
+	{
+		{ "#",     "999999" },                    /* account number */
+		{ "Name",  "Typical account name" },      /* names can be longer; this fits most */
+		{ "Since", "Nov 30 23:59" },              /* ShortTimeStr */
+		{ "State", "Synchronized - validating" }, /* longest GetStateName */
+		{ "From",  "255.255.255.255" },           /* IP address */
+	};
+	int i;
+
+	lvc.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
+	lvc.fmt = LVCFMT_LEFT;
+	for (i = 0; i < (int) (sizeof(columns) / sizeof(columns[0])); i++)
+	{
+		lvc.pszText = const_cast<char *>(columns[i].sample);
+		lvc.iSubItem = i;
+		ListView_InsertColumn(hwndLV,i,&lvc);
+	}
+
+	/* sizing waits until every column exists, since sizing the last one fills the list */
+	lvc.mask = LVCF_TEXT;
+	for (i = 0; i < (int) (sizeof(columns) / sizeof(columns[0])); i++)
+	{
+		ListView_SetColumnWidth(hwndLV,i,LVSCW_AUTOSIZE_USEHEADER);
+		lvc.pszText = const_cast<char *>(columns[i].heading);
+		ListView_SetColumn(hwndLV,i,&lvc);
+	}
 }
 
 
@@ -864,8 +869,7 @@ void InterfaceCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 		DialogBox(hInst,MAKEINTRESOURCE(IDD_MOTD),hwnd,InterfaceDialogMotd);    
 		return;
 	case IDM_HELP_ABOUT :
-		ShowWindow(tab_about,TRUE);
-		ShowWindow(hwndTab_page,FALSE);
+		DialogBox(hInst,MAKEINTRESOURCE(IDD_ABOUT),hwnd,InterfaceDialogAbout);
 		return;
 	}
 	
@@ -1023,7 +1027,7 @@ void InterfaceReloadSystem()
 	LeaveServerLock();
 }
 
-/* 
+/*
 * CenterWindow: Centers the child window (hwnd) over the parent window 
 *   (hwndParent) while ensuring it's fully visible on the screen, even 
 *   across multiple monitors. The window is positioned within the 
@@ -1124,18 +1128,16 @@ INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARA
 	switch (message)
 	{
 	case WM_INITDIALOG :
-		is_about = true;
-		
-		SetWindowPos(hwnd,HWND_TOP,7,54,0,0,SWP_NOSIZE);
+		CenterWindow(hwnd, GetParent(hwnd));
 		SetWindowText(GetDlgItem(hwnd,IDC_ABOUT_TITLE),BlakServLongVersionString());
 		return TRUE;
-		
+
 	case WM_COMMAND :
 		switch (wParam)
 		{
 		case IDOK :
 		case IDCANCEL :
-			InterfaceTabChange();
+			EndDialog(hwnd,0);
 			return TRUE;
 		}
 	}
@@ -1147,7 +1149,7 @@ INT_PTR CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,WPARAM wParam,LPA
 	switch (message)
 	{
 	case WM_INITDIALOG:
-		SetWindowPos(hwnd,HWND_TOP,7,24,0,0,SWP_NOSIZE);
+		EnableThemeDialogTexture(hwnd,ETDT_ENABLETAB);
 		return TRUE;
 		
 		HANDLE_MSG(hwnd,WM_COMMAND,InterfaceTabPageCommand);

@@ -796,11 +796,11 @@ void InterfaceCreateListControl()
 	   From, the last, takes the remaining width */
 	static const struct { const char *heading, *sample; } columns[] =
 	{
-		{ "#",     "9999" },                      /* account number */
+		{ "#",     "999999" },                    /* account number */
 		{ "Name",  "Typical account name" },      /* names can be longer; this fits most */
 		{ "Since", "Nov 30 23:59" },              /* ShortTimeStr */
 		{ "State", "Synchronized - validating" }, /* longest GetStateName */
-		{ "From",  "From" },
+		{ "From",  "255.255.255.255" },           /* IP address */
 	};
 	int i;
 

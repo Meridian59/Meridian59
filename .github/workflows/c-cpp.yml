@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: make blakserv
       working-directory: blakserv
@@ -30,7 +30,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: make blakserv
       working-directory: blakserv
@@ -49,7 +49,7 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - uses: ilammy/msvc-dev-cmd@v1
       with: 
         arch: x86
@@ -68,7 +68,7 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - uses: ilammy/msvc-dev-cmd@v1
       with: 
         arch: x64

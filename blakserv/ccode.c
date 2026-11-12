@@ -625,7 +625,10 @@ blak_int C_StringEqual(int object_id,local_var_type *local_vars,
 
 void FuzzyCollapseString(char* pTarget, const char* pSource, int len)
 {
-	if (!pTarget || !pSource || len <= 0)
+	if (!pTarget)
+		return;
+
+	if (!pSource || len <= 0)
 	{
 		*pTarget = '\0';
 		return;

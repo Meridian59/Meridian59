@@ -37,7 +37,10 @@ LIBS = $(LIBS) \
 
 DEFFILE  = $(SOURCEDIR)\client.def
 
-all: makedirs $(OUTDIR)\meridian.exe
+all: makedirs $(OUTDIR)\meridian.exe defaultini
+
+defaultini:
+	@if not exist $(CLIENTRUNDIR)\meridian.ini $(CP) $(SOURCEDIR)\meridian.ini $(CLIENTRUNDIR) >nul
 
 OBJS = \
         $(OUTDIR)\client.obj \

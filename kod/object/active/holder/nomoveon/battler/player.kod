@@ -11315,12 +11315,17 @@ messages:
    {
       local iServiceQuestIndex = 0;
 
-      local oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
-      if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
+      % Leaving a faction ends a flagpole claim in the player's current room.
+      % A logged-off player doesn't have a room, so they can't make a claim.
+      if poOwner <> $
       {
-         if Send(oFlagPole,@GetClaimer) = self
+         local oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
+         if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
          {
-            Send(oFlagPole,@ClaimFailed);
+            if Send(oFlagPole,@GetClaimer) = self
+            {
+               Send(oFlagPole,@ClaimFailed);
+            }
          }
       }
 

@@ -624,8 +624,8 @@ messages:
    "Returns FALSE if criteria not met, otherwise calls completion criteria "
    "met to award prize/penalty."
    {
-      local lQuesters, iDistance, iType, oQuester, bOnQuest, iNumber,
-            lMonster, oMonster, bFound;
+      local lQuesters, iDistance, iType, oQuester, bOnQuest,
+            iNumber, lMonster, oMonster, bFound;
 
       % if the player isn't on this quest, bail out here
       if piStatus <> QN_STATUS_WAITING_FOR_PLAYERS
@@ -645,10 +645,17 @@ messages:
          }
       }
 
-      % If the player is too far away, bail out.
+      % If the player is too far away, bail out. Quest speech counts 
+      % from anywhere the NPC can already hear it.
+      local iDistanceLimit = Q_NPC_CLOSE_ENOUGH * Q_NPC_CLOSE_ENOUGH;
+      if message <> $
+      {
+         iDistanceLimit = SAY_RADIUS;
+      }
+
       iDistance = Send(poDestNPC,@SquaredDistanceTo,#what=who_tried);
       if iDistance = $
-         OR iDistance > (Q_NPC_CLOSE_ENOUGH * Q_NPC_CLOSE_ENOUGH)
+         OR iDistance > iDistanceLimit
       {
          return FALSE;
       }

@@ -177,6 +177,7 @@ M59EXPORT void _cdecl dprintf(const char *fmt,...);
 #include "winmenu.h"
 #include "cache.h"
 #include "overlay.h"
+#include "characternotes.h"
 #include "moveobj.h"
 #include "msgfiltr.h"
 #include "statconn.h"

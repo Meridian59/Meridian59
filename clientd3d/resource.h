@@ -223,6 +223,9 @@
 #define IDS_PASSWORDINVALID             195
 #define IDS_SERVERUNKNOWN               196
 #define IDS_SIGNUPOFFLINE               197
+#define IDD_CHARACTERNOTE                198
+#define IDC_CHARACTERNOTE_EDIT           1177
+#define IDC_CHARACTERNOTE_LABEL          1178
 #define IDS_SIGNUPUNKNOWNERROR          198
 #define IDS_SIGNUPAPI                   199
 #define IDS_WEBAPIDOMAIN                200

@@ -145,6 +145,7 @@ void MainQuit(HWND hwnd)
 	if (config.save_settings)
 		SaveSettings();
 	FreeProfaneTerms();
+	FreeCharacterNotes();
 	
 	MainExitState();
 	

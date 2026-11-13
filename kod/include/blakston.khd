@@ -2780,9 +2780,6 @@
 
    % Quest misc constants
 
-   % An player must be this close to an NPC to offer/receive items, talk, etc.
-   Q_NPC_CLOSE_ENOUGH   = 5
-
    % Quest types (Not yet implemented)
    % First player to complete gets prize, rest get penalty.
    Q_TYPE_COMPETITIVE   = 0x0

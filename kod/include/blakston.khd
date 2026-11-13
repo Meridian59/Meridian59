@@ -2781,7 +2781,7 @@
    % Quest misc constants
 
    % A player must be this close to an NPC to hand over a quest item or
-   %  show up for a quest.  Speech uses SAY_RADIUS instead.
+   %  show up for a quest.
    Q_NPC_CLOSE_ENOUGH   = 5
 
    % Quest types (Not yet implemented)

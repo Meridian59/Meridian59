@@ -645,9 +645,8 @@ messages:
          }
       }
 
-      % If the player is too far away, bail out.  Speech counts from
-      %  anywhere the NPC can hear it.  Items and showing up need the
-      %  player close by.
+      % If the player is too far away, bail out. Quest speech counts 
+      % from anywhere the NPC can already hear it.
       local iDistanceLimit = Q_NPC_CLOSE_ENOUGH * Q_NPC_CLOSE_ENOUGH;
       if message <> $
       {

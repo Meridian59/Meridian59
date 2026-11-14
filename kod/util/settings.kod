@@ -132,7 +132,7 @@ properties:
    piMinHoursOnlineForJusticar = 160
 
    % Cost per Royal Ballot.
-   piBallotCost = 10000
+   piBallotCost = 1000
 
    % If enabled, unsafe penalties send the player to their hometown.
    % This is intended to prevent being players 'kept offline' by enemies.

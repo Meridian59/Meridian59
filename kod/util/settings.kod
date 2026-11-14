@@ -129,7 +129,7 @@ properties:
 
    % Minimum cumulative real playtime (in hours) needed to vote for or
    % become Justicar
-   piMinHoursOnlineForJusticar = 160
+   piMinPlaytimeForJusticarElection = 160
 
    % Cost per Royal Ballot.
    piBallotCost = 1000
@@ -345,9 +345,9 @@ messages:
       return piMinHPForJusticarVoter;
    }
 
-   GetMinHoursOnlineForJusticar()
+   GetMinPlaytimeForJusticarElection()
    {
-      return piMinHoursOnlineForJusticar;
+      return piMinPlaytimeForJusticarElection;
    }
 
    GetBallotCost()

@@ -1411,7 +1411,7 @@ messages:
       }
 
       return Send(who,@GetTimeLoggedIn) >=
-             Send(Send(SYS,@GetSettings),@GetMinHoursOnlineForJusticar) * 3600;
+             (Send(Send(SYS,@GetSettings),@GetMinPlaytimeForJusticarElection) * 3600);
    }
 
    IsQualifiedCandidate(who = $)
@@ -1423,7 +1423,7 @@ messages:
       }
 
       return Send(who,@GetTimeLoggedIn) >=
-             Send(Send(SYS,@GetSettings),@GetMinHoursOnlineForJusticar) * 3600;
+             (Send(Send(SYS,@GetSettings),@GetMinPlaytimeForJusticarElection) * 3600);
    }
 
    ResetBrain()

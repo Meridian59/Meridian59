@@ -262,7 +262,7 @@ messages:
       
       if NOT Send(oRoom,@ReqNewHold,#what=oTwin,#new_row=iRow,#new_col=iCol)
       {
-         Send(oTwin,@Delete);
+         Send(oTwin,@Delete,#bMonsterReport=FALSE);
 
          return FALSE;
       }

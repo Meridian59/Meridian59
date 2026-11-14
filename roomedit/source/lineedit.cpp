@@ -334,9 +334,6 @@ TDialog(parent, resId, module)
    CurLineDef = LineDefs[Selected->objnum];
    memset(&ConfirmData, 0, sizeof(ConfirmData));
    
-   // Crete object for texture view, but do not create dialog box.
-   pWTextureDialog = NULL;
-   
    pPassPosCheck      = newTCheckBox(this, IDC_PASSPOS, 0);
    pPassNegCheck      = newTCheckBox(this, IDC_PASSNEG, 0);
    pTransPosCheck     = newTCheckBox(this, IDC_TRANSPOS, 0);
@@ -425,8 +422,8 @@ TDialog(parent, resId, module)
    pScrollMediumRadio[1]  = newTRadioButton(this, IDC_SCROLLMEDIUM2);
    pScrollFastRadio[1]  = newTRadioButton(this, IDC_SCROLLFAST2);
 
-   pTranslucencyPos = newTComboBox(this, IDC_TRANSLUCENCY_POS);
-   pTranslucencyNeg = newTComboBox(this, IDC_TRANSLUCENCY_NEG);
+   pTranslucencyPos = newTComboBox(this, IDC_POS_TRANSLUCENCY);
+   pTranslucencyNeg = newTComboBox(this, IDC_NEG_TRANSLUCENCY);
 }
 
 
@@ -437,7 +434,6 @@ TDialog(parent, resId, module)
 TLineDefEditDialog::~TLineDefEditDialog ()
 {
    Destroy();
-   delete pWTextureDialog;
 }
 
 
@@ -722,7 +718,13 @@ void TLineDefEditDialog::CmOk ()
 	       }
 
 	       pSelLineDef->blak_flags = lflags;
-	    }
+
+          if (ConfirmData.pTranslucencyPosCheck)
+             pSelLineDef->translucency_pos = CurLineDef.translucency_pos;
+
+          if (ConfirmData.pTranslucencyNegCheck)
+             pSelLineDef->translucency_neg = CurLineDef.translucency_neg;
+       }
 	    
 	    // Did we made changes?
 	    if ( memcmp (pSelLineDef, &LineDefBefore, sizeof (CurLineDef)) != 0 )
@@ -848,8 +850,20 @@ void TLineDefEditDialog::GetLineDef ()
    // Read translucency dropdowns
    int tpos = pTranslucencyPos->GetSelIndex();
    int tneg = pTranslucencyNeg->GetSelIndex();
-   CurLineDef.translucency_pos = (BYTE)(tpos >= 0 ? tpos : 0);
-   CurLineDef.translucency_neg = (BYTE)(tneg >= 0 ? tneg : 0);
+   BYTE new_tpos = (BYTE) (tpos >= 0 ? tpos : 0);
+   BYTE new_tneg = (BYTE) (tneg >= 0 ? tneg : 0);
+   if (CurLineDef.translucency_pos != new_tpos)
+   {
+      ConfirmData.pFlagsCheck = TRUE;
+      ConfirmData.pTranslucencyPosCheck = TRUE;
+   }
+   if (CurLineDef.translucency_neg != new_tneg)
+   {
+      ConfirmData.pFlagsCheck = TRUE;
+      ConfirmData.pTranslucencyNegCheck = TRUE;
+   }
+   CurLineDef.translucency_pos = new_tpos;
+   CurLineDef.translucency_neg = new_tneg;
 }
 
 
@@ -1802,10 +1816,8 @@ void TLineDefEditDialog::TextureSelchange ()
    strcpy (TextureName, texname);
    
    // If texture view dialog box opened, change selection
-   if ( pWTextureDialog != NULL && pWTextureDialog->IsWindow() )
-   {
+   if (IsTexturePreviewOpen ())
       TextureListDBLClick();
-   }
 }
 
 
@@ -1818,25 +1830,8 @@ void TLineDefEditDialog::TextureListDBLClick ()
    // Don't select empty texture !
    if ( TextureName[0] == '\0' || strcmp (TextureName, "-") == 0 )
       return;
-   
-   // Create modeless dialog box
-   if ( pWTextureDialog == NULL || pWTextureDialog->IsWindow() == FALSE )
-   {
-      delete pWTextureDialog;
-      pWTextureDialog = new TDisplayWallTextureDialog (Parent);
-      pWTextureDialog->Create();
-   }
-   
-   if ( pWTextureDialog->IsWindow() )
-   {
-      TextureInfo *info = FindTextureByName(TextureName);
 
-      if ( pWTextureDialog->SelectBitmap2 (info->filename) < 0 )
-	 Notify ("Error: Cannot select the texture name \"%s\" in the "
-		 "dialog box of Wall Texture view ! (BUG)", TextureName);
-   }
-   else
-      Notify ("Error: Cannot create dialog box of Wall Texture view !");
+   ShowTexturePreview (Parent, TextureName, TRUE);
 }
 
 

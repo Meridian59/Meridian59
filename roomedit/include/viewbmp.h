@@ -251,6 +251,11 @@ public:
 	virtual void SetupWindow ();
 };
 
+void ShowTexturePreview (TWindow *parent, const char *texname, BOOL createIfNeeded = TRUE);
+
+void CloseTexturePreview ();
+
+BOOL IsTexturePreviewOpen ();
 
 #endif                                      // __viewbmp_h sentry.
 

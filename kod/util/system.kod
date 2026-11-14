@@ -1240,6 +1240,29 @@ messages:
       return GetTableEntry(phRooms,num);
    }
 
+   FindRoomNumByResource(rsc = $)
+   "Returns the room number (RID) of the first room object whose room "
+   "resource matches rsc, or $ if none.  This magic function name is "
+	"looked up in the server to find rooms based on their resource ID."
+   {
+      local i;
+
+      if rsc = $
+      {
+         return $;
+      }
+
+      for i in plRooms
+      {
+         if Send(i,@GetRoomResource) = rsc
+         {
+            return Send(i,@GetRoomNum);
+         }
+      }
+
+      return $;
+   }
+
    FindSpellByNum(num = 0)
    {
       return GetTableEntry(phSpells,num);
@@ -1613,7 +1636,7 @@ messages:
                %  mysterious murder message!
                if rMessage = $
                   AND Send(killer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-                  AND NOT Send(Send(killer,@GetOwner),@SafePlayerAttack)
+                  AND Send(killer,@IsOutsideSafeAttackRoom)
                {
                   rMessage = system_user_killed_by_pker;
                   poLastMurderer = killer;
@@ -3328,7 +3351,7 @@ messages:
    "Admin supported\n"
    "Deletes all spells and then calls CreateAllSpellsIfNew."
    "Figure_totals decides whether or not to recount the number of spells for "
-   "the advacnement object.  If in doubt, call it."
+   "the advancement object.  If in doubt, call it."
    {
       local i;
 

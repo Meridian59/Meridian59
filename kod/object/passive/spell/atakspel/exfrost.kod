@@ -21,7 +21,7 @@ resources:
    ExplosiveFrost_icon_rsc = iexfrost.bgf
 
    ExplosiveFrost_desc_rsc = \
-      "Creates a small exploision of frost which damages a target at short range.  "
+      "Creates a small explosion of frost which damages a target at short range.  "
       "Requires red mushrooms and elderberries to cast."
 
    ExplosiveFrost_sound = ficefing.wav

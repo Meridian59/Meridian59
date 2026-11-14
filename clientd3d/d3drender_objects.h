@@ -59,6 +59,7 @@ struct LightAndTextureParams
     // Light cache details
     d_light_cache* lightCache;
     d_light_cache* lightCacheDynamic;
+    d_light_cache* lightCacheFlicker;
 
     // Texture and sector settings
     int smallTextureSize;
@@ -67,10 +68,12 @@ struct LightAndTextureParams
     LightAndTextureParams(
         d_light_cache* lightCacheParam,
         d_light_cache* lightCacheDynamicParam,
+        d_light_cache* lightCacheFlickerParam,
         int smallTextureSizeParam,
         int* sectorDepthsParam)
         : lightCache(lightCacheParam),
           lightCacheDynamic(lightCacheDynamicParam),
+          lightCacheFlicker(lightCacheFlickerParam),
           smallTextureSize(smallTextureSizeParam),
           sectorDepths(sectorDepthsParam)
     {}

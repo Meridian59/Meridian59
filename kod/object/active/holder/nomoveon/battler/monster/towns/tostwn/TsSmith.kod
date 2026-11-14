@@ -55,7 +55,7 @@ messages:
 
    Constructor()
    {
-      debug("Someome tried to make a defunct class!");
+      debug("Someone tried to make a defunct class!");
       post(self,@Delete);
       return;
    }

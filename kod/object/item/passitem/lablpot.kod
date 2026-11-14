@@ -22,7 +22,7 @@ resources:
    LabeledPotion_name3_rsc = "bottle of eye makeup"
    LabeledPotion_name4_rsc = "bottle of insect repellant"
    LabeledPotion_name5_rsc = "nerve-calming elixir"
-   LabeledPotion_name6_rsc = "potion of ambidexerity"
+   LabeledPotion_name6_rsc = "potion of ambidexterity"
    LabeledPotion_name7_rsc = "bottle of cleaning solution"
    LabeledPotion_name8_rsc = "skin softening lotion"
    LabeledPotion_name9_rsc = "vial of perfume"

@@ -52,6 +52,10 @@ void ClearList(void)
 	list_nodes = (list_node *)
 		ResizeMemory(MALLOC_ID_LIST,list_nodes,old_nodes*sizeof(list_node),
 		max_nodes*sizeof(list_node));
+	if (list_nodes == NULL)
+	{
+		FatalError("List node array allocation failed");
+	}
 }
 
 int GetListNodesUsed(void)
@@ -71,6 +75,10 @@ int AllocateListNode(void)
 		list_nodes = (list_node *)
 			ResizeMemory(MALLOC_ID_LIST,list_nodes,old_nodes*sizeof(list_node),
 			max_nodes*sizeof(list_node));      
+		if (list_nodes == NULL)
+		{
+			FatalError("List node array allocation failed");
+		}
 		lprintf("AllocateListNode resized to %i list nodes\n",max_nodes);
 	}
 	return num_nodes++;

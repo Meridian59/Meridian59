@@ -143,7 +143,8 @@ void FatalErrorShow(const char *filename,int line,const char *str)
 {
 	char s[5000];
 
-	printf(s,"Fatal Error File %s line %i\r\n\r\n%s",filename,line,str);
+	snprintf(s,sizeof(s),"Fatal Error File %s line %i: %s\r\n",filename,line,str);
+	WriteStrChannel(CHANNEL_E,s);
 
 	exit(1);
 }

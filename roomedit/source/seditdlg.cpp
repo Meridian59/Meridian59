@@ -46,6 +46,10 @@
 	#include <owl\edit.h>
 #endif
 
+#ifndef __OWL_COMBOBOX_H
+	#include <owl\combobox.h>
+#endif
+
 #ifndef __OWL_STATIC_H
 	#include <owl\static.h>
 #endif
@@ -134,6 +138,8 @@ DEFINE_RESPONSE_TABLE1(TSectorEditDialog, TDialog)
 	EV_BN_CLICKED(IDC_TO_CEILING, ToCeilingClicked),
 	EV_BN_CLICKED(IDC_FLOOR_CLEAR, FloorClearClicked),
 	EV_BN_CLICKED(IDC_CEILING_CLEAR, CeilingClearClicked),
+	EV_BN_CLICKED(IDC_FLOOR_SLOPE_CLEAR, FloorSlopeClearClicked),
+	EV_BN_CLICKED(IDC_CEILING_SLOPE_CLEAR, CeilingSlopeClearClicked),
 	EV_BN_CLICKED(IDC_DEPTHNONE, DepthClicked),
 	EV_BN_CLICKED(IDC_DEPTHSHALLOW, DepthClicked),
 	EV_BN_CLICKED(IDC_DEPTHDEEP, DepthClicked),
@@ -183,9 +189,6 @@ TSectorEditDialog::TSectorEditDialog (TWindow* parent, SelPtr sel,
 	TextureName[0] = '\0';
 	memset(&ConfirmData, 0, sizeof(ConfirmData));
 
-	// Crete object for texture view, but do not create dialog box.
-	pFTextureDialog = NULL;
-
 	// Create objects for controls
 	pNoAmbientCheck    = newTCheckBox(this, IDC_NOAMBIENT, 0);
 //	pTagEdit           = newTEdit(this, IDC_TAG_EDIT, 6);
@@ -221,15 +224,15 @@ TSectorEditDialog::TSectorEditDialog (TWindow* parent, SelPtr sel,
 	pScrollMediumRadio = newTRadioButton(this, IDC_SCROLLMEDIUM, 0);
 	pScrollFastRadio   = newTRadioButton(this, IDC_SCROLLFAST, 0);
 	pFlickerCheck      = newTCheckBox(this, IDC_FLICKER, 0);
-	pSlopeFloorVertex[0]  = newTEdit(this, IDC_FLOORV1, 6);
-	pSlopeFloorVertex[1]  = newTEdit(this, IDC_FLOORV2, 6);
-	pSlopeFloorVertex[2]  = newTEdit(this, IDC_FLOORV3, 6);
+	pSlopeFloorVertex[0]  = newTComboBox(this, IDC_FLOORV1, 6);
+	pSlopeFloorVertex[1]  = newTComboBox(this, IDC_FLOORV2, 6);
+	pSlopeFloorVertex[2]  = newTComboBox(this, IDC_FLOORV3, 6);
 	pSlopeFloorHeight[0]  = newTEdit(this, IDC_FLOORH1, 6);
 	pSlopeFloorHeight[1]  = newTEdit(this, IDC_FLOORH2, 6);
 	pSlopeFloorHeight[2]  = newTEdit(this, IDC_FLOORH3, 6);
-	pSlopeCeilingVertex[0]  = newTEdit(this, IDC_CEILINGV1, 6);
-	pSlopeCeilingVertex[1]  = newTEdit(this, IDC_CEILINGV2, 6);
-	pSlopeCeilingVertex[2]  = newTEdit(this, IDC_CEILINGV3, 6);
+	pSlopeCeilingVertex[0]  = newTComboBox(this, IDC_CEILINGV1, 6);
+	pSlopeCeilingVertex[1]  = newTComboBox(this, IDC_CEILINGV2, 6);
+	pSlopeCeilingVertex[2]  = newTComboBox(this, IDC_CEILINGV3, 6);
 	pSlopeCeilingHeight[0]  = newTEdit(this, IDC_CEILINGH1, 6);
 	pSlopeCeilingHeight[1]  = newTEdit(this, IDC_CEILINGH2, 6);
 	pSlopeCeilingHeight[2]  = newTEdit(this, IDC_CEILINGH3, 6);
@@ -245,7 +248,37 @@ TSectorEditDialog::TSectorEditDialog (TWindow* parent, SelPtr sel,
 TSectorEditDialog::~TSectorEditDialog ()
 {
 	Destroy();
-	delete pFTextureDialog;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// TSectorEditDialog
+// -----------------
+// Preset the floor and ceiling slopes to the given vertices, with all
+// heights at the sector's flat floor/ceiling heights.
+//
+void TSectorEditDialog::SetSlopePreset (SHORT v1, SHORT v2, SHORT v3)
+{
+   int i;
+   SHORT v[3];
+
+   v[0] = v1;
+   v[1] = v2;
+   v[2] = v3;
+
+   if (!(CurSector.blak_flags & SF_SLOPED_FLOOR))
+      CurSector.floor_slope.angle = 0;
+   if (!(CurSector.blak_flags & SF_SLOPED_CEILING))
+      CurSector.ceiling_slope.angle = 0;
+
+   for (i = 0; i < 3; i++)
+   {
+      CurSector.floor_slope.points[i].vertex = v[i];
+      CurSector.floor_slope.points[i].z = CurSector.floorh;
+      CurSector.ceiling_slope.points[i].vertex = v[i];
+      CurSector.ceiling_slope.points[i].z = CurSector.ceilh;
+   }
+   CurSector.blak_flags |= SF_SLOPED_FLOOR | SF_SLOPED_CEILING;
 }
 
 
@@ -260,6 +293,7 @@ void TSectorEditDialog::SetupWindow ()
 
 	SetTextureList();
 //	SetSectorList();
+	SetVertexLists();
 	SetSector();
 
 	// Setup validators
@@ -321,6 +355,77 @@ void TSectorEditDialog::SetTextureList ()
 		assert (FTexture[i] != NULL);
 		pTextureList->AddString (FTexture[i]->Name);
 	}
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// TSectorEditDialog
+// -----------------
+// Fill the slope vertex dropdowns with the vertices on this sector's
+// boundary.  The first entry ("-") means no vertex.
+//
+void TSectorEditDialog::SetVertexLists()
+{
+   char str[16];
+   int i, v;
+   SHORT sector = SelSectors->objnum;
+
+   BOOL *used = new BOOL[NumVertexes];
+   memset (used, 0, NumVertexes * sizeof(BOOL));
+
+   // Mark vertices of linedefs whose sidedefs touch this sector
+   for (i = 0; i < NumLineDefs; i++)
+   {
+      BOOL adjoins = FALSE;
+      if (LineDefs[i].sidedef1 != -1 &&
+	  SideDefs[LineDefs[i].sidedef1].sector == sector)
+	 adjoins = TRUE;
+      if (!adjoins && LineDefs[i].sidedef2 != -1 &&
+	  SideDefs[LineDefs[i].sidedef2].sector == sector)
+	 adjoins = TRUE;
+      if (adjoins)
+      {
+	 used[LineDefs[i].start] = TRUE;
+	 used[LineDefs[i].end] = TRUE;
+      }
+   }
+
+   // Keep vertices already referenced by the slope info, even if they
+   // aren't on the boundary, so existing data stays visible
+   for (i = 0; i < 3; i++)
+   {
+      v = CurSector.floor_slope.points[i].vertex;
+      if (v >= 0 && v < NumVertexes)
+	 used[v] = TRUE;
+      v = CurSector.ceiling_slope.points[i].vertex;
+      if (v >= 0 && v < NumVertexes)
+	 used[v] = TRUE;
+   }
+
+   // First entry means "no vertex"
+   for (i = 0; i < 3; i++)
+   {
+      pSlopeFloorVertex[i]->AddString ("-");
+      pSlopeCeilingVertex[i]->AddString ("-");
+   }
+   for (v = 0; v < NumVertexes; v++)
+   {
+      if (!used[v])
+	 continue;
+      wsprintf (str, "%d", v);
+      for (i = 0; i < 3; i++)
+      {
+	 pSlopeFloorVertex[i]->AddString (str);
+	 pSlopeCeilingVertex[i]->AddString (str);
+      }
+   }
+   delete[] used;
+
+   for (i = 0; i < 3; i++)
+   {
+      pSlopeFloorVertex[i]->SetSelIndex (0);
+      pSlopeCeilingVertex[i]->SetSelIndex (0);
+   }
 }
 
 
@@ -576,7 +681,7 @@ BOOL TSectorEditDialog::GetSector()
    for (i=0; i < 3; i++)
    {
       pSlopeFloorVertex[i]->GetText (str, 6);
-      if (str[0] == 0)
+      if (str[0] == 0 || strcmp (str, "-") == 0)
 	 vertex = -1;
       else vertex = atoi(str);
       if (vertex != CurSector.floor_slope.points[i].vertex)
@@ -594,7 +699,7 @@ BOOL TSectorEditDialog::GetSector()
    for (i=0; i < 3; i++)
    {
       pSlopeCeilingVertex[i]->GetText (str, 6);
-      if (str[0] == 0)
+      if (str[0] == 0 || strcmp (str, "-") == 0)
 	 vertex = -1;
       else vertex = atoi(str);
       if (vertex != CurSector.ceiling_slope.points[i].vertex)
@@ -856,6 +961,38 @@ void TSectorEditDialog::CeilingClearClicked ()
 // TSectorEditDialog
 // -----------------
 //
+void TSectorEditDialog::FloorSlopeClearClicked ()
+{
+   for (int i = 0; i < 3; i++)
+   {
+      pSlopeFloorVertex[i]->SetSelIndex (0);
+      pSlopeFloorHeight[i]->SetText ("");
+   }
+   pFloorAngle->SetText ("");
+   pFloorStyle->SetText ("(flat)");
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// TSectorEditDialog
+// -----------------
+//
+void TSectorEditDialog::CeilingSlopeClearClicked ()
+{
+   for (int i = 0; i < 3; i++)
+   {
+      pSlopeCeilingVertex[i]->SetSelIndex (0);
+      pSlopeCeilingHeight[i]->SetText ("");
+   }
+   pCeilingAngle->SetText ("");
+   pCeilingStyle->SetText ("(flat)");
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// TSectorEditDialog
+// -----------------
+//
 void TSectorEditDialog::DepthClicked ()
 {
    ConfirmData.pDepthCheck = TRUE;
@@ -969,10 +1106,8 @@ void TSectorEditDialog::TextureSelChange ()
 	strcpy (TextureName, texname);
 
 	// If texture view dialog box opened, display texture
-	if ( pFTextureDialog != NULL && pFTextureDialog->IsWindow() )
-	{
+	if (IsTexturePreviewOpen ())
 		TextureDblclick();
-	}
 }
 
 
@@ -986,26 +1121,7 @@ void TSectorEditDialog::TextureDblclick ()
 	if ( TextureName[0] == '\0' || strcmp (TextureName, "-") == 0 )
 		return;
 
-	// Create modeless dialog box
-	if ( pFTextureDialog == NULL || pFTextureDialog->IsWindow() == FALSE )
-	{
-		delete pFTextureDialog;
-		pFTextureDialog = new TDisplayFloorTextureDialog (Parent);
-		pFTextureDialog->Create();
-	}
-
-	if ( pFTextureDialog->IsWindow() )
-	{
-	   TextureInfo *info = FindTextureByName(TextureName);
-	   
-	   if ( pFTextureDialog->SelectBitmap2 (info->filename) < 0 )
-	      Notify ("Error: Cannot select the texture name \"%s\" in the "
-		      "dialog box of Floor/Ceiling Texture view ! (BUG)",
-		      TextureName);
-	}
-	else
-		Notify ("Error: Cannot create dialog box of Floor/Ceiling "
-				"Texture view !");
+	ShowTexturePreview (Parent, TextureName, TRUE);
 }
 
 

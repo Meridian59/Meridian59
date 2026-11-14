@@ -10,6 +10,8 @@
 // Interfaces
 
 static void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
+static unsigned short PaletteIndexToTexel(const PALETTEENTRY* palette, BYTE index, bool bSolid,
+	Color* lastColor);
 
 // Implementations
 
@@ -148,6 +150,33 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 }
 
 /**
+Convert one palette index to an A1R5G5B5 texel.
+
+Index 254 is the cutout colour, and is written fully transparent unless bSolid is set, in
+which case it has no special meaning and is written as an ordinary opaque colour. A cutout
+texel takes its RGB from lastColor, the most recent opaque colour, so that bilinear
+filtering along a cutout edge blends towards a neighbouring colour rather than producing a
+halo. lastColor is updated by every opaque texel and must persist across a whole row.
+*/
+unsigned short PaletteIndexToTexel(const PALETTEENTRY* palette, BYTE index, bool bSolid,
+	Color* lastColor)
+{
+	if (0 == palette[index].peFlags && !bSolid)
+		return (lastColor->blue >> 3) |
+			((lastColor->green >> 3) << 5) |
+			((lastColor->red >> 3) << 10);
+
+	lastColor->red = palette[index].peRed;
+	lastColor->green = palette[index].peGreen;
+	lastColor->blue = palette[index].peBlue;
+
+	return (palette[index].peBlue >> 3) |
+		((palette[index].peGreen >> 3) << 5) |
+		((palette[index].peRed >> 3) << 10) |
+		(1 << 15);
+}
+
+/**
 / straight texture loader for objects
 */
 LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLat1,
@@ -237,6 +266,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 	pPixels16 = (unsigned short*)lockedRect.pBits;
 
 	auto* palette = getPalette();
+	const bool bSolid = (effect & D3DRENDER_TEXTURE_SOLID) != 0;
 
 	for (si = 0, di = 0; di < newHeight; si++, di++)
 	{
@@ -256,29 +286,8 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 					k -= newWidth;
 				}
 
-			// 16bit 1555 textures
-			if (palette[pBits[si * pDib->width + sj]].peFlags != 0)
-			{
-				pPixels16[di * pitchHalf + dj] =
-					(palette[pBits[si * pDib->width + sj]].peBlue >> 3) |
-					((palette[pBits[si * pDib->width + sj]].peGreen >> 3) << 5) |
-					((palette[pBits[si * pDib->width + sj]].peRed >> 3) << 10);
-				pPixels16[di * pitchHalf + dj] |=
-					palette[pBits[si * pDib->width + sj]].peFlags ? (1 << 15) : 0;
-
-				lastColor.red = palette[pBits[si * pDib->width + sj]].peRed;
-				lastColor.green = palette[pBits[si * pDib->width + sj]].peGreen;
-				lastColor.blue = palette[pBits[si * pDib->width + sj]].peBlue;
-			}
-			else
-			{
-				pPixels16[di * pitchHalf + dj] =
-					(lastColor.blue >> 3) |
-					((lastColor.green >> 3) << 5) |
-					((lastColor.red >> 3) << 10);
-				pPixels16[di * pitchHalf + dj] |=
-					palette[pBits[si * pDib->width + sj]].peFlags ? (1 << 15) : 0;
-			}
+			pPixels16[di * pitchHalf + dj] =
+				PaletteIndexToTexel(palette, pBits[si * pDib->width + sj], bSolid, &lastColor);
 		}
 	}
 
@@ -395,6 +404,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 	pPixels16 = (unsigned short*)lockedRect.pBits;
 
 	auto* palette = getPalette();
+	const bool bSolid = (effect & D3DRENDER_TEXTURE_SOLID) != 0;
 
 	for (si = 0, di = 0; di < newWidth; si++, di++)
 	{
@@ -414,29 +424,8 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, 
 					l -= newHeight;
 				}
 
-			// 16bit 1555 textures
-			if (palette[pBits[(sj * pDib->width) + si]].peFlags != 0)
-			{
-				pPixels16[di * pitchHalf + dj] =
-					(palette[pBits[(sj * pDib->width) + si]].peBlue >> 3) |
-					((palette[pBits[(sj * pDib->width) + si]].peGreen >> 3) << 5) |
-					((palette[pBits[(sj * pDib->width) + si]].peRed >> 3) << 10);
-				pPixels16[di * pitchHalf + dj] |=
-					palette[pBits[(sj * pDib->width) + si]].peFlags ? (1 << 15) : 0;
-
-				lastColor.red = palette[pBits[(sj * pDib->width) + si]].peRed;
-				lastColor.green = palette[pBits[(sj * pDib->width) + si]].peGreen;
-				lastColor.blue = palette[pBits[(sj * pDib->width) + si]].peBlue;
-			}
-			else
-			{
-				pPixels16[di * pitchHalf + dj] =
-					(lastColor.blue >> 3) |
-					((lastColor.green >> 3) << 5) |
-					((lastColor.red >> 3) << 10);
-				pPixels16[di * pitchHalf + dj] |=
-					palette[pBits[(sj * pDib->width) + si]].peFlags ? (1 << 15) : 0;
-			}
+			pPixels16[di * pitchHalf + dj] =
+				PaletteIndexToTexel(palette, pBits[(sj * pDib->width) + si], bSolid, &lastColor);
 		}
 	}
 

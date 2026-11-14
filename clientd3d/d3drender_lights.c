@@ -125,7 +125,7 @@ static int CalculateFlickeredIntensity(const LightSourceData& lightData, float* 
    float flickerBrightness = 1.0f;
    int flickeredIntensity;
 
-   if (lightData.objFlags & (OF_FLICKERING | OF_FLASHING))
+   if (ObjectHasLightEffect(lightData.objFlags))
    {
       flickerBrightness = (float)lightData.lightAdjust / GetFlickerLevel();
       flickeredIntensity = (int)(D3DLightScale(lightData.baseIntensity) * flickerBrightness);
@@ -264,6 +264,7 @@ void D3DLMapsStaticGet(room_type* room, const LightCacheUpdateParams& params)
 
    d_light_cache* lightCache = params.lightCache;
    d_light_cache* lightCacheDynamic = params.lightCacheDynamic;
+   d_light_cache* lightCacheFlicker = params.lightCacheFlicker;
 
    if (projectileLightsEnable)
    {
@@ -356,7 +357,7 @@ void D3DLMapsStaticGet(room_type* room, const LightCacheUpdateParams& params)
          if (flickerPerfProfile)
          {
             totalLightCount++;
-            if (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING))
+            if (ObjectHasLightEffect(pRNode->obj.flags))
                flickerCount++;
          }
       }
@@ -381,15 +382,16 @@ void D3DLMapsStaticGet(room_type* room, const LightCacheUpdateParams& params)
          if (isDynamic)
             continue;
 
-         if (ShouldSkipLight(lightCacheDynamic->numLights, pRNode->obj.dLighting.flags, pRNode->obj.dLighting.color,
+         bool isFlickering = ObjectHasLightEffect(pRNode->obj.flags);
+
+         // Select target cache: flickering lights go to flicker cache, static lights to main cache
+         d_light_cache* targetCache = isFlickering ? lightCacheFlicker : lightCache;
+         const char* debugLabel = isFlickering ? "Flickering" : "Static";
+
+         // Each cache holds its own share of the light budget
+         if (ShouldSkipLight(targetCache->numLights, pRNode->obj.dLighting.flags, pRNode->obj.dLighting.color,
                              pRNode->obj.dLighting.intensity))
             continue;
-
-         bool isFlickering = (pRNode->obj.flags & (OF_FLICKERING | OF_FLASHING)) != 0;
-
-         // Select target cache: flickering lights go to dynamic cache, static lights to main cache
-         d_light_cache* targetCache = isFlickering ? lightCacheDynamic : lightCache;
-         const char* debugLabel = isFlickering ? "Flickering" : "Static";
 
          // Non-flickering lights need structural change detection
          if (!isFlickering)

@@ -888,6 +888,12 @@ messages:
       return FALSE;
    }
 
+   DMCanPlace()
+   {
+      % There must only ever be one lich, tied to her guild hall.
+      return FALSE;
+   }
+
    NewOwner(what=$)
    {
       % This should never happen, but if it does...

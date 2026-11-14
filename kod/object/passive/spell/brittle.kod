@@ -139,9 +139,7 @@ messages:
 
       iHits   = Send(oWeapon,@GetHits);
 
-      %% Brittle currently does random(1,iSpellPower/2) - 10 points of damage.
-
-      iHits   = iHits - (random(1,iSpellPower/2)) - 10;
+      iHits   = iHits - (random(1,Bound(iSpellPower/2,1,$))) - 10;
       if iHits < 1   {  iHits = 1 ;  }
       Send(oWeapon,@SetHits,#number=iHits);
       Send(oTarget, @MsgSendUser, #message_rsc=brittle_cast_rsc,

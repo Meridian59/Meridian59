@@ -73,6 +73,34 @@ int CompareObjectNameAndNumber(void *obj1, void *obj2)
 }
 /*****************************************************************************/
 /*
+ * Object light effect predicates.
+ *
+ * OF_BOUNCING is not a bit of its own: it is OF_FLICKERING | OF_FLASHING.  A
+ * bouncing object therefore satisfies a bare test for either light effect, and
+ * would be lit as though it were carrying a torch.  Test light effects through
+ * these predicates rather than against the flag bits directly.
+ */
+bool ObjectIsBouncing(int flags)
+{
+   return OF_BOUNCING == (OF_BOUNCING & flags);
+}
+/*****************************************************************************/
+bool ObjectHasFlickeringLight(int flags)
+{
+   return 0 != (flags & OF_FLICKERING) && !ObjectIsBouncing(flags);
+}
+/*****************************************************************************/
+bool ObjectHasFlashingLight(int flags)
+{
+   return 0 != (flags & OF_FLASHING) && !ObjectIsBouncing(flags);
+}
+/*****************************************************************************/
+bool ObjectHasLightEffect(int flags)
+{
+   return ObjectHasFlickeringLight(flags) || ObjectHasFlashingLight(flags);
+}
+/*****************************************************************************/
+/*
  * OverlayListDestroy:  Free memory associated with a list of overlays, and return NULL.
  */
 list_type OverlayListDestroy(list_type overlays)

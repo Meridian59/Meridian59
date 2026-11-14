@@ -69,6 +69,10 @@ messages:
       return FALSE;
    }
 
+   OverrideArmsForGauntlets()
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

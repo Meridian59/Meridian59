@@ -400,7 +400,7 @@ messages:
 
       if poDead <> $
       {
-         Send(poDead,@MsgSendUser,#message_rsc=riijadeadmessage0a);
+         Send(what,@MsgSendUser,#message_rsc=riijadeadmessage0a);
          Send(SYS,@UtilGotoSquare,#what=what,#where=Send(SYS,@FindRoomByNum,#num=RID_KOC_INN),
               #new_row=8,#new_col=6,#new_angle=ANGLE_NORTH);
          Send(what,@LoseHealth,#amount=(Send(what,@GetHealth)-1));
@@ -419,7 +419,8 @@ messages:
               #where=Send(SYS,@FindRoomByNum,#num=RID_KOC_INN),
               #new_row=8,#new_col=6,#new_angle=ANGLE_NORTH);
          Send(what,@Losehealth,#amount=(Send(what,@GetHealth)-1));
-         Send(Send(sys,@FindSpellByNum,#num=SID_HOLD),@DoHold,#oTarget=what,#iDurationSecs=30,#report=FALSE);
+         Send(Send(sys,@FindSpellByNum,#num=SID_HOLD),@DoHold,
+              #what=self,#oTarget=what,#iDurationSecs=30,#report=FALSE,#bAllowFreeAction=FALSE);
          
          ptDeathMessageTimer = CreateTimer(self,@TimerMessage1,DEATH_MESSAGE_DELAY); 
       }

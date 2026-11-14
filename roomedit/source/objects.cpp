@@ -881,6 +881,8 @@ void InsertObject (int objtype, SHORT copyfrom, SHORT xpos, SHORT ypos)
 			NewLineDef.type  = LdCopy.type;
 			NewLineDef.tag   = LdCopy.tag;
 			NewLineDef.blak_flags   = LdCopy.blak_flags;
+			NewLineDef.translucency_pos = LdCopy.translucency_pos;
+			NewLineDef.translucency_neg = LdCopy.translucency_neg;
 		}
 		else
 		{
@@ -3472,7 +3474,7 @@ BOOL CheckSectors ()
 		checks that all Sectors are closed.  But if a closed set of LineDefs
 		is moved out of a Sector and has all its "external" SideDefs pointing
 		to that Sector instead of the new one, then we need a second test.
-ง		That's why I check if the SideDefs facing each other are bound to
+ยง		That's why I check if the SideDefs facing each other are bound to
 		the same Sector.
 
 	  Other note from RQ:

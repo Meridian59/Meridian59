@@ -47,6 +47,8 @@ void _cdecl ClientError(HINSTANCE hModule, HWND hParent, int fmt_id, ...)
       snprintf(msg, sizeof(msg), "Can't load message string #%d", fmt_id);
       ClientMessageBox(hParent, msg, szAppName, MB_APPLMODAL);
       SetFocus(hwndFocus);
+      error_dialog_up = false;
+
       return;
    }
 

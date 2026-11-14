@@ -185,7 +185,7 @@ void D3DRenderBackgroundOverlays(const BackgroundOverlaysRenderStateParams& bgoR
 
 		D3DMATRIX localToScreen, trans;
 		MatrixRotateY(&rot, (float)angleHeading * 360.0f / 4096.0f * PI / 180.0f);
-		MatrixRotateX(&mat, (float)anglePitch * 50.0f / 414.0f * PI / 180.0f);
+		MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_PITCH_RAD);
 		MatrixMultiply(&rot, &rot, &mat);
 		MatrixTranslate(&trans, -(float)params->viewer_x, -(float)params->viewer_height, -(float)params->viewer_y);
 		MatrixMultiply(&mat, &trans, &rot);

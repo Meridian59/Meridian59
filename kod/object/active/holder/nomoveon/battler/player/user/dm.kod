@@ -746,8 +746,9 @@ messages:
 
         if StringEqual(string,"plain") OR StringEqual(string,"human")
         {
-           Send(self,@ResetPlayerIcon,#alldone=FALSE);
+           % ResetPlayerIcon keeps the disguise while pbMorph is set.
            pbMorph = FALSE;
+           Send(self,@ResetPlayerIcon,#alldone=FALSE);
 
            % For characters we want to have a non-standard icon
            if prStandardIcon <> $

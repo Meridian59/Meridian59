@@ -42,7 +42,7 @@ bool D3DMaterialWorldPacket(d3d_render_packet_new *pPacket, d3d_render_cache_sys
     if (pPacket->pTexture)
       pTexture = pPacket->pTexture;
     else if (pPacket->pDib)
-      pTexture = D3DCacheTextureLookupSwizzled(&pCacheSystem->textureCache, pPacket, 0);
+      pTexture = D3DCacheTextureLookupSwizzled(&pCacheSystem->textureCache, pPacket, pPacket->effect);
   }
   else
   {
@@ -245,7 +245,7 @@ bool D3DMaterialLMapDynamicPacket(d3d_render_packet_new *pPacket, d3d_render_cac
 	if (pPacket->pTexture)
 		pTexture = pPacket->pTexture;
 	else if (pPacket->pDib)
-		pTexture = D3DCacheTextureLookupSwizzled(&pCacheSystem->textureCache, pPacket, 0);
+		pTexture = D3DCacheTextureLookupSwizzled(&pCacheSystem->textureCache, pPacket, pPacket->effect);
 
 	if (pTexture)
 		IDirect3DDevice9_SetTexture(gpD3DDevice, 1, (IDirect3DBaseTexture9 *) pTexture);
@@ -374,6 +374,13 @@ bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 	if (pChunk->isTargeted)
 	{
 		D3DRender_SetColorStage(0, D3DTOP_SELECTARG1, D3DTA_DIFFUSE, 0);
+		D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
+	}
+	else if (pChunk->isGlowing)
+	{
+		// Doubling lets the vertex color brighten the sprite beyond the texture's own colors,
+		// which is what makes an object's light visible on it in an already bright sector.
+		D3DRender_SetColorStage(0, D3DTOP_MODULATE2X, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 		D3DRender_SetAlphaStage(0, D3DTOP_MODULATE, D3DTA_TEXTURE, D3DTA_DIFFUSE);
 	}
 	else

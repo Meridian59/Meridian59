@@ -164,7 +164,7 @@ messages:
    }
 
    NewHold(what = $,new_row = 22, new_col = 11)
-   "Sends cutesey messages to anyone who enters the room."
+   "Sends cutesy messages to anyone who enters the room."
    "Also, note that it will move anyone who enters in the playing field into the stands."
    "This should only be necessary for people who drop link."
    {

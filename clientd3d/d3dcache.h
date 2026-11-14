@@ -160,6 +160,7 @@ typedef struct d3d_render_chunk_new
 	BYTE				xLat1;
 	BYTE				zBias;
 	bool				isTargeted;
+	bool				isGlowing;
 	Plane				plane;
 	custom_index		indices[(MAX_NPTS - 2) * 3];
 	custom_st			st0[MAX_NPTS];

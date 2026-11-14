@@ -113,7 +113,6 @@ static char INITechnical[]    = "Technical";
 /* config.ini file entries (preferences) */
 static char config_section[] = "config";  /* Section for configuration stuff */
 static char INIGpuEfficiency[] = "gpuefficiency";
-static char INIGpuEfficiencyOneTimeFlip[] = "gpuefficiencyonetimeflip";
 
 static char INITextAreaSize[] = "TextAreaSize";
 

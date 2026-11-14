@@ -187,7 +187,11 @@ messages:
 	           #report=FALSE) = $
       {
          % we killed someone off... heh heh heh
-         Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
+         local oRoom = Send(poOwner,@GetOwner);
+         if oRoom <> $
+         {
+            Send(oRoom,@SomethingKilled,#what=self,#victim=poOwner);
+         }
          Send(poOwner,@Killed,#what=self);
          send(self,@Delete);
       }

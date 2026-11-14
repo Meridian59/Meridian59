@@ -61,6 +61,26 @@ temporary values, which are all stored in local variables.  Thus the
 actual # of local variables in a message is likely to be higher than the
 # of variables declared by that procedure.
 
+	A "local" declaration is a statement and may appear anywhere in
+the handler body or in any braced block (if, else, for, while).
+enter_block pushes a scope (actions.c scope_stack) at each opening
+brace; make_var adds each declared id to the innermost scope as well as
+to the local table.  leave_block, at the closing brace, removes the
+scope's ids from the local table and restores st.maxlocals to its value
+at the opening brace, so non-overlapping blocks reuse the same local
+variable #s.  st.peaklocals records the highest # ever allocated in the
+handler; codegen numbers temporaries above that peak
+(message_handler_struct.maxlocal) rather than above a count of
+declarations.
+
+	A declaration may carry an initializer ("local a = 0").  make_var
+turns each one into an ordinary assignment statement; the statement_list
+rule for a declaration collects these (take_local_inits) and splices
+them into the statement list at the point of the declaration, so codegen
+never sees anything but assignments.  The initializer marks the variable
+as assigned, which is what the unused-local and use-before-assignment
+checks look at.
+
 Superclasses
 ------------
 	

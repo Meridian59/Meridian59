@@ -35,6 +35,15 @@ void SetCurrentUsers(list_type users)
 }
 /*****************************************************************************/
 /*
+* CurrentUser:  Return the logged on user with that id, or NULL if none.
+*/
+object_node *CurrentUser(ID user_id)
+{
+	return (object_node *) list_find_item(current_users, (void *) user_id,
+		CompareIdObject);
+}
+/*****************************************************************************/
+/*
 * AddCurrentUser:  Add user to list of current users
 */
 void AddCurrentUser(object_node *user)

@@ -26,6 +26,7 @@ int    current_obj;                      // Object we're currently displaying, i
 static ChildPlacement admin_controls[] = {
 { IDC_ADMINTEXT,   RDI_ALL },
 { IDC_TELEPORT,    RDI_BOTTOM | RDI_LEFT },
+{ IDC_SORTPROPS,   RDI_BOTTOM | RDI_RIGHT },
 
 { IDC_USERFRAME,   RDI_BOTTOM | RDI_LEFT },
 { IDC_INVALIDATE,  RDI_BOTTOM | RDI_LEFT },
@@ -196,6 +197,7 @@ INT_PTR CALLBACK AdminDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
       EnableWindow(GetDlgItem(hAdminDlg, IDC_SEND), FALSE);
       AdminDisplayOwner(0);
 
+      AdminClearProperties();
       ListBox_ResetContent(hObjectList);
       ListBox_ResetContent(hUserList);
 
@@ -329,6 +331,10 @@ void AdminDlgCommand(HWND hDlg, int cmd_id, HWND hwndCtl, UINT codeNotify)
 	 sprintf(command, "show object %d", current_obj);
 	 SendMessage(hAdminDlg, BK_SENDCMD, 0, (LPARAM) command);
       }
+      break;
+
+   case IDC_SORTPROPS:
+      AdminFillPropertyList();
       break;
 
 

@@ -17,7 +17,8 @@
 struct LightCacheUpdateParams
 {
    d_light_cache* lightCache;          // Static lights cache
-   d_light_cache* lightCacheDynamic;   // Dynamic/flickering lights cache
+   d_light_cache* lightCacheDynamic;   // Moving lights cache (light-emitting monsters, projectiles)
+   d_light_cache* lightCacheFlicker;   // Stationary flickering lights cache
    int& redrawFlags;                    // Reference to allow light cache updates to trigger scene redraws
 };
 
@@ -30,7 +31,8 @@ struct LightDebugRenderParams
 };
 
 // Populate the light caches with lights from the room's objects and projectiles.
-// Separates lights into static (lightCache) and dynamic/flickering (lightCacheDynamic).
+// Moving lights are kept apart from the flickering ones because the world draws them with a
+// different blend.
 void D3DLMapsStaticGet(room_type* room, const LightCacheUpdateParams& params);
 
 // Check if a light's cached properties match the current object state.

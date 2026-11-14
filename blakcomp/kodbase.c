@@ -259,7 +259,7 @@ bool load_add_message(char *message_name, int message_id)
    h->params = NULL;
 
    m->header = h;
-   m->locals = NULL;
+   m->maxlocal = -1;
    m->body = NULL;
 
    /* Add message to message list of current class */

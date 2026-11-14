@@ -333,6 +333,7 @@ messages:
       local lSpells, oTarget, iAbility, iRand, i;
 
       lSpells = Send(SYS,@GetSpells);
+      oTarget = $;
       iRand = Random(1,100);
 
       % Use EVENT_STEER: don't print fizzle message
@@ -350,6 +351,8 @@ messages:
       
       if oTarget = $
       {
+         Send(who,@MsgSendUser,#message_rsc=Distill_no_message);
+
          return;
       }
       

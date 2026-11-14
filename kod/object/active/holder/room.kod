@@ -1737,8 +1737,10 @@ messages:
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
 
-            if each_obj <> what AND Send(each_obj,@GetRow) = new_row
-               AND Send(each_obj,@GetCol) = new_col
+            % This list entry is the room's record of where the object lies:
+            % its 3rd and 4th values are the object's row and column.
+            if each_obj <> what AND Nth(i,3) = new_row
+               AND Nth(i,4) = new_col
             {
                if GetClass(what) = GetClass(each_obj)
                {
@@ -1809,7 +1811,10 @@ messages:
             for i in plActive
             {
                each_obj = First(i);
-               Send(each_obj,@UserEntered,#who=what);
+               if IsClass(each_obj,&Monster)
+               {
+                  Send(each_obj,@UserEntered,#who=what);
+               }
             }
          }
 
@@ -2273,17 +2278,22 @@ messages:
          }
       }
 
-      for i in plPassive
+      % Search plPassive only if the object was not found in plActive.
+      % An object is only ever on one of the two lists.
+      if NOT bFound
       {
-         if First(i) = what
+         for i in plPassive
          {
-            SetNth(i,3,new_row);
-            SetNth(i,4,new_col);
-            SetNth(i,5,fine_row);
-            SetNth(i,6,fine_col);
-            bFound = TRUE;
+            if First(i) = what
+            {
+               SetNth(i,3,new_row);
+               SetNth(i,4,new_col);
+               SetNth(i,5,fine_row);
+               SetNth(i,6,fine_col);
+               bFound = TRUE;
 
-            break;
+               break;
+            }
          }
       }
 
@@ -2378,14 +2388,19 @@ messages:
             break;
          }
       }
-      for i in plPassive
+      % Search plPassive only if the object was not found in plActive.
+      % An object is only ever on one of the two lists.
+      if NOT bFound
       {
-         if First(i) = what
+         for i in plPassive
          {
-            SetNth(i,2,new_angle);
-            bFound = TRUE;
+            if First(i) = what
+            {
+               SetNth(i,2,new_angle);
+               bFound = TRUE;
 
-            break;
+               break;
+            }
          }
       }
 
@@ -3776,7 +3791,7 @@ messages:
       }
 
       oBrain = Send(mob,@GetBrain);
-      if mob <> $
+      if oBrain <> $
       {
          if Send(oBrain,@AttemptTargetSwitch,#mob=mob,#what=what,#event=7)
          {

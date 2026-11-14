@@ -18,7 +18,7 @@ AddButton default_buttons[] = {
 { A_TEXTCOMMAND, "help", A_NOACTION,     NULL,   NULL, IDB_HELP,   IDS_TBHELP, },
 { A_TEXTCOMMAND, "drop", A_NOACTION,     NULL,   NULL, IDB_DROP,   IDS_TBDROP, },
 { A_TEXTCOMMAND, "get",  A_NOACTION,     NULL,   NULL, IDB_GET,    IDS_TBGET, },
-{ A_TEXTCOMMAND, "rest", A_TEXTCOMMAND, "stand", NULL, IDB_REST,   IDS_TBREST, },
+{ A_REST,        NULL,   A_STAND,       NULL,    NULL, IDB_REST,   IDS_TBREST, },
 { 0,             NULL,   0,              NULL,   NULL, 0,          0, },           // Separator
 };
 
@@ -30,6 +30,19 @@ PInfo pinfo;
 // true when we've told server to change safety flag; prevents multiple requests
 static bool safety_flipped;  
 
+/****************************************************************************/
+/*
+ * SendConfiguredSafety:  Send the configured safety state to the server and
+ *   record it in pinfo.aggressive.
+ */
+static void SendConfiguredSafety(void)
+{
+   pinfo.aggressive = cinfo->config->aggressive;
+   if (pinfo.aggressive)
+      SendSafety(0);
+   else
+      SendSafety(1);
+}
 /****************************************************************************/
 /*
  * InterfaceInit:  Called on startup.  Initialize interface.
@@ -71,10 +84,7 @@ void InterfaceInit(void)
       RequestRest();
    else
       RequestStand();
-   if (cinfo->config->aggressive)
-      SendSafety(0);
-   else
-      SendSafety(1);
+   SendConfiguredSafety();
 }
 /****************************************************************************/
 /*
@@ -175,10 +185,7 @@ void InterfaceResetData(void)
       RequestRest();
    else
       RequestStand();
-   if (cinfo->config->aggressive)
-      SendSafety(0);
-   else
-      SendSafety(1);
+   SendConfiguredSafety();
 
    RequestSpells();
    RequestSkills();
@@ -254,6 +261,14 @@ bool InterfaceAction(int action, void *action_data)
 
    switch (action)
    {
+   case A_REST:
+      CommandRest(NULL);
+      return false;
+
+   case A_STAND:
+      CommandStand(NULL);
+      return false;
+
    case A_TARGETCLEAR:
    case A_TARGETSELF:
 	case A_TARGETNEXT:
@@ -416,7 +431,7 @@ void InterfaceUserChanged(void)
       if (cinfo->config->aggressive)
       {
          if (!safety_flipped)
-            SendSafety(0);
+            SendConfiguredSafety();
          safety_flipped = true;
       }
       else 
@@ -430,7 +445,7 @@ void InterfaceUserChanged(void)
       if (!cinfo->config->aggressive)
       {
          if (!safety_flipped)
-            SendSafety(1);
+            SendConfiguredSafety();
          safety_flipped = true;
       }
       else 

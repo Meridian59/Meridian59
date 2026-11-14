@@ -122,10 +122,10 @@ messages:
    
    SecondAttackTimer()
    {
+      ptSecondAttack = $;
       if pbFirstAttack
       {  return;  }
 
-      ptSecondAttack = $;
       if poTarget <> $ and send(self,@getowner) = send(poTarget,@getowner)
       {  Send(self,@tryAttack,#what=poTarget); }      
       return;

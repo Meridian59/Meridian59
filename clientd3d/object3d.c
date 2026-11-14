@@ -315,7 +315,7 @@ bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, bool bTargetSelectEf
    y = (starty - obj_area->y) * yinc;
 
    /* Find palette to use, depending on distance */
-   if (dos->flags & (OF_FLICKERING | OF_FLASHING))
+   if (ObjectHasLightEffect(dos->flags))
    {
       palette = GetLightPalette(dos->distance, dos->light, FINENESS,GetFlicker(dos->obj));
    }
@@ -770,7 +770,7 @@ void DrawObjectDecorations(DrawnObject *object)
    else
    {
       // Draw name with color that fades with distance, just like object
-      if (r->obj.flags & (OF_FLICKERING | OF_FLASHING))
+      if (ObjectHasLightEffect(r->obj.flags))
       {
          palette = GetLightPalette(object->distance, object->light, FINENESS,GetFlicker(r));
       }
@@ -782,8 +782,12 @@ void DrawObjectDecorations(DrawnObject *object)
       fg_color = PALETTERGB(color.red, color.green, color.blue);
    }
 
-   SetTextColor(gBitsDC, bg_color);
-   TextOut(gBitsDC, x + 1, y + 1, name, namelen);
+   // Only draw a text shadow if the text and shadow colors differ
+   if (fg_color != bg_color)
+   {
+      SetTextColor(gBitsDC, bg_color);
+      TextOut(gBitsDC, x + 1, y + 1, name, namelen);
+   }
    SetTextColor(gBitsDC, fg_color);
    TextOut(gBitsDC, x, y, name, namelen);
 

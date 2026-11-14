@@ -58,7 +58,7 @@ resources:
    guildhall_conquer_safety_check = \
       "Flipping a guild switch is an outlaw action.  You must have your "
       "safety OFF in order to continue with this action!"
-   guildhall_conquer_outlaw = \
+   guildhall_attempted_conquer_outlaw = \
       "You have been branded an outlaw for attempting to conquer a guild hall!"
 
    guildhall_uneasiness = \
@@ -601,7 +601,7 @@ messages:
             AND Send(who,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
          {
             % If safety is on, let them know they need to take it off.
-            Send(who,@MsgSendUser,#message=guildhall_conquer_safety_check);
+            Send(who,@MsgSendUser,#message_rsc=guildhall_conquer_safety_check);
 
             return;
          }
@@ -681,11 +681,11 @@ messages:
                                     Random(60000,180000));
          }
 
-         % They conquered the guild hall....
+         % They attempted to conquer the guild hall.
          if NOT (pbBetrayed OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
          {
             % Make them an outlaw!
-            Send(who,@MsgSendUser,#message=guildhall_conquer_outlaw);
+            Send(who,@MsgSendUser,#message_rsc=guildhall_attempted_conquer_outlaw);
             Send(who,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
          }
 

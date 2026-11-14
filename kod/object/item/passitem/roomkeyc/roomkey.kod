@@ -59,7 +59,7 @@ messages:
    }
 
    AppendSpecial()
-   "Appends the number of key copies in ciculation to the key's description."
+   "Appends the number of key copies in circulation to the key's description."
    {
       local iCopyCount;
 

@@ -49,11 +49,6 @@
 	class _OWLCLASS TListBox;
 #endif
 
-#ifndef __viewbmp_h
-	class TDisplayWallTextureDialog;
-	class TDisplayFloorTextureDialog;
-#endif
-
 #ifndef __prefdlg_rh
 	#include "prefdlg.rh"            // Definition of resource
 #endif
@@ -90,9 +85,6 @@ protected:
 
 	char WTextureName[MAX_BITMAPNAME + 1];
 	char FTextureName[MAX_BITMAPNAME + 1];
-
-	TDisplayWallTextureDialog  *pWTextureDialog;
-	TDisplayFloorTextureDialog *pFTextureDialog;
 
 protected:
 	BOOL IsPointInDlgItem (int itemId, TPoint &clientPoint);

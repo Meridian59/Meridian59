@@ -588,7 +588,8 @@ int main(int argc, char **argv)
       simple_error("Error loading database; continuing with compilation");
       
 
-	bool all_success = true;
+   bool all_success = true;
+   bool any_success = false;
    for (current_file_ptr = file_list; current_file_ptr != NULL; 
         current_file_ptr = current_file_ptr->next)
    {
@@ -607,12 +608,20 @@ int main(int argc, char **argv)
       
       yyparse();
 
-      if (generate_code) 
-		   codegen(current_fname, bof_fname);
-		else
-		   all_success = false;
+      if (generate_code)
+      {
+         if (codegen(current_fname, bof_fname))
+            any_success = true;
+      }
+      else
+         all_success = false;
       generate_code = true;
    }
+
+   /* Write out the new database once, after all files have been compiled.
+    * Skip it if nothing compiled, so a bad run leaves the old database intact. */
+   if (any_success)
+      save_kodbase();
 
    /* Give warnings for classes that should be recompiled */
    recompile_warnings(st.recompile_list);

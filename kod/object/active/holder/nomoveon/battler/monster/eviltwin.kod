@@ -226,12 +226,16 @@ messages:
       if poOriginal = $
 	   {
 	      Send(self,@Delete);
+
+         return;
       }
 
       if IsClass(poOriginal,&Player)
          AND NOT send(poOriginal,@IsLoggedOn)
 	   {
 	      Send(self,@Delete);
+
+         return;
       }
 
       if what = poOriginal

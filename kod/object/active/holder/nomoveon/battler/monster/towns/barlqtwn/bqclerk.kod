@@ -1188,6 +1188,13 @@ messages:
 
    IsLegalVoter(voter=$)
    {
+      if IsClass(voter,&DM)
+      {
+         debug("DM ",Send(voter,@GetTrueName)," made an invalid attempt to vote.");
+
+         return FALSE;
+      }
+
       if NOT Send(self,@IsQualifiedVoter,#who=voter)
       {
          Send(self,@SayToOne,#message_rsc=barloqueclerk_no_newbie_voter,#target=voter);

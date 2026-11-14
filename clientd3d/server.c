@@ -1371,6 +1371,9 @@ bool HandleShoot(char *ptr, long len)
    //Extract(&ptr, &reserved, SIZE_PROJECTILE_RESERVED);
    reserved = 0;
    ExtractDLighting(&ptr, &p->dLighting);
+   if (flags & PROJ_FLAG_HIT_SOUND)
+      Extract(&ptr, &p->hit_sound, SIZE_ID);
+   p->destination = dest;
 
    len -= (ptr - start);
    if (len != 0)

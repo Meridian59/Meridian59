@@ -663,6 +663,11 @@ messages:
       return;
    }
 
+   GetProjectileHitSound()
+   {
+      return $;
+   }
+
    SomethingDidAction(what = $, action = $)
    {
       return;

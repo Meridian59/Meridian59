@@ -8349,14 +8349,19 @@ messages:
 
    StopDancing()
    {
-      if Send(poOwner,@CheckRoomFlag,#Flag=ROOM_JIG)
+      if poOwner <> $
+         AND Send(poOwner,@CheckRoomFlag,#Flag=ROOM_JIG)
       {
          return;
       }
       
       Send(self,@MsgSendUser,#message_rsc=player_stop_dance);
       Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=FALSE,#flagset=2);      
-      Send(poOwner,@SomethingChanged,#what=self);
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
       
       return;
    }

@@ -10,7 +10,7 @@
 ////////////////
 // Structures //
 ////////////////
-struct XlatBlend
+struct XlatBGRAEntry
 {
 	int xlat;
 	custom_bgra bgra;
@@ -21,7 +21,7 @@ struct XlatBlend
 ///////////////
 
 // Lookup table for translating XLAT to BGRA.
-static constexpr XlatBlend XLAT_BLENDS[] =
+static constexpr XlatBGRAEntry XLAT_BGRA_TABLE[] =
 {
 	{ XLAT_BLEND10RED,    { 0, 0, COLOR_MAX, 25 } },
 	{ XLAT_BLEND20RED,    { 0, 0, COLOR_MAX, 50 } },
@@ -67,15 +67,17 @@ static particle_system sandParticleSystem;
 // Internal Implementation //
 /////////////////////////////
 
+// Returns the BGRA color that matches the given XLAT value.
 static custom_bgra XlatToBGRA(int xlat)
 {
-	for (const XlatBlend& blend : XLAT_BLENDS)
+	for (const XlatBGRAEntry& entry : XLAT_BGRA_TABLE)
 	{
-		if (blend.xlat == xlat)
+		if (entry.xlat == xlat)
 		{
-			return blend.bgra;
+			return entry.bgra;
 		}
 	}
+	// Default to opaque black if XLAT wasn't find in the lookup table.
 	return {0, 0, 0, 255};
 }
 

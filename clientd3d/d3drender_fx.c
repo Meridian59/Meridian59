@@ -83,7 +83,7 @@ static custom_bgra XlatToBGRA(int xlat)
 * Initializes the sandstorm particle emitters with predefined positions, energy, and colors for the
 * particle system.
 */
-static void SandstormInit(void)
+static void SandstormInit()
 {
 	static constexpr int SAND_EMITTER_COUNT = 8;
 	static constexpr int SAND_LIFETIME = 40;
@@ -161,7 +161,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 {
 	D3DRender_SetAlphaTestState(TRUE, 1, D3DCMP_GREATEREQUAL);
 	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 
 	D3DCacheSystemReset(fxrss.objectCacheSystem);
 	D3DRenderPoolReset(fxrss.objectPool, &D3DMaterialObjectPool);
@@ -177,7 +177,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	{
 		custom_bgra	bgra = XlatToBGRA(effects.flashxlat);
 
-		effects.duration -= (int)timeDelta;
+		effects.duration -= static_cast<int>(timeDelta);
 
 		if (effects.duration <= 0)
 		{
@@ -185,8 +185,8 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			effects.duration = 0;
 		}
 
-		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+		if (nullptr == pPacket)
 			return;
 		auto *pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
@@ -221,8 +221,8 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	{
 		custom_bgra	bgra = XlatToBGRA(effects.xlatOverride);
 
-		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+		if (nullptr == pPacket)
 			return;
 		auto *pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
@@ -263,8 +263,8 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		whiteout = whiteout * COLOR_MAX / 500;
 		whiteout = std::max(whiteout, 200);
 
-		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+		if (nullptr == pPacket)
 			return;
 		auto *pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
@@ -304,8 +304,8 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 			pain = pain * 204 / 2000;
 
-			auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-			if (NULL == pPacket)
+			auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+			if (nullptr == pPacket)
 				return;
 			auto *pChunk = D3DRenderChunkNew(pPacket);
 			assert(pChunk);
@@ -339,7 +339,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 	D3DCacheFill(fxrss.objectCacheSystem, fxrss.objectPool, 1);
 	D3DCacheFlush(fxrss.objectCacheSystem, fxrss.objectPool, 1, D3DPT_TRIANGLESTRIP);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 }
 
 /**
@@ -367,8 +367,8 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	D3DRender_SetAlphaTestState(FALSE, 1, D3DCMP_GREATEREQUAL);
 	D3DRender_SetAlphaBlendState(FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, fxRss.vertexDeclaration);
+	gpD3DDevice->SetVertexShader(nullptr);
+	gpD3DDevice->SetVertexDeclaration(fxRss.vertexDeclaration);
 
 	D3DRender_CaptureEffect(fxRss.backBufferTexFull, fxRss.backBufferTex[t]);
 
@@ -378,7 +378,7 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	for (int i = 0; i <= 7; i++)
 	{
 		auto *pPacket = D3DRenderPacketNew(fxRss.effectPool);
-		if (NULL == pPacket)
+		if (nullptr == pPacket)
 			return;
 		auto *pChunk = D3DRenderChunkNew(pPacket);
 		pPacket->pMaterialFctn = D3DMaterialBlurPacket;
@@ -413,10 +413,10 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 		CHUNK_INDEX_SET(pChunk, 3, 3);
 	}
 
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &fxRss.transformMatrix);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &fxRss.transformMatrix);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &fxRss.transformMatrix);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
+	gpD3DDevice->SetTransform(D3DTS_WORLD, &fxRss.transformMatrix);
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &fxRss.transformMatrix);
+	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &fxRss.transformMatrix);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 
 	D3DRender_SetAlphaTestState(FALSE, 1, D3DCMP_GREATEREQUAL);
 	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
@@ -424,5 +424,5 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	D3DCacheFill(fxRss.effectCacheSystem, fxRss.effectPool, 1);
 	D3DCacheFlush(fxRss.effectCacheSystem, fxRss.effectPool, 1, D3DPT_TRIANGLESTRIP);
 
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 }

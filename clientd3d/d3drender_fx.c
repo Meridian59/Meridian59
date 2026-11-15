@@ -7,6 +7,57 @@
 // Meridian is a registered trademark.
 #include "client.h"
 
+////////////////
+// Structures //
+////////////////
+struct XlatBlend
+{
+	int xlat;
+	custom_bgra bgra;
+};
+
+///////////////
+// Constants //
+///////////////
+
+// Lookup table for translating XLAT to BGRA.
+static constexpr XlatBlend XLAT_BLENDS[] =
+{
+	{ XLAT_BLEND10RED,    { 0, 0, COLOR_MAX, 25 } },
+	{ XLAT_BLEND20RED,    { 0, 0, COLOR_MAX, 50 } },
+	{ XLAT_BLEND25RED,    { 0, 0, COLOR_MAX, 75 } },
+	{ XLAT_BLEND30RED,    { 0, 0, COLOR_MAX, 75 } },
+	{ XLAT_BLEND40RED,    { 0, 0, COLOR_MAX, 100 } },
+	{ XLAT_BLEND50RED,    { 0, 0, COLOR_MAX, 125 } },
+	{ XLAT_BLEND60RED,    { 0, 0, COLOR_MAX, 150 } },
+	{ XLAT_BLEND70RED,    { 0, 0, COLOR_MAX, 175 } },
+	{ XLAT_BLEND75RED,    { 0, 0, COLOR_MAX, 200 } },
+	{ XLAT_BLEND80RED,    { 0, 0, COLOR_MAX, 200 } },
+	{ XLAT_BLEND90RED,    { 0, 0, COLOR_MAX, 225 } },
+	{ XLAT_BLEND100RED,   { 0, 0, COLOR_MAX, 255 } },
+
+	{ XLAT_BLEND10WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 25 } },
+	{ XLAT_BLEND20WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 50 } },
+	{ XLAT_BLEND30WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 75 } },
+	{ XLAT_BLEND40WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 100 } },
+	{ XLAT_BLEND50WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 125 } },
+	{ XLAT_BLEND60WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 150 } },
+	{ XLAT_BLEND70WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 175 } },
+	{ XLAT_BLEND80WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 200 } },
+	{ XLAT_BLEND90WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 225 } },
+	{ XLAT_BLEND100WHITE, { COLOR_MAX, COLOR_MAX, COLOR_MAX, 255 } },
+
+	{ XLAT_BLEND25YELLOW, { COLOR_MAX, COLOR_MAX, COLOR_MAX, 255 } },
+
+	{ XLAT_BLEND25GREEN,  { 0, COLOR_MAX, 0, 64 } },
+	{ XLAT_BLEND50GREEN,  { 0, COLOR_MAX, 0, 128 } },
+	{ XLAT_BLEND75GREEN,  { 0, COLOR_MAX, 0, 192 } },
+
+	{ XLAT_BLEND25BLUE,   { COLOR_MAX, 0, 0, 64 } },
+	{ XLAT_BLEND50BLUE,   { COLOR_MAX, 0, 0, 128 } },
+	{ XLAT_BLEND75BLUE,   { COLOR_MAX, 0, 0, 192 } },
+};
+
 ///////////////
 // Variables //
 ///////////////
@@ -15,6 +66,18 @@ static particle_system sandParticleSystem;
 /////////////////////////////
 // Internal Implementation //
 /////////////////////////////
+
+static custom_bgra XlatToBGRA(int xlat)
+{
+	for (const XlatBlend& blend : XLAT_BLENDS)
+	{
+		if (blend.xlat == xlat)
+		{
+			return blend.bgra;
+		}
+	}
+	return {0, 0, 0, 255};
+}
 
 /**
 * Initializes the sandstorm particle emitters with predefined positions, energy, and colors for the
@@ -116,120 +179,9 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	// Flash of XLAT.  Could be color, blindness, whatever.
 	if (effects.flashxlat != XLAT_IDENTITY)
 	{
-		custom_bgra	bgra;
+		custom_bgra	bgra = XlatToBGRA(effects.flashxlat);
 
 		effects.duration -= (int)timeDelta;
-		switch (effects.flashxlat)
-		{
-			case XLAT_BLEND10RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 25;
-			break;
-
-			case XLAT_BLEND20RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 50;
-			break;
-
-			case XLAT_BLEND25RED:
-			case XLAT_BLEND30RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 75;
-			break;
-
-			case XLAT_BLEND40RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 100;
-			break;
-
-			case XLAT_BLEND50RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 125;
-			break;
-
-			case XLAT_BLEND60RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 150;
-			break;
-
-			case XLAT_BLEND70RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 175;
-			break;
-
-			case XLAT_BLEND75RED:
-			case XLAT_BLEND80RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 200;
-			break;
-
-			case XLAT_BLEND90RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 225;
-			break;
-
-			case XLAT_BLEND100RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND10WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 25;
-			break;
-
-			case XLAT_BLEND20WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 50;
-			break;
-
-			case XLAT_BLEND30WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 75;
-			break;
-
-			case XLAT_BLEND40WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 100;
-			break;
-
-			case XLAT_BLEND50WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 125;
-			break;
-
-			case XLAT_BLEND60WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 150;
-			break;
-
-			case XLAT_BLEND70WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 175;
-			break;
-
-			case XLAT_BLEND80WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 200;
-			break;
-
-			case XLAT_BLEND90WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 225;
-			break;
-
-			case XLAT_BLEND100WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND25YELLOW:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND25GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 64;
-			break;
-			case XLAT_BLEND50GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 128;
-			break;
-			case XLAT_BLEND75GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 192;
-			break;
-			case XLAT_BLEND25BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 64;
-			break;
-			case XLAT_BLEND50BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 128;
-			break;
-			case XLAT_BLEND75BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 192;
-			break;
-
-			default:
-				bgra.b = 0; bgra.g = 0; bgra.r = 0; bgra.a = 255;
-			break;
-		}
 
 		if (effects.duration <= 0)
 		{
@@ -271,119 +223,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 	if (effects.xlatOverride > 0)
 	{
-		custom_bgra	bgra;
-
-		switch (effects.xlatOverride)
-		{
-			case XLAT_BLEND10RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 25;
-			break;
-
-			case XLAT_BLEND20RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 50;
-			break;
-
-			case XLAT_BLEND25RED:
-			case XLAT_BLEND30RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 75;
-			break;
-
-			case XLAT_BLEND40RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 100;
-			break;
-
-			case XLAT_BLEND50RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 125;
-			break;
-
-			case XLAT_BLEND60RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 150;
-			break;
-
-			case XLAT_BLEND70RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 175;
-			break;
-
-			case XLAT_BLEND75RED:
-			case XLAT_BLEND80RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 200;
-			break;
-
-			case XLAT_BLEND90RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 225;
-			break;
-
-			case XLAT_BLEND100RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND10WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 25;
-			break;
-
-			case XLAT_BLEND20WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 50;
-			break;
-
-			case XLAT_BLEND30WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 75;
-			break;
-
-			case XLAT_BLEND40WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 100;
-			break;
-
-			case XLAT_BLEND50WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 125;
-			break;
-
-			case XLAT_BLEND60WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 150;
-			break;
-
-			case XLAT_BLEND70WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 175;
-			break;
-
-			case XLAT_BLEND80WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 200;
-			break;
-
-			case XLAT_BLEND90WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 225;
-			break;
-
-			case XLAT_BLEND100WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND25YELLOW:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND25GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 64;
-			break;
-			case XLAT_BLEND50GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 128;
-			break;
-			case XLAT_BLEND75GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 192;
-			break;
-			case XLAT_BLEND25BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 64;
-			break;
-			case XLAT_BLEND50BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 128;
-			break;
-			case XLAT_BLEND75BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 192;
-			break;
-
-			default:
-				bgra.b = 0; bgra.g = 0; bgra.r = 0; bgra.a = 255;
-			break;
-		}
+		custom_bgra	bgra = XlatToBGRA(effects.xlatOverride);
 
 		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)

@@ -27,7 +27,7 @@ resources:
 
    forgetpotion_nothing_happens = "The disorientation passes.  Nothing seems to have happened."
    forgetpotion_name_rsc = "potion of forgetfulness"
-   forgetpotion_icon_rsc = forgetpo.bgf
+   forgetpotion_icon_rsc = potion03.bgf
    forgetpotion_desc_rsc = "Drinking this potion will cause you to forget all of your spells in a certain spell school.  "
       "Be absolutely sure you want this to happen before drinking it!"
 

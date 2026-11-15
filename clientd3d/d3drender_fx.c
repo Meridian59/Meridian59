@@ -166,14 +166,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	D3DCacheSystemReset(fxrss.objectCacheSystem);
 	D3DRenderPoolReset(fxrss.objectPool, &D3DMaterialObjectPool);
 
-	static DWORD			timeLastFrame = 0;
-	DWORD					timeCurrent, timeDelta;
-	int						i;
-	d3d_render_chunk_new	*pChunk;
-	d3d_render_packet_new	*pPacket;
+	static DWORD timeLastFrame = 0;
 
-	timeCurrent = timeGetTime();
-	timeDelta = timeCurrent - timeLastFrame;
+	DWORD timeCurrent = timeGetTime();
+	DWORD timeDelta = timeCurrent - timeLastFrame;
 	timeLastFrame = timeCurrent;
 
 	// Flash of XLAT.  Could be color, blindness, whatever.
@@ -189,10 +185,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			effects.duration = 0;
 		}
 
-		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
+		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
+		auto *pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
 		pChunk->numIndices = 4;
 		pChunk->numVertices = 4;
@@ -201,7 +197,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
 		MatrixIdentity(&pChunk->xForm);
 
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
 		}
@@ -225,10 +221,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	{
 		custom_bgra	bgra = XlatToBGRA(effects.xlatOverride);
 
-		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
+		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
+		auto *pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
 		pChunk->numIndices = 4;
 		pChunk->numVertices = 4;
@@ -237,7 +233,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
 		MatrixIdentity(&pChunk->xForm);
 
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
 		}
@@ -267,10 +263,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		whiteout = whiteout * COLOR_MAX / 500;
 		whiteout = std::max(whiteout, 200);
 
-		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
+		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 		if (NULL == pPacket)
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
+		auto *pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
 		pChunk->numIndices = 4;
 		pChunk->numVertices = 4;
@@ -279,7 +275,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
 		MatrixIdentity(&pChunk->xForm);
 
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			CHUNK_BGRA_SET(pChunk, i, COLOR_MAX, COLOR_MAX, COLOR_MAX, whiteout);
 		}
@@ -308,10 +304,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 			pain = pain * 204 / 2000;
 
-			pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
+			auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
 			if (NULL == pPacket)
 				return;
-			pChunk = D3DRenderChunkNew(pPacket);
+			auto *pChunk = D3DRenderChunkNew(pPacket);
 			assert(pChunk);
 			pChunk->numIndices = 4;
 			pChunk->numVertices = 4;
@@ -320,7 +316,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
 			MatrixIdentity(&pChunk->xForm);
 
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				CHUNK_BGRA_SET(pChunk, i, 0, 0, COLOR_MAX, pain);
 			}
@@ -352,13 +348,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 */
 void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 {
-	d3d_render_packet_new	*pPacket;
-	d3d_render_chunk_new	*pChunk;
-	int						i, t;
-	static int				offset = 0;
-	static int				offsetDir = 1;
+	static int offset = 0;
+	static int offsetDir = 1;
 
-	t = fxRss.frame & 7;
+	int t = fxRss.frame & 7;
 
 	if (fxRss.frame & 63)
 	{
@@ -382,12 +375,12 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	D3DCacheSystemReset(fxRss.effectCacheSystem);
 	D3DRenderPoolReset(fxRss.effectPool, &D3DMaterialBlurPool);
 
-	for (i = 0; i <= 7; i++)
+	for (int i = 0; i <= 7; i++)
 	{
-		pPacket = D3DRenderPacketNew(fxRss.effectPool);
+		auto *pPacket = D3DRenderPacketNew(fxRss.effectPool);
 		if (NULL == pPacket)
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
+		auto *pChunk = D3DRenderChunkNew(pPacket);
 		pPacket->pMaterialFctn = D3DMaterialBlurPacket;
 		pChunk->pMaterialFctn = D3DMaterialBlurChunk;
 		pPacket->pTexture = fxRss.backBufferTex[i];

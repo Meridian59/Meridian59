@@ -20,42 +20,42 @@ struct XlatBGRAEntry
 // Constants //
 ///////////////
 
-// Lookup table for translating XLAT to BGRA.
-static constexpr XlatBGRAEntry XLAT_BGRA_TABLE[] =
+// Lookup table for translating blend XLAT to BGRA.
+static constexpr XlatBGRAEntry BLEND_XLAT_BGRA_TABLE[] =
 {
-	{ XLAT_BLEND10RED,    { 0, 0, COLOR_MAX, 25 } },
-	{ XLAT_BLEND20RED,    { 0, 0, COLOR_MAX, 50 } },
-	{ XLAT_BLEND25RED,    { 0, 0, COLOR_MAX, 75 } },
-	{ XLAT_BLEND30RED,    { 0, 0, COLOR_MAX, 75 } },
-	{ XLAT_BLEND40RED,    { 0, 0, COLOR_MAX, 100 } },
-	{ XLAT_BLEND50RED,    { 0, 0, COLOR_MAX, 125 } },
-	{ XLAT_BLEND60RED,    { 0, 0, COLOR_MAX, 150 } },
-	{ XLAT_BLEND70RED,    { 0, 0, COLOR_MAX, 175 } },
-	{ XLAT_BLEND75RED,    { 0, 0, COLOR_MAX, 200 } },
-	{ XLAT_BLEND80RED,    { 0, 0, COLOR_MAX, 200 } },
-	{ XLAT_BLEND90RED,    { 0, 0, COLOR_MAX, 225 } },
-	{ XLAT_BLEND100RED,   { 0, 0, COLOR_MAX, 255 } },
+	{ XLAT_BLEND10RED,		{ 0, 0, COLOR_MAX, 25 } },
+	{ XLAT_BLEND20RED,		{ 0, 0, COLOR_MAX, 50 } },
+	{ XLAT_BLEND25RED,		{ 0, 0, COLOR_MAX, 75 } },
+	{ XLAT_BLEND30RED,		{ 0, 0, COLOR_MAX, 75 } },
+	{ XLAT_BLEND40RED,		{ 0, 0, COLOR_MAX, 100 } },
+	{ XLAT_BLEND50RED,		{ 0, 0, COLOR_MAX, 125 } },
+	{ XLAT_BLEND60RED,		{ 0, 0, COLOR_MAX, 150 } },
+	{ XLAT_BLEND70RED,		{ 0, 0, COLOR_MAX, 175 } },
+	{ XLAT_BLEND75RED,		{ 0, 0, COLOR_MAX, 200 } },
+	{ XLAT_BLEND80RED,		{ 0, 0, COLOR_MAX, 200 } },
+	{ XLAT_BLEND90RED,		{ 0, 0, COLOR_MAX, 225 } },
+	{ XLAT_BLEND100RED,		{ 0, 0, COLOR_MAX, 255 } },
 
-	{ XLAT_BLEND10WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 25 } },
-	{ XLAT_BLEND20WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 50 } },
-	{ XLAT_BLEND30WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 75 } },
-	{ XLAT_BLEND40WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 100 } },
-	{ XLAT_BLEND50WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 125 } },
-	{ XLAT_BLEND60WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 150 } },
-	{ XLAT_BLEND70WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 175 } },
-	{ XLAT_BLEND80WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 200 } },
-	{ XLAT_BLEND90WHITE,  { COLOR_MAX, COLOR_MAX, COLOR_MAX, 225 } },
-	{ XLAT_BLEND100WHITE, { COLOR_MAX, COLOR_MAX, COLOR_MAX, 255 } },
+	{ XLAT_BLEND10WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 25 } },
+	{ XLAT_BLEND20WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 50 } },
+	{ XLAT_BLEND30WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 75 } },
+	{ XLAT_BLEND40WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 100 } },
+	{ XLAT_BLEND50WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 125 } },
+	{ XLAT_BLEND60WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 150 } },
+	{ XLAT_BLEND70WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 175 } },
+	{ XLAT_BLEND80WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 200 } },
+	{ XLAT_BLEND90WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 225 } },
+	{ XLAT_BLEND100WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 255 } },
 
-	{ XLAT_BLEND25YELLOW, { COLOR_MAX, COLOR_MAX, COLOR_MAX, 255 } },
+	{ XLAT_BLEND25YELLOW,	{ 0, COLOR_MAX, COLOR_MAX, 64 } },
 
-	{ XLAT_BLEND25GREEN,  { 0, COLOR_MAX, 0, 64 } },
-	{ XLAT_BLEND50GREEN,  { 0, COLOR_MAX, 0, 128 } },
-	{ XLAT_BLEND75GREEN,  { 0, COLOR_MAX, 0, 192 } },
+	{ XLAT_BLEND25GREEN,	{ 0, COLOR_MAX, 0, 64 } },
+	{ XLAT_BLEND50GREEN,	{ 0, COLOR_MAX, 0, 128 } },
+	{ XLAT_BLEND75GREEN,	{ 0, COLOR_MAX, 0, 192 } },
 
-	{ XLAT_BLEND25BLUE,   { COLOR_MAX, 0, 0, 64 } },
-	{ XLAT_BLEND50BLUE,   { COLOR_MAX, 0, 0, 128 } },
-	{ XLAT_BLEND75BLUE,   { COLOR_MAX, 0, 0, 192 } },
+	{ XLAT_BLEND25BLUE,		{ COLOR_MAX, 0, 0, 64 } },
+	{ XLAT_BLEND50BLUE,		{ COLOR_MAX, 0, 0, 128 } },
+	{ XLAT_BLEND75BLUE,		{ COLOR_MAX, 0, 0, 192 } },
 };
 
 ///////////////
@@ -67,17 +67,17 @@ static particle_system sandParticleSystem;
 // Internal Implementation //
 /////////////////////////////
 
-// Returns the BGRA color that matches the given XLAT value.
-static custom_bgra XlatToBGRA(int xlat)
+// Returns the BGRA color that matches the given blend XLAT value.
+static custom_bgra BlendXlatToBGRA(int xlat)
 {
-	for (const XlatBGRAEntry& entry : XLAT_BGRA_TABLE)
+	for (const XlatBGRAEntry& entry : BLEND_XLAT_BGRA_TABLE)
 	{
 		if (entry.xlat == xlat)
 		{
 			return entry.bgra;
 		}
 	}
-	// Default to opaque black if XLAT wasn't find in the lookup table.
+	// Default to opaque black if blend XLAT wasn't found in the lookup table.
 	return {0, 0, 0, 255};
 }
 
@@ -177,7 +177,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 	// Flash of XLAT.  Could be color, blindness, whatever.
 	if (effects.flashxlat != XLAT_IDENTITY)
 	{
-		custom_bgra	bgra = XlatToBGRA(effects.flashxlat);
+		custom_bgra	bgra = BlendXlatToBGRA(effects.flashxlat);
 
 		effects.duration -= static_cast<int>(timeDelta);
 
@@ -221,7 +221,7 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 	if (effects.xlatOverride > 0)
 	{
-		custom_bgra	bgra = XlatToBGRA(effects.xlatOverride);
+		custom_bgra	bgra = BlendXlatToBGRA(effects.xlatOverride);
 
 		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
 		if (nullptr == pPacket)
@@ -353,7 +353,7 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	static int offset = 0;
 	static int offsetDir = 1;
 
-	int t = fxRss.frame & 7;
+	int captureSlot = fxRss.frame & 7;
 
 	if (fxRss.frame & 63)
 	{
@@ -372,7 +372,7 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	gpD3DDevice->SetVertexShader(nullptr);
 	gpD3DDevice->SetVertexDeclaration(fxRss.vertexDeclaration);
 
-	D3DRender_CaptureEffect(fxRss.backBufferTexFull, fxRss.backBufferTex[t]);
+	D3DRender_CaptureEffect(fxRss.backBufferTexFull, fxRss.backBufferTex[captureSlot]);
 
 	D3DCacheSystemReset(fxRss.effectCacheSystem);
 	D3DRenderPoolReset(fxRss.effectPool, &D3DMaterialBlurPool);

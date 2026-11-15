@@ -6,22 +6,14 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
-
-////////////////
-// Structures //
-////////////////
-struct XlatBGRAEntry
-{
-	int xlat;
-	custom_bgra bgra;
-};
+#include <unordered_map>
 
 ///////////////
 // Constants //
 ///////////////
 
 // Lookup table for translating blend XLAT to BGRA.
-static constexpr XlatBGRAEntry BLEND_XLAT_BGRA_TABLE[] =
+static const std::unordered_map<int, custom_bgra> BLEND_XLAT_BGRA_TABLE =
 {
 	{ XLAT_BLEND10RED,		{ 0, 0, COLOR_MAX, 25 } },
 	{ XLAT_BLEND20RED,		{ 0, 0, COLOR_MAX, 50 } },
@@ -70,13 +62,12 @@ static particle_system sandParticleSystem;
 // Returns the BGRA color that matches the given blend XLAT value.
 static custom_bgra BlendXlatToBGRA(int xlat)
 {
-	for (const XlatBGRAEntry& entry : BLEND_XLAT_BGRA_TABLE)
+	auto entry = BLEND_XLAT_BGRA_TABLE.find(xlat);
+	if (entry != BLEND_XLAT_BGRA_TABLE.end())
 	{
-		if (entry.xlat == xlat)
-		{
-			return entry.bgra;
-		}
+		return entry->second;
 	}
+
 	// Default to opaque black if blend XLAT wasn't found in the lookup table.
 	return {0, 0, 0, 255};
 }

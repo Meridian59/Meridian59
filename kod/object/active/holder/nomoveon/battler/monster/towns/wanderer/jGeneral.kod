@@ -28,7 +28,7 @@ resources:
 	"his tactics are superb. "
 
    JealousGeneral_already_have_spell = "I believe you already have knowledge of the %s spell, m'%s"
-   JealousGeneral_no_murderer = "I am a servant of the Law, m'%s, and as such my conscience"
+   JealousGeneral_no_murderer = "I am a servant of the Law, m'%s, and as such my conscience "
          "will not allow me to help you.  Please be on your way."
 
 classvars:

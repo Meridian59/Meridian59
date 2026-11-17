@@ -22,8 +22,8 @@ resources:
       "Despite that, it is obvious to all that her true passion lies in the crafting of fine bows."
 
    KocatanBowMaker_KriipaClaw_sale = \
-         "I have claws from several Kriipa I've killed in the jungle.  The Kriipa is a truly"
-         "fearsome beast, as I'm sure you know, and a hunter who wishes to obtain their claws must pay for them"
+         "I have claws from several Kriipa I've killed in the jungle.  The Kriipa is a truly "
+         "fearsome beast, as I'm sure you know, and a hunter who wishes to obtain their claws must pay for them "
          "in blood spilt in battle.  You will understand, then, that my price for them is high."
    KocatanBowMaker_unwanted_give = "~k%s%s tells you, \"I have enough of those type of supplies to hold us through the summer.~n~k\""
 

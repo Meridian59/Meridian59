@@ -73,6 +73,47 @@ static custom_bgra BlendXlatToBGRA(int xlat)
 }
 
 /**
+* Adds a fullscreen quad of the given color to the object pool, tinting the whole screen.
+* Returns false if no render packet was available.
+*/
+static bool DrawFullScreenTint(const FxRenderSystemStructure& fxrss, custom_bgra bgra)
+{
+	auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+	if (nullptr == pPacket)
+		return false;
+
+	auto *pChunk = D3DRenderChunkNew(pPacket);
+	assert(pChunk);
+	pChunk->numIndices = 4;
+	pChunk->numVertices = 4;
+	pChunk->numPrimitives = pChunk->numVertices - 2;
+	pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
+	pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
+	MatrixIdentity(&pChunk->xForm);
+
+	for (int i = 0; i < 4; i++)
+	{
+		CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
+	}
+
+	CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+		D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
+	CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+		D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+	CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+		D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+	CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+		D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
+
+	pChunk->indices[0] = 1;
+	pChunk->indices[1] = 2;
+	pChunk->indices[2] = 0;
+	pChunk->indices[3] = 3;
+
+	return true;
+}
+
+/**
 * Initializes the sandstorm particle emitters with predefined positions, energy, and colors for the
 * particle system.
 */
@@ -178,72 +219,14 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			effects.duration = 0;
 		}
 
-		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
-		if (nullptr == pPacket)
+		if (!DrawFullScreenTint(fxrss, bgra))
 			return;
-		auto *pChunk = D3DRenderChunkNew(pPacket);
-		assert(pChunk);
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
-		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
-		MatrixIdentity(&pChunk->xForm);
-
-		for (int i = 0; i < 4; i++)
-		{
-			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
-		}
-
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
 	}
 
 	if (effects.xlatOverride > 0)
 	{
-		custom_bgra	bgra = BlendXlatToBGRA(effects.xlatOverride);
-
-		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
-		if (nullptr == pPacket)
+		if (!DrawFullScreenTint(fxrss, BlendXlatToBGRA(effects.xlatOverride)))
 			return;
-		auto *pChunk = D3DRenderChunkNew(pPacket);
-		assert(pChunk);
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
-		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
-		MatrixIdentity(&pChunk->xForm);
-
-		for (int i = 0; i < 4; i++)
-		{
-			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
-		}
-
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
 	}
 
 	// May be drawn over room or map.
@@ -256,36 +239,9 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		whiteout = whiteout * COLOR_MAX / 500;
 		whiteout = std::max(whiteout, 200);
 
-		auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
-		if (nullptr == pPacket)
+		custom_bgra bgra = {COLOR_MAX, COLOR_MAX, COLOR_MAX, static_cast<unsigned char>(whiteout)};
+		if (!DrawFullScreenTint(fxrss, bgra))
 			return;
-		auto *pChunk = D3DRenderChunkNew(pPacket);
-		assert(pChunk);
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
-		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
-		MatrixIdentity(&pChunk->xForm);
-
-		for (int i = 0; i < 4; i++)
-		{
-			CHUNK_BGRA_SET(pChunk, i, COLOR_MAX, COLOR_MAX, COLOR_MAX, whiteout);
-		}
-
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
 	}
 
 	// Pain (always drawn last).
@@ -297,36 +253,9 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 			pain = pain * 204 / 2000;
 
-			auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
-			if (nullptr == pPacket)
+			custom_bgra bgra = {0, 0, COLOR_MAX, static_cast<unsigned char>(pain)};
+			if (!DrawFullScreenTint(fxrss, bgra))
 				return;
-			auto *pChunk = D3DRenderChunkNew(pPacket);
-			assert(pChunk);
-			pChunk->numIndices = 4;
-			pChunk->numVertices = 4;
-			pChunk->numPrimitives = pChunk->numVertices - 2;
-			pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
-			pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
-			MatrixIdentity(&pChunk->xForm);
-
-			for (int i = 0; i < 4; i++)
-			{
-				CHUNK_BGRA_SET(pChunk, i, 0, 0, COLOR_MAX, pain);
-			}
-
-			CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-			CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-			CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-			CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-
-			pChunk->indices[0] = 1;
-			pChunk->indices[1] = 2;
-			pChunk->indices[2] = 0;
-			pChunk->indices[3] = 3;
 		}
 	}
 

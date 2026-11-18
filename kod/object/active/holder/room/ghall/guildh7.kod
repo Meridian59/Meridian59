@@ -87,10 +87,17 @@ messages:
    }
 
    InFoyer(who=$)
-   "Due to the multiple foyers in this guild hall, we return which foyer 'who' "
-   "is currently in.  Returns FALSE if not in foyer, a positive integer otherwise."
+   "Returns which foyer who is in, as a positive integer, because this guild "
+   "hall has multiple foyers.  Returns FALSE if who is not in a foyer, or not "
+   "in this room at all, such as an object the room has not placed yet."
    {
       local iRow, iCol;
+
+      % An object not in this room has no row or column to compare.
+      if Send(who,@GetOwner) <> self
+      {
+         return FALSE;
+      }
 
       iRow = Send(who,@GetRow);
       iCol = Send(who,@GetCol);

@@ -894,12 +894,14 @@ messages:
    }
 
    InFoyer(who=$)
-   "This returns TRUE if the player is in the foyer area, and FALSE if the "
-   "player is in the guild hall proper.  Note that the declared silence area "
-   "must now be perfectly rectangular."
+   "Returns TRUE if who is in this room and in the foyer area.  Returns "
+   "FALSE if who is in the guild hall proper, or not in this room at all, "
+   "such as an object the room has not placed yet.  Note that the declared "
+   "silence area must be perfectly rectangular."
    {
       local iRow, iCol;
 
+      % An object not in this room has no row or column to compare.
       if Send(who,@GetOwner) <> self
       {
          return FALSE;

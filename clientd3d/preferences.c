@@ -35,6 +35,7 @@ static bool m_quickchat;
 static bool m_software;
 static bool m_attackontarget;
 static bool m_gpuefficiency;
+static bool m_antialiasing;
 
 static char TCBroadcast[MAX_KEYVALUELEN];
 static char TCChat[MAX_KEYVALUELEN];
@@ -89,6 +90,7 @@ static const char* const DEF_DYNAMIC = "true";
 static const char* const DEF_SOFTWARE = "false";
 static const char* const DEF_ATTACKONTARGET = "false";
 static const char* const DEF_GPU_EFFICIENCY = "true";
+static const char* const DEF_ANTIALIASING = "false";
 
 // Communication
 static const char* const DEF_BROADCAST = "b";
@@ -177,6 +179,14 @@ static const std::vector<TabInfo> tabs = {
 };
 
 // Helpers
+static void ShowBindingHelp(HWND hDlg)
+{
+    // The help text is far longer than the strings GetString can return.
+    char bindingHelpText[2048];
+    LoadString(hInst, IDS_BINDING_HELP, bindingHelpText, sizeof(bindingHelpText));
+    MessageBox(hDlg, bindingHelpText, GetString(hInst, IDS_HELP_TITLE), MB_OK | MB_ICONINFORMATION);
+}
+
 static void BoolToString(bool bValue, char *TCValue)
 {
     const char* value = bValue ? "true" : "false";
@@ -237,6 +247,7 @@ static void UpdateINIFile()
     settingsChanged = WritePrivateProfileStringIfChanged(strSection, "softwarerenderer", m_software ? "true" : "false", strINIFile) || settingsChanged;
     settingsChanged = WritePrivateProfileStringIfChanged(strSection, "attackontarget", m_attackontarget ? "true" : "false", strINIFile) || settingsChanged;
     settingsChanged = WritePrivateProfileStringIfChanged(strSection, "gpuefficiency", m_gpuefficiency ? "true" : "false", strINIFile) || settingsChanged;
+    settingsChanged = WritePrivateProfileStringIfChanged(strSection, "antialiasing", m_antialiasing ? "true" : "false", strINIFile) || settingsChanged;
 
     BoolToString(bInvert, Value);
     settingsChanged = WritePrivateProfileStringIfChanged(strSection, "invertmouse", Value, strINIFile) || settingsChanged;
@@ -338,6 +349,9 @@ static void ReadINIFile()
 
     GetPrivateProfileString(strSection, "gpuefficiency", "true", ReturnedString, nSize, strINIFile);
     m_gpuefficiency = strcmp(ReturnedString, "true") == 0;
+
+    GetPrivateProfileString(strSection, "antialiasing", "false", ReturnedString, nSize, strINIFile);
+    m_antialiasing = strcmp(ReturnedString, "true") == 0;
 
     GetPrivateProfileString(strSection, "invertmouse", "false", ReturnedString, nSize, strINIFile);
     bInvert = strcmp(ReturnedString, "true") == 0;
@@ -565,6 +579,15 @@ static void ModifyKey(HWND hDlg, TCHAR* TCString, int nID)
 
 static void RestoreDefaults(HWND hDlg)
 {
+    m_classic = StringToBool(DEF_CLASSIC);
+    m_quickchat = StringToBool(DEF_QUICKCHAT);
+    m_alwaysrun = StringToBool(DEF_ALWAYSRUN);
+    m_attackontarget = StringToBool(DEF_ATTACKONTARGET);
+    m_dynamic = StringToBool(DEF_DYNAMIC);
+    m_software = StringToBool(DEF_SOFTWARE);
+    m_gpuefficiency = StringToBool(DEF_GPU_EFFICIENCY);
+    m_antialiasing = StringToBool(DEF_ANTIALIASING);
+
     bInvert = StringToBool(DEF_INVERT);
 
     iMouselookXscale = DEF_MOUSELOOKXSCALE;
@@ -621,6 +644,7 @@ static void RestoreDefaults(HWND hDlg)
     CheckDlgButton(hDlg, IDC_SOFTWARE, m_software);
     CheckDlgButton(hDlg, IDC_ATTACKONTARGET, m_attackontarget);
     CheckDlgButton(hDlg, IDC_GPU_EFFICIENCY, m_gpuefficiency);
+    CheckDlgButton(hDlg, IDC_ANTIALIASING, m_antialiasing);
 
     // Select the correct options on each preferences tab.
     HWND hParent = GetParent(hDlg);
@@ -725,6 +749,9 @@ static INT_PTR CALLBACK MapPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wP
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
+        case IDC_MAINHELP:
+            ShowBindingHelp(hDlg);
+            break;
         case IDC_MAP:
             AssignKey(hDlg, TCMap, IDC_MAP);
             break;
@@ -797,6 +824,9 @@ static INT_PTR CALLBACK TargetingPreferencesDlgProc(HWND hDlg, UINT message, WPA
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
+        case IDC_MAINHELP:
+            ShowBindingHelp(hDlg);
+            break;
         case IDC_TABBACKWARD:
             AssignKey(hDlg, TCTabbackward, IDC_TABBACKWARD);
             break;
@@ -889,6 +919,9 @@ static INT_PTR CALLBACK InteractionPreferencesDlgProc(HWND hDlg, UINT message, W
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
+        case IDC_MAINHELP:
+            ShowBindingHelp(hDlg);
+            break;
         case IDC_ATTACK:
             AssignKey(hDlg, TCAttack, IDC_ATTACK);
             break;
@@ -959,11 +992,67 @@ static INT_PTR CALLBACK InteractionPreferencesDlgProc(HWND hDlg, UINT message, W
     return (INT_PTR)FALSE;
 }
 
+// The graphics settings need more explanation than their labels can carry, so each
+// one gets a hover tooltip.  The text is held here because the tooltip control asks for
+// it by pointer every time it shows the tip.
+struct GraphicsTooltip {
+    int controlId;
+    int stringId;
+    std::string text;
+};
+
+static GraphicsTooltip graphicsTooltips[] = {
+    { IDC_DYNAMIC,         IDS_TIP_DYNAMIC_LIGHTING  },
+    { IDC_SOFTWARE,        IDS_TIP_SOFTWARE_RENDERER },
+    { IDC_GPU_EFFICIENCY,  IDS_TIP_GPU_EFFICIENCY    },
+    { IDC_ANTIALIASING,    IDS_TIP_ANTIALIASING      }
+};
+
+// The software renderer ignores these, so they are only offered while it is off.
+static const int hardwareRendererOptions[] = { IDC_DYNAMIC, IDC_GPU_EFFICIENCY, IDC_ANTIALIASING };
+
+static void EnableHardwareRendererOptions(HWND hDlg, bool bEnable)
+{
+    for (int controlId : hardwareRendererOptions)
+        EnableWindow(GetDlgItem(hDlg, controlId), bEnable);
+}
+
+// The preferences property sheet runs its own modal message loop, so it cannot use the
+// main window's tooltip control, which is fed from the game's message loop.  TTF_SUBCLASS
+// lets this control pick up the mouse messages itself.
+static void AddGraphicsTooltips(HWND hDlg)
+{
+    HWND hTooltips = CreateWindow(TOOLTIPS_CLASS, NULL, WS_POPUP | TTS_ALWAYSTIP | TTS_NOPREFIX,
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+        hDlg, NULL, hInst, NULL);
+
+    // Tooltips are single line until given a maximum width, in pixels.
+    static const int TOOLTIP_WIDTH = 320;
+    SendMessage(hTooltips, TTM_SETMAXTIPWIDTH, 0, TOOLTIP_WIDTH);
+
+    for (auto &tooltip : graphicsTooltips)
+    {
+        tooltip.text = GetString(hInst, tooltip.stringId);
+
+        TOOLINFO toolInfo = { 0 };
+        toolInfo.cbSize = sizeof(toolInfo);
+        toolInfo.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
+        toolInfo.hwnd = hDlg;
+        toolInfo.uId = reinterpret_cast<UINT_PTR>(GetDlgItem(hDlg, tooltip.controlId));
+        // A tooltip control copies only the first 80 characters of the text handed to
+        // TTM_ADDTOOL, so these tips are supplied on demand instead.
+        toolInfo.lpszText = LPSTR_TEXTCALLBACK;
+        SendMessage(hTooltips, TTM_ADDTOOL, 0, reinterpret_cast<LPARAM>(&toolInfo));
+    }
+}
+
 static INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
     case WM_INITDIALOG:
+        AddGraphicsTooltips(hDlg);
+        // Fall through to pick up the current settings.
     case WM_USER_REINITDIALOG:
         // Initialize dialog with current settings
         CheckDlgButton(hDlg, IDC_ALWAYSRUN, m_alwaysrun);
@@ -973,6 +1062,8 @@ static INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARA
         CheckDlgButton(hDlg, IDC_SOFTWARE, m_software);
         CheckDlgButton(hDlg, IDC_ATTACKONTARGET, m_attackontarget);
         CheckDlgButton(hDlg, IDC_GPU_EFFICIENCY, m_gpuefficiency);
+        CheckDlgButton(hDlg, IDC_ANTIALIASING, m_antialiasing);
+        EnableHardwareRendererOptions(hDlg, !m_software);
         return (INT_PTR)TRUE;
     case WM_COMMAND:
         switch (LOWORD(wParam))
@@ -987,17 +1078,10 @@ static INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARA
 
         case IDC_SOFTWARE:
             m_software = IsDlgButtonChecked(hDlg, IDC_SOFTWARE);
+            EnableHardwareRendererOptions(hDlg, !m_software);
             if (!m_software)
             {
                 MessageBox(hDlg, GetString(hInst, IDS_SOFTWARERENDERER_WARN), GetString(hInst, IDS_WARNING_TITLE), MB_OK | MB_ICONEXCLAMATION);
-            }
-            break;
-
-        case IDC_MAINHELP:
-            {
-	            char bindingHelpText[2048];
-	            LoadString (hInst, IDS_BINDING_HELP, bindingHelpText, 2048);
-                MessageBox(hDlg, bindingHelpText, GetString(hInst, IDS_HELP_TITLE), MB_OK | MB_ICONINFORMATION);
             }
             break;
 
@@ -1013,17 +1097,36 @@ static INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARA
         case IDC_QUICKCHAT:
         case IDC_ATTACKONTARGET:
         case IDC_GPU_EFFICIENCY:
+        case IDC_ANTIALIASING:
             // Update the settings based on the checkbox state
             m_alwaysrun = IsDlgButtonChecked(hDlg, IDC_ALWAYSRUN);
             m_dynamic = IsDlgButtonChecked(hDlg, IDC_DYNAMIC);
             m_quickchat = IsDlgButtonChecked(hDlg, IDC_QUICKCHAT);
             m_attackontarget = IsDlgButtonChecked(hDlg, IDC_ATTACKONTARGET);
             m_gpuefficiency = IsDlgButtonChecked(hDlg, IDC_GPU_EFFICIENCY);
+            m_antialiasing = IsDlgButtonChecked(hDlg, IDC_ANTIALIASING);
             break;
         }
         break;
 
     case WM_NOTIFY:
+        if (reinterpret_cast<LPNMHDR>(lParam)->code == TTN_GETDISPINFO)
+        {
+            NMTTDISPINFO *tooltipInfo = reinterpret_cast<NMTTDISPINFO *>(lParam);
+
+            // The tools were added with TTF_IDISHWND, so idFrom is the control window.
+            int controlId = GetDlgCtrlID(reinterpret_cast<HWND>(tooltipInfo->hdr.idFrom));
+
+            for (auto &tooltip : graphicsTooltips)
+            {
+                if (tooltip.controlId == controlId)
+                {
+                    tooltipInfo->lpszText = tooltip.text.data();
+                    break;
+                }
+            }
+            return (INT_PTR)TRUE;
+        }
         if (((LPNMHDR)lParam)->code == PSN_APPLY)
         {
             // Save settings
@@ -1034,6 +1137,7 @@ static INT_PTR CALLBACK OptionsPreferencesDlgProc(HWND hDlg, UINT message, WPARA
             m_software = IsDlgButtonChecked(hDlg, IDC_SOFTWARE);
             m_attackontarget = IsDlgButtonChecked(hDlg, IDC_ATTACKONTARGET);
             m_gpuefficiency = IsDlgButtonChecked(hDlg, IDC_GPU_EFFICIENCY);
+            m_antialiasing = IsDlgButtonChecked(hDlg, IDC_ANTIALIASING);
 
             UpdateINIFile();
             SetWindowLongPtr(hDlg, DWLP_MSGRESULT, PSNRET_NOERROR);
@@ -1439,6 +1543,9 @@ static INT_PTR CALLBACK CommunicationPreferencesDlgProc(HWND hDlg, UINT message,
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
+        case IDC_MAINHELP:
+            ShowBindingHelp(hDlg);
+            break;
         case IDC_BROADCAST:
             AssignKey(hDlg, TCBroadcast, IDC_BROADCAST);
             break;
@@ -1530,12 +1637,16 @@ static void InitializeMovementKeyBindings(HWND hDlg) {
 // Dialog procedure for the Movement Preferences dialog
 static INT_PTR CALLBACK MovementPreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
+    case WM_USER_REINITDIALOG:
     case WM_INITDIALOG:
         InitializeMovementKeyBindings(hDlg);
         return (INT_PTR)TRUE;
 
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
+        case IDC_MAINHELP:
+            ShowBindingHelp(hDlg);
+            break;
         case IDC_FORWARD:
             AssignKey(hDlg, TCForward, IDC_FORWARD);
             break;

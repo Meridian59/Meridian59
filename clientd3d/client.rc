@@ -559,23 +559,26 @@ BEGIN
     CONTROL         "",IDC_TARGETCURSOR,"SysTabControl32",0x0,6,6,464,373
 END
 
-IDD_OPTIONS DIALOGEX 0, 0, 135, 163
+IDD_OPTIONS DIALOGEX 0, 0, 257, 261
 STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Editor de comandos do Meridian 59"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    GROUPBOX        "Opções",IDC_STATIC,6,5,124,114
-    CONTROL         "Configuração de teclas clássica",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,19,110,10
-    CONTROL         "Mensagem rápida",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,33,72,10
-    CONTROL         "Sempre correr",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,47,58,10
-    CONTROL         "Sempre atacar o alvo",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,61,83,10
-    CONTROL         "Luzes dinâmicas",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,75,95,10
-    CONTROL         "Renderização de software",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,89,100,10
-    CONTROL         "Eficiência da GPU",IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,103,75,10
+    GROUPBOX        "Opções",IDC_STATIC,7,7,243,72
+    CONTROL         "Configuração de teclas clássica",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,20,225,10
+    CONTROL         "Mensagem rápida",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,34,225,10
+    CONTROL         "Sempre correr",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,48,225,10
+    CONTROL         "Sempre atacar o alvo",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,62,225,10
+    GROUPBOX        "Gráficos",IDC_STATIC,7,86,243,72
+    CONTROL         "Renderização de software",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,99,225,10
+    CONTROL         "Luzes dinâmicas",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,113,225,10
+    CONTROL         "Eficiência da GPU",IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,127,225,10
+    CONTROL         "Multisample Anti-Aliasing (MSAA)",IDC_ANTIALIASING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,141,225,10
+    PUSHBUTTON      "Restaurar Padrões",IDC_RESTOREDEFAULTS,171,239,79,15
 END
 
-IDD_COMMUNICATION DIALOG 0, 0, 258, 138
+IDD_COMMUNICATION DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Comunicação"
 FONT 8, "MS Sans Serif"
@@ -601,9 +604,10 @@ BEGIN
     PUSHBUTTON      "+",IDC_BROADCAST_MOD,116,83,14,14
     PUSHBUTTON      "+",IDC_WHO_MOD,116,102,14,14
     PUSHBUTTON      "+",IDC_EMOTE_MOD,239,7,14,14
+    PUSHBUTTON      "Ajuda",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_INTERACTION DIALOG 0, 0, 258, 138
+IDD_INTERACTION DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Interações"
 FONT 8, "MS Sans Serif"
@@ -635,9 +639,10 @@ BEGIN
     PUSHBUTTON      "+",IDC_DEPOSIT_MOD,237,7,14,14
     PUSHBUTTON      "+",IDC_WITHDRAW_MOD,237,26,14,14
     PUSHBUTTON      "+",IDC_ATTACK_MOD,237,45,14,14
+    PUSHBUTTON      "Ajuda",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_MAP DIALOG 0, 0, 258, 138
+IDD_MAP DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Mapa"
 FONT 8, "MS Sans Serif"
@@ -656,9 +661,10 @@ BEGIN
     CONTROL         "Anotações",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,91,72,10
     LTEXT           "Limite de Zoom do Texto",IDC_STATIC,13,109,50,10
     CONTROL         "",IDC_ANNOTATION_ZOOM_LIMIT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
+    PUSHBUTTON      "Ajuda",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_MOVEMENT DIALOG 0, 0, 296, 138
+IDD_MOVEMENT DIALOG 0, 0, 296, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Movimentação"
 FONT 8, "MS Sans Serif"
@@ -699,9 +705,10 @@ BEGIN
     PUSHBUTTON      "+",IDC_LOOKSTRAIGHT_MOD,269,64,14,14
     PUSHBUTTON      "+",IDC_FLIP_MOD,269,83,14,14
     PUSHBUTTON      "+",IDC_MOUSELOOKTOGGLE_MOD,269,102,14,14
+    PUSHBUTTON      "Ajuda",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_TARGETING DIALOG 0, 0, 268, 138
+IDD_TARGETING DIALOG 0, 0, 268, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Seleção de alvo"
 FONT 8, "MS Sans Serif"
@@ -727,6 +734,7 @@ BEGIN
     PUSHBUTTON      "+",IDC_TABFORWARD_MOD,123,83,14,14
     PUSHBUTTON      "+",IDC_TABBACKWARD_MOD,123,102,14,14
     PUSHBUTTON      "+",IDC_SELECTTARGET_MOD,254,7,14,14
+    PUSHBUTTON      "Ajuda",IDC_MAINHELP,180,239,70,15
 END
 
 IDD_ASSIGNKEY DIALOG 0, 0, 110, 54
@@ -1032,6 +1040,10 @@ BEGIN
 	IDS_RESTORE_DEFAULTS			"Restaurar Padrões"
 	IDS_THEME_DEFAULT				"Padrão"
 	IDS_THEME_DARK					"Escuro"
+	IDS_TIP_DYNAMIC_LIGHTING		"Faz com que tochas, feitiços e outras fontes de luz iluminem o cenário ao redor. Desligá-lo é um pouco mais rápido em máquinas antigas."
+	IDS_TIP_SOFTWARE_RENDERER		"Desenha o mundo no processador em vez da placa de vídeo. Só é necessário se o renderizador por hardware não iniciar nesta máquina, ou se quiser o visual original dos anos 90."
+	IDS_TIP_GPU_EFFICIENCY			"Troca qualidade de imagem por consumo e temperatura: limita a taxa de quadros a 60, reduz o detalhe das texturas de fundo e aguarda a atualização do monitor. Bom para notebooks."
+	IDS_TIP_ANTIALIASING			"Suaviza as bordas serrilhadas de paredes e objetos usando várias amostras por pixel. Custa desempenho da placa de vídeo e é ignorado por placas que não o suportam."
 END
 
 
@@ -1579,25 +1591,26 @@ BEGIN
     CONTROL         "",IDC_TARGETCURSOR,"SysTabControl32",0x0,6,6,464,373
 END
 
-IDD_OPTIONS DIALOGEX 0, 0, 151, 163
+IDD_OPTIONS DIALOGEX 0, 0, 257, 261
 STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Meridian 59 Bind Editor"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    GROUPBOX        "Optionen",IDC_STATIC,5,3,137,102
-    CONTROL         "klassische Tastenbelegung",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,17,102,10
-    CONTROL         "schnelles Chatten",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,29,72,10
-    CONTROL         "immer Laufen",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,41,58,10
-    CONTROL         "Angriff bei Zielanwahl",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,53,83,10
-    CONTROL         "dynamische Beleuchtung",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,65,95,10
-    CONTROL         "Software-Grafikmodus",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,77,85,10
-    CONTROL         "GPU Efficiency",IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,89,75,10
-    PUSHBUTTON      "Hilfe",IDC_MAINHELP,100,130,42,15
-    PUSHBUTTON      "Standardeinstellungen",IDC_RESTOREDEFAULTS,4,111,79,14
+    GROUPBOX        "Optionen",IDC_STATIC,7,7,243,72
+    CONTROL         "klassische Tastenbelegung",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,20,225,10
+    CONTROL         "schnelles Chatten",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,34,225,10
+    CONTROL         "immer Laufen",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,48,225,10
+    CONTROL         "Angriff bei Zielanwahl",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,62,225,10
+    GROUPBOX        "Grafik",IDC_STATIC,7,86,243,72
+    CONTROL         "Software-Grafikmodus",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,99,225,10
+    CONTROL         "dynamische Beleuchtung",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,113,225,10
+    CONTROL         "GPU Efficiency",IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,127,225,10
+    CONTROL         "Multisample Anti-Aliasing (MSAA)",IDC_ANTIALIASING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,141,225,10
+    PUSHBUTTON      "Standardeinstellungen",IDC_RESTOREDEFAULTS,171,239,79,15
 END
 
-IDD_COMMUNICATION DIALOG 0, 0, 258, 138
+IDD_COMMUNICATION DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Kommunikation"
 FONT 8, "MS Sans Serif"
@@ -1623,9 +1636,10 @@ BEGIN
     PUSHBUTTON      "+",IDC_BROADCAST_MOD,106,83,14,14
     PUSHBUTTON      "+",IDC_WHO_MOD,106,102,14,14
     PUSHBUTTON      "+",IDC_EMOTE_MOD,229,7,14,14
+    PUSHBUTTON      "Hilfe",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_INTERACTION DIALOG 0, 0, 258, 138
+IDD_INTERACTION DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Interaktion"
 FONT 8, "MS Sans Serif"
@@ -1657,9 +1671,10 @@ BEGIN
     PUSHBUTTON      "+",IDC_DEPOSIT_MOD,237,7,14,14
     PUSHBUTTON      "+",IDC_WITHDRAW_MOD,237,26,14,14
     PUSHBUTTON      "+",IDC_ATTACK_MOD,237,45,14,14
+    PUSHBUTTON      "Hilfe",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_MAP DIALOG 0, 0, 258, 138
+IDD_MAP DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Karte"
 FONT 8, "MS Sans Serif"
@@ -1678,9 +1693,10 @@ BEGIN
     CONTROL         "Kartennotizen",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,91,72,10
     LTEXT           "Zoomgrenze für Text",IDC_STATIC,13,109,50,10
     CONTROL         "",IDC_ANNOTATION_ZOOM_LIMIT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
+    PUSHBUTTON      "Hilfe",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_MOVEMENT DIALOG 0, 0, 296, 138
+IDD_MOVEMENT DIALOG 0, 0, 296, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Bewegung"
 FONT 8, "MS Sans Serif"
@@ -1722,9 +1738,10 @@ BEGIN
     PUSHBUTTON      "+",IDC_LOOKSTRAIGHT_MOD,269,64,14,14
     PUSHBUTTON      "+",IDC_FLIP_MOD,269,83,14,14
     PUSHBUTTON      "+",IDC_MOUSELOOKTOGGLE_MOD,269,102,14,14
+    PUSHBUTTON      "Hilfe",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_TARGETING DIALOG 0, 0, 268, 138
+IDD_TARGETING DIALOG 0, 0, 268, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Zielanwahl"
 FONT 8, "MS Sans Serif"
@@ -1750,6 +1767,7 @@ BEGIN
     PUSHBUTTON      "+",IDC_TABFORWARD_MOD,123,83,14,14
     PUSHBUTTON      "+",IDC_TABBACKWARD_MOD,123,102,14,14
     PUSHBUTTON      "+",IDC_SELECTTARGET_MOD,244,7,14,14
+    PUSHBUTTON      "Hilfe",IDC_MAINHELP,180,239,70,15
 END
 
 IDD_ASSIGNKEY DIALOG 0, 0, 110, 54
@@ -2056,6 +2074,10 @@ BEGIN
 	IDS_RESTORE_DEFAULTS			"Standardwerte wiederherstellen"
 	IDS_THEME_DEFAULT				"Standard"
 	IDS_THEME_DARK					"Dunkel"
+	IDS_TIP_DYNAMIC_LIGHTING		"Lässt Fackeln, Zauber und andere Lichtquellen ihre Umgebung erhellen. Ausschalten ist auf älterer Hardware etwas schneller."
+	IDS_TIP_SOFTWARE_RENDERER		"Zeichnet die Welt über den Prozessor statt über die Grafikkarte. Nur nötig, wenn der Hardware-Renderer auf diesem Rechner nicht startet, oder wenn Sie die Optik der 1990er möchten."
+	IDS_TIP_GPU_EFFICIENCY			"Tauscht Bildqualität gegen Strom und Wärme: begrenzt die Bildrate auf 60, senkt die Detailstufe der Hintergrundtexturen und wartet auf die Bildwiederholung des Monitors. Gut für Laptops."
+	IDS_TIP_ANTIALIASING			"Glättet die ausgefransten Kanten von Wänden und Objekten, indem mehrere Proben pro Pixel genommen werden. Kostet Grafikleistung und wird von Karten ohne Unterstützung ignoriert."
 END
 
 
@@ -2613,25 +2635,27 @@ BEGIN
     CONTROL         "",IDC_TARGETCURSOR,"SysTabControl32",0x0,6,6,464,373
 END
 
-IDD_OPTIONS DIALOGEX 0, 0, 124, 163
+IDD_OPTIONS DIALOGEX 0, 0, 257, 261
 STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Options"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    GROUPBOX        "Options",IDC_STATIC,7,7,110,114
-    CONTROL         "Classic Key Bindings",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,24,81,10
-    CONTROL         "Quick Chat",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,38,51,10
-    CONTROL         "Always Run",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,52,53,10
-    CONTROL         "Dynamic Lighting",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,80,70,10
-    CONTROL         "Software Renderer",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,94,75,10
-    CONTROL         "Attack On Target",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,66,73,10
-    PUSHBUTTON      "Help",IDC_MAINHELP,87,140,30,15
-    PUSHBUTTON      "Restore Defaults",IDC_RESTOREDEFAULTS,47,122,70,15
-    CONTROL         "GPU Efficiency",IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,107,75,10
+    GROUPBOX        "Options",IDC_STATIC,7,7,243,72
+    CONTROL         "Classic Key Bindings",IDC_CLASSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,20,225,10
+    CONTROL         "Quick Chat",IDC_QUICKCHAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,34,225,10
+    CONTROL         "Always Run",IDC_ALWAYSRUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,48,225,10
+    CONTROL         "Attack On Target",IDC_ATTACKONTARGET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,62,225,10
+    GROUPBOX        "Graphics",IDC_STATIC,7,86,243,72
+    CONTROL         "Software Renderer",IDC_SOFTWARE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,99,225,10
+    CONTROL         "Dynamic Lighting",IDC_DYNAMIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,113,225,10
+    CONTROL         "GPU Efficiency",IDC_GPU_EFFICIENCY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,127,225,10
+    CONTROL         "Multisample Anti-Aliasing (MSAA)",IDC_ANTIALIASING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,141,225,10
+    LTEXT           "Hover over a graphics setting for a description of what it does.",IDC_STATIC,7,164,243,10
+    PUSHBUTTON      "Restore Defaults",IDC_RESTOREDEFAULTS,180,239,70,15
 END
 
-IDD_MOVEMENT DIALOG 0, 0, 258, 138
+IDD_MOVEMENT DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Movement"
 FONT 8, "MS Sans Serif"
@@ -2673,6 +2697,7 @@ BEGIN
     PUSHBUTTON      "+",IDC_LOOKSTRAIGHT_MOD,229,64,14,14
     PUSHBUTTON      "+",IDC_FLIP_MOD,229,83,14,14
     PUSHBUTTON      "+",IDC_MOUSELOOKTOGGLE_MOD,229,102,14,14
+    PUSHBUTTON      "Help",IDC_MAINHELP,180,239,70,15
 END
 
 IDD_ASSIGNKEY DIALOG 0, 0, 110, 54
@@ -2712,7 +2737,7 @@ BEGIN
     CTEXT           "Choose a modifier key:",IDC_STATIC,7,7,50,20
 END
 
-IDD_COMMUNICATION DIALOG 0, 0, 258, 138
+IDD_COMMUNICATION DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Communication"
 FONT 8, "MS Sans Serif"
@@ -2738,9 +2763,10 @@ BEGIN
     PUSHBUTTON      "+",IDC_BROADCAST_MOD,102,83,14,14
     PUSHBUTTON      "+",IDC_WHO_MOD,102,102,14,14
     PUSHBUTTON      "+",IDC_EMOTE_MOD,229,7,14,14
+    PUSHBUTTON      "Help",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_INTERACTION DIALOG 0, 0, 258, 138
+IDD_INTERACTION DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Interaction"
 FONT 8, "MS Sans Serif"
@@ -2772,9 +2798,10 @@ BEGIN
     PUSHBUTTON      "+",IDC_DEPOSIT_MOD,229,7,14,14
     PUSHBUTTON      "+",IDC_WITHDRAW_MOD,229,26,14,14
     PUSHBUTTON      "+",IDC_ATTACK_MOD,229,45,14,14
+    PUSHBUTTON      "Help",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_TARGETING DIALOG 0, 0, 258, 138
+IDD_TARGETING DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Targeting"
 FONT 8, "MS Sans Serif"
@@ -2800,9 +2827,10 @@ BEGIN
     PUSHBUTTON      "+",IDC_TABFORWARD_MOD,118,83,14,14
     PUSHBUTTON      "+",IDC_TABBACKWARD_MOD,118,102,14,14
     PUSHBUTTON      "+",IDC_SELECTTARGET_MOD,229,7,14,14
+    PUSHBUTTON      "Help",IDC_MAINHELP,180,239,70,15
 END
 
-IDD_MAP DIALOG 0, 0, 258, 138
+IDD_MAP DIALOG 0, 0, 258, 261
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Map"
 FONT 8, "MS Sans Serif"
@@ -2821,6 +2849,7 @@ BEGIN
     CONTROL         "Annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,91,72,10
     LTEXT           "Text Zoom Limit",IDC_STATIC,13,109,50,10
     CONTROL         "",IDC_ANNOTATION_ZOOM_LIMIT,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,106,173,15
+    PUSHBUTTON      "Help",IDC_MAINHELP,180,239,70,15
 END
 
 /////////////////////////////////////////////////////////////////////////////
@@ -3341,6 +3370,10 @@ BEGIN
 	IDS_RESTORE_DEFAULTS			"Restore Defaults"
 	IDS_THEME_DEFAULT				"Default"
 	IDS_THEME_DARK					"Dark"
+	IDS_TIP_DYNAMIC_LIGHTING		"Lets torches, spells and other light sources light up the world around them.  Turning it off is slightly faster on old hardware."
+	IDS_TIP_SOFTWARE_RENDERER		"Draws the world on the processor instead of the graphics card.  Needed only if the hardware renderer will not start on your machine, or if you want the original 1990s look."
+	IDS_TIP_GPU_EFFICIENCY			"Trades image quality for power and heat:  caps the frame rate at 60, lowers background texture detail and waits for the monitor refresh.  Good for laptops."
+	IDS_TIP_ANTIALIASING			"Smooths the jagged edges of walls and objects by taking several samples per pixel.  Costs graphics card performance, and is ignored by cards that do not support it."
 END
 
 

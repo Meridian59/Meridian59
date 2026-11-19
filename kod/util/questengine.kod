@@ -20,6 +20,7 @@ constants:
 
    QUEST_MAX_NUM_PLAYERS = 5
    QUEST_MAX_MAX_ACTIVE = 100
+
    
 % Field names for a QuestTemplate
 %	QT_NUM_PLAYERS       = 1
@@ -1447,6 +1448,14 @@ resources:
       "Some fool probably even suspects me.  But I wouldn't be surprised if the Duke had some "
       "secret lover; looks like a crime of passion to me."
 
+   % Restriction hint overrides
+   
+   % template #35 overrides:
+   % The tradingpost quests require players to have chosen a side (good or evil karma), so neutral
+   % players cannot access it. Both karma restriction messages share the same text to guide neutral
+   % players to choose light or darkness, regardless of which restriction triggers.
+   tradingpost_karma_good = "My inventory is only for those who walk a clear path.  Come back when you've chosen light or darkness."
+   tradingpost_karma_evil = "My inventory is only for those who walk a clear path.  Come back when you've chosen light or darkness."
 
    questEngine_report_sender = "Quest Engine"
    questEngine_report_1 = "Subject: Report: Quest %q\n"
@@ -1471,6 +1480,9 @@ properties:
 	plChessPieces = $
 	plChessPiecesFiles = $
 	plChessPiecesRanks = $
+
+   % Reference to QuestRestrictionHints instance
+	poRestrictionHints = $
 
 	piDefaultNumPlayers = 1
 	piDefaultQuestType = Q_TYPE_COMPETITIVE		% not used for single-player quests
@@ -1567,6 +1579,9 @@ Recreate()
    plChessPieces = [ pawn, rook, knight, bishop, queen, king ];
    plChessPiecesFiles = [ rook1, rook2, knight1, knight2, bishop1, bishop2, queen, king ];
    plChessPiecesRanks = [ two, three, four, five, six, seven ];
+	
+   % Initialize restriction hints handler
+   Send(self,@InitializeRestrictionHints);
 	
    piDefaultNumPlayers = 1;
    piDefaultQuestType = Q_TYPE_COMPETITIVE;	% not used for single-player quests
@@ -2385,7 +2400,22 @@ RecreateQuestNodes()
    %		assign hint,
    %		success hint,
    %		failure hint
-   %		time limit	]
+   %		time limit,
+   %		restriction hints ]
+
+   % Quest Node Restriction Hints:
+   % --------------------------------
+   % Restriction hints are custom messages (resource strings) displayed to players when they fail to meet
+   % a quest node's requirements. Each hint is associated with a restriction type (e.g. Q_PLAYER_KARMA_GOOD,
+   % Q_PLAYER_KARMA_EVIL, Q_PLAYER_HAS_HEALTH_LEVEL, etc). Use @SetQuestNodeRestrictionHints to override
+   % the default restriction hints for a quest node template.
+   %
+   % Example:
+   % send( self, @SetQuestNodeRestrictionHints, #index = 35, #restriction_hints = 
+   %   [ 
+   %      [ Q_PLAYER_KARMA_GOOD, tradingpost_karma_good ],
+   %      [ Q_PLAYER_KARMA_EVIL, tradingpost_karma_evil ] 
+   %   ] );
 
   % Will recreate questnodetemplates, including creating strings to hold the hints
 
@@ -2963,6 +2993,11 @@ RecreateQuestNodes()
    {
       send( self, @SetQuestNodeNPCList, #index = 35,
             #new_NPC_list = send( send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &kocatanTradeMaster));
+      send( self, @SetQuestNodeRestrictionHints, #index = 35, #restriction_hints = 
+      [ 
+         [ Q_PLAYER_KARMA_GOOD, tradingpost_karma_good ],
+         [ Q_PLAYER_KARMA_EVIL, tradingpost_karma_evil ] 
+      ] );
    }
    else
    {
@@ -6064,6 +6099,18 @@ RecreateQuestNodes()
    return;
 }
 
+InitializeRestrictionHints()
+{
+   if poRestrictionHints = $
+   {
+      poRestrictionHints = Create(&QuestRestrictionHints);
+   }
+   
+   Send(poRestrictionHints,@SetQuestEngine,#quest_engine=self);
+
+   return;
+}
+
 %% AddQuestNodeTemplate:
 %	Adds a new questnode template to plQuestNodeTemplates
 %	Returns index number of new questnode template if successful, 0 otherwise
@@ -6080,7 +6127,8 @@ RecreateQuestNodes()
 	%		assign hint,
 	%		success hint,
 	%		failure hint
-	%		time limit	]
+	%		time limit,
+	%		restriction hints ]
 %%
 AddQuestNodeTemplate(NPC_modifier = $,
 	             questnode_type = $,
@@ -6088,7 +6136,8 @@ AddQuestNodeTemplate(NPC_modifier = $,
 	             monsterlist = $,
 	             prizelist = $, 
 	             penaltylist = $,
-	             timelimit = 0 )
+	             timelimit = 0,
+	             restriction_hints = $ )
 {
 	% Validity checks
 
@@ -6145,7 +6194,7 @@ AddQuestNodeTemplate(NPC_modifier = $,
 	}
 
 	lThisQuestNodeTemplate = [ plDefaultNPCList, NPC_modifier, questnode_type,\
-		cargolist, monsterlist, prizelist, penaltylist, CreateString(), CreateString(), CreateString(), timelimit ];
+		cargolist, monsterlist, prizelist, penaltylist, CreateString(), CreateString(), CreateString(), timelimit, $ ];
 
 	%	Can only add to front of list
 	plQuestNodeTemplates = Cons( lThisQuestNodeTemplate, plQuestNodeTemplates );
@@ -7368,6 +7417,34 @@ CheckQuestDeadlines()
       }
 
       return;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % Restriction hint handling
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   GetRestrictionHint( quest_template_index = 0, who = $, quest_node_index = 0, restriction_type = $ )
+   "Search restrictions hints and returns the first restriction hint that matches the node's restriction types."
+   {
+      return Send(poRestrictionHints,@GetQuestNodeRestrictionHint,#quest_template_index=quest_template_index,#who=who,#quest_node_index=quest_node_index,#restriction_type=restriction_type);
+   }
+   
+   BuildRestrict2HintMessage( who = $, hint = $, quest_template_index = $, restriction_type = $ )
+   "Replaces %REQUIREMENT token in tokenized hint messages with specific requirement"
+   {
+      return Send(poRestrictionHints,@BuildQuestTemplateRestrict2HintMessage,#who=who,#hint=hint,#quest_template_index=quest_template_index,#restriction_type=restriction_type);
+   }
+
+   GetTemplateRestrictionHints( index = 0 )
+   "Returns the list of restriction hints for a quest node template, or $ if no hints are configured"
+   {
+      return Send(poRestrictionHints,@GetQuestTemplateRestrictionHints,#index=index);
+   }
+
+   SetQuestNodeRestrictionHints( index = 0, restriction_hints = $ )
+   "Sets the restriction hints for a quest node template"
+   {
+      return Send(poRestrictionHints,@SetQuestNodeTemplateRestrictionHints,#index=index,#restriction_hints=restriction_hints);
    }
 
 end

@@ -24,6 +24,8 @@ resources:
 
    smite_hit_rsc = "%s%s gets a big wet smooch and is completely smitten!"
 
+   seduce_hit_sound = qseduce.wav
+
 classvars:
    vrName = smite_name_rsc
    vrIcon = smite_icon_rsc
@@ -31,6 +33,8 @@ classvars:
    vrDesc = smite_desc_rsc
 
    viSpell_num = SID_SMITE
+
+   vrHitSound_wav = seduce_hit_sound
 
    viAttack_spell = ATCK_SPELL_ALL
 

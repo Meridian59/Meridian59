@@ -638,19 +638,11 @@ void FuzzyCollapseString(char* pTarget, const char* pSource, int len)
 	while (len && iswhite(*pSource)) { pSource++; len--; }
 	while (len && iswhite(pSource[len-1])) { len--; }
 	
-	// copy the core string in uppercase and collapse whitespace to single spaces
+	// copy the core string in uppercase
 	while (len)
 	{
-		if (iswhite(*pSource))
-		{
-			while (len && iswhite(*pSource)) { pSource++; len--; }
-			*pTarget++ = ' ';
-		}
-		else
-		{
-			*pTarget++ = toupper(*pSource++);
-			len--;
-		}
+		*pTarget++ = toupper(*pSource++);
+		len--;
 	}
 	
 	*pTarget = '\0';
@@ -892,6 +884,18 @@ blak_int C_StringContain(int object_id,local_var_type *local_vars,
 "orcteeth" == "orc teeth"
 */
 
+/**
+ * SquashWhitespace: Replaces each run of spaces, tabs, and line breaks in the
+ * string with one space.
+ */
+static void SquashWhitespace(char *s)
+{
+	char *end = s + strlen(s);
+	std::replace_if(s, end, [](char c) { return iswhite(c); }, ' ');
+	end = std::unique(s, end, [](char a, char b) { return a == ' ' && b == ' '; });
+	*end = '\0';
+}
+
 // return true if s1 contains s2,
 //	first converting to uppercase and squashing tabs and spaces to a single space
 bool FuzzyBufferContain(const char *s1,int len_s1,const char *s2,int len_s2)
@@ -901,6 +905,8 @@ bool FuzzyBufferContain(const char *s1,int len_s1,const char *s2,int len_s2)
 	
 	FuzzyCollapseString(buf0, s1, len_s1);
 	FuzzyCollapseString(buf1, s2, len_s2);
+	SquashWhitespace(buf0);
+	SquashWhitespace(buf1);
 	
 	return (NULL != strstr(buf0, buf1));
 }

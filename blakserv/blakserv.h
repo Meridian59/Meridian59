@@ -251,7 +251,6 @@ extern DWORD main_thread_id;
 #include "dllist.h"
 #include "motd.h"
 #include "gamelock.h"
-#include "apndfile.h"
 #include "builtin.h"
 #include "version.h"
 #include "rscfile.h"

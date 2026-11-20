@@ -57,7 +57,6 @@ OBJS =  \
 	$(OUTDIR)\resync.obj \
 	$(OUTDIR)\gamelock.obj \
 	$(OUTDIR)\config.obj \
-	$(OUTDIR)\apndfile.obj \
 	$(OUTDIR)\admincons.obj \
 	$(OUTDIR)\builtin.obj \
 	$(OUTDIR)\version.obj \

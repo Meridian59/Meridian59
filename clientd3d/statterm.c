@@ -20,8 +20,6 @@ static WNDPROC lpfnDefInputProc; /* Default edit window procedure */
 static char    *buf;             /* Buffer to store stuff coming from server */
 static int     pos = 0;          /* Current position in buf */
 
-extern bool admin_mode;            // true when user wants to go into admin mode
-
 /* local function prototypes */
 
 LRESULT CALLBACK InputProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -30,8 +28,6 @@ LRESULT CALLBACK HistoryProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 void TermInit(void)
 {
    RECT r;
-
-   admin_mode = false;     // Don't re-enter admin mode after leaving 
 
    /* clear the window for our use */
    InvalidateRect(hMain,NULL,TRUE); 

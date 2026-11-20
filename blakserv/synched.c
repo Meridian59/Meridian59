@@ -276,24 +276,8 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       }
       break;
 
-   case AP_REGISTER :
-      len = *(short *)(msg->data+index);
-      if (index + 2 + len > msg->len) /* 2 = length word len */
-	 break;
-      lprintf("SynchedProtocolParse got a registration form\n");
-      AppendTextFile(s,REGFORM_FILE,len,msg->data+index+2);
-      break;
-
    case AP_RESYNC :
       SetSessionState(s,STATE_RESYNC);
-      break;
-
-   case AP_ADMINNOTE :
-      len = *(short *)(msg->data+index);
-      if (index + 2 + len > msg->len) /* 2 = length word len */
-	 break;
-      lprintf("SynchedProtocolParse got a note for admins\n");
-      AppendTextFile(s,NOTE_FILE,len,msg->data+index+2);
       break;
 
    case AP_REQ_MENU :

@@ -22,10 +22,8 @@ static client_message login_msg_table[] = {
 { AP_GETRESOURCE,          { PARAM_END }, },
 { AP_GETALL,               { PARAM_END }, },
 { AP_UPLOAD,               { PARAM_END }, },
-{ AP_REGISTER,             { PARAM_STRING, PARAM_END }, },
 { AP_RESYNC,               { PARAM_END }, },
 { AP_REQ_MENU,             { PARAM_END }, },
-{ AP_ADMINNOTE,            { PARAM_STRING, PARAM_END }, },
 { AP_PING,                 { PARAM_END }, },
 { 0,                       { PARAM_END }, },    // Must terminate table this way
 };

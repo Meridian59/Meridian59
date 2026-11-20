@@ -878,12 +878,6 @@ blak_int C_StringContain(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-/*
-"   orc teeth" == "orc teeth"
-" orc  teeth" == "orc teeth"
-"orcteeth" == "orc teeth"
-*/
-
 /**
  * SquashWhitespace: Replaces each run of spaces, tabs, and line breaks in the
  * string with one space.
@@ -895,6 +889,12 @@ static void SquashWhitespace(char *s)
 	end = std::unique(s, end, [](char a, char b) { return a == ' ' && b == ' '; });
 	*end = '\0';
 }
+
+/*
+"   orc teeth" == "orc teeth"
+" orc  teeth" == "orc teeth"
+"orcteeth" != "orc teeth"
+*/
 
 // return true if s1 contains s2,
 //	first converting to uppercase and squashing tabs and spaces to a single space

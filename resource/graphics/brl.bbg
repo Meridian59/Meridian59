@@ -1,0 +1,181 @@
+# female right arms, robed, gauntleted
+# groups
+# 1 standing
+# 2-3 walking
+# 4-6 fighting
+# 7-10 waving
+# 11 casting spell
+# 12 pointing
+# 13-14 punching
+# 15-16 shooting bow
+# 17 carrying weapon
+# hotspots
+# 22 right hand weapon place
+#^Applied to Hotspot: 21
+#*Groups: 33
+#* standing
+#* walking A
+#* walking B
+#* fighting A
+#* fighting B
+#* fighting C
+#* waving A
+#* waving B
+#* waving C
+#* waving B
+#* spell-casting
+#* pointing
+#* punch A
+#* punch B
+#* bow-shooting A
+#* bow-shooting B
+#* holding weapon
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+-s 4
+96
+brl.bgf_frame0.bmp  [153, 92]
+brl.bgf_frame1.bmp  [154, 89]
+brl.bgf_frame2.bmp  [174, 89]
+brl.bgf_frame3.bmp  [198, 90]
+brl.bgf_frame4.bmp  [176, 90]
+brl.bgf_frame5.bmp  [157, 90]
+brl.bgf_frame6.bmp  [156, 91]
+brl.bgf_frame7.bmp  [170, 93]
+brl.bgf_frame8.bmp  [184, 92]
+brl.bgf_frame9.bmp  [198, 93]
+brl.bgf_frame10.bmp  [162, 92]
+brl.bgf_frame11.bmp  [147, 90]
+brl.bgf_frame12.bmp  [152, 92]
+brl.bgf_frame13.bmp  [142, 90]
+brl.bgf_frame14.bmp  [156, 91]
+brl.bgf_frame15.bmp  [198, 93]
+brl.bgf_frame16.bmp  [176, 92]
+brl.bgf_frame17.bmp  [163, 92]
+brl.bgf_frame18.bmp  [152, 68] :1  -22 [-150, -63]
+brl.bgf_frame19.bmp  [151, 70] :1  -22 [-143, -63]
+brl.bgf_frame20.bmp  [160, 69] :1  22 [-150, -65]
+brl.bgf_frame21.bmp  [196, 68] :1  22 [-199, -62]
+brl.bgf_frame22.bmp  [167, 68] :1  -22 [-177, -63]
+brl.bgf_frame23.bmp  [161, 69] :1  -22 [-165, -66]
+brl.bgf_frame24.bmp  [161, 69] :1  -22 [-146, -62]
+brl.bgf_frame25.bmp  [167, 69] :1  -22 [-162, -64]
+brl.bgf_frame26.bmp  [182, 69] :1  -22 [-177, -64]
+brl.bgf_frame27.bmp  [187, 69] :1  22 [-186, -66]
+brl.bgf_frame28.bmp  [153, 71] :1  -22 [-158, -65]
+brl.bgf_frame29.bmp  [154, 70] :1  -22 [-155, -65]
+brl.bgf_frame30.bmp  [172, 106] :1  22 [-169, -116]
+brl.bgf_frame31.bmp  [141, 109] :1  22 [-130, -118]
+brl.bgf_frame32.bmp  [134, 108] :1  -22 [-119, -115]
+brl.bgf_frame33.bmp  [187, 108] :1  -22 [-183, -110]
+brl.bgf_frame34.bmp  [187, 109] :1  22 [-202, -117]
+brl.bgf_frame35.bmp  [174, 110] :1  22 [-185, -118]
+brl.bgf_frame36.bmp  [144, 56]
+brl.bgf_frame37.bmp  [138, 52]
+brl.bgf_frame38.bmp  [156, 53]
+brl.bgf_frame39.bmp  [206, 52]
+brl.bgf_frame40.bmp  [177, 49]
+brl.bgf_frame41.bmp  [163, 49]
+brl.bgf_frame42.bmp  [139, 54]
+brl.bgf_frame43.bmp  [130, 52]
+brl.bgf_frame44.bmp  [151, 51]
+brl.bgf_frame45.bmp  [205, 51]
+brl.bgf_frame46.bmp  [177, 47]
+brl.bgf_frame47.bmp  [163, 47]
+brl.bgf_frame48.bmp  [131, 64]
+brl.bgf_frame49.bmp  [125, 62]
+brl.bgf_frame50.bmp  [147, 62]
+brl.bgf_frame51.bmp  [205, 60]
+brl.bgf_frame52.bmp  [177, 56]
+brl.bgf_frame53.bmp  [163, 58]
+brl.bgf_frame54.bmp  [157, 91]
+brl.bgf_frame55.bmp  [133, 89]
+brl.bgf_frame56.bmp  [134, 88]
+brl.bgf_frame57.bmp  [201, 88]
+brl.bgf_frame58.bmp  [177, 91]
+brl.bgf_frame59.bmp  [166, 90]
+brl.bgf_frame60.bmp  [155, 92]
+brl.bgf_frame61.bmp  [126, 90]
+brl.bgf_frame62.bmp  [126, 91]
+brl.bgf_frame63.bmp  [199, 91]
+brl.bgf_frame64.bmp  [177, 91]
+brl.bgf_frame65.bmp  [166, 91]
+brl.bgf_frame66.bmp  [155, 99]
+brl.bgf_frame67.bmp  [164, 99]
+brl.bgf_frame68.bmp  [183, 100]
+brl.bgf_frame69.bmp  [194, 101]
+brl.bgf_frame70.bmp  [155, 101]
+brl.bgf_frame71.bmp  [146, 100]
+brl.bgf_frame72.bmp  [170, 109]
+brl.bgf_frame73.bmp  [137, 106]
+brl.bgf_frame74.bmp  [120, 108]
+brl.bgf_frame75.bmp  [187, 107]
+brl.bgf_frame76.bmp  [185, 108]
+brl.bgf_frame77.bmp  [174, 109]
+brl.bgf_frame78.bmp  [142, 93] :1  22 [-142, -93]
+brl.bgf_frame79.bmp  [151, 92] :1  22 [-151, -92]
+brl.bgf_frame80.bmp  [166, 93] :1  22 [-168, -92]
+brl.bgf_frame81.bmp  [200, 94] :1  22 [-200, -94]
+brl.bgf_frame82.bmp  [160, 95] :1  22 [-160, -95]
+brl.bgf_frame83.bmp  [144, 94] :1  22 [-144, -94]
+brl.bgf_frame84.bmp  [134, 88] :1  22 [-134, -88]
+brl.bgf_frame85.bmp  [149, 86] :1  22 [-149, -86]
+brl.bgf_frame86.bmp  [183, 86] :1  22 [-183, -86]
+brl.bgf_frame87.bmp  [200, 88] :1  22 [-200, -88]
+brl.bgf_frame88.bmp  [157, 89] :1  22 [-157, -89]
+brl.bgf_frame89.bmp  [139, 89] :1  22 [-139, -89]
+brl.bgf_frame90.bmp  [154, 92] :1  22 [-151, -90]
+brl.bgf_frame91.bmp  [168, 89] :1  22 [-168, -89]
+brl.bgf_frame92.bmp  [184, 89] :1  22 [-184, -89]
+brl.bgf_frame93.bmp  [200, 90] :1  -22 [-200, -90]
+brl.bgf_frame94.bmp  [169, 90] :1  -22 [-169, -90]
+brl.bgf_frame95.bmp  [152, 90] :1  22 [-152, -90]
+34
+ 8   1 2 3 4 4 4 5 6
+ 8   7 8 9 10 10 10 11 12
+ 8   13 14 15 16 16 16 17 18
+ 8   19 20 21 22 22 22 23 24
+ 8   25 26 27 28 28 28 29 30
+ 8   31 32 33 34 34 34 35 36
+ 8   37 38 39 40 40 40 41 42
+ 8   43 44 45 46 46 46 47 48
+ 8   49 50 51 52 52 52 53 54
+ 8   43 44 45 46 46 46 47 48
+ 8   55 56 57 58 58 58 59 60
+ 8   61 62 63 64 64 64 65 66
+ 8   67 68 69 70 70 70 71 72
+ 8   73 74 75 76 76 76 77 78
+ 8   79 80 81 82 82 82 83 84
+ 8   85 86 87 88 88 88 89 90
+ 8   91 92 93 94 94 94 95 96
+ 8   37 38 39 40 40 40 41 42
+ 8   43 44 45 46 46 46 47 48
+ 8   49 50 51 52 52 52 53 54
+ 8   43 44 45 46 46 46 47 48
+ 8   13 14 15 16 16 16 17 18
+ 8   55 56 57 58 58 58 59 60
+ 8   61 62 63 64 64 64 65 66
+ 8   55 56 57 58 58 58 59 60
+ 8   67 68 69 70 70 70 71 72
+ 8   31 32 33 34 34 34 35 36
+ 8   67 68 69 70 70 70 71 72
+ 8   31 32 33 34 34 34 35 36
+ 8   67 68 69 70 70 70 71 72
+ 8   19 20 21 22 22 22 23 24
+ 8   25 26 27 28 28 28 29 30
+ 8   19 20 21 22 22 22 23 24
+ 8   13 14 15 16 16 16 17 18

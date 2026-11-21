@@ -43,7 +43,7 @@ void LoadMotd(void)
       // Delete any existing file
       if (access(file_copy_path, 0) != -1)
          unlink(file_copy_path);
-      if (!rename(file_load_path,file_copy_path))
+      if (rename(file_load_path,file_copy_path) != 0)
          eprintf("LoadMotd can't move %s\n",MOTD_FILE);
    }
 

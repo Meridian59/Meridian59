@@ -51,6 +51,9 @@ resources:
    KocatanTailor_sapphire_sale = "I have imported %s%s from the mainland.  I do love the bright blue color."
    KocatanTailor_emerald_sale = "I can sell you %s%s.  They come all the way from the mainland, so it will cost you."
 
+   KocatanTailor_not_interested = "Um, sorry. I can't accept that offer."
+   KocatanTailor_offer_too_much = "Not so much at once. I shouldn't have all that out where people might notice."
+
 classvars:
 
    vrName = KocatanTailor_name_rsc
@@ -60,6 +63,8 @@ classvars:
 
    viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_COND_SELLER | MOB_BUYER
    viOccupation = MOB_ROLE_TAILOR
+
+   vrBuyer_unwanted = KocatanTailor_not_interested
 
 properties:
    
@@ -249,16 +254,15 @@ messages:
 
    ObjectDesired(what=$,who=$)
    {
-      if IsClass(what,&NumberItem) and
-         Send(what,@GetNumber) > 100
+      if Send(self,@IsObjectGem,#what=what) OR Send(self,@IsObjectSundry,#what=what)
       {
-         return FALSE;
-      }
+         if IsClass(what,&NumberItem) AND Send(what,@GetNumber) > 100
+         {
+            Send(self,@SayToOne,#target=who,#message_rsc=KocatanTailor_offer_too_much);
+            return FALSE;
+         }
 
-      if Send(self,@IsObjectGem,#what=what) or
-         Send(self,@IsObjectSundry,#what=what)
-      {
-	      return TRUE;
+         return TRUE;
       }
 
       return FALSE;

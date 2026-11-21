@@ -1,4 +1,4 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+// Meridian 59, Copyright 1994-2026 Andrew Kirmse and Chris Kirmse.
 // All rights reserved.
 //
 // This software is distributed under a license that is described in
@@ -860,10 +860,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		gFullTextureSize, gSmallTextureSize, mat, gFrame, gScreenWidth, gScreenHeight);
 
 	// post overlay effects
-	if (draw_objects)
-	{
-		D3DPostOverlayEffects(fxRenderSystemStructure);
-	}
+	D3DPostOverlayEffects(fxRenderSystemStructure);
 
 	// apply blur and wave distortion effects
 	if (effects.blur || effects.waver)

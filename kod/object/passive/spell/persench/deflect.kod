@@ -31,7 +31,7 @@ resources:
    Deflect_off_rsc = "The magical barrier protecting you seems to be waning."
 
    Deflect_spell_intro = \
-      "Kraanan Level 4: Forms a magical barrier around the target, protecting"
+      "Kraanan Level 4: Forms a magical barrier around the target, protecting "
       "them from harm of magics that damage directly."
 
    Deflect_sound = kdeflect.wav

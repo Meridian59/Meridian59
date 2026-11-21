@@ -94,6 +94,14 @@ messages:
 	 Send(who, @MsgSendUser, #message_rsc=enchantweapon_already_done);
 	 return False;
       }
+      % ATCK_WEAP_NONMAGIC is added once the effect expires, so do not apply this
+      % enchantment to weapons that do not currently have it.
+      if NOT Send(oWeapon, @CheckTypeFlag, #flag=ATCK_WEAP_NONMAGIC)
+      {
+         Send(who, @MsgSendUser, #message_rsc=enchantweapon_resists,
+	        #parm1=Send(oWeapon, @GetCapDef), #parm2=send(oWeapon, @GetName));
+         return false;
+      }
       propagate;   % Check other things higher up
    }
 

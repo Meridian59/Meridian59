@@ -61,15 +61,12 @@
 #define IDS_UPLOAD                      56
 #define IDS_CHPASSWD                    57
 #define IDS_ADMIN                       58
-#define IDS_REGISTER                    59
-#define IDS_ADMINNOTE                   60
 #define IDS_HELP                        61
 #define IDS_MENULOGOFF                  62
 #define IDS_PASSWORDCHANGED             63
 #define IDS_ADDRESS                     64
 #define IDS_PHONENUM                    65
 #define IDS_NAME                        66
-#define IDS_NOREGISTER                  67
 #define IDS_CHARNAME                    68
 #define IDS_UNPACKING                   69
 #define IDS_RETRIEVING                  69
@@ -144,8 +141,6 @@
 #define IDD_PASSWORD                    123
 #define IDC_TARGETCURSOR                125
 #define IDD_TIMEOUT                     126
-#define IDD_REGISTER                    127
-#define IDD_ADMINNOTE                   128
 #define IDS_NOSELLERS                   128
 #define IDS_NOOFFERERS                  129
 #define IDS_NOBROWSER                   130

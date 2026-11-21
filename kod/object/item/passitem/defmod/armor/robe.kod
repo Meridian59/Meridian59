@@ -162,6 +162,11 @@ messages:
       return 2;
    }
    
+   OverrideArmsForGauntlets()
+   {
+      return TRUE;
+   }
+
    DoPlayerArt()
    {
       local oRoom;

@@ -16,7 +16,6 @@
 enum {
    AP_PING          = 1,
    AP_LOGIN         = 2,
-   AP_REGISTER      = 3,
    AP_REQ_GAME      = 4,
    AP_REQ_ADMIN     = 5,
    AP_RESYNC        = 6,
@@ -24,7 +23,6 @@ enum {
    AP_GETRESOURCE   = 8,
    AP_GETALL        = 9,
    AP_REQ_MENU      = 10,
-   AP_ADMINNOTE     = 11,
 
    AP_GETLOGIN      = 21,
    AP_GETCHOICE     = 22,

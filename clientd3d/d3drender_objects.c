@@ -531,7 +531,11 @@ void D3DRenderNamesDraw3D(
 
 		float lastDistance = 0;
 
-		for (offset = 0; offset <= 1; offset++)
+		// Only draw a text shadow if the text and shadow colors differ
+		const bool drawShadow = (PALETTERGB(color.red, color.green, color.blue) != NAME_COLOR_NORMAL_BG);
+		const int numPasses = drawShadow ? 2 : 1;
+
+		for (offset = 0; offset < numPasses; offset++)
 		{
 			float x = 0.0f;
 			float z = 0;
@@ -639,9 +643,9 @@ void D3DRenderNamesDraw3D(
 
 				if (offset != 0)
 				{
-					bgra.r = 0;
-					bgra.g = 0;
-					bgra.b = 0;
+					bgra.r = GetRValue(NAME_COLOR_NORMAL_BG);
+					bgra.g = GetGValue(NAME_COLOR_NORMAL_BG);
+					bgra.b = GetBValue(NAME_COLOR_NORMAL_BG);
 				}
 
 				for (i = 0; i < 4; i++)
@@ -1184,7 +1188,7 @@ void D3DRenderOverlaysDraw(
 						bottomRight.w = 1.0f;
 
 						MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
-						MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_OBJECT_PITCH_RAD);
+						MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_PITCH_RAD);
 						MatrixMultiply(&rot, &rot, &mat);
 						MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
 							-(float)objectsRenderParams.params->viewer_height, -(float)objectsRenderParams.params->viewer_y);
@@ -1730,7 +1734,7 @@ void D3DRenderObjectsDraw(
 			bottomRight.w = 1.0f;
 
 			MatrixRotateY(&rot, static_cast<float>(angleHeading) * GAME_ANGLE_TO_RAD);
-			MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_OBJECT_PITCH_RAD);
+			MatrixRotateX(&mat, static_cast<float>(anglePitch) * Y_UNIT_TO_VIEW_PITCH_RAD);
 			MatrixMultiply(&rot, &rot, &mat);
 			MatrixTranslate(&trans, -(float)objectsRenderParams.params->viewer_x, 
 				-(float)objectsRenderParams.params->viewer_height, -(float)objectsRenderParams.params->viewer_y);

@@ -6,6 +6,49 @@
 //
 // Meridian is a registered trademark.
 #include "client.h"
+#include <unordered_map>
+
+///////////////
+// Constants //
+///////////////
+
+// Lookup table for translating blend XLAT to BGRA.
+static const std::unordered_map<int, custom_bgra> BLEND_XLAT_BGRA_TABLE =
+{
+	{ XLAT_BLEND10RED,		{ 0, 0, COLOR_MAX, 25 } },
+	{ XLAT_BLEND20RED,		{ 0, 0, COLOR_MAX, 50 } },
+	{ XLAT_BLEND25RED,		{ 0, 0, COLOR_MAX, 75 } },
+	{ XLAT_BLEND30RED,		{ 0, 0, COLOR_MAX, 75 } },
+	{ XLAT_BLEND40RED,		{ 0, 0, COLOR_MAX, 100 } },
+	{ XLAT_BLEND50RED,		{ 0, 0, COLOR_MAX, 125 } },
+	{ XLAT_BLEND60RED,		{ 0, 0, COLOR_MAX, 150 } },
+	{ XLAT_BLEND70RED,		{ 0, 0, COLOR_MAX, 175 } },
+	{ XLAT_BLEND75RED,		{ 0, 0, COLOR_MAX, 200 } },
+	{ XLAT_BLEND80RED,		{ 0, 0, COLOR_MAX, 200 } },
+	{ XLAT_BLEND90RED,		{ 0, 0, COLOR_MAX, 225 } },
+	{ XLAT_BLEND100RED,		{ 0, 0, COLOR_MAX, 255 } },
+
+	{ XLAT_BLEND10WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 25 } },
+	{ XLAT_BLEND20WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 50 } },
+	{ XLAT_BLEND30WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 75 } },
+	{ XLAT_BLEND40WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 100 } },
+	{ XLAT_BLEND50WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 125 } },
+	{ XLAT_BLEND60WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 150 } },
+	{ XLAT_BLEND70WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 175 } },
+	{ XLAT_BLEND80WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 200 } },
+	{ XLAT_BLEND90WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 225 } },
+	{ XLAT_BLEND100WHITE,	{ COLOR_MAX, COLOR_MAX, COLOR_MAX, 255 } },
+
+	{ XLAT_BLEND25YELLOW,	{ 0, COLOR_MAX, COLOR_MAX, 64 } },
+
+	{ XLAT_BLEND25GREEN,	{ 0, COLOR_MAX, 0, 64 } },
+	{ XLAT_BLEND50GREEN,	{ 0, COLOR_MAX, 0, 128 } },
+	{ XLAT_BLEND75GREEN,	{ 0, COLOR_MAX, 0, 192 } },
+
+	{ XLAT_BLEND25BLUE,		{ COLOR_MAX, 0, 0, 64 } },
+	{ XLAT_BLEND50BLUE,		{ COLOR_MAX, 0, 0, 128 } },
+	{ XLAT_BLEND75BLUE,		{ COLOR_MAX, 0, 0, 192 } },
+};
 
 ///////////////
 // Variables //
@@ -16,11 +59,65 @@ static particle_system sandParticleSystem;
 // Internal Implementation //
 /////////////////////////////
 
+// Returns the BGRA color that matches the given blend XLAT value.
+static custom_bgra BlendXlatToBGRA(int xlat)
+{
+	auto entry = BLEND_XLAT_BGRA_TABLE.find(xlat);
+	if (entry != BLEND_XLAT_BGRA_TABLE.end())
+	{
+		return entry->second;
+	}
+
+	// Default to opaque black if blend XLAT wasn't found in the lookup table.
+	return {0, 0, 0, 255};
+}
+
+/**
+* Adds a fullscreen quad of the given color to the object pool, tinting the whole screen.
+* Returns false if no render packet was available.
+*/
+static bool DrawFullScreenTint(const FxRenderSystemStructure& fxrss, custom_bgra bgra)
+{
+	auto *pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, nullptr, nullptr, 0, 0, 0);
+	if (nullptr == pPacket)
+		return false;
+
+	auto *pChunk = D3DRenderChunkNew(pPacket);
+	assert(pChunk);
+	pChunk->numIndices = 4;
+	pChunk->numVertices = 4;
+	pChunk->numPrimitives = pChunk->numVertices - 2;
+	pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
+	pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
+	MatrixIdentity(&pChunk->xForm);
+
+	for (int i = 0; i < 4; i++)
+	{
+		CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
+	}
+
+	CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+		D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
+	CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
+		D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+	CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+		D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
+	CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
+		D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
+
+	pChunk->indices[0] = 1;
+	pChunk->indices[1] = 2;
+	pChunk->indices[2] = 0;
+	pChunk->indices[3] = 3;
+
+	return true;
+}
+
 /**
 * Initializes the sandstorm particle emitters with predefined positions, energy, and colors for the
 * particle system.
 */
-static void SandstormInit(void)
+static void SandstormInit()
 {
 	static constexpr int SAND_EMITTER_COUNT = 8;
 	static constexpr int SAND_LIFETIME = 40;
@@ -98,138 +195,23 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 {
 	D3DRender_SetAlphaTestState(TRUE, 1, D3DCMP_GREATEREQUAL);
 	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 
 	D3DCacheSystemReset(fxrss.objectCacheSystem);
 	D3DRenderPoolReset(fxrss.objectPool, &D3DMaterialObjectPool);
 
-	static DWORD			timeLastFrame = 0;
-	DWORD					timeCurrent, timeDelta;
-	int						i;
-	d3d_render_chunk_new	*pChunk;
-	d3d_render_packet_new	*pPacket;
+	static DWORD timeLastFrame = 0;
 
-	timeCurrent = timeGetTime();
-	timeDelta = timeCurrent - timeLastFrame;
+	DWORD timeCurrent = timeGetTime();
+	DWORD timeDelta = timeCurrent - timeLastFrame;
 	timeLastFrame = timeCurrent;
 
 	// Flash of XLAT.  Could be color, blindness, whatever.
 	if (effects.flashxlat != XLAT_IDENTITY)
 	{
-		custom_bgra	bgra;
+		custom_bgra	bgra = BlendXlatToBGRA(effects.flashxlat);
 
-		effects.duration -= (int)timeDelta;
-		switch (effects.flashxlat)
-		{
-			case XLAT_BLEND10RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 25;
-			break;
-
-			case XLAT_BLEND20RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 50;
-			break;
-
-			case XLAT_BLEND25RED:
-			case XLAT_BLEND30RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 75;
-			break;
-
-			case XLAT_BLEND40RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 100;
-			break;
-
-			case XLAT_BLEND50RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 125;
-			break;
-
-			case XLAT_BLEND60RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 150;
-			break;
-
-			case XLAT_BLEND70RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 175;
-			break;
-
-			case XLAT_BLEND75RED:
-			case XLAT_BLEND80RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 200;
-			break;
-
-			case XLAT_BLEND90RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 225;
-			break;
-
-			case XLAT_BLEND100RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND10WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 25;
-			break;
-
-			case XLAT_BLEND20WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 50;
-			break;
-
-			case XLAT_BLEND30WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 75;
-			break;
-
-			case XLAT_BLEND40WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 100;
-			break;
-
-			case XLAT_BLEND50WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 125;
-			break;
-
-			case XLAT_BLEND60WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 150;
-			break;
-
-			case XLAT_BLEND70WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 175;
-			break;
-
-			case XLAT_BLEND80WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 200;
-			break;
-
-			case XLAT_BLEND90WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 225;
-			break;
-
-			case XLAT_BLEND100WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND25YELLOW:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND25GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 64;
-			break;
-			case XLAT_BLEND50GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 128;
-			break;
-			case XLAT_BLEND75GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 192;
-			break;
-			case XLAT_BLEND25BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 64;
-			break;
-			case XLAT_BLEND50BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 128;
-			break;
-			case XLAT_BLEND75BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 192;
-			break;
-
-			default:
-				bgra.b = 0; bgra.g = 0; bgra.r = 0; bgra.a = 255;
-			break;
-		}
+		effects.duration -= static_cast<int>(timeDelta);
 
 		if (effects.duration <= 0)
 		{
@@ -237,184 +219,14 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 			effects.duration = 0;
 		}
 
-		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		if (!DrawFullScreenTint(fxrss, bgra))
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
-		assert(pChunk);
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
-		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
-		MatrixIdentity(&pChunk->xForm);
-
-		for (i = 0; i < 4; i++)
-		{
-			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
-		}
-
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
 	}
 
 	if (effects.xlatOverride > 0)
 	{
-		custom_bgra	bgra;
-
-		switch (effects.xlatOverride)
-		{
-			case XLAT_BLEND10RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 25;
-			break;
-
-			case XLAT_BLEND20RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 50;
-			break;
-
-			case XLAT_BLEND25RED:
-			case XLAT_BLEND30RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 75;
-			break;
-
-			case XLAT_BLEND40RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 100;
-			break;
-
-			case XLAT_BLEND50RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 125;
-			break;
-
-			case XLAT_BLEND60RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 150;
-			break;
-
-			case XLAT_BLEND70RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 175;
-			break;
-
-			case XLAT_BLEND75RED:
-			case XLAT_BLEND80RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 200;
-			break;
-
-			case XLAT_BLEND90RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 225;
-			break;
-
-			case XLAT_BLEND100RED:
-				bgra.b = 0; bgra.g = 0; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND10WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 25;
-			break;
-
-			case XLAT_BLEND20WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 50;
-			break;
-
-			case XLAT_BLEND30WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 75;
-			break;
-
-			case XLAT_BLEND40WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 100;
-			break;
-
-			case XLAT_BLEND50WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 125;
-			break;
-
-			case XLAT_BLEND60WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 150;
-			break;
-
-			case XLAT_BLEND70WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 175;
-			break;
-
-			case XLAT_BLEND80WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 200;
-			break;
-
-			case XLAT_BLEND90WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 225;
-			break;
-
-			case XLAT_BLEND100WHITE:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND25YELLOW:
-				bgra.b = COLOR_MAX; bgra.g = COLOR_MAX; bgra.r = COLOR_MAX; bgra.a = 255;
-			break;
-
-			case XLAT_BLEND25GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 64;
-			break;
-			case XLAT_BLEND50GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 128;
-			break;
-			case XLAT_BLEND75GREEN:
-				bgra.b = 0; bgra.g = COLOR_MAX; bgra.r = 0; bgra.a = 192;
-			break;
-			case XLAT_BLEND25BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 64;
-			break;
-			case XLAT_BLEND50BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 128;
-			break;
-			case XLAT_BLEND75BLUE:
-				bgra.b = COLOR_MAX; bgra.g = 0; bgra.r = 0; bgra.a = 192;
-			break;
-
-			default:
-				bgra.b = 0; bgra.g = 0; bgra.r = 0; bgra.a = 255;
-			break;
-		}
-
-		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		if (!DrawFullScreenTint(fxrss, BlendXlatToBGRA(effects.xlatOverride)))
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
-		assert(pChunk);
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
-		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
-		MatrixIdentity(&pChunk->xForm);
-
-		for (i = 0; i < 4; i++)
-		{
-			CHUNK_BGRA_SET(pChunk, i, bgra.b, bgra.g, bgra.r, bgra.a);
-		}
-
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
 	}
 
 	// May be drawn over room or map.
@@ -427,36 +239,9 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 		whiteout = whiteout * COLOR_MAX / 500;
 		whiteout = std::max(whiteout, 200);
 
-		pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-		if (NULL == pPacket)
+		custom_bgra bgra = {COLOR_MAX, COLOR_MAX, COLOR_MAX, static_cast<unsigned char>(whiteout)};
+		if (!DrawFullScreenTint(fxrss, bgra))
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
-		assert(pChunk);
-		pChunk->numIndices = 4;
-		pChunk->numVertices = 4;
-		pChunk->numPrimitives = pChunk->numVertices - 2;
-		pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
-		pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
-		MatrixIdentity(&pChunk->xForm);
-
-		for (i = 0; i < 4; i++)
-		{
-			CHUNK_BGRA_SET(pChunk, i, COLOR_MAX, COLOR_MAX, COLOR_MAX, whiteout);
-		}
-
-		CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-		CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-			D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-
-		pChunk->indices[0] = 1;
-		pChunk->indices[1] = 2;
-		pChunk->indices[2] = 0;
-		pChunk->indices[3] = 3;
 	}
 
 	// Pain (always drawn last).
@@ -468,42 +253,15 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 
 			pain = pain * 204 / 2000;
 
-			pPacket = D3DRenderPacketFindMatch(fxrss.objectPool, NULL, NULL, 0, 0, 0);
-			if (NULL == pPacket)
+			custom_bgra bgra = {0, 0, COLOR_MAX, static_cast<unsigned char>(pain)};
+			if (!DrawFullScreenTint(fxrss, bgra))
 				return;
-			pChunk = D3DRenderChunkNew(pPacket);
-			assert(pChunk);
-			pChunk->numIndices = 4;
-			pChunk->numVertices = 4;
-			pChunk->numPrimitives = pChunk->numVertices - 2;
-			pPacket->pMaterialFctn = &D3DMaterialEffectPacket;
-			pChunk->pMaterialFctn = &D3DMaterialEffectChunk;
-			MatrixIdentity(&pChunk->xForm);
-
-			for (i = 0; i < 4; i++)
-			{
-				CHUNK_BGRA_SET(pChunk, i, 0, 0, COLOR_MAX, pain);
-			}
-
-			CHUNK_XYZ_SET(pChunk, 0, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-			CHUNK_XYZ_SET(pChunk, 1, D3DRENDER_SCREEN_TO_CLIP_X(0, fxrss.screenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-			CHUNK_XYZ_SET(pChunk, 2, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(fxrss.screenHeight, fxrss.screenHeight));
-			CHUNK_XYZ_SET(pChunk, 3, D3DRENDER_SCREEN_TO_CLIP_X(fxrss.screenWidth, fxrss.screenWidth), 0,
-				D3DRENDER_SCREEN_TO_CLIP_Y(0, fxrss.screenHeight));
-
-			pChunk->indices[0] = 1;
-			pChunk->indices[1] = 2;
-			pChunk->indices[2] = 0;
-			pChunk->indices[3] = 3;
 		}
 	}
 
 	D3DCacheFill(fxrss.objectCacheSystem, fxrss.objectPool, 1);
 	D3DCacheFlush(fxrss.objectCacheSystem, fxrss.objectPool, 1, D3DPT_TRIANGLESTRIP);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 }
 
 /**
@@ -512,13 +270,10 @@ void D3DPostOverlayEffects(const FxRenderSystemStructure& fxrss)
 */
 void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 {
-	d3d_render_packet_new	*pPacket;
-	d3d_render_chunk_new	*pChunk;
-	int						i, t;
-	static int				offset = 0;
-	static int				offsetDir = 1;
+	static int offset = 0;
+	static int offsetDir = 1;
 
-	t = fxRss.frame & 7;
+	int captureSlot = fxRss.frame & 7;
 
 	if (fxRss.frame & 63)
 	{
@@ -534,20 +289,20 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	D3DRender_SetAlphaTestState(FALSE, 1, D3DCMP_GREATEREQUAL);
 	D3DRender_SetAlphaBlendState(FALSE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
 
-	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, fxRss.vertexDeclaration);
+	gpD3DDevice->SetVertexShader(nullptr);
+	gpD3DDevice->SetVertexDeclaration(fxRss.vertexDeclaration);
 
-	D3DRender_CaptureEffect(fxRss.backBufferTexFull, fxRss.backBufferTex[t]);
+	D3DRender_CaptureEffect(fxRss.backBufferTexFull, fxRss.backBufferTex[captureSlot]);
 
 	D3DCacheSystemReset(fxRss.effectCacheSystem);
 	D3DRenderPoolReset(fxRss.effectPool, &D3DMaterialBlurPool);
 
-	for (i = 0; i <= 7; i++)
+	for (int i = 0; i <= 7; i++)
 	{
-		pPacket = D3DRenderPacketNew(fxRss.effectPool);
-		if (NULL == pPacket)
+		auto *pPacket = D3DRenderPacketNew(fxRss.effectPool);
+		if (nullptr == pPacket)
 			return;
-		pChunk = D3DRenderChunkNew(pPacket);
+		auto *pChunk = D3DRenderChunkNew(pPacket);
 		pPacket->pMaterialFctn = D3DMaterialBlurPacket;
 		pChunk->pMaterialFctn = D3DMaterialBlurChunk;
 		pPacket->pTexture = fxRss.backBufferTex[i];
@@ -580,10 +335,10 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 		CHUNK_INDEX_SET(pChunk, 3, 3);
 	}
 
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_WORLD, &fxRss.transformMatrix);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &fxRss.transformMatrix);
-	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &fxRss.transformMatrix);
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, FALSE);
+	gpD3DDevice->SetTransform(D3DTS_WORLD, &fxRss.transformMatrix);
+	gpD3DDevice->SetTransform(D3DTS_VIEW, &fxRss.transformMatrix);
+	gpD3DDevice->SetTransform(D3DTS_PROJECTION, &fxRss.transformMatrix);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 
 	D3DRender_SetAlphaTestState(FALSE, 1, D3DCMP_GREATEREQUAL);
 	D3DRender_SetAlphaBlendState(TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
@@ -591,5 +346,5 @@ void D3DFxBlurWaver(const FxRenderSystemStructure& fxRss)
 	D3DCacheFill(fxRss.effectCacheSystem, fxRss.effectPool, 1);
 	D3DCacheFlush(fxRss.effectCacheSystem, fxRss.effectPool, 1, D3DPT_TRIANGLESTRIP);
 
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
+	gpD3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 }

@@ -19,7 +19,6 @@ using namespace std;
 static int user_type;       /* Tells if user is administrator, guest, etc.. */
 bool logged_in;             /* true iff we're past login dialog */
 extern int connection;
-bool admin_mode;            // true when user wants to go into admin mode
 
 static INT_PTR CALLBACK LoginDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 static HWND GetMessageBoxParent(void);
@@ -212,13 +211,6 @@ void EnterGame(void)
 {
    int encodednum;
 
-   // Go into admin mode if person is admin and mode selected
-   if (user_type == USER_ADMIN && admin_mode)
-     {
-       RequestAdmin();
-       return;
-     }
-  
    // Go into game
    DownloadCheckDirs(hMain);
    encodednum = (((MAJOR_REV * 100) + MINOR_REV) * P_CATCH) + P_CATCH;
@@ -232,7 +224,6 @@ void EnterGame(void)
  */
 bool GetLogin(void)
 {
-   admin_mode = false;
    if (config.quickstart)
    {
       logged_in = false;
@@ -241,9 +232,7 @@ bool GetLogin(void)
    {
       logged_in = false;
       if (DialogBox(hInst, MAKEINTRESOURCE(IDD_LOGIN), hMain, LoginDialogProc) == IDCANCEL)
-	 return false;
-      // Go into admin mode if control key is held down
-      admin_mode = (GetKeyState(VK_CONTROL) < 0);
+        return false;
    }
       
    return true;

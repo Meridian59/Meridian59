@@ -266,7 +266,14 @@ messages:
       
       propagate;
    }
-   
+
+   GetWindowOverlayID()
+   {
+	  % Setting bows to the offhand means the main hand can be shown casting spells.
+      % Bows require both hands so it isn't possible to equip other offhand items.
+	  return PWO_LEFT_HAND;
+   }
+
    GetWindowOverlayHotspot()
    {
       % turns off the window overlay

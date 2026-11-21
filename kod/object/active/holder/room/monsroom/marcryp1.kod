@@ -102,7 +102,7 @@ messages:
 
       plGenerators = [ [5, 21], [5, 36], [9, 28], [17, 35], [21, 23], [25, 11], [29, 18], [37, 35], [38, 19] ];
 
-      post(self,@DoMartyr);
+      Post(self,@DoMartyr);
 
       propagate;
    }
@@ -136,9 +136,7 @@ messages:
 
    CreateStandardObjects()
    {
-      local oSign;
-
-      oSign = Create(&Skull);
+      local oSign = Create(&Skull);
       Send(self,@NewHold,#what=oSign,#new_row=11,#new_col=21,#fine_row=32,#fine_col=40);
 
       oSign = Create(&Skull);
@@ -225,14 +223,12 @@ messages:
 
    DoMartyr()
    {
-      local oMartyr;
-
-      if NOT send(SYS,@IsPKAllowed)
+      if NOT Send(SYS,@IsPKAllowed)
       {
          return;
       }
 
-      oMartyr = send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
+      local oMartyr = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
       
       if Send(self,@IsEnchanted,#what=oMartyr)
       {
@@ -254,11 +250,11 @@ messages:
       if what <> self
          AND StringContain(string,MarionCrypt1_gods)
       {
-         send(self,@DoMartyr);
+         Send(self,@DoMartyr);
       }
 
       % Set the IsClass check to Player when finished testing.
-      if NOT isClass(what,&DM) OR type = SAY_YELL
+      if NOT IsClass(what,&DM) OR type = SAY_YELL
       {
          propagate;
       }
@@ -268,8 +264,8 @@ messages:
          AND ptNecroDoor = $
          %AND Check for location?
       {
-         send(self,@OpenNecroCeiling);
-         send(self,@OpenNecroFloor);
+         Send(self,@OpenNecroCeiling);
+         Send(self,@OpenNecroFloor);
 
          Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc);
 
@@ -282,16 +278,16 @@ messages:
    TryCreateMonster()
    {
       % When we try to create a monster, then make sure Martyr's is up.
-      send(self,@DoMartyr);
+      Send(self,@DoMartyr);
 
       propagate;
    }
 
    OpenNecroCeiling()
    {
-      send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_CEILING_LIFT,
            #height=484,#speed=8);
-      send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_CEILING_LIFT,
            #height=494,#speed=8);
 
       return;
@@ -299,9 +295,9 @@ messages:
 
    OpenNecroFloor()
    {
-      send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_FLOOR_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_FLOOR_LIFT,
            #height=424,#speed=8);
-      send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_FLOOR_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_FLOOR_LIFT,
            #height=434,#speed=8);
            
       return;
@@ -323,8 +319,8 @@ messages:
          ptNecroDoor = $;
       }
 
-      send(self,@CloseNecroCeiling);
-      send(self,@CloseNecroFloor);
+      Send(self,@CloseNecroCeiling);
+      Send(self,@CloseNecroFloor);
 
       Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc);
 
@@ -333,9 +329,9 @@ messages:
 
    CloseNecroCeiling()
    {
-      send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_CEILING_LIFT,
            #height=458,#speed=16);
-      send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_CEILING_LIFT,
            #height=468,#speed=16);
 
       return;
@@ -343,9 +339,9 @@ messages:
 
    CloseNecroFloor()
    {
-      send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_FLOOR_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_FLOOR_LIFT,
            #height=458,#speed=16);
-      send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_FLOOR_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_FLOOR_LIFT,
            #height=468,#speed=16);
 
       return;
@@ -364,9 +360,7 @@ messages:
 
    LeverChanged(what = $)
    {
-      local iSwitched;
-
-      iSwitched = 0;
+      local iSwitched = 0;
       if Send(poLever1,@IsSwitched)
       {
          iSwitched = iSwitched + 1;
@@ -377,9 +371,9 @@ messages:
          iSwitched = iSwitched + 1;
       }
 
-      if send(self,@CountInFinal,#count=COUNT_MONSTERS) = 0
+      if Send(self,@CountInFinal,#count=COUNT_MONSTERS) = 0
       {
-         send(self,@ResetMonstersInFinal);
+         Send(self,@ResetMonstersInFinal);
       }
 
       if ptDoor <> $
@@ -398,9 +392,9 @@ messages:
       
       if iSwitched = 2
       {
-         send(self,@OpenFinalDoor);
+         Send(self,@OpenFinalDoor);
          % Close the door down.  Gotta fight in the last area to go down.
-         send(self,@CloseDoorDown);
+         Send(self,@CloseDoorDown);
       }
 
       piSwitched = iSwitched;
@@ -410,7 +404,7 @@ messages:
 
    ResetPuzzle()
    {
-      send(self,@SlamTimer);
+      Send(self,@SlamTimer);
       
       return;
    }
@@ -454,8 +448,8 @@ messages:
       Send(poLever1,@SetSwitched,#switched=FALSE);
       Send(poLever2,@SetSwitched,#switched=FALSE);
 
-      send(self,@CloseDoorDown);
-      send(self,@CloseFinalDoor,#speed=32);
+      Send(self,@CloseDoorDown);
+      Send(self,@CloseFinalDoor,#speed=32);
 
       Send(self,@ResetMonstersInFinal);
 
@@ -470,11 +464,11 @@ messages:
          Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc,#what=poLever1);
          if pbDoorDownActive
          {
-            send(self,@OpenDoorDown);
+            Send(self,@OpenDoorDown);
          }
          else
          {
-            send(self,@OpenFinalDoor);
+            Send(self,@OpenFinalDoor);
          }
 
          ptDoor = CreateTimer(self,@FightTimer,FIGHT_TIME);
@@ -506,20 +500,17 @@ messages:
    "With count = COUNT_MONSTERS, count monsters in region.\n"
    "With count = COUNT_PLAYERS, count players in region."
    {
-      local i,each_obj,iCount,iRow,iCol;
-
-      iCount = 0;
+      local i, iCount = 0;
       for i in plActive
       {
-         each_obj = First(i);
+         local each_obj = First(i);
          if count = COUNT_MONSTERS
-             AND IsClass(each_obj,&Monster) 
+             AND IsClass(each_obj,&Monster)
             OR count = COUNT_PLAYERS
              AND IsClass(each_obj,&User)
          {
-            iRow = Send(each_obj,@GetRow);
-            
-            iCol = Send(each_obj,@GetCol);
+            local iRow = Send(each_obj,@GetRow);
+            local iCol = Send(each_obj,@GetCol);
             if (iRow >= MIN_FINAL_ROW
                 AND iRow <= MAX_FINAL_ROW
                 AND iCol >= MIN_FINAL_COL
@@ -537,15 +528,14 @@ messages:
 
    ResetMonstersInFinal()
    {
-      local i,each_obj,iRow,iCol, oStatue;
-
+      local i;
       for i in plActive
       {
-         each_obj = First(i);
+         local each_obj = First(i);
          if IsClass(each_obj,&Monster)
          {
-            iRow = Send(each_obj,@GetRow);
-            iCol = Send(each_obj,@GetCol);
+            local iRow = Send(each_obj,@GetRow);
+            local iCol = Send(each_obj,@GetCol);
             
             if (iRow >= MIN_FINAL_ROW
                 AND iRow <= MAX_FINAL_ROW
@@ -559,15 +549,15 @@ messages:
          }
       }
 
-      oStatue = Create(&LivingStatue);
-      send(self,@NewHold,#what=oStatue,#new_row=32,#new_col=7,#fine_row=0,#fine_col=0);
-      send(self,@SomethingTurned,#what=oStatue,#new_angle=ANGLE_NORTH);
+      local oStatue = Create(&LivingStatue);
+      Send(self,@NewHold,#what=oStatue,#new_row=32,#new_col=7,#fine_row=0,#fine_col=0);
+      Send(self,@SomethingTurned,#what=oStatue,#new_angle=ANGLE_NORTH);
 
       i = 0;
       while i < 5
       {
-         iRow = Random(MIN_GEN_ROW,MAX_GEN_ROW);
-         iCol = Random(MIN_GEN_COL,MAX_GEN_COL);
+         local iRow = Random(MIN_GEN_ROW,MAX_GEN_ROW);
+         local iCol = Random(MIN_GEN_COL,MAX_GEN_COL);
          Send(self,@NewHold,#what=Create(&SpectralMummy),#new_row=iRow,#new_col=iCol);
          i = i + 1;
       }
@@ -577,11 +567,11 @@ messages:
 
    OpenDoorDown()
    {
-      send(self,@CloseFinalDoor);
+      Send(self,@CloseFinalDoor);
 
-      send(self,@SetSector,#sector=SECTOR_EXIT1,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_EXIT1,#animation=ANIMATE_CEILING_LIFT,
            #height=273,#speed=4);
-      send(self,@SetSector,#sector=SECTOR_EXIT2,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_EXIT2,#animation=ANIMATE_CEILING_LIFT,
            #height=161,#speed=4);
 
       return;
@@ -589,9 +579,9 @@ messages:
 
    CloseDoorDown()
    {
-      send(self,@SetSector,#sector=SECTOR_EXIT1,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_EXIT1,#animation=ANIMATE_CEILING_LIFT,
            #height=200,#speed=16);
-      send(self,@SetSector,#sector=SECTOR_EXIT2,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_EXIT2,#animation=ANIMATE_CEILING_LIFT,
            #height=88,#speed=16);
 
       return;

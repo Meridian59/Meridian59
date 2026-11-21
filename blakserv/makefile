@@ -6,11 +6,11 @@ TOPDIR=..
 
 !include $(TOPDIR)\common.mak
 
-BLAKSERVLINKFLAGS = /STACK:10000000 /map /debug $(LINKWINDOWSFLAGS)
+BLAKSERVLINKFLAGS = /STACK:10000000 /map /debug $(LINKWINDOWSFLAGS) /MANIFEST:EMBED /MANIFESTINPUT:blakserv.manifest /MANIFESTUAC:NO
 
 SOURCEDIR = .
 
-LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib
+LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib uxtheme.lib
 
 OBJS =  \
 	$(OUTDIR)\main.obj \
@@ -57,7 +57,6 @@ OBJS =  \
 	$(OUTDIR)\resync.obj \
 	$(OUTDIR)\gamelock.obj \
 	$(OUTDIR)\config.obj \
-	$(OUTDIR)\apndfile.obj \
 	$(OUTDIR)\admincons.obj \
 	$(OUTDIR)\builtin.obj \
 	$(OUTDIR)\version.obj \

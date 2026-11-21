@@ -116,8 +116,17 @@ messages:
 
 
      InFoyer(who=$)
+     "Returns TRUE if who is in this room and in the foyer area.  Returns "
+     "FALSE if who is in the guild hall proper, or not in this room at all, "
+     "such as an object the room has not placed yet."
      {
        local iRow, iCol;
+
+       % An object not in this room has no row or column to compare.
+       if send(who,@getowner) <> self
+         {
+            return FALSE;
+         }
 
        iRow = send(who,@getrow);
        iCol = send(who,@getcol);

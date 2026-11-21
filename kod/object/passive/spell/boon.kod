@@ -114,7 +114,10 @@ messages:
 
       oRoom = Send(first(lTargets),@GetOwner);
 
-      Send(self,@PlaySpellSound,#room_obj=oRoom,#what=first(lTargets));
+      if oRoom <> $
+      {
+         Send(self,@PlaySpellSound,#room_obj=oRoom,#what=first(lTargets));
+      }
 
       return;
    }

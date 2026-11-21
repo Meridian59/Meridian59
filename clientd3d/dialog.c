@@ -383,12 +383,22 @@ INT_PTR CALLBACK DescDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM l
 		   SelectObject(lpdis->hDC, hFont);
 		   SetBkMode(lpdis->hDC, TRANSPARENT);
 		   str = LookupNameRsc(info->obj->name_res);
-		   SetTextColor(lpdis->hDC, NAME_COLOR_NORMAL_BG);
+		   COLORREF fg = GetPlayerNameColor(info->obj->flags, info->name.c_str());
+
+		   // Color white names so that they may be seen against the dialog bg
+		   if (fg == PALETTERGB(255, 255, 255))
+			   fg = NAME_COLOR_DIALOG_FG;
+
+		   // A shadow the same color as the text would only smear it
+		   if (fg != NAME_COLOR_NORMAL_BG)
+		   {
+			   SetTextColor(lpdis->hDC, NAME_COLOR_NORMAL_BG);
+			   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
+			   OffsetRect(&lpdis->rcItem, -1, -1);
+		   }
+		   SetTextColor(lpdis->hDC, fg);
 		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
-		   OffsetRect(&lpdis->rcItem, -1, -1);
-		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name.c_str()));
-		   DrawText(lpdis->hDC, str, (int) strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
-		   
+
 		   break;
        }
 	   return TRUE;

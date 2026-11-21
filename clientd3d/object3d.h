@@ -53,6 +53,7 @@ typedef struct {
 } DrawObjectInfo;
 
 #define NAME_COLOR_NORMAL_BG   PALETTERGB(0, 0, 0)
+#define NAME_COLOR_DIALOG_FG   PALETTERGB(0, 0, 0)
 
 BOOL DrawObject3D(DrawnObject *object, ViewCone *clip);
 bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *area, bool bTargetSelectEffect );

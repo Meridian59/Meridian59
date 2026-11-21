@@ -104,6 +104,9 @@ messages:
 	
       if Send(oItem,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC)
       { DEBUG("This shouldn't have happened!  Adding effect already here!"); return; }
+      
+      if NOT Send(oItem, @CheckTypeFlag, #flag=ATCK_WEAP_NONMAGIC)
+      { DEBUG("This shouldn't have happened!  Target missing ATCK_WEAP_NONMAGIC flag!"); return; }
 
       Send(oItem,@SetTypeFlag,#flag=ATCK_WEAP_MAGIC,#value=True);
       Send(oItem,@SetTypeFlag,#flag=ATCK_WEAP_NONMAGIC,#value=False);

@@ -2584,7 +2584,7 @@ messages:
 
          Send(self,@ToCliObject,#what=oThing);
          AddPacket(2,Nth(i,3)*FINENESS+Nth(i,5), 2,Nth(i,4)*FINENESS+Nth(i,6));
-         AddPacket(2,Send(oThing,@GetAngle));
+         AddPacket(2,Nth(i,2));  % the object's angle
          Send(oThing,@SendMoveAnimation);
          Send(oThing,@SendMoveOverlays);
       }
@@ -2594,7 +2594,7 @@ messages:
          oThing = Send(poOwner,@HolderExtractObject,#data=i);
          Send(self,@ToCliObject,#what=oThing);
          AddPacket(2,Nth(i,3)*FINENESS+Nth(i,5), 2,Nth(i,4)*FINENESS+Nth(i,6));
-         AddPacket(2,Send(oThing,@GetAngle));
+         AddPacket(2,Nth(i,2));  % the object's angle
          Send(oThing,@SendMoveAnimation);
          Send(oThing,@SendMoveOverlays);
       }

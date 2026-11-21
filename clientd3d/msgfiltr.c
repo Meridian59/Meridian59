@@ -151,17 +151,7 @@ static int WhoListItemFromPoint(HWND hList, POINT clientPt)
    if (HIWORD(result) != 0)
       return LB_ERR;
 
-   const int index = (int) (short) LOWORD(result);
-   if (index < 0)
-      return LB_ERR;
-
-   RECT rc;
-   if (ListBox_GetItemRect(hList, index, &rc) == LB_ERR)
-      return LB_ERR;
-   if (!PtInRect(&rc, clientPt))
-      return LB_ERR;
-
-   return index;
+   return LOWORD(result);
 }
 
 /*****************************************************************************/

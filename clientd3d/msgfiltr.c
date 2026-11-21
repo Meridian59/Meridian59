@@ -107,7 +107,7 @@ void ResetWhoList(list_type users)
 
 /*****************************************************************************/
 /*
- * CopyTextToClipboard:  Place an ANSI string on the clipboard.
+ * CopyTextToClipboard:  Place a string on the clipboard.
  */
 static void CopyTextToClipboard(HWND hwnd, const std::string &text)
 {

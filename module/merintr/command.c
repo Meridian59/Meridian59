@@ -286,8 +286,9 @@ void CommandCast(char *args)
 {
    spell *sp;
    char *spell_name;
+   char *next_name = NULL;
 
-   spell_name = GetSpellName(args, NULL);
+   spell_name = GetSpellName(args, &next_name);
    if (spell_name == NULL)
    {
       PerformAction(A_CAST, NULL);
@@ -307,7 +308,8 @@ void CommandCast(char *args)
       return;
    }
 
-   PerformAction(A_CASTSPELL, sp);
+   spell_action spa = {sp, next_name};
+   PerformAction(A_CASTSPELL, &spa);
 }
 
 /************************************************************************/

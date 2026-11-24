@@ -43,6 +43,7 @@ enum {
    AP_NOCHARACTERS  = 37,
    AP_GUEST         = 38,
    AP_SERVICEREPORT = 39,
+   AP_MOVE_INTERVAL = 40,
 };
 
 

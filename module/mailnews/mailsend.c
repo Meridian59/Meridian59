@@ -87,6 +87,7 @@ INT_PTR CALLBACK SendMailDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
    {
    case WM_INITDIALOG:
       CenterWindow(hDlg, cinfo->hMain);
+      ThemeApplyDialogTitleBar(hDlg);
 
       hEdit = GetDlgItem(hDlg, IDC_MAILEDIT);
       hSubject = GetDlgItem(hDlg, IDC_SUBJECT);

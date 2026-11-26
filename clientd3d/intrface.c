@@ -62,7 +62,7 @@ void InterfaceClose(void)
    /* Close offer dialogs, if they're up */
    OfferClose();
 
-   /* Close modal dialogs */
+   /* Close open dialogs */
    AbortLookList();
    AbortGameDialogs();
    AbortPasswordDialog();

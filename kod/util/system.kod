@@ -279,8 +279,8 @@ properties:
 
    % outdoor brightness level (0-100), updated hourly
    piBrightness
-   % updated here and there
-   piWeather
+   % Tracks which skybox to use for the time of the day
+   piTimePeriod
 
    % updated every day
    pbStormy = TRUE
@@ -3557,9 +3557,9 @@ messages:
       return $;
    }
 
-   GetWeather()
+   GetTimePeriod()
    {
-      return piWeather;
+      return piTimePeriod;
    }
 
    RecalcLightAndWeather()
@@ -3603,36 +3603,23 @@ messages:
 
       if piHour < 6 or piHour > 20
       {
-         piWeather = WEATHER_NIGHT;
+         piTimePeriod = TIMEPERIOD_NIGHT;
       }
       else
       {
          if piHour > 17
          {
-            piWeather = WEATHER_DUSK;
-            if pbStormy
-            {
-               piWeather = WEATHER_DUSK_STORMY;
-            }
-
+            piTimePeriod = TIMEPERIOD_DUSK;
          }
          else
          {
             if piHour < 9
             {
-               piWeather = WEATHER_DAWN;
-               if pbStormy
-               {
-                  piWeather = WEATHER_DAWN_STORMY;
-               }
+               piTimePeriod = TIMEPERIOD_DAWN;
             }
             else
             {
-               piWeather = WEATHER_DAY;
-               if pbStormy
-               {
-                  piWeather = WEATHER_DAY_STORMY;
-               }
+               piTimePeriod = TIMEPERIOD_DAY;
             }
          }
       }

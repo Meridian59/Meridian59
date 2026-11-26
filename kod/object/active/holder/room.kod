@@ -474,7 +474,7 @@ messages:
          % No eagle sound in the jungle.
          if NOT (iTerrain & TERRAIN_JUNGLE)
          {
-            Cons(room_badmount_sound5, plPeriodic_sounds);
+            plPeriodic_sounds = Cons(room_badmount_sound5, plPeriodic_sounds);
          }
 
       }

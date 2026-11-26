@@ -282,9 +282,6 @@ properties:
    % Tracks which skybox to use for the time of the day
    piTimePeriod
 
-   % updated every day
-   pbStormy = TRUE
-
    poLibrary = $
    poParliament = $
    poLore = $
@@ -1142,7 +1139,6 @@ messages:
          }
       }
 
-      Send(self,@RecalcWeatherConditions);
       Send(self,@NewGameDay);
 
       Send(poParliament,@NewDay);
@@ -3582,17 +3578,6 @@ messages:
 
       Send(self,@NewGameHour);
 
-      return;
-   }
-
-   RecalcWeatherConditions()
-   "Resets piStormy randomly"
-   {
-      pbStormy = False;
-      if Random(1,100) <= 100
-      {
-         pbStormy = True;
-      }
       return;
    }
 

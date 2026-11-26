@@ -59,9 +59,6 @@ resources:
    background_morning_sky = 2skyc.bgf
    background_night_sky = 2skyd.bgf
 
-   % Unlike the rest of these, this is actually a stormy sky.
-   background_stormy_sky = 3sky.bgf
-
    door_open_sound = doropen1.ogg
    door_close_sound = dorclose.ogg
 

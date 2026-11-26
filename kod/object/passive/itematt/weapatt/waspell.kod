@@ -44,20 +44,16 @@ properties:
    piValue_modifier = 150   %% modify the object's price by 100%
    piValue_power_modifier = 10
 
-   plSpells = $
-
 messages:
 
-Constructor()
-{
-   plSpells = [ [SID_DEMENT, 12], [SID_ENFEEBLE, 13],
-                [SID_VERTIGO, 13], [SID_SWAP, 12],
-                [SID_INVISIBILITY, 12], [SID_FORGET, 13],
-                [SID_EVIL_TWIN, 12], [SID_MARK_OF_DISHONOR, 13]
-              ];
-              
-   propagate;
-}
+   GetSpellChances()
+   "Returns the spells this attribute can cast, each with its chance in 100."
+   {
+      return [ [SID_DEMENT, 20], [SID_ENFEEBLE, 20],
+               [SID_VERTIGO, 20], [SID_FORGET, 20],
+               [SID_MARK_OF_DISHONOR, 20]
+             ];
+   }
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,7 +103,7 @@ Constructor()
       }
       
       iSpell = 0;
-      for i in plSpells
+      for i in Send(self,@GetSpellChances)
       {
          if stringContain(string,send(send(SYS,@FindSpellByNum,#num=first(i)),@GetName))
          {
@@ -148,13 +144,15 @@ Constructor()
       if spellNum = $
       {
          iValue = random(1,100);
-         spellNum = first(first(plSpells));
+         local lSpells = Send(self,@GetSpellChances);
+         spellNum = first(first(lSpells));
          
-         for i in plSpells
+         for i in lSpells
          {
             if iValue <= nth(i,2)
             {
                spellNum = nth(i,1);
+               break;
             }
             else
             {

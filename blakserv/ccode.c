@@ -625,7 +625,10 @@ blak_int C_StringEqual(int object_id,local_var_type *local_vars,
 
 void FuzzyCollapseString(char* pTarget, const char* pSource, int len)
 {
-	if (!pTarget || !pSource || len <= 0)
+	if (!pTarget)
+		return;
+
+	if (!pSource || len <= 0)
 	{
 		*pTarget = '\0';
 		return;
@@ -875,10 +878,22 @@ blak_int C_StringContain(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+/**
+ * SquashWhitespace: Replaces each run of spaces, tabs, and line breaks in the
+ * string with one space.
+ */
+static void SquashWhitespace(char *s)
+{
+	char *end = s + strlen(s);
+	std::replace_if(s, end, [](char c) { return iswhite(c); }, ' ');
+	end = std::unique(s, end, [](char a, char b) { return a == ' ' && b == ' '; });
+	*end = '\0';
+}
+
 /*
 "   orc teeth" == "orc teeth"
 " orc  teeth" == "orc teeth"
-"orcteeth" == "orc teeth"
+"orcteeth" != "orc teeth"
 */
 
 // return true if s1 contains s2,
@@ -890,6 +905,8 @@ bool FuzzyBufferContain(const char *s1,int len_s1,const char *s2,int len_s2)
 	
 	FuzzyCollapseString(buf0, s1, len_s1);
 	FuzzyCollapseString(buf1, s2, len_s2);
+	SquashWhitespace(buf0);
+	SquashWhitespace(buf1);
 	
 	return (NULL != strstr(buf0, buf1));
 }

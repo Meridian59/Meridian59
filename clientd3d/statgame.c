@@ -248,6 +248,9 @@ void GameMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
     RECT rcToolbar;
     ToolbarGetUnionRect(&rcToolbar);
+    AREA view;
+    CopyCurrentView(&view);
+    int left = view.x - VIEW_LEFT;
 
     /* Resize the text area by clicking and dragging in-between the viewport and 
     * the textarea. The vertical resize cursor will be displayed at this time. */
@@ -255,8 +258,8 @@ void GameMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
     if (text_area_resize_inprogress ||
         (y >= main_viewport_height + rcToolbar.bottom + EDGETREAT_HEIGHT- offset
         && y <= main_viewport_height + EDGETREAT_HEIGHT + rcToolbar.bottom + offset
-        && x >= EDGETREAT_WIDTH
-        && x <= EDGETREAT_WIDTH * 2 + main_viewport_width))
+        && x >= left + EDGETREAT_WIDTH
+        && x <= left + EDGETREAT_WIDTH * 2 + main_viewport_width))
     {
         MainSetCursor(hwnd, hwnd, HTTOP, 0);
         text_area_resize_zone = true;

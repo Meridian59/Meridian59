@@ -28,6 +28,8 @@ static bool need_redraw = false;
 
 static AREA view;			/* Client coordinates of room viewing rectangle */
 static AREA areaMiniMap;	//	Coords of the MiniMap.
+static int interface_left;	/* Client x where the interface starts */
+static int interface_right;	/* Client x where the sidebar ends */
 
 static DRAWBORDEREXCLUDE drawborderexcludeView = { 43, 43, 45, 45, 46, 48, 46, 48 };
 
@@ -176,15 +178,13 @@ bool MouseToMiniMap( int* x, int* y )
 
 /************************************************************************/
 /*
- * GraphicsAreaResize:  Set view variable to reflect size of window.
- *   Use when window is resized, and on startup.
+ * ClassicViewSize:  Size of the room view in a client area of xsize by ysize:
+ *   as tall as the text area leaves room for, at the classic aspect ratio,
+ *   leaving the sidebar at least INVENTORY_MIN_WIDTH.
  */
-void GraphicsAreaResize(int xsize, int ysize)
+static void ClassicViewSize(int xsize, int ysize, int *cx, int *cy)
 {
    int new_xsize, new_ysize;  /* Need signed #s */
-   bool must_redraw = false;
-
-   int iHeightAvailableForMapAndStats;
 
    // Determine the height of the text area section of the client
    int text_area_size = ((float)config.text_area_size / 100.0) * ysize;
@@ -212,15 +212,44 @@ void GraphicsAreaResize(int xsize, int ysize)
    new_xsize &= ~3;
    new_ysize &= ~3;
 
-   int inventory_width = xsize - new_xsize;
+   *cx = std::max(new_xsize, 0);
+   *cy = std::max(new_ysize, 0);
+}
+/************************************************************************/
+/*
+ * GraphicsAreaResize:  Set view variable to reflect size of window.
+ *   Use when window is resized, and on startup.
+ */
+void GraphicsAreaResize(int xsize, int ysize)
+{
+   int new_xsize, new_ysize;
+   bool must_redraw = false;
 
-   if (new_xsize < 0)
-      new_xsize = 0;
-   if (new_ysize < 0)
-      new_ysize = 0;
+   int iHeightAvailableForMapAndStats;
+
+   ClassicViewSize(xsize, ysize, &new_xsize, &new_ysize);
+
+   // The sidebar takes the rest of the width, but no more than in a 1920x1080
+   // window of the same height (a 1920x1060 client area under the menu bar);
+   // a wider window centers the interface.
+   int wide_xsize = ysize * 1920 / 1060;
+   int wide_view_cx, wide_view_cy;
+   ClassicViewSize(wide_xsize, ysize, &wide_view_cx, &wide_view_cy);
+   int sidebar_width = xsize - VIEW_LEFT - new_xsize;
+   int max_sidebar_width = std::max(wide_xsize - VIEW_LEFT - wide_view_cx, INVENTORY_MIN_WIDTH - VIEW_LEFT);
+   int margin = 0;
+   if (sidebar_width > max_sidebar_width)
+   {
+      margin = (sidebar_width - max_sidebar_width) / 2;
+      sidebar_width = max_sidebar_width;
+   }
+   interface_left = margin;
+   interface_right = margin + VIEW_LEFT + new_xsize + sidebar_width;
+
+   int inventory_width = VIEW_LEFT + sidebar_width;
 
    /* Move grid area to appropriate place */
-   view.x = LEFT_BORDER + HIGHLIGHT_THICKNESS + EDGETREAT_WIDTH;
+   view.x = margin + VIEW_LEFT;
    view.y = HIGHLIGHT_THICKNESS;
    if (config.toolbar)
      view.y += TOOLBAR_Y + TOOLBAR_BUTTON_HEIGHT + MIN_TOP_TOOLBAR;
@@ -242,7 +271,7 @@ void GraphicsAreaResize(int xsize, int ysize)
 
    //	areaMiniMap added by ajw.
    areaMiniMap.x = view.x + view.cx + LEFT_BORDER + 2 * HIGHLIGHT_THICKNESS + MAPTREAT_WIDTH;
-   areaMiniMap.cx = std::min( xsize - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, minimap_width_height);
+   areaMiniMap.cx = std::min( interface_right - areaMiniMap.x - 2 * HIGHLIGHT_THICKNESS - EDGETREAT_WIDTH - MAPTREAT_WIDTH, minimap_width_height);
 
    areaMiniMap.y = 2 * TOP_BORDER + USERAREA_HEIGHT + EDGETREAT_HEIGHT + (MAPTREAT_HEIGHT * 2) - 1;
 
@@ -272,6 +301,24 @@ void GraphicsAreaResize(int xsize, int ysize)
 void CopyCurrentView(AREA *v)
 {
    memcpy(v, &view, sizeof(view));
+}
+/************************************************************************/
+/*
+ * GetInterfaceLeft:  Client x where the interface starts; before it, on
+ *   windows wider than 1920x1080, is empty margin.
+ */
+int GetInterfaceLeft(void)
+{
+   return interface_left;
+}
+/************************************************************************/
+/*
+ * GetInterfaceRight:  Client x where the sidebar ends; past it, on windows
+ *   wider than 1920x1080, is empty margin.
+ */
+int GetInterfaceRight(void)
+{
+   return interface_right;
 }
 /************************************************************************/
 /*
@@ -390,7 +437,7 @@ void RedrawForce(void)
 
         rc.bottom = DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
         Lagbox_GetRect(&lagBox);
-        OffsetRect(&rc, main_viewport_width - 110, lagBox.top);
+        OffsetRect(&rc, view.x - VIEW_LEFT + main_viewport_width - 110, lagBox.top);
         DrawWindowBackground(hdc, &rc, rc.left, rc.top);
         int oldMode = SetBkMode(hdc,TRANSPARENT);
         DrawText(hdc, buffer,-1,&rc,DT_SINGLELINE);

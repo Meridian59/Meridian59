@@ -351,6 +351,7 @@ void InterfaceDrawResize(int xsize, int ysize, AREA *view)
   AREA inv, stat, areaMiniMap, areaEditBox, areaPersonalEnch;
   int i, x, y, width, height, end;
   HDC hdc;
+  int left = GetInterfaceLeft();  // The window frame is around the interface, not the window
 
   InventoryGetArea(&inv);
   StatsGetArea(&stat);
@@ -472,11 +473,11 @@ void InterfaceDrawResize(int xsize, int ysize, AREA *view)
       break;
 
 	case ELEMENT_EULTOP:
-		x = 0;
+		x = left;
 		y = 0;
 		break;
 	case ELEMENT_EULLEFT:
-		x = 0;
+		x = left;
 		y = elements[ ELEMENT_EULTOP ].height;
 		break;
 	case ELEMENT_EURTOP:
@@ -488,11 +489,11 @@ void InterfaceDrawResize(int xsize, int ysize, AREA *view)
 		y = elements[ ELEMENT_EURTOP ].height;
 		break;
 	case ELEMENT_ELLBOTTOM:
-		x = 0;
+		x = left;
 		y = ysize - height;
 		break;
 	case ELEMENT_ELLLEFT:
-		x = 0;
+		x = left;
 		y = ysize - elements[ ELEMENT_ELLBOTTOM ].height - height;
 		break;
 	case ELEMENT_ELRBOTTOM:
@@ -665,17 +666,17 @@ void InterfaceDrawResize(int xsize, int ysize, AREA *view)
       break;
 
 	case ELEMENT_ETOP:
-		x = elements[ ELEMENT_EULTOP ].width;
+		x = left + elements[ ELEMENT_EULTOP ].width;
 		y = 0;
 		end = elements[ ELEMENT_EURTOP ].x;
 		break;
 	case ELEMENT_EBOTTOM:
-		x = elements[ ELEMENT_ELLBOTTOM ].width;
+		x = left + elements[ ELEMENT_ELLBOTTOM ].width;
 		y = ysize - height;
 		end = elements[ ELEMENT_ELRBOTTOM ].x;
 		break;
 	case ELEMENT_ELEFT:
-		x = 0;
+		x = left;
 		y = elements[ ELEMENT_EULTOP ].height + elements[ ELEMENT_EULLEFT ].height;
 		end = elements[ ELEMENT_ELLLEFT ].y;
 		break;

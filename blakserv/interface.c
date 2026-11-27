@@ -46,6 +46,7 @@
 #define WM_BLAK_SOCKET_MAINTENANCE_ACCEPT (WM_APP + 8)
 #define WM_BLAK_SOCKET_NAME_LOOKUP (WM_APP + 10)
 #define WM_BLAK_SOCKET_SELECT  (WM_APP + 11)
+#define WM_BLAK_SHOW_WINDOW    (WM_APP + 12)
 
 #define CHANNEL_INTERFACE_LINES 5000 /* number of lines we'll keep in a list box */
 
@@ -246,7 +247,6 @@ void __cdecl InterfaceThread(void *unused)
 	InterfaceCreateListControl();
 
 	InterfaceInitLayout();
-	ShowWindow(hwndMain,InterfaceRestorePlacement(window_display));
 	
 	/* the main thread is waiting for our window to be created--tell it we're ready */
 	SetEvent(hEvent);
@@ -413,6 +413,10 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
 			AsyncNameLookup((HANDLE)wParam,WSAGETASYNCERROR(lParam));
 			break;
 			
+		case WM_BLAK_SHOW_WINDOW :
+			ShowWindow(hwndMain,InterfaceRestorePlacement(window_display));
+			break;
+			
 		case WM_BLAK_SOCKET_SELECT :
 			AsyncSocketSelect(wParam,WSAGETSELECTEVENT(lParam),WSAGETSELECTERROR(lParam));
 			break;
@@ -524,6 +528,11 @@ void InterfaceUpdateList(int session_id)
 
 
 /* this is executed in the main, non-interface thread */
+void InterfaceShow()
+{
+	PostMessage(hwndMain,WM_BLAK_SHOW_WINDOW,0,0);
+}
+
 void InterfaceUpdate()
 {
 	if (!GetQuit())
@@ -952,9 +961,6 @@ static void InterfaceLayout(void)
 	RedrawWindow(hwndMain, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
 }
 
-/* in the server's working directory, beside blakserv.cfg, so each install keeps its own */
-#define PLACEMENT_INI ".\\blakserv.ini"
-
 /*
 * InterfaceSavePlacement: Saves the window's position, size and maximized state
 * to the configuration file.
@@ -962,10 +968,29 @@ static void InterfaceLayout(void)
 static void InterfaceSavePlacement(void)
 {
 	WINDOWPLACEMENT wp;
+	const RECT *rc = &wp.rcNormalPosition;
+	const char *value;
+	char buf[64];
+	bool unchanged;
 
 	wp.length = sizeof(wp);
-	if (GetWindowPlacement(hwndMain, &wp))
-		WritePrivateProfileStruct("Interface", "Placement", &wp, sizeof(wp), PLACEMENT_INI);
+	if (!GetWindowPlacement(hwndMain, &wp))
+		return;
+
+	snprintf(buf, sizeof(buf), "%ld,%ld,%ld,%ld,%d", rc->left, rc->top, rc->right, rc->bottom,
+		wp.showCmd == SW_SHOWMAXIMIZED || (wp.flags & WPF_RESTORETOMAXIMIZED));
+
+	/* leave the file alone when the window hasn't moved */
+	value = LockConfigStr(CONSOLE_WINDOW_PLACEMENT);
+	if (value == NULL)
+		return;
+	unchanged = strcmp(value, buf) == 0;
+	UnlockConfigStr();
+	if (unchanged)
+		return;
+
+	SetConfigStr(CONSOLE_WINDOW_PLACEMENT, buf);
+	SaveConfigSetting(CONSOLE_WINDOW_PLACEMENT);
 }
 
 /*
@@ -975,14 +1000,24 @@ static void InterfaceSavePlacement(void)
 static int InterfaceRestorePlacement(int show)
 {
 	WINDOWPLACEMENT wp;
-	bool maximized;
+	RECT *rc = &wp.rcNormalPosition;
+	const char *value;
+	int fields, maximized;
 
-	if (!GetPrivateProfileStruct("Interface", "Placement", &wp, sizeof(wp), PLACEMENT_INI))
+	wp.length = sizeof(wp);
+	if (!GetWindowPlacement(hwndMain, &wp))
 		return show;
 
-	/* never reopen minimized; SetWindowPlacement moves a window that would be off
-	   screen back onto one */
-	maximized = wp.showCmd == SW_SHOWMAXIMIZED || (wp.flags & WPF_RESTORETOMAXIMIZED);
+	value = LockConfigStr(CONSOLE_WINDOW_PLACEMENT);
+	if (value == NULL)
+		return show;
+	fields = sscanf(value, "%ld,%ld,%ld,%ld,%d", &rc->left, &rc->top, &rc->right, &rc->bottom,
+		&maximized);
+	UnlockConfigStr();
+	if (fields != 5)
+		return show;
+
+	/* SetWindowPlacement moves a window that would be off screen back onto one */
 	wp.flags = 0;
 	wp.showCmd = SW_HIDE;
 	SetWindowPlacement(hwndMain, &wp);

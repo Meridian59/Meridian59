@@ -67,6 +67,9 @@ void MainServer()
 	
 	InitConfig();
 	LoadConfig();		/* must be nearly first since channels use it */
+#ifdef BLAK_PLATFORM_WINDOWS
+	InterfaceShow();	/* the window's placement is in the configuration */
+#endif
 	
 	InitDebug();
 	

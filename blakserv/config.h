@@ -78,7 +78,7 @@ enum
    UPDATE_PACKAGE_PATH, UPDATE_DOWNLOAD_REASON, UPDATE_DEMO_BUTTON,
 
    CONSOLE_GROUP,
-   CONSOLE_ADMINISTRATOR, CONSOLE_CAPTION,
+   CONSOLE_ADMINISTRATOR, CONSOLE_CAPTION, CONSOLE_WINDOW_PLACEMENT,
 
    RIGHTS_GROUP,
    RIGHTS_GOROOM, RIGHTS_GOROOMBYNUM, RIGHTS_GOPLAYER, RIGHTS_GETPLAYER,
@@ -147,6 +147,8 @@ int GetConfigIDByGroupAndName(char *group,char *name);
 void SetConfigInt(int config_id,int new_value);
 void SetConfigBool(int config_id,bool new_value);
 void SetConfigStr(int config_id,char *new_value);
+std::string FormatConfigLine(config_node *c,const char *config_name);
+void SaveConfigSetting(int config_id);
 
 void LoadConfig(void);
 

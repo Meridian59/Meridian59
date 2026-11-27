@@ -699,23 +699,9 @@ void InterfaceCreateTabControl(HWND hwnd)
 
     /* set admin page font */
     hwndCtl = GetDlgItem(HWND_ADMIN,IDC_ADMIN_RESPONSE);
-    SendMessage(hwndCtl,WM_SETFONT,(WPARAM)GetStockObject(ANSI_FIXED_FONT),
-		MAKELPARAM(TRUE,0));
-	
-    lf.lfHeight = 8;
-    lf.lfWidth = 0;
-    lf.lfEscapement = 0;
-    lf.lfOrientation = 0;
-    lf.lfWeight = 400;
-    lf.lfItalic = 0; 
-    lf.lfUnderline = 0;
-    lf.lfStrikeOut = 0;
-    lf.lfCharSet = 255;
-    lf.lfOutPrecision = 1;
-    lf.lfClipPrecision = 2;
-    lf.lfQuality = 1;
-    lf.lfPitchAndFamily = 49;
-    strncpy(lf.lfFaceName,"Terminal", sizeof(lf.lfFaceName));
+    GetObject((HFONT) SendMessage(HWND_ADMIN,WM_GETFONT,0,0),sizeof(lf),&lf);
+    lf.lfPitchAndFamily = FIXED_PITCH | FF_MODERN;
+    strncpy(lf.lfFaceName,"Consolas", sizeof(lf.lfFaceName));
     
     font = CreateFontIndirect(&lf);
     if (font != NULL)
@@ -781,7 +767,8 @@ void InterfaceSetup()
 	tbab.nID   = IDB_TOOLBAR;
 	*/
 	tbab.hInst = HINST_COMMCTRL;
-	tbab.nID   = IDB_STD_SMALL_COLOR;
+	tbab.nID   = IDB_STD_LARGE_COLOR;
+	SendMessage(hwndTB,TB_SETBITMAPSIZE,0,MAKELPARAM(24,24));
 	
 	SendMessage(hwndTB, TB_ADDBITMAP,15,(LPARAM)&tbab); 
 	

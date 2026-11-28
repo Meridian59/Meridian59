@@ -164,6 +164,7 @@ config_table_type config_table[] =
 { CONSOLE_GROUP,          false, "[Console]",     CONFIG_GROUP, "" },
 { CONSOLE_ADMINISTRATOR,  false, "Administrator", CONFIG_STR,   "Administrator" },
 { CONSOLE_CAPTION,        false, "Caption",       CONFIG_STR,   "BlakSton Server" },
+{ CONSOLE_WINDOW_PLACEMENT, true, "WindowPlacement", CONFIG_STR, "" },
 
 { RIGHTS_GROUP,           false, "[Rights]",      CONFIG_GROUP, "" },
 { RIGHTS_GOROOM,          true, "GoRoom",        CONFIG_INT,   "2" },
@@ -605,6 +606,116 @@ void SetConfigStr(int config_id,char *new_value)
    strcpy(c->config_str_value,new_value);
 
    UnlockDynamicConfig();
+}
+
+/*
+* FormatConfigLine: A setting's line as the configuration file has it, or an empty
+*   string for a group or an unknown type.
+*/
+std::string FormatConfigLine(config_node *c,const char *config_name)
+{
+   std::string name = config_name;
+
+   if (name.size() < 20)
+      name.append(20 - name.size(),' ');
+   name += ' ';
+   switch (c->config_type)
+   {
+   case CONFIG_STR :
+      if (strchr(c->config_str_value,' ') != NULL)
+         return name + "<" + c->config_str_value + ">";
+      return name + c->config_str_value;
+   case CONFIG_PATH :
+      return name + c->config_str_value;
+   case CONFIG_INT :
+      return name + std::to_string(c->config_int_value);
+   case CONFIG_BOOL :
+      return name + (c->config_int_value ? "Yes" : "No");
+   default :
+      return "";
+   }
+}
+
+/*
+* SaveConfigSetting: Writes a setting's current value to the configuration file.
+*/
+void SaveConfigSetting(int config_id)
+{
+   std::vector<std::string> lines;
+   std::string setting;
+   const char *group = NULL,*name,*first;
+   char line[MAX_CONFIG_LINE+1];
+   config_node *c = GetConfigByID(config_id);
+   int i,insert_at = -1;
+   size_t len;
+   bool in_group = false;
+   FILE *configfile;
+
+   /* a setting belongs to the last group listed before it in the table */
+   for (i=0;i<LEN_CONFIG_TABLE && config_table[i].config_id != config_id;i++)
+      if (config_table[i].config_type == CONFIG_GROUP)
+         group = config_table[i].config_name;
+   if (c == NULL || i == LEN_CONFIG_TABLE || group == NULL)
+      return;
+   name = config_table[i].config_name;
+
+   LockDynamicConfig();
+   setting = FormatConfigLine(c,name);
+   UnlockDynamicConfig();
+   if (setting.empty())
+      return;
+
+   /* the setting goes where its old line was, or else first in its group */
+   if ((configfile = fopen(CONFIG_FILE,"rt")) != NULL)
+   {
+      while (fgets(line,sizeof(line),configfile))
+      {
+         line[strcspn(line,"\n")] = 0;
+         first = line + strspn(line," \t");
+         len = strcspn(first,"= \t");
+
+         if (*first == '[')
+         {
+            in_group = len == strlen(group) && !strnicmp(first,group,len);
+            if (in_group)
+               insert_at = (int) lines.size() + 1;
+         }
+         else if (in_group && len == strlen(name) && !strnicmp(first,name,len))
+         {
+            insert_at = (int) lines.size();
+            continue;
+         }
+         lines.push_back(line);
+      }
+      fclose(configfile);
+   }
+
+   /* the file has no such group yet; add it at the end */
+   if (insert_at < 0)
+   {
+      lines.push_back("");
+      lines.push_back(group);
+      insert_at = (int) lines.size();
+   }
+   lines.insert(lines.begin() + insert_at,setting);
+
+   if ((configfile = fopen(CONFIG_FILE ".tmp","wt")) == NULL)
+   {
+      eprintf("SaveConfigSetting can't open %s.tmp to save config.\n",CONFIG_FILE);
+      return;
+   }
+   for (const std::string &l : lines)
+      fprintf(configfile,"%s\n",l.c_str());
+   if (fclose(configfile) != 0)
+   {
+      eprintf("SaveConfigSetting can't write %s.tmp to save config.\n",CONFIG_FILE);
+      return;
+   }
+
+   std::error_code error;
+   std::filesystem::rename(CONFIG_FILE ".tmp",CONFIG_FILE,error);
+   if (error)
+      eprintf("SaveConfigSetting can't replace %s: %s\n",CONFIG_FILE,error.message().c_str());
 }
 
 void LoadConfig(void)

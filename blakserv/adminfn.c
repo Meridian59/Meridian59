@@ -1097,6 +1097,8 @@ void AdminSaveConfiguration(int session_id,admin_parm_type parms[],
 
 void AdminSaveOneConfigNode(config_node *c,const char *config_name,const char *default_str)
 {
+	std::string line;
+
 	/* print out non-default config data */
 	switch (c->config_type)
 	{
@@ -1104,46 +1106,27 @@ void AdminSaveOneConfigNode(config_node *c,const char *config_name,const char *d
 		fprintf(configfile,"\n");
 		fprintf(configfile,"%-20s ",config_name);
 		fprintf(configfile,"\n");
-		break;
+		return;
 	case CONFIG_STR :
-		if (strcmp(c->config_str_value,default_str) != 0)
-		{
-			fprintf(configfile,"%-20s ",config_name);
-			if (strchr(c->config_str_value,' ') != NULL)
-				fprintf(configfile,"<%s>\n",c->config_str_value);
-			else
-				fprintf(configfile,"%s\n",c->config_str_value);
-		}
+	case CONFIG_PATH :
+		if (strcmp(c->config_str_value,default_str) == 0)
+			return;
 		break;
 	case CONFIG_INT :
-		if (atoi(default_str) != c->config_int_value)
-		{
-			fprintf(configfile,"%-20s ",config_name);
-			fprintf(configfile,"%i\n",c->config_int_value);
-		}
-		break;
-	case CONFIG_PATH :
-		if (strcmp(c->config_str_value,default_str) != 0)
-		{
-			fprintf(configfile,"%-20s ",config_name);
-			fprintf(configfile,"%s\n",c->config_str_value);
-		}
+		if (atoi(default_str) == c->config_int_value)
+			return;
 		break;
 	case CONFIG_BOOL :
-		if ((stricmp(default_str,"Yes") == 0) ^ c->config_int_value)
-		{
-			fprintf(configfile,"%-20s ",config_name);
-			if (c->config_int_value != false)
-				fprintf(configfile,"Yes\n");
-			else
-				fprintf(configfile,"No\n");
-		}
-		break;
-	default :
-		fprintf(configfile,"%-20s ",config_name);
-		fprintf(configfile,"# Unknown type\n");
+		if (!((stricmp(default_str,"Yes") == 0) ^ c->config_int_value))
+			return;
 		break;
 	}
+
+	line = FormatConfigLine(c,config_name);
+	if (line.empty())
+		fprintf(configfile,"%-20s # Unknown type\n",config_name);
+	else
+		fprintf(configfile,"%s\n",line.c_str());
 }
 
 static int admin_who_count;

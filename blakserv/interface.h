@@ -25,6 +25,7 @@ int GetUsedSessions(void);
 void StartupPrintf(const char *fmt,...);
 void StartupComplete(void);
 
+void InterfaceShow(void);
 void InterfaceUpdate(void);
 void InterfaceLogon(session_node *s);
 void InterfaceLogoff(session_node *s);

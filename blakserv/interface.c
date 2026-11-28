@@ -28,6 +28,7 @@
 #include <commctrl.h>
 #include <richedit.h>
 #include <uxtheme.h>
+#include <span>
 
 /* event sent to our interface when it should update numbers */
 #define WM_BLAK_NEW_INFO       (WM_APP + 0)
@@ -45,6 +46,7 @@
 #define WM_BLAK_SOCKET_MAINTENANCE_ACCEPT (WM_APP + 8)
 #define WM_BLAK_SOCKET_NAME_LOOKUP (WM_APP + 10)
 #define WM_BLAK_SOCKET_SELECT  (WM_APP + 11)
+#define WM_BLAK_SHOW_WINDOW    (WM_APP + 12)
 
 #define CHANNEL_INTERFACE_LINES 5000 /* number of lines we'll keep in a list box */
 
@@ -66,6 +68,59 @@ HWND tab_pages[NUM_TAB_PAGES];
 #define HWND_STATUS tab_pages[0]
 #define HWND_CHANNEL tab_pages[1]
 #define HWND_ADMIN tab_pages[2]
+
+/* Each tab lists the controls that adapt to window resizing. A control's x and
+   y modes say how it follows the tab's right and bottom edges:
+   - FIXED leaves it in place,
+   - MOVE shifts it to keep its distance from that edge
+   - STRETCH widens or lengthens it */
+enum { LAYOUT_FIXED, LAYOUT_MOVE, LAYOUT_STRETCH };
+
+struct layout_item
+{
+	int id;
+	int x_mode;
+	int y_mode;
+	RECT orig; /* in the parent's client coordinates */
+};
+
+static layout_item status_layout[] =
+{
+	{ IDC_STARTUP_BORDER,     LAYOUT_STRETCH, LAYOUT_FIXED },
+	{ IDC_STARTUP_TEXT,       LAYOUT_STRETCH, LAYOUT_FIXED },
+	{ IDC_LOGO_BITMAP,        LAYOUT_MOVE,    LAYOUT_FIXED },
+	{ IDC_CONNECTIONS_BORDER, LAYOUT_STRETCH, LAYOUT_STRETCH },
+	{ IDC_CONNECTION_LIST,    LAYOUT_STRETCH, LAYOUT_STRETCH },
+};
+
+static layout_item channel_layout[] =
+{
+	{ IDC_LOG_LIST,           LAYOUT_STRETCH, LAYOUT_FIXED },
+	{ IDC_ERROR_LIST,         LAYOUT_STRETCH, LAYOUT_FIXED },
+	{ IDC_DEBUG_LIST,         LAYOUT_STRETCH, LAYOUT_STRETCH },
+};
+
+static layout_item admin_layout[] =
+{
+	{ IDC_ADMIN_RESPONSE,     LAYOUT_STRETCH, LAYOUT_STRETCH },
+	{ IDC_ADMIN_COMMAND,      LAYOUT_STRETCH, LAYOUT_MOVE },
+	{ IDC_CONNECTIONS_BORDER, LAYOUT_STRETCH, LAYOUT_MOVE }, /* the box around the command line */
+};
+
+struct page_layout
+{
+	std::span<layout_item> items;
+	SIZE orig;
+};
+
+static page_layout page_layouts[NUM_TAB_PAGES] =
+{
+	{ status_layout }, { channel_layout }, { admin_layout },
+};
+
+static RECT tab_margins; /* no bottom: the tab control ends at the status bar */
+static POINT min_window_size;
+static bool layout_ready = false;
 
 /* subclass admin edit window to get enter and tab keys */
 static WNDPROC lpfnDefAdminInputProc;
@@ -103,6 +158,11 @@ void InterfaceCheckChannels(void);
 void InterfaceSave(void);
 void InterfaceReloadSystem(void);
 void CenterWindow(HWND hwnd, HWND hwndParent);
+static void InterfaceSetStatusParts(void);
+static void InterfaceInitLayout(void);
+static void InterfaceLayout(void);
+static void InterfaceSavePlacement(void);
+static int InterfaceRestorePlacement(int show);
 
 INT_PTR CALLBACK InterfaceDialogMotd(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam);
 INT_PTR CALLBACK InterfaceDialogAbout(HWND hwnd,UINT message,WPARAM wParam,LPARAM lParam);
@@ -167,7 +227,7 @@ void __cdecl InterfaceThread(void *unused)
 	main_class.hIconSm = (HICON) LoadImage(hInst,MAKEINTRESOURCE(IDI_MAIN),IMAGE_ICON,
 		GetSystemMetrics(SM_CXSMICON),GetSystemMetrics(SM_CYSMICON),LR_DEFAULTCOLOR);
 	main_class.hCursor = NULL;
-	main_class.hbrBackground = (HBRUSH) GetStockObject(LTGRAY_BRUSH);
+	main_class.hbrBackground = GetSysColorBrush(COLOR_3DFACE);
 	main_class.lpszMenuName = NULL;
 	main_class.lpszClassName = "blakserv";
 
@@ -185,8 +245,8 @@ void __cdecl InterfaceThread(void *unused)
 	InterfaceSetup();
 	InterfaceCreateTabControl(hwndMain);
 	InterfaceCreateListControl();
-	
-	ShowWindow(hwndMain,window_display);
+
+	InterfaceInitLayout();
 	
 	/* the main thread is waiting for our window to be created--tell it we're ready */
 	SetEvent(hEvent);
@@ -221,10 +281,21 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
 		HANDLE_MSG(hwnd,WM_COMMAND,InterfaceCommand);
 		
 	case WM_DESTROY :
+		InterfaceSavePlacement();
 		SetQuit();
 		PostQuitMessage(0);
 		return 0;
-		
+
+	case WM_SIZE :
+		if (wParam != SIZE_MINIMIZED)
+			InterfaceLayout();
+		return 0;
+
+	case WM_GETMINMAXINFO :
+		if (layout_ready)
+			((MINMAXINFO *) lParam)->ptMinTrackSize = min_window_size;
+		return 0;
+
 	case WM_CLOSE :
 		if (MessageBox(hwnd,"Are you sure you want to exit?",BlakServNameString(),
 			MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION) == IDYES)
@@ -342,6 +413,10 @@ LRESULT WINAPI InterfaceWindowProc(HWND hwnd,UINT message,WPARAM wParam,LPARAM l
 			AsyncNameLookup((HANDLE)wParam,WSAGETASYNCERROR(lParam));
 			break;
 			
+		case WM_BLAK_SHOW_WINDOW :
+			ShowWindow(hwndMain,InterfaceRestorePlacement(window_display));
+			break;
+			
 		case WM_BLAK_SOCKET_SELECT :
 			AsyncSocketSelect(wParam,WSAGETSELECTEVENT(lParam),WSAGETSELECTERROR(lParam));
 			break;
@@ -453,6 +528,11 @@ void InterfaceUpdateList(int session_id)
 
 
 /* this is executed in the main, non-interface thread */
+void InterfaceShow()
+{
+	PostMessage(hwndMain,WM_BLAK_SHOW_WINDOW,0,0);
+}
+
 void InterfaceUpdate()
 {
 	if (!GetQuit())
@@ -596,8 +676,6 @@ void InterfaceCreateTabControl(HWND hwnd)
     HWND hwndCtl;
     LOGFONT lf;
     HFONT font;
-    RECT rcPage;
-    int i;
     
     hwndTab = GetDlgItem(hwndMain,IDC_TAB_MAIN);
 	
@@ -618,13 +696,6 @@ void InterfaceCreateTabControl(HWND hwnd)
 		InterfaceDialogTabPage);
     tab_pages[2] = CreateDialog(hInst,MAKEINTRESOURCE(IDD_TAB_PAGE_ADMINISTRATION),hwndTab,
 		InterfaceDialogTabPage);
-
-    /* pages are children of the tab control; place them in its display area,
-       below the tab headers */
-    GetClientRect(hwndTab,&rcPage);
-    TabCtrl_AdjustRect(hwndTab,FALSE,&rcPage);
-    for (i = 0; i < NUM_TAB_PAGES; i++)
-		SetWindowPos(tab_pages[i],HWND_TOP,rcPage.left,rcPage.top,0,0,SWP_NOSIZE);
 
     /* set admin page font */
     hwndCtl = GetDlgItem(HWND_ADMIN,IDC_ADMIN_RESPONSE);
@@ -684,9 +755,6 @@ void InterfaceSetup()
 	HWND hwndTB; 
 	TBADDBITMAP tbab; 
 	TBBUTTON tbb[8];
-	
-	RECT rcClient, rcPart;
-	int status_widths[2];
 	
 	hwndTB = CreateWindowEx(0,TOOLBARCLASSNAME,NULL,WS_CHILD | TBSTYLE_TOOLTIPS,
 		0,0,0,0,hwndMain,(HMENU) IDC_TOOLBAR,hInst, NULL); 
@@ -759,17 +827,192 @@ void InterfaceSetup()
 	ShowWindow(hwndTB,SW_SHOW);
 	
 	CreateStatusWindow(WS_CHILD | WS_VISIBLE,"",hwndMain,IDS_STATUS_WINDOW);
-	GetClientRect(hwndMain,&rcClient); 
+	InterfaceSetStatusParts();
+	SendDlgItemMessage(hwndMain,IDS_STATUS_WINDOW,SB_SETTEXT,1,(LPARAM)"  0");
+}
+
+/*
+* InterfaceSetStatusParts: Splits the status bar into parts sized to the window
+*/
+static void InterfaceSetStatusParts(void)
+{
+	RECT rcClient, rcPart;
+	int status_widths[2];
+
+	GetClientRect(hwndMain,&rcClient);
 	/* room for the connection count, in dialog units so it grows with the font */
 	SetRect(&rcPart,0,0,STATUS_CONNECTION_WIDTH,0);
 	MapDialogRect(hwndMain,&rcPart);
 	status_widths[0] = rcClient.right - rcPart.right;
-	status_widths[1] = rcClient.right - 1;
-	
+	/* and for the sizing grip */
+	status_widths[0] -= GetSystemMetrics(SM_CXVSCROLL);
+	status_widths[1] = -1; /* to the right edge */
+
 	SendDlgItemMessage(hwndMain,IDS_STATUS_WINDOW,SB_SETPARTS,2,(LPARAM)status_widths);
-	SendDlgItemMessage(hwndMain,IDS_STATUS_WINDOW,SB_SETTEXT,1,(LPARAM)"  0");
-	
-	
+}
+
+/*
+* InterfaceInitLayout: Records the window's starting size as its minimum, and the
+* starting positions of the tabs and their listed controls.
+*/
+static void InterfaceInitLayout(void)
+{
+	RECT rc, rc_tab;
+
+	GetWindowRect(hwndMain, &rc);
+	min_window_size.x = rc.right - rc.left;
+	min_window_size.y = rc.bottom - rc.top;
+
+	GetClientRect(hwndMain, &rc);
+	GetWindowRect(hwndTab, &rc_tab);
+	MapWindowPoints(NULL, hwndMain, (POINT *) &rc_tab, 2);
+	SetRect(&tab_margins, rc_tab.left, rc_tab.top, rc.right - rc_tab.right, 0);
+
+	for (int i = 0; i < NUM_TAB_PAGES; i++)
+	{
+		GetClientRect(tab_pages[i], &rc);
+		page_layouts[i].orig = { rc.right, rc.bottom };
+		for (layout_item &item : page_layouts[i].items)
+		{
+			GetWindowRect(GetDlgItem(tab_pages[i], item.id), &item.orig);
+			MapWindowPoints(NULL, tab_pages[i], (POINT *) &item.orig, 2);
+		}
+	}
+
+	layout_ready = true;
+	InterfaceLayout();
+}
+
+/*
+* InterfaceLayout: Fits the layout components to the window's current size.
+*/
+static void InterfaceLayout(void)
+{
+	RECT rc, rc_status;
+	int width, height;
+
+	if (!layout_ready)
+		return;
+
+	SendDlgItemMessage(hwndMain, IDC_TOOLBAR, TB_AUTOSIZE, 0, 0);
+	SendDlgItemMessage(hwndMain, IDS_STATUS_WINDOW, WM_SIZE, 0, 0);
+	InterfaceSetStatusParts();
+
+	GetClientRect(hwndMain, &rc);
+	GetWindowRect(GetDlgItem(hwndMain, IDS_STATUS_WINDOW), &rc_status);
+	SetWindowPos(hwndTab, NULL, tab_margins.left, tab_margins.top,
+		rc.right - tab_margins.right - tab_margins.left,
+		rc.bottom - (rc_status.bottom - rc_status.top) - tab_margins.top,
+		SWP_NOZORDER | SWP_NOACTIVATE);
+
+	GetClientRect(hwndTab, &rc);
+	TabCtrl_AdjustRect(hwndTab, FALSE, &rc);
+	width = rc.right - rc.left;
+	height = rc.bottom - rc.top;
+	for (int i = 0; i < NUM_TAB_PAGES; i++)
+	{
+		const page_layout &page = page_layouts[i];
+		int dx = width - page.orig.cx;
+		int dy = height - page.orig.cy;
+		HDWP defer;
+
+		SetWindowPos(tab_pages[i], NULL, rc.left, rc.top, width, height,
+			SWP_NOZORDER | SWP_NOACTIVATE);
+
+		/* moved together, so the page repaints once */
+		defer = BeginDeferWindowPos((int) page.items.size());
+		for (const layout_item &item : page.items)
+		{
+			RECT ctl = item.orig;
+
+			if (item.x_mode == LAYOUT_MOVE)
+				OffsetRect(&ctl, dx, 0);
+			else if (item.x_mode == LAYOUT_STRETCH)
+				ctl.right += dx;
+
+			if (item.y_mode == LAYOUT_MOVE)
+				OffsetRect(&ctl, 0, dy);
+			else if (item.y_mode == LAYOUT_STRETCH)
+				ctl.bottom += dy;
+
+			defer = DeferWindowPos(defer, GetDlgItem(tab_pages[i], item.id), NULL, ctl.left, ctl.top,
+				ctl.right - ctl.left, ctl.bottom - ctl.top, SWP_NOZORDER | SWP_NOACTIVATE);
+		}
+		EndDeferWindowPos(defer);
+	}
+
+	/* sizing the last column to its header fills the remaining width */
+	ListView_SetColumnWidth(hwndLV, 4, LVSCW_AUTOSIZE_USEHEADER);
+
+	/* group boxes don't repaint their insides when stretched */
+	RedrawWindow(hwndMain, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
+}
+
+/*
+* InterfaceSavePlacement: Saves the window's position, size and maximized state
+* to the configuration file.
+*/
+static void InterfaceSavePlacement(void)
+{
+	WINDOWPLACEMENT wp;
+	const RECT *rc = &wp.rcNormalPosition;
+	const char *value;
+	char buf[64];
+	bool unchanged;
+
+	wp.length = sizeof(wp);
+	if (!GetWindowPlacement(hwndMain, &wp))
+		return;
+
+	snprintf(buf, sizeof(buf), "%ld,%ld,%ld,%ld,%d", rc->left, rc->top, rc->right, rc->bottom,
+		wp.showCmd == SW_SHOWMAXIMIZED || (wp.flags & WPF_RESTORETOMAXIMIZED));
+
+	/* leave the file alone when the window hasn't moved */
+	value = LockConfigStr(CONSOLE_WINDOW_PLACEMENT);
+	if (value == NULL)
+		return;
+	unchanged = strcmp(value, buf) == 0;
+	UnlockConfigStr();
+	if (unchanged)
+		return;
+
+	SetConfigStr(CONSOLE_WINDOW_PLACEMENT, buf);
+	SaveConfigSetting(CONSOLE_WINDOW_PLACEMENT);
+}
+
+/*
+* InterfaceRestorePlacement: Moves the window to the placement saved in
+* the configuration file, if any.
+*/
+static int InterfaceRestorePlacement(int show)
+{
+	WINDOWPLACEMENT wp;
+	RECT *rc = &wp.rcNormalPosition;
+	const char *value;
+	int fields, maximized;
+
+	wp.length = sizeof(wp);
+	if (!GetWindowPlacement(hwndMain, &wp))
+		return show;
+
+	value = LockConfigStr(CONSOLE_WINDOW_PLACEMENT);
+	if (value == NULL)
+		return show;
+	fields = sscanf(value, "%ld,%ld,%ld,%ld,%d", &rc->left, &rc->top, &rc->right, &rc->bottom,
+		&maximized);
+	UnlockConfigStr();
+	if (fields != 5)
+		return show;
+
+	/* SetWindowPlacement moves a window that would be off screen back onto one */
+	wp.flags = 0;
+	wp.showCmd = SW_HIDE;
+	SetWindowPlacement(hwndMain, &wp);
+
+	/* starting minimized or hidden takes precedence */
+	if (maximized && (show == SW_SHOWNORMAL || show == SW_SHOW || show == SW_SHOWDEFAULT))
+		return SW_SHOWMAXIMIZED;
+	return show;
 }
 
 void InterfaceCreateListControl()

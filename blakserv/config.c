@@ -614,21 +614,23 @@ void SetConfigStr(int config_id,char *new_value)
 */
 std::string FormatConfigLine(config_node *c,const char *config_name)
 {
-   char name[64];
+   std::string name = config_name;
 
-   snprintf(name,sizeof(name),"%-20s ",config_name);
+   if (name.size() < 20)
+      name.append(20 - name.size(),' ');
+   name += ' ';
    switch (c->config_type)
    {
    case CONFIG_STR :
       if (strchr(c->config_str_value,' ') != NULL)
-         return std::string(name) + "<" + c->config_str_value + ">";
-      return std::string(name) + c->config_str_value;
+         return name + "<" + c->config_str_value + ">";
+      return name + c->config_str_value;
    case CONFIG_PATH :
-      return std::string(name) + c->config_str_value;
+      return name + c->config_str_value;
    case CONFIG_INT :
-      return std::string(name) + std::to_string(c->config_int_value);
+      return name + std::to_string(c->config_int_value);
    case CONFIG_BOOL :
-      return std::string(name) + (c->config_int_value ? "Yes" : "No");
+      return name + (c->config_int_value ? "Yes" : "No");
    default :
       return "";
    }

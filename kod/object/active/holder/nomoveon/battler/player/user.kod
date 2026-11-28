@@ -6280,13 +6280,19 @@ messages:
    SomethingShot(who=$, target=$, projectile=$, flags=PROJ_FLAG_NONE,
                  iLightIntensity=0, iLightColor=0)
    {
-      local iValue;
+      local iValue, rHitSound;
 
       % This happened in the past.  Ignore this, because Sending nil in a
       %  packet is bad.
       if target = $
       {
          propagate;
+      }
+
+      rHitSound = Send(projectile,@GetProjectileHitSound);
+      if rHitSound <> $
+      {
+          flags = flags | PROJ_FLAG_HIT_SOUND;
       }
 
       AddPacket(1,BP_SHOOT,4,Send(projectile,@GetProjectileIcon));
@@ -6315,13 +6321,19 @@ messages:
             % No lighting info
             AddPacket(2,0);
          }
+
       }
       else
       {
          % No lighting info
          AddPacket(2,0);
       }
-     
+
+      if rHitSound <> $
+      {
+         AddPacket(4,rHitSound);
+      }
+
       SendPacket(poSession);
       
       propagate;
